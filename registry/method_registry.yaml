@@ -1,0 +1,1965 @@
+# 方法注册表 · 条目本体（数据侧权威）
+#
+# 依据：母本 0.17.2 条目 schema（逐字采用，不重定义/不扩展/不裁剪，编译规范 2.4）；
+#       0.17.3 kind 封闭枚举；0.17.4 四类消费者字段映射；0.17.5 生命周期；
+#       0.17.6 人工种子通道（四层数据源）；0.17.7 准入门槛；0.17.8 M 系列；0.18.6 M10–M15；
+#       0.8 质量属性包络；0.14/9.2.1 守护分级；1.2 方法空间（骨架源）；1.2.5 冲突矩阵；
+#       1.4 约束接口（施加表）；1.5 形式化锚点（V1–V5）；6.2.1 指标词汇；0.12 可信度分级。
+#
+# 本批次：STY（架构风格）24 条 = 1.2.1（7）+ 1.2.2（6）+ 1.2.3（6）+ 1.2.4（5）。
+# 编号采用分块序并锚定 STY-004（母本反例 18-A 已发布引用 STY-04 事件溯源；0.22 编号永不复用/重排）——
+# 裁决留痕见 README §4 与本文件顶层 manual_judgments: MJ-1。
+#
+# 四层数据源标注约定（0.17.6(1)）：条目内**不得出现 0.17.2 之外的字段**（README §2），
+# 故逐字段来源以行内注释标注，标签固定为四类：
+#   骨架源       = 母本 x.2 表格行（row_id）+ 0.17.3 指针表
+#   交叉表源     = 1.2.5 / x.4 约束接口表 / 0.14+9.2.1 分级 / x.5 形式化锚点
+#   参考资料源   = 带 compile_usage 的书目条目（bib_id）
+#   人工判断     = 无表格无文献支撑的字段，显式登记（禁默认值假充）
+# 机器可读的源指针统一收敛于 provenance.source_pointers 与 envelope[].source / compatibility[].evidence；
+# scripts/project.py 反查全部指针在母本中可查（防幻觉），并统计方括号事实占位符 → 勘察义务清单（M15）。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）"
+  schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
+  kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
+  seed_channel_source: {source_type: clause_id, value: "0.17.6", verified: true}
+  metric_vocabulary_source: {source_type: clause_id, value: "6.2.1", verified: true}
+  signal_level_source: {source_type: clause_id, value: "0.14", verified: true}
+  entry_count: 24
+  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）；其余 16 kind 待后续批次"
+
+entries:
+
+  # ══════════ 子维度三：通信/协调风格（1.2.3）→ STY-001…STY-006 ══════════
+  # 块序在前的理由：使「事件溯源 + CQRS」= STY-004，与母本反例 18-A 既有引用 STY-04 一致（MJ-1）。
+
+  - entry_id: STY-001
+    kind: STY
+    name: 同步请求-响应
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions
+    provenance:
+      origin: hybrid                   # 骨架=表格行（compiled 视图）＋谓词人工转写（manual）
+      source_pointers:
+        - {source_type: row_id, value: "1.2.3-同步请求-响应", verified: true}
+        - {source_type: clause_id, value: "1.2.5", verified: true}
+        - {source_type: clause_id, value: "1.3", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+        - {source_type: bib_id, value: "5", verified: true}
+    typical_reversibility: costly      # 人工判断：通信风格变更牵动契约形态与协调方式（1.4 施→3/5），非自由逆转
+    applicability:
+      problem_space:                   # 骨架源：1.2.3「适用条件」列
+        - "[需要即时结果]"
+        - "[调用链短]"
+      current_space:                   # 交叉表源：1.3「既有中间件/平台限定通信风格候选」
+        - "[既有平台/中间件提供同步端点能力]"
+      delivery_space: []
+    envelope:                          # 骨架源：1.2.3「包络要点」列；metric 词汇取 6.2.1；转写规则见 MJ-2
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(path) = Σ_{i ∈ path} latency_i；depth(path) ↑ → P99(path) 单调不减"   # 人工判断：链式求和为标准转写，母本仅给方向（调用链长时级联失败风险）；无具体数字
+        source: {source_type: row_id, value: "1.2.3-同步请求-响应", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "availability(path) ≤ Π_{i ∈ path} availability_i（串联上界）；depth(path) ↑ → 可达 SLO 上界单调不增"   # 人工判断：串联可靠性乘积式；母本依据为「级联失败风险」方向性摘要
+        source: {source_type: row_id, value: "1.2.3-同步请求-响应", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time(change) ≥ max_{i ∈ path} lead_time_i（时间耦合：链上单元须协同发布）"   # 人工判断：母本依据为「时间耦合」
+        source: {source_type: row_id, value: "1.2.3-同步请求-响应", verified: true}
+    cost_profile:
+      latency_budget_delta: "请求路径每增一跳同步调用：+ latency_hop（网络/序列化/排队）；depth(path) 为参数"   # 骨架源 1.2.3 包络要点
+      failure_modes: ["调用链级联失败（上游超时随深度累积）", "时间耦合导致的协同发布失败", "阻塞等待造成的线程/连接资源耗尽"]   # 骨架源：前两项来自 1.2.3；第三项人工判断（阻塞语义直接后果）
+      consistency_impact: "无额外降级：同步语义下调用方读到的是被调方当前状态；跨单元场景的一致性级别仍由方面 4 决定"   # 人工判断（母本未对该行给一致性摘要）
+      observability_requires: ["调用链追踪（depth 与每跳延迟可观测）", "超时预算（timeout_budget）登记与计量"]
+      ops_cost: "[随同步链深度与端点数量上升；无独立中介运维项]"
+      skill_prerequisites: ["超时/重试/熔断的失败语义设计", "调用链延迟预算分解"]
+      aggregation_semantics: itemwise   # 默认（0.17.2）：逐项并列，不稀释极端值
+    compatibility:
+      - peer_entry: STY-004
+        relation: tension
+        evidence: {source_type: clause_id, value: "1.2.5", verified: true}   # 交叉表源：「事件溯源 × 强同步查询语义 → 张力（读模型最终一致）」；「强同步查询语义」映射到本条目为人工判断（MJ-3）
+    constraints_imposed:               # 交叉表源：1.4「施加约束」表
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：同步链上的单元边界即调用契约边界", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（connects/style）；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:                     # 骨架源：1.2.3「反模式」列；signal_level 交叉表源：0.14 + 9.2.1
+      - pattern_id: STY-001-AP1
+        description: "深层同步调用链（链深超出超时预算可容纳层级）"
+        detection_predicate: "∃ path: interaction_flow(path, sync_chain) ∧ timeout_budget(path, ·) ∧ [depth(path) 超过 timeout_budget 可容纳的层级数]"
+        signal_level: P1               # 结构性漂移须限期整改（0.14 P1）；未直接构成 V1/V3 硬违例
+      - pattern_id: STY-001-AP2
+        description: "同步链上的跨团队耦合部署"
+        detection_predicate: "∃ u1, u2, t1, t2: connects(u1, u2, ·) ∧ owned_by(u1, t1) ∧ owned_by(u2, t2) ∧ team(t1) ∧ team(t2) ∧ ¬(t1 = t2) ∧ depends_on(u1, u2, deploy, ·)"
+        signal_level: P1
+    formal_anchor:                     # 交叉表源：1.5 V1–V5
+      - {property_id: V2, role: implements}     # 通信协议与风格自洽
+      - {property_id: V4, role: consumed_by}    # envelope → 目标可达性
+      - {property_id: V5, role: implements}     # 风格定案走批准路径（纪律二）
+    references:
+      - {bib_id: 3, support_claim: "同步/异步通信风格的分布式权衡定位（1.2.3 行权衡摘要的元方法来源）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 5, support_claim: "部署 × 通信组合模式中同步请求-响应的位置", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：语义简单、易推理、无需处理乱序与重复投递；代价：时间耦合（调用方阻塞）与级联失败风险随链深上升，可用性上界为链上各单元可用性的乘积。"
+      typical_scenarios: "查询类交互、需要即时结果的命令、调用链短（1–2 跳）的内部协作。"
+      common_misuse: "以深层同步链串接多团队单元（分布式单体的通信面征兆）；在需要削峰/时间解耦的负载上坚持同步语义。"
+
+  - entry_id: STY-002
+    kind: STY
+    name: 异步消息
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.3-异步消息", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+        - {source_type: bib_id, value: "5", verified: true}
+    typical_reversibility: costly      # 人工判断：改为同步语义须重设计契约与失败处置
+    applicability:
+      problem_space:
+        - "[需要削峰]"
+        - "[需要时间解耦]"
+        - "[存在可靠投递要求]"
+      current_space:
+        - "[存在可用消息中间件]"
+      delivery_space:
+        - "[具备顺序/幂等/重复投递的处置能力]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(e2e) ≥ P99_sync_equivalent + queue_delay(load)；queue_delay 随到达率/处理率之比 ↑"   # 人工判断：母本依据「时间解耦↑」（不保证即时性）
+        source: {source_type: row_id, value: "1.2.3-异步消息", verified: true}
+      - metric: "可伸缩性：单位资源容量增量"
+        bound_expr: "capacity(consumers) 随消费者实例数单调不减（削峰：突发由队列吸收，处理速率由消费者规模决定）"   # 人工判断：母本依据「削峰」
+        source: {source_type: row_id, value: "1.2.3-异步消息", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "delivery_guarantee ∈ {at-most-once, at-least-once, exactly-once}；选 at-least-once → 消费侧必须 idempotency(·, ·) 成立方可保证业务级 SLO"   # 交叉表源：5.5 谓词 delivery_semantics/idempotency；母本依据「顺序/幂等/重复投递成为必答题」
+        source: {source_type: row_id, value: "1.2.3-异步消息", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ queue_delay（参数：到达率、消费者处理率、队列深度）；即时性不再有上界保证"
+      failure_modes: ["重复投递（消费侧非幂等 → 业务状态错乱）", "乱序到达（顺序语义缺失）", "队列积压/毒消息导致消费停滞", "中间件自身可用性成为新单点"]   # 前两项骨架源 1.2.3；后两项人工判断
+      consistency_impact: "最终一致为默认；强一致需额外的事务性发件箱/对账机制（代价单列，归方面 4）"
+      observability_requires: ["队列深度与滞留时长计量", "消息级追踪（因果关联）", "重复/乱序事件的可观测计数"]
+      ops_cost: "[消息中间件集群运维 + 积压告警值守；随吞吐与分区数上升]"
+      skill_prerequisites: ["幂等消费者设计", "投递语义（at-least-once 等）与业务语义对齐", "积压/毒消息处置规程"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 1.2.5 未登记本条目相关的风格对；不臆造关系（0.17.6 第四层）
+    constraints_imposed:
+      - {target_aspect: 3, constraint: "契约须表达投递语义与消息 schema（异步端点不得以进程内调用契约替代）", level: hard}   # 人工判断：由 1.4 施→3「事件驱动 → 异步消息/事件流必选其一」同族推得，本行为异步消息侧的对应义务
+      - {target_aspect: 5, constraint: "协调须处置重复/乱序/补偿（分布式协调成为必答题）", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:
+      - pattern_id: STY-002-AP1
+        description: "用异步消息实现需要同步语义的查询"
+        detection_predicate: "∃ u1, u2: depends_on(u1, u2, event, ·) ∧ [该交互的业务语义为查询且调用方需要即时结果] ∧ ¬interaction_flow(u1, sync_chain)"
+        signal_level: P1
+    formal_anchor:
+      - {property_id: V2, role: implements}
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 3, support_claim: "异步通信的分布式权衡（时间解耦收益 vs 投递语义代价）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 5, support_claim: "异步消息模式与幂等/投递语义的工程处置", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：时间解耦、削峰、消费者可独立伸缩；代价：顺序/幂等/重复投递从可选变为必答题，可调试性与因果追踪成本上升，中间件成为新的可用性依赖。"
+      typical_scenarios: "突发流量吸收、跨团队解耦通知、批处理交接、需要重试与补偿的长流程起点。"
+      common_misuse: "以异步消息伪装同步查询（用轮询/回调补齐即时语义）；消费侧不做幂等却假设 exactly-once。"
+
+  - entry_id: STY-003
+    kind: STY
+    name: 事件驱动（发布订阅）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.3-事件驱动（发布订阅）", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+        - {source_type: bib_id, value: "5", verified: true}
+    typical_reversibility: costly      # 人工判断：事件契约一经多方订阅即成隐式公共接口
+    applicability:
+      problem_space:
+        - "[多方需要响应同一业务事实]"
+        - "[扩展新消费者不应改动生产者]"
+      current_space:
+        - "[存在事件基础设施（消息中介或事件流平台）]"
+      delivery_space:
+        - "[具备事件 schema 版本治理能力]"
+        - "[具备因果链追踪能力]"
+    envelope:
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "新增消费者时 touched_contracts(change) = 0（生产者不改）；变更事件 schema 时 touched_contracts = |subscribers(event)|"   # 人工判断：母本依据「扩展性↑↑」与「事件契约无版本治理」反模式
+        source: {source_type: row_id, value: "1.2.3-事件驱动（发布订阅）", verified: true}
+      - metric: "可伸缩性：单位资源容量增量"
+        bound_expr: "capacity 随消费者组数单调不减；生产者吞吐与消费者数解耦"
+        source: {source_type: row_id, value: "1.2.3-事件驱动（发布订阅）", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "consistency_default = eventual；对强一致目标的可达性 = 不可达（除非引入额外协调，代价单列）"   # 骨架源：「最终一致为默认」
+        source: {source_type: row_id, value: "1.2.3-事件驱动（发布订阅）", verified: true}
+      - metric: "可观测性：追踪覆盖率"
+        bound_expr: "causal_trace_coverage ≤ 1 − implicit_hops/total_hops；因果链追踪难度随订阅方数 ↑（母本：因果链追踪难）"   # 人工判断
+        source: {source_type: row_id, value: "1.2.3-事件驱动（发布订阅）", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 事件传播与消费延迟（参数：订阅方数、消费者处理率）；无即时性上界"
+      failure_modes: ["事件丢失/重复（投递语义）", "因果链断裂导致不可复现的故障", "事件 schema 漂移使消费者静默失败", "隐式 RPC 化造成的时序耦合回流"]
+      consistency_impact: "最终一致为默认；跨聚合的强一致须显式引入协调机制（方面 4/5）"
+      observability_requires: ["事件级追踪与关联 ID", "订阅方清单与事件契约版本可查", "死信/重试队列计量"]
+      ops_cost: "[事件基础设施运维 + 契约治理流程；随订阅方数上升]"
+      skill_prerequisites: ["领域事件建模（事件 vs 命令的语义区分）", "事件 schema 演化与版本治理", "最终一致下的业务对账设计"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - peer_entry: STY-016
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.4", verified: true}   # 交叉表源：施→3「事件驱动 → 异步消息/事件流必选其一」、施→5「事件驱动 → 协同式为默认」均以多单元部署为前提语境
+      - peer_entry: STY-004
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.3-事件溯源 + CQRS", verified: true}   # 骨架源：事件溯源以事件日志为准，与发布订阅同族可组合（人工判断：可组合而非互相要求）
+    constraints_imposed:
+      - {target_aspect: 3, constraint: "异步消息/事件流必选其一（跨单元契约不得以进程内调用为主手段）", level: hard}   # 交叉表源 1.4 施→3
+      - {target_aspect: 4, constraint: "事件日志为一等数据模型", level: soft}   # 交叉表源 1.4 施→4（表标「硬/软按条」，判读见 MJ-4）
+      - {target_aspect: 5, constraint: "协同式（choreography）行为为默认", level: soft}   # 交叉表源 1.4 施→5
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界", level: hard}
+      - {target_aspect: 8, constraint: "事件回放/乱序注入验证必备", level: soft}   # 交叉表源 1.4 施→8
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:
+      - pattern_id: STY-003-AP1
+        description: "事件变成隐式 RPC（PleaseDoX 事件：命令语义伪装为领域事件）"
+        detection_predicate: "∃ e: [e 为已登记领域事件] ∧ [e 的命名或载荷表达命令语义（要求特定接收方执行动作）] ∧ [e 的订阅方数 = 1]"
+        signal_level: P1
+      - pattern_id: STY-003-AP2
+        description: "事件契约无版本治理"
+        detection_predicate: "∃ e: [e 为已登记领域事件] ∧ ¬[e 的 schema 携带版本且变更经方面 3 契约治理登记]"
+        signal_level: P1               # 9.2.1 将 schema 漂移列为 P2 典型源；此处针对「治理缺失」这一结构事实定 P1，漂移趋势监测归 P2（见 STY-003-AP3）
+      - pattern_id: STY-003-AP3
+        description: "事件 schema 漂移趋势（消费者兼容性劣化）"
+        detection_predicate: "∃ e: [e 为已登记领域事件] ∧ [滚动窗口 W 内 e 的不兼容 schema 变更次数 > C_max]"
+        signal_level: P2               # 0.14 P2 双判据：阈值 C_max + 趋势窗口 W（均为待勘察参数，禁填无出处数字）
+    formal_anchor:
+      - {property_id: V2, role: implements}
+      - {property_id: V3, role: triggers}     # 与 STY-016/STY-004 的组合进入冲突矩阵检查
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 5, support_claim: "事件驱动与发布订阅的部署 × 通信组合模式", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 3, support_claim: "事件驱动架构的分布式权衡分析", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：新消费者零改动接入、时间解耦、可扩展性最高；代价：因果链难以追踪、最终一致成为默认语义、事件契约事实上成为公共接口（治理成本随订阅方数上升）。"
+      typical_scenarios: "多方响应同一业务事实（下单后触发库存/通知/分析）、跨团队解耦、需要审计与回放的领域事件流。"
+      common_misuse: "以事件之名行命令之实（隐式 RPC）；不做 schema 版本治理即让多方订阅；在需要强同步语义处使用（与 STY-004 组合时尤为常见）。"
+
+  - entry_id: STY-004
+    kind: STY
+    name: 事件溯源 + CQRS
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.3-事件溯源 + CQRS", verified: true}
+        - {source_type: clause_id, value: "1.2.5", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "5", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+    typical_reversibility: costly      # 人工判断：事件日志成为权威数据模型后回退需重建状态存储（非严格 irreversible：日志可弃用，但历史与读模型重建代价高）
+    applicability:
+      problem_space:                   # 骨架源：1.2.3「适用条件」列（三项为析取）
+        - "[存在审计留痕要求] ∨ [需要时间旅行调试] ∨ [读写负载特征悬殊]"
+      current_space:
+        - "[事件日志可持久化且可重放]"
+      delivery_space:
+        - "[具备事件 schema 演化治理能力]"
+        - "[具备读模型重建与对账能力]"
+    envelope:
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "history_completeness = 全量（自溯源起点）；读模型可独立优化 → read_latency 上界由读模型存储决定，与写路径解耦"   # 骨架源：「完整历史↑、读模型自由优化」
+        source: {source_type: row_id, value: "1.2.3-事件溯源 + CQRS", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "read_consistency_lag ≥ 0 且无零上界保证（读模型最终一致）；对强同步查询语义目标：不可达"   # 交叉表源：1.2.5「事件溯源 × 强同步查询语义 → 张力（读模型最终一致）」
+        source: {source_type: clause_id, value: "1.2.5", verified: true}
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "event_schema_evolution_cost 随已发布事件版本数单调不减（母本：事件 schema 演化难、复杂度↑↑）"   # 人工判断
+        source: {source_type: row_id, value: "1.2.3-事件溯源 + CQRS", verified: true}
+    cost_profile:
+      latency_budget_delta: "写路径：+ 事件追加与投影触发；读路径：+ 投影滞后（read_consistency_lag，参数：投影吞吐/事件到达率）"
+      failure_modes: ["事件 schema 不兼容演化导致重放失败", "读模型投影停滞/漂移（与写模型不一致）", "事件日志膨胀导致重放时长不可接受", "把 CQRS 用于不需要读写分离的场景带来的无谓复杂度"]
+      consistency_impact: "写侧：事件日志为权威（可重建状态）；读侧：最终一致为默认，强同步查询语义不可达（1.2.5 张力行）"
+      observability_requires: ["投影滞后计量（lag）", "事件重放可执行性与时长可观测", "读写模型对账差异计数"]
+      ops_cost: "[事件存储 + 投影管道 + 读模型存储三套运维面；复杂度↑↑（骨架源）]"
+      skill_prerequisites: ["事件建模与版本演化", "投影/读模型设计与重建", "最终一致下的业务语义论证（方面 4 Y3 联动）"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - peer_entry: STY-001
+        relation: tension
+        evidence: {source_type: clause_id, value: "1.2.5", verified: true}   # 交叉表源：「事件溯源 × 强同步查询语义 → 张力（读模型最终一致）」
+      - peer_entry: STY-003
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.3-事件溯源 + CQRS", verified: true}
+    constraints_imposed:
+      - {target_aspect: 4, constraint: "事件日志为一等数据模型；状态存储降为投影产物", level: hard}   # 交叉表源 1.4 施→4（事件驱动行），本条目为该行的强化形态
+      - {target_aspect: 3, constraint: "事件契约必须版本化（读写两侧独立演化）", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界；强同步查询目标 → V4 失败须升级裁决", level: hard}
+      - {target_aspect: 8, constraint: "事件回放验证必备（重放即回归手段）", level: soft}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:
+      - pattern_id: STY-004-AP1
+        description: "把 CQRS 当作默认选择用在不需要的场景（无审计要求、读写负载特征相近）"
+        detection_predicate: "∃ M: style(M, STY-004) ∧ ¬([存在审计留痕要求] ∨ [需要时间旅行调试] ∨ [读写负载特征悬殊])"
+        signal_level: P1
+      - pattern_id: STY-004-AP2
+        description: "在事件溯源读模型上提供强同步查询语义而未登记批准例外"
+        detection_predicate: "∃ M, q: style(M, STY-004) ∧ [q 为对读模型的查询且业务要求写后立即可读] ∧ ¬has_approved_exception(STY-004, STY-001, ·)"
+        signal_level: P0               # 交叉表源：1.2.5 张力行 + 0.14 P0；未批准例外的硬冲突对构成 V3 违例
+    formal_anchor:
+      - {property_id: V3, role: triggers}     # 1.2.5 张力/冲突行进入矩阵检查
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 5, support_claim: "CQRS 与事件溯源的组合模式（母本登记：部署 × 通信组合模式含 Saga、CQRS、事件驱动）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 3, support_claim: "事件溯源的一致性/复杂度权衡分析", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：完整历史（审计、时间旅行调试）、读写模型各自自由优化；代价：复杂度↑↑、事件 schema 演化难、读侧最终一致。母本明示 CQRS **不必然**绑定事件溯源——两者可分别采用，本条目登记的是二者组合形态。"
+      typical_scenarios: "金融/合规审计场景、需要重放与回溯的领域、读写负载特征悬殊（写少读多或读需异构视图）。"
+      common_misuse: "作为默认架构使用（无审计与负载悬殊依据）；在最终一致读模型上承诺强同步语义而不登记例外；把 CQRS 与事件溯源当作不可分割的整体。"
+
+  - entry_id: STY-005
+    kind: STY
+    name: Broker 中介
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.3-Broker 中介", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+    typical_reversibility: bounded     # 人工判断：中介可在保留端点契约的前提下替换/退化为直连，代价集中于路由与策略迁移
+    applicability:
+      problem_space:
+        - "[异构系统集成]"
+        - "[需要集中策略点]"
+      current_space:
+        - "[中介组件可用]"
+      delivery_space:
+        - "[具备中介高可用运维能力]"
+    envelope:
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "新增/替换参与方时 touched_contracts = 1（仅对中介）；集中治理 → 策略变更触达单元数 = 1"   # 骨架源：「集中治理↑」
+        source: {source_type: row_id, value: "1.2.3-Broker 中介", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "availability(system) ≤ availability(broker)（中介为单点时系统可用性以其为上界）"   # 骨架源：「中介单点/瓶颈」；人工判断：单点上界式
+        source: {source_type: row_id, value: "1.2.3-Broker 中介", verified: true}
+      - metric: "吞吐量"
+        bound_expr: "throughput(system) ≤ throughput(broker)（瓶颈上界）"
+        source: {source_type: row_id, value: "1.2.3-Broker 中介", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 中介转发跳（每交互固定增加 1 跳路由/转换开销）"
+      failure_modes: ["中介单点故障（全局不可用）", "中介成为吞吐瓶颈", "业务逻辑沉积导致中介变更频繁且高风险"]
+      consistency_impact: "中介不改变一致性级别；若中介承载状态转换则引入新的一致性边界（应视为反模式 STY-005-AP1）"
+      observability_requires: ["中介级流量/延迟/错误计量", "路由与策略变更审计", "参与方到中介的连接健康度"]
+      ops_cost: "[中介集群高可用运维 + 策略治理；集中式 → 单点运维压力高]"
+      skill_prerequisites: ["中介产品运维", "路由/转换策略设计", "集中策略点的权限与变更治理"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - peer_entry: STY-017
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.2-SOA", verified: true}   # 骨架源：SOA 定义含「ESB（集中式消息路由/转换/治理中介）」——ESB 为 Broker 的实例形态（人工判断：可组合而非要求）
+    constraints_imposed:
+      - {target_aspect: 3, constraint: "跨中介契约须与中介路由/转换能力自洽（V2）", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（中介单点上界尤其约束可用性目标）", level: hard}
+      - {target_aspect: 9, constraint: "中介承载业务逻辑属守护对象（反模式 → G 规则播种）", level: soft}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:
+      - pattern_id: STY-005-AP1
+        description: "业务逻辑沉积在中介里"
+        detection_predicate: "∃ b: [b 为已登记的中介单元] ∧ responsibility(b, ·) ∧ [b 承载的职责中存在业务规则（非路由/转换/策略）]"
+        signal_level: P1
+    formal_anchor:
+      - {property_id: V2, role: implements}
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 1, support_claim: "Broker 模式的词汇与定义（母本登记：1.2.1 抽象结构风格词汇表含 Broker）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 3, support_claim: "中介化集成的分布式权衡", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：异构集成、集中策略点、参与方解耦（契约变更只触达中介）；代价：中介成为单点与瓶颈，系统可用性/吞吐以中介为上界，且中介易沉积业务逻辑。"
+      typical_scenarios: "企业内异构系统互联、需要统一策略执行点（认证/限流/转换）的集成场景。"
+      common_misuse: "把中介当作业务编排引擎（逻辑沉积）；未做中介高可用却承诺系统级 SLO。"
+
+  - entry_id: STY-006
+    kind: STY
+    name: 共享数据
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.3-共享数据", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+    typical_reversibility: costly      # 人工判断：隐式契约一旦扩散，解除共享须重建显式接口
+    applicability:
+      problem_space:
+        - "[场景限于批处理交接或配置分发等弱耦合] ∨ has_approved_exception(STY-006, ·, ·)"   # 骨架源：「仅限：批处理交接、配置分发等弱耦合场景」；例外覆盖机制见 1.2.5
+      current_space:
+        - "[共享存储已存在且访问受控]"
+      delivery_space:
+        - "[方面 3 已定结论中的适用条件满足且显式记录]"   # 骨架源：「使用须满足方面 3 已定结论中的适用条件并显式记录」
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99 以共享存储访问延迟为下界项；无中介跳，延迟低于跨单元 RPC 形态"   # 骨架源：「简单」
+        source: {source_type: row_id, value: "1.2.3-共享数据", verified: true}
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "touched_contracts(schema_change) = |readers(store)| ∪ |writers(store)|（隐式契约：schema 变更触达全部共享方）"   # 骨架源：「时间耦合与隐式契约是默认代价」
+        source: {source_type: row_id, value: "1.2.3-共享数据", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time(change) ≥ max_{p ∈ sharers} lead_time_p（时间耦合：须与全部共享方协同）"
+        source: {source_type: row_id, value: "1.2.3-共享数据", verified: true}
+    cost_profile:
+      latency_budget_delta: "共享存储访问项（参数：读写方数、存储引擎延迟特征）；无网络中介跳"
+      failure_modes: ["隐式契约破坏（schema 变更未通知共享方）", "写冲突/锁争用", "共享存储成为耦合单点", "以共享库实现服务间集成 → 分布式单体"]
+      consistency_impact: "可达强一致（同一存储的事务边界内）；跨共享方的语义一致性仍须显式约定"
+      observability_requires: ["共享存储的读写方清单可查", "schema 变更影响面分析", "锁争用/冲突计量"]
+      ops_cost: "[共享存储运维 + 跨方变更协调成本（随共享方数上升）]"
+      skill_prerequisites: ["数据建模与 schema 演化治理", "并发/锁语义", "隐式契约的显式化能力"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - peer_entry: STY-016
+        relation: tension
+        evidence: {source_type: row_id, value: "1.2.3-共享数据", verified: true}   # 骨架源：反模式「以共享数据库实现服务间集成（分布式单体信号）」；对侧为微服务（独立数据）
+      - peer_entry: STY-014
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.2-单体", verified: true}   # 骨架源：单体行「ACID 事务可用」；1.4 施→4「单体 → 共享数据库可用」；分块序映射见 manual_judgments.MJ-1（单体=STY-014）
+    constraints_imposed:
+      - {target_aspect: 3, constraint: "共享数据的适用条件须由方面 3 已定结论确认并显式记录", level: hard}   # 骨架源：1.2.3 该行「使用须满足…」
+      - {target_aspect: 4, constraint: "共享存储的写方与所有权须明确（否则违反数据单一所有者，W4 联动）", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:
+      - pattern_id: STY-006-AP1
+        description: "以共享数据库实现服务间集成（分布式单体信号）"
+        detection_predicate: "∃ u1, u2, s: unit(u1) ∧ unit(u2) ∧ depends_on(u1, s, data, ·) ∧ depends_on(u2, s, data, ·) ∧ [u1 与 u2 属不同部署单元] ∧ ¬([该共享属批处理交接场景] ∨ [该共享属配置分发场景])"
+        signal_level: P1               # 交叉表源：0.14 P1（分布式单体的数据面征兆，须限期整改）；未直接构成 V1/V3 硬违例
+    formal_anchor:
+      - {property_id: V2, role: implements}
+      - {property_id: V3, role: triggers}
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 3, support_claim: "共享数据库集成的分布式权衡（母本登记：1.2.2/1.2.3 分布式风格权衡的元方法）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：实现简单、无中介跳、同一存储内可达强一致；代价：时间耦合与隐式契约是默认代价，schema 变更触达全部共享方，且极易退化为分布式单体的数据面。母本对本行给出**范围限定**（仅限批处理交接、配置分发等弱耦合场景），越界使用须走 1.2.5 例外覆盖。"
+      typical_scenarios: "批处理作业间的文件/表交接、配置与参考数据分发、迁移期的双写过渡（须设可推翻指标与终止时刻）。"
+      common_misuse: "以共享数据库替代服务间接口（隐式契约扩散）；多写方共享同一业务表而无所有权界定。"
+
+  # ══════════ 子维度一：抽象/代码结构风格（1.2.1）→ STY-007…STY-013 ══════════
+  # 通用说明：1.2.1 表列名为「适用条件（摘要）」，未区分三空间；故本子维度条目的
+  # current_space / delivery_space 多为空（无据即留空，禁臆造），登记为 gaps: G-STY-1 勘察义务。
+  # 子维度内取值互斥（一个 scope 在 1.2.1 表内至多取一行）——判读见 manual_judgments: MJ-5，
+  # 故本批不逐对登记互斥关系，compatibility 仅在母本有叠加声明（@1.2/1.2.1）或冲突行（1.2.5）时登记。
+
+  - entry_id: STY-007
+    kind: STY
+    name: 分层
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions
+    provenance:
+      origin: hybrid                   # 骨架=1.2.1 表格行（compiled 视图）＋谓词/界式人工转写（manual）
+      source_pointers:
+        - {source_type: row_id, value: "1.2.1-分层", verified: true}
+        - {source_type: clause_id, value: "1.2", verified: true}
+        - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: clause_id, value: "1.2.5", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "1", verified: true}
+    typical_reversibility: costly      # 人工判断：层级归属与依赖规则决定依赖形状（V1 校验对象），重切分触达全部跨层调用点
+    applicability:
+      problem_space:                   # 骨架源：1.2.1「适用条件（摘要）」列（分号分隔 → 逐项列出）
+        - "[关注点可按抽象级别自然切分]"
+        - "[变更率层间差异大]"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space: []
+    envelope:                          # 骨架源：1.2.1「包络要点」列；metric 词汇取 6.2.1；转写规则见 MJ-2
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "change 限于层 L → touched_units ≤ |units(L)|（层内替换）；跨层变更 → touched_units = Σ_{L ∈ path} touched_units(L)；层间抽象泄漏时该项失去层内上界（见 STY-007-AP3）"   # 骨架源：「可修改性↑（层内替换）」＋「层间泄漏抽象是主要风险」；求和形态为人工转写
+        source: {source_type: row_id, value: "1.2.1-分层", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(req) ≥ P99_core(req) + Σ_{L ∈ traversed} overhead_L（穿越层的开销：每穿越一层一项；overhead_L 由转发/校验/适配的实现形态决定，为参数）"   # 骨架源：「性能↓（穿越层的开销）」；求和形态为人工转写（MJ-2）
+        source: {source_type: row_id, value: "1.2.1-分层", verified: true}
+    cost_profile:
+      latency_budget_delta: "每穿越一层：+ overhead_L（参数：层间转发/校验/适配的实现形态与层数）"
+      failure_modes: ["层间抽象泄漏导致跨层变更放大", "万能工具层成为全局耦合点", "严格分层下为性能开洞（内层直访）而未登记松弛与权衡承认 ADR"]   # 骨架源前两项来自 1.2.1 反模式列；第三项交叉表源 1.2.5「严格分层 × 高性能内层直访 → 张力」
+      consistency_impact: "无直接影响：一致性级别由方面 4 决定，本风格只约束依赖形状"   # 人工判断（母本未对本行给一致性摘要）
+      observability_requires: ["layer_of 归属可查（依赖规则违例检测的前提）", "跨层调用计数与层间开销计量"]
+      ops_cost: "[无独立运维面；成本落在结构治理侧（依赖规则校验工具与 CI 门禁）]"
+      skill_prerequisites: ["抽象层级切分与依赖规则设计", "抽象泄漏的识别与处置"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - peer_entry: STY-008
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}   # 骨架源 @1344：「单体内每一层内部也可以是六边形」
+      - peer_entry: STY-016
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2", verified: true}      # 骨架源 @1319：「外层微服务（部署结构）…整体上分层治理（抽象结构）」四子维度组合
+      - peer_entry: STY-003
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2", verified: true}      # 骨架源 @1319：「服务间事件驱动（通信结构）」与抽象结构子维度正交
+    constraints_imposed:               # 交叉表源：1.4「施加约束」表（行 2/6/10 无风格修饰 → 全风格通用；实例化措辞为人工判断）
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：分解单元须归属唯一层级（layer_of 全定义），层间依赖方向即分解允许的耦合方向", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（layer_of/dependency_rule）；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:                     # 骨架源：1.2.1「典型反模式」列；signal_level 交叉表源：0.14 + 9.2.1
+      - pattern_id: STY-007-AP1
+        description: "层跳跃调用（跨越相邻层直接依赖）"
+        detection_predicate: "∃ c1, c2, L1, L2: layer_of(c1, L1) ∧ layer_of(c2, L2) ∧ depends_on(c1, c2, call, ·) ∧ dependency_rule(L1, L2, forbidden)"
+        signal_level: P1               # 人工判断（MJ-4 同型）：母本区分严格/松弛分层——严格分层下该违例构成 V1 硬失败升 P0；松弛分层（「主要向下」）下为结构漂移，定 P1 限期整改
+      - pattern_id: STY-007-AP2
+        description: "下层反向依赖上层"
+        detection_predicate: "∃ c_lo, c_hi, L_lo, L_hi: layer_of(c_lo, L_lo) ∧ layer_of(c_hi, L_hi) ∧ [L_lo 位于 L_hi 之下] ∧ depends_on(c_lo, c_hi, call, ·) ∧ dependency_rule(L_lo, L_hi, forbidden)"
+        signal_level: P0               # 交叉表源：1.5 V1「依赖规则无违例环 —— 硬」；反向依赖是违例环的直接来源，检出即阻塞（0.14 P0）
+      - pattern_id: STY-007-AP3
+        description: "「万能工具层」（被全体上层依赖的公共层膨胀为全局耦合点）"
+        detection_predicate: "∃ L: layer_of(·, L) ∧ [依赖 L 的上层组件占比 > R_max] ∧ [滚动窗口 W 内触达 L 的变更数 > C_max]"
+        signal_level: P2               # 0.14 P2 双判据：阈值 R_max/C_max + 趋势窗口 W（均为待勘察参数，禁填无出处数字）
+    formal_anchor:                     # 交叉表源：1.5 V1–V5
+      - {property_id: V1, role: implements}     # dependency_rule(L1,L2,allowed|forbidden) 是本性质的直接登记面
+      - {property_id: V3, role: triggers}       # 1.2.5「严格分层 × 高性能内层直访 → 张力」进入冲突矩阵检查
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 1, support_claim: "分层风格的词汇与定义（母本登记：1.2.1 抽象结构风格词汇表含分层、管道-过滤器、黑板、微内核、Broker）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：层内替换使变更触达面被层边界收敛，抽象级别与关注点对齐；代价：穿越层的开销进入每次请求路径，且层间抽象泄漏会让『层内替换』的上界失效。母本明示严格分层与松弛分层是两种依赖规则强度（自上而下 vs 主要向下），选择哪一种须显式登记（dependency_rule 谓词），因为它决定 AP1 的 P 级。"
+      typical_scenarios: "关注点可按抽象级别自然切分的系统（表现/应用/领域/基础设施）、层间变更率差异明显的系统、需要以层为单位替换实现的演进场景。"
+      common_misuse: "以分层之名允许任意跨层直访（依赖规则未登记即无 V1 可校验）；把公共工具堆进单一底层形成万能工具层；为性能开洞做内层直访而不记松弛分层与权衡承认 ADR（1.2.5 张力行）。"
+
+  - entry_id: STY-008
+    kind: STY
+    name: 六边形（端口-适配器）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.1-六边形（端口-适配器）", verified: true}
+        - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "0.15", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "20", verified: true}
+    typical_reversibility: costly      # 人工判断：依赖方向反转触达全部核心↔外部调用点（可增量执行，但覆盖面为全核心边界）
+    applicability:
+      problem_space:                   # 骨架源：1.2.1「适用条件（摘要）」列
+        - "[外部技术栈易变或多样]"
+        - "[核心逻辑值得长期保护]"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space: []
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "外部技术替换 → touched_units = |adapters(port)| 且 touched_units(core) = 0（核心不依赖任何外部技术）；成本项 = +|ports| 的接口定义与维护量（间接层成本）"   # 骨架源：「可替换性↑；间接层成本」
+        source: {source_type: row_id, value: "1.2.1-六边形（端口-适配器）", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time(核心变更) ≤ verify(core) + regression(adapters)，且 verify(core) 可脱离适配器执行（可测试性↑↑ 的量化落点：核心单测不需要外部设施就绪）"   # 骨架源：「可测试性↑↑（核心可脱离适配器单测）」；属性族映射说明见 gaps: G-ENV-1
+        source: {source_type: row_id, value: "1.2.1-六边形（端口-适配器）", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 每个端口一次间接跳（接口分派/适配转换）；参数：端口数与适配器实现形态"
+      failure_modes: ["端口退化为框架接口的转发（抽象未承担翻译职责）", "适配器类型/异常语义泄漏进核心", "间接层数量膨胀导致调用路径难以追踪"]   # 前两项骨架源 1.2.1 反模式列；第三项人工判断（间接层的直接后果）
+      consistency_impact: "无直接影响：一致性级别由方面 4 决定；端口边界不改变事务语义"   # 人工判断
+      observability_requires: ["端口↔适配器映射可查", "核心边界上的调用可观测（区分核心内与适配器内失败）"]
+      ops_cost: "[无独立运维面；成本落在端口契约维护与适配器测试替身建设]"
+      skill_prerequisites: ["端口契约设计（抽象粒度与语义边界）", "测试替身与核心脱离适配器的验证能力"]
+      aggregation_semantics: itemwise
+    compatibility:                     # 骨架源 @1344：「依赖方向控制族（六边形/整洁/洋葱）与任何顶层风格可叠加」——逐一登记已入库的顶层风格对，「任何」的完备化随后续批次推进
+      - peer_entry: STY-016
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}   # 「微服务内部可以是六边形」
+      - peer_entry: STY-014
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}   # 「单体内每一层内部也可以是六边形」（单体形态）
+      - peer_entry: STY-015
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}   # 同上（模块化单体形态：模块边界与端口边界可对齐）
+      - peer_entry: STY-007
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}   # 「单体内每一层内部也可以是六边形」（分层形态）
+    constraints_imposed:
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：核心与外部的边界即分解单元边界候选，端口为 hides 的登记面", level: hard}   # 交叉表源 1.4 施→2 的本风格实例化（措辞人工判断）
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）", level: hard}
+      - {target_aspect: 8, constraint: "验证策略适配：核心须存在可脱离适配器执行的测试路径（seam 即端口，0.15 可测试性冻结项的落点）", level: soft}   # 交叉表源 1.4 施→8（软）＋0.15 seam 定义
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格（核心/端口/适配器三区须可辨）", level: hard}
+    anti_patterns:
+      - pattern_id: STY-008-AP1
+        description: "端口退化为框架接口的转发（端口未承担翻译职责，核心经端口直接暴露框架语义）"
+        detection_predicate: "∃ p, a: [p 为已声明端口] ∧ [a 为 p 的适配器实现] ∧ [a 的实现仅转发至框架接口且不含语义翻译] ∧ [p 的签名同构于框架接口签名]"
+        signal_level: P1               # 结构漂移：使「外部技术替换 → touched_units(core)=0」的上界失效，须限期整改（0.14 P1）
+      - pattern_id: STY-008-AP2
+        description: "适配器泄漏进核心（核心依赖外部技术类型/异常/设施）"
+        detection_predicate: "∃ core, ext: [core 属业务核心] ∧ [ext 为外部技术设施] ∧ depends_on(core, ext, call, ·)"
+        signal_level: P1               # 人工判断：违反本风格定义性约束「核心不依赖任何外部技术」，但 1.5 未登记端口方向谓词（VG-03）→ 无 V1 可绑定，定 P1；词汇补齐后按 V1 同型升 P0
+    formal_anchor:
+      - {property_id: V1, role: implements}     # 依赖方向控制族的违例面（词汇缺口 VG-03 补齐前以 depends_on 人工核验）
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 20, support_claim: "端口-适配器（六边形）风格的源头定义与端口/适配器职责划分（母本登记：1.2.1 端口-适配器源头；本地提取以 2025 专著为准，2005 文章仅作历史出处标注）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：核心可脱离适配器单测（可测试性↑↑）、外部技术可替换（可替换性↑），替换的触达单元数被端口边界收敛；代价：间接层成本（每个端口一次分派与一层契约维护），且端口若退化为框架接口转发，收益即归零。母本将本风格与整洁/洋葱并列为『依赖方向控制族』，并明示该族与任何顶层风格可叠加。"
+      typical_scenarios: "外部技术栈易变或多样（存储/消息/第三方 API 可替换）、核心业务规则值得长期保护、需要以测试替身驱动核心验证的场景。"
+      common_misuse: "把端口当作框架接口的别名（无语义翻译）；在核心中直接引用适配器类型或其异常；为小型/短生命周期系统引入全量端口-适配器间接层（间接层成本无对应收益）。"
+
+  - entry_id: STY-009
+    kind: STY
+    name: 整洁/洋葱架构
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.1-整洁/洋葱架构", verified: true}
+        - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "6", verified: true}
+        - {source_type: bib_id, value: "21", verified: true}
+        - {source_type: bib_id, value: "22", verified: true}
+    typical_reversibility: costly      # 人工判断：与 STY-008 同族，依赖方向反转覆盖面为全内层边界
+    applicability:
+      problem_space:                   # 骨架源：本行适用条件为「同上；强调领域模型在中心」——「同上」指 STY-008 行（人工判断，MJ-7）
+        - "[外部技术栈易变或多样]"
+        - "[核心逻辑值得长期保护]"
+        - "[存在可置于中心的稳定领域模型]"
+      current_space: []
+      delivery_space: []
+    envelope:                          # 骨架源：本行包络要点为「同六边形」→ 界形态与 STY-008 同型（人工转写，MJ-2）
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "外层技术替换 → touched_units = |外层环上的实现单元| 且 touched_units(内层) = 0（依赖只能指向内层，内层不知道外层）；成本项 = +|环间接口| 的契约维护量"
+        source: {source_type: row_id, value: "1.2.1-整洁/洋葱架构", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time(领域模型变更) ≤ verify(内层) + regression(外层环)，且 verify(内层) 可脱离外层设施执行（同六边形：核心可独立验证）"
+        source: {source_type: row_id, value: "1.2.1-整洁/洋葱架构", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 每穿越一环一次间接跳；参数：环数与环间接口形态（同 STY-008 的间接层成本）"
+      failure_modes: ["外层设施语义泄漏进内层（数据库/框架类型出现在领域模型中）", "环划分沦为目录结构而无依赖规则校验", "间接层膨胀导致调用路径难以追踪"]   # 前两项为骨架源「同六边形」反模式的同族实例；第三项人工判断
+      consistency_impact: "无直接影响：一致性级别由方面 4 决定；数据库外置于环结构不改变事务语义"   # 人工判断（书目 22 的「数据库外置论」为 narrative_only 级线索，不作机器层出处）
+      observability_requires: ["环归属与依赖方向可查（layer_of/dependency_rule 或等价登记）", "领域层失败与外层设施失败可区分"]
+      ops_cost: "[无独立运维面；成本落在环间契约维护与依赖方向门禁]"
+      skill_prerequisites: ["领域建模能力（中心模型的稳定性判断）", "依赖方向规则的自动化校验"]
+      aggregation_semantics: itemwise
+    compatibility:                     # 骨架源 @1344：依赖方向控制族（六边形/整洁/洋葱）与任何顶层风格可叠加
+      - peer_entry: STY-016
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}
+      - peer_entry: STY-014
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}
+      - peer_entry: STY-015
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}
+      - peer_entry: STY-007
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}
+    constraints_imposed:
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：环边界即分解单元边界候选，依赖方向为单向向内（分解不得产生向外的语义依赖）", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格（环序与依赖方向须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：本行反模式列为「同六边形」→ 与 STY-008-AP1/AP2 同型（措辞按环结构转写）
+      - pattern_id: STY-009-AP1
+        description: "环间接口退化为外层框架接口的转发（内层接口未承担语义翻译）"
+        detection_predicate: "∃ p, a: [p 为内层声明的接口] ∧ [a 为外层环上的实现] ∧ [a 的实现仅转发至框架接口且不含语义翻译] ∧ [p 的签名同构于框架接口签名]"
+        signal_level: P1
+      - pattern_id: STY-009-AP2
+        description: "外层泄漏进内层（内层依赖外层技术类型/设施）"
+        detection_predicate: "∃ c_in, c_out: [c_in 属内层] ∧ [c_out 属外层] ∧ depends_on(c_in, c_out, call, ·)"
+        signal_level: P1               # 人工判断：违反「依赖只能指向内层」的定义性约束；1.5 未登记环方向谓词（VG-03）→ 无 V1 可绑定，定 P1
+    formal_anchor:
+      - {property_id: V1, role: implements}
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 6, support_claim: "依赖方向控制的机制内容（母本登记：1.2.1 依赖方向控制；第 12–14 章组件化对 Parnas 判据的现代重述）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 21, support_claim: "整洁架构的原始博文出处（母本登记：依赖方向控制，本地提取以书目 6 为准，本条不单独承载提取）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 22, support_claim: "洋葱架构的环结构与依赖方向命题（母本登记：核心命题「all coupling is toward the center」、数据库外置论与 DIP 依据；本地 epub 全文存档）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：与六边形同族的依赖方向控制收益（内层可独立验证、外层可替换），并以领域模型为中心组织环序；代价：间接层成本与环划分的治理成本。母本明示本行『包络要点/反模式同六边形』，故本条目的界形态与反模式均按同族同型登记，差异仅在措辞（端口/适配器 vs 环）。"
+      typical_scenarios: "领域模型稳定且复杂的系统、需要长期保护核心语义的系统、外部技术栈易变或多样的系统。"
+      common_misuse: "把环结构当作目录约定而不登记依赖规则（无 V1 可校验）；在领域层引用数据库/框架类型（外层泄漏）；与六边形在同一 scope 内并列声明为两种风格（同族取值互斥，见 MJ-5）。"
+
+  - entry_id: STY-010
+    kind: STY
+    name: 微内核-插件
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.1-微内核-插件", verified: true}
+        - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "1", verified: true}
+    typical_reversibility: costly      # 人工判断：扩展点契约是全部插件的共同依赖面，重设计的影响面 = 已注册插件全集（母本「契约不稳定导致插件全灭」即该量级的证据）
+    applicability:
+      problem_space:                   # 骨架源：1.2.1「适用条件（摘要）」列
+        - "[需求变化集中在「扩展」方向]"
+        - "[存在第三方定制或多租户定制需求]"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space: []
+    envelope:                          # 骨架源：「可扩展性↑↑；核心稳定性取决于扩展点契约质量」；「可扩展性」映射 6.2.1 可修改性族（G-ENV-1）
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "新增扩展 → touched_units = |新增插件单元| + |注册点|，且 touched_units(core) = 0（最小核心不因扩展而变更）；前提：扩展点契约不变——契约变更时该上界失效，改由下一项承载"
+        source: {source_type: row_id, value: "1.2.1-微内核-插件", verified: true}
+      - metric: "可修改性：典型变更的实现成本（跨边界契约变更数）"
+        bound_expr: "扩展点契约变更 e → contract_changes(e) 的波及面 = |registered_plugins(e)|（「插件全灭」的参数化形态）；核心稳定性 ⇒ contract_changes(extension_point) 须受版本化/兼容策略约束，无策略声明时波及面无上界"
+        source: {source_type: row_id, value: "1.2.1-微内核-插件", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 每次扩展点分派一次注册表查找与间接调用；参数：扩展点数、命中插件数与分派机制（注册表查找/动态加载）"
+      failure_modes: ["扩展点契约不稳定导致已注册插件全量失效", "核心膨胀吞并插件职责（「最小核心」约束失守）", "插件间经核心或共享设施形成未声明耦合"]   # 前两项骨架源 1.2.1 反模式列；第三项人工判断（注册式扩展的常见旁路）
+      consistency_impact: "无直接影响：插件注册与加载不改变数据一致性级别；插件自有状态的一致性归方面 4"   # 人工判断
+      observability_requires: ["扩展点↔已注册插件映射可查", "插件加载/卸载与分派失败可观测（区分核心失败与插件失败）"]
+      ops_cost: "[无独立运维面；成本落在扩展点契约的版本治理与插件兼容性回归]"
+      skill_prerequisites: ["扩展点契约设计（最小核心的职责边界）", "插件注册/发现机制与版本兼容策略"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 母本对本行无叠加声明、1.2.5 无涉本风格的冲突行；子维度内取值互斥不逐对登记（MJ-5），跨子维度正交性不构成条目级 composable 声明（MJ-9），组合自洽性由 1.2.5 冲突矩阵校验（V3）
+    constraints_imposed:               # 交叉表源：1.4「施加约束」表行 2/6/10（无风格修饰 → 全风格通用；实例化措辞为人工判断）
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：核心与插件为两类分解单元，插件职责不得回流核心（seam = 扩展点）", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格（核心/扩展点/插件三区须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.1「典型反模式」列（本行两项，不增补）
+      - pattern_id: STY-010-AP1
+        description: "扩展点契约不稳定导致插件全灭（契约破坏性变更无版本化/兼容策略）"
+        detection_predicate: "∃ ep: [ep 为已声明扩展点] ∧ [ep 的契约未登记版本化/兼容策略] ∧ [滚动窗口 W 内 ep 契约的破坏性变更数 > N_max]"
+        signal_level: P2               # 0.14 P2 双判据：阈值 N_max + 趋势窗口 W（均为待勘察参数，禁填无出处数字）
+        # M4 修正（MJ-12）：原书写 ¬declared(compat_policy(ep))。compat_policy 是母本 3.5 `contract(C, provider,
+        # consumer_set, kind, version, compat_policy, lifecycle_state)` 的**实参槽**，不是独立谓词名；以其实参槽名
+        # 充当谓词属本地造词（README §3.1 / 编译规范 2.3「谓词名注册」禁）→ 改为方括号事实占位，缺口登记 VG-04。
+      - pattern_id: STY-010-AP2
+        description: "核心膨胀吞并插件职责"
+        detection_predicate: "∃ core, pl, r: unit(core) ∧ unit(pl) ∧ [pl 为已注册插件] ∧ responsibility(core, r) ∧ responsibility(pl, r)"
+        signal_level: P2               # 0.14 P2 双判据：阈值（双重承载的职责数 > D_max）+ 趋势窗口（W 内核心单元变更数 > C_max）；均为待勘察参数
+    formal_anchor:                     # 交叉表源：1.5 V1–V5
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 1, support_claim: "微内核风格的词汇与定义（母本登记：1.2.1 抽象结构风格词汇表含分层、管道-过滤器、黑板、微内核、Broker）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：扩展方向的变更被注册机制收敛为『新增插件 + 注册』，核心不动，故 touched_units(core)=0；代价：核心稳定性完全取决于扩展点契约质量——契约一旦破坏性变更，波及面是已注册插件全集（母本直言『插件全灭』），因此契约的版本化与兼容策略不是可选项而是本风格的前置投资。"
+      typical_scenarios: "需求变化集中在扩展方向的系统（多租户定制、第三方生态、规则/算法可插拔）、核心语义稳定而外围形态多样的系统。"
+      common_misuse: "把扩展点当作函数回调别名而无契约治理（AP1 直接成立）；核心逐步吸收插件逻辑形成膨胀核心（AP2）；在需求变化不集中于扩展方向的系统引入插件机制（注册/加载/兼容成本无对应收益）。"
+
+  - entry_id: STY-011
+    kind: STY
+    name: 黑板
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.1-黑板", verified: true}
+        - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: clause_id, value: "0.7", verified: true}   # 黑板条目附注（自我对应限定措辞 + 三层区分）
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "1", verified: true}
+    typical_reversibility: costly      # 人工判断：控制模型由黑板状态驱动，改为确定解法序列须重排全部知识源触发条件与状态 schema
+    applicability:
+      problem_space:                   # 骨架源：1.2.1「适用条件（摘要）」列
+        - "[问题无确定解法序列（启发式求解、多专家协同）]"
+        - "[多 Agent 协同（母本明示：多 Agent 协同系统是其当代实例）]"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space: []
+    envelope:                          # 骨架源：「灵活性↑；可预测性↓、可调试性↓（控制流非确定）」；「灵活性/可调试性」映射见 G-ENV-1
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "新增知识源 ks → touched_units = 1（ks 自身）+ |黑板 schema 登记项|，且 touched_units(既有知识源) = 0（控制由黑板状态驱动，无需改编排方）；前提：知识源间无隐式协议——AP2 成立时该上界失效"
+        source: {source_type: row_id, value: "1.2.1-黑板", verified: true}
+      - metric: "可观测性：追踪覆盖率"
+        bound_expr: "trace_coverage ≤ 1 − |状态驱动的非确定转移| / |全部控制流转移|（控制流非确定 → 覆盖上界由黑板状态空间规模与知识源触发条件数决定，二者为参数）；可预测性下降的量化落点即该上界"
+        source: {source_type: row_id, value: "1.2.1-黑板", verified: true}
+    cost_profile:
+      latency_budget_delta: "[母本本行未给延迟摘要；控制流非确定 → 无结构性延迟界可声明，须以运行观测分布登记：P99 ≤ P99_obs，参数 = 知识源触发轮次 × 单轮调度开销]"   # 人工判断（禁假精确，0.17.7 门槛 2）
+      failure_modes: ["黑板变成无结构的垃圾场（schema 缺失致写入语义不明）", "知识源间隐式协议（未经黑板 schema 声明的相互假设）", "非确定控制流导致缺陷不可复现"]   # 前两项骨架源 1.2.1 反模式列；第三项人工判断（「可调试性↓」的直接后果）
+      consistency_impact: "共享知识库为多写者：知识源并发写入的隔离级别与冲突消解不由本风格默认提供，须由方面 4 显式决定"   # 人工判断
+      observability_requires: ["黑板状态变迁历史可回放（非确定控制流的唯一可诊断面）", "知识源触发条件与其写入项可关联追踪"]
+      ops_cost: "[无独立运维面；成本落在状态回放设施与触发条件治理]"
+      skill_prerequisites: ["黑板 schema 设计（结构化约束）", "机会主义控制的调试方法（状态回放与触发条件推理）"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 母本对本行无叠加声明、1.2.5 无涉本风格的冲突行；@1342 附注是自我对应限定措辞（框架自身用黑板 ≠ 目标系统绑定黑板），属叙事层而非条目间关系 → 不登记为 compatibility（MJ-6）
+    constraints_imposed:
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：分解单元为知识源，其职责须以黑板 schema 的读写项表达（不得以隐式协议表达）", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）；追踪覆盖率上界受非确定控制流约束，方面 6 目标须落在该上界内", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格（黑板/知识源/控制三区须可辨，控制流非确定性须显式标注）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.1「典型反模式」列（本行两项，不增补）
+      - pattern_id: STY-011-AP1
+        description: "黑板变成无结构的垃圾场（写入项无 schema 声明）"
+        detection_predicate: "∃ bb, w: [bb 为已声明黑板] ∧ [w 为对 bb 的写入项] ∧ [w 无 schema 声明]"
+        signal_level: P1               # 结构漂移限期整改（0.14 P1）：schema 缺失使「新增知识源 touched_units(既有)=0」的上界失效
+        # M4 修正（MJ-12）：原书写 ¬declared(schema(w))。schema 在母本为契约工件名（3.2.1「schema + 语义条款」等），
+        # 非 x.5 登记谓词名 → 本地造词，改方括号事实占位，缺口登记 VG-04。
+      - pattern_id: STY-011-AP2
+        description: "知识源间隐式协议（未经黑板 schema 声明的相互假设）"
+        detection_predicate: "∃ ks1, ks2: [ks1, ks2 为知识源] ∧ [ks2 的触发条件或读取语义假设 ks1 的写入内容] ∧ ¬declared(该假设于黑板 schema) ∧ depends_on(ks2, ks1, data, ·)"
+        signal_level: P1               # 人工判断（MJ-6）：1.2.5 无黑板冲突行、1.5 V 系列无对应硬性质 → 不满足 MJ-4 的 P0 判据；定 P1 限期整改（隐式协议使知识源不再可独立增删）
+    formal_anchor:
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 1, support_claim: "黑板风格的词汇与定义（母本登记：1.2.1 抽象结构风格词汇表含分层、管道-过滤器、黑板、微内核、Broker）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：知识源可机会主义增删而无需改动既有知识源（灵活性↑ 的落点 = 变更触达面收敛到 1 个单元 + schema 登记）；代价：控制流由黑板状态驱动而非确定序列，可预测性与可调试性同时下降，追踪覆盖率存在结构性上界，缺陷复现依赖状态回放设施。母本据此把黑板限定在『无确定解法序列』的问题域。"
+      typical_scenarios: "启发式求解（语音识别、图像理解、规划搜索类）、多专家协同且专家贡献顺序不可预先固定、多 Agent 协同系统（母本明示为当代实例）。"
+      common_misuse: "以框架自身使用黑板（0.7 共享白板）为由跳过方面 1 候选分析与批准——母本附注明示**结构等价不构成实现绑定**，且 0.7 的三层区分（设计时存储／框架运行层协同／目标系统运行时架构）不得混用；把黑板当无 schema 的共享内存倾倒数据（AP1）；知识源之间私下约定字段语义（AP2）；在解法序列确定的系统使用黑板（非确定控制流的代价无对应收益）。"
+
+  - entry_id: STY-012
+    kind: STY
+    name: MVC 及变体（MVP/MVVM）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.1-MVC 及变体（MVP/MVVM）", verified: true}
+        - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+    typical_reversibility: bounded     # 人工判断：三分结构的重排限于表现侧（领域层不被触达），可在界面层内增量执行；AP1 成立时退化为 costly
+    applicability:
+      problem_space:                   # 骨架源：1.2.1「适用条件（摘要）」列
+        - "[存在交互式界面]"
+        - "[表现逻辑与领域逻辑的变更率不同]"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space: []
+    envelope:                          # 骨架源：「表现层可替换性↑」
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "表现层替换 → touched_units = |表现层单元|，且 touched_units(领域) = 0（表现-领域-交互三分 + 单向数据流）；领域逻辑渗入控制器/视图时该上界失效（见 STY-012-AP1）"
+        source: {source_type: row_id, value: "1.2.1-MVC 及变体（MVP/MVVM）", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 每次交互一次表现↔领域转发（控制器/Presenter/ViewModel 分派）；参数：交互事件数与绑定机制（直接调用/数据绑定）"
+      failure_modes: ["领域逻辑渗入控制器/视图（三分边界失守）", "变体（MVC/MVP/MVVM）混用导致数据流方向不一致（单向数据流约束失守）"]   # 第一项骨架源 1.2.1 反模式列；第二项人工判断（母本将三变体并列于同一行且定义含「单向数据流」）
+      consistency_impact: "无直接影响：一致性级别由方面 4 决定；本风格只约束表现-领域-交互的职责与数据流方向"   # 人工判断
+      observability_requires: ["表现↔领域调用可追踪（区分表现层缺陷与领域缺陷）"]
+      ops_cost: "[无独立运维面；成本落在表现层构建与前端交付管道]"
+      skill_prerequisites: ["表现-领域边界划分", "所选变体（MVC/MVP/MVVM）的数据流约定"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 母本对本行无叠加声明、1.2.5 无涉本风格的冲突行；MJ-5/MJ-9 同 STY-010
+    constraints_imposed:
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：表现/领域/交互为三类分解单元，领域规则不得以表现单元为承载", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格（须标明采用的变体与数据流方向）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.1「典型反模式」列（本行一项，不增补）
+      - pattern_id: STY-012-AP1
+        description: "领域逻辑渗入控制器/视图"
+        detection_predicate: "∃ c, d: ([c 为控制器单元] ∨ [c 为视图单元] ∨ [c 为 ViewModel/Presenter 单元]) ∧ responsibility(c, d) ∧ [d 为领域规则]"
+        signal_level: P1               # 结构漂移限期整改（0.14 P1）：使「表现层替换 → touched_units(领域)=0」的上界失效
+    formal_anchor:
+      - {property_id: V1, role: implements}     # 人工判断：「单向数据流」即依赖方向约束，可经 layer_of（表现/领域/交互三区）+ dependency_rule 登记 → V1 校验面
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references: []                     # 无合法提取源：书目 1 的登记提取面为 1.2.1 词汇表（分层、管道-过滤器、黑板、微内核、Broker），不含 MVC；书目 2 的登记提取面为「风格对比与架构决策方法」，未登记 MVC 章节。M6 禁止以不承载该主张的文献充当出处 → 留空并登记勘察义务（gaps: G-STY-3）
+    narrative:
+      benefit_cost_analysis: "收益：表现层可替换（触达面收敛到表现单元，领域零触达），交互式界面与领域逻辑的变更率差异被结构吸收；代价：三分带来每次交互一次转发，且变体（MVC/MVP/MVVM）的数据流约定不同——混用即失去『单向数据流』这一使上界成立的前提。母本把三个变体登记在同一行，故选用哪一个变体须显式记录（约束 10 的投影要求）。"
+      typical_scenarios: "交互式界面系统（Web/桌面/移动前端）、表现逻辑与领域逻辑变更率差异明显的系统、需要以表现层为单位替换技术栈（如框架升级）的场景。"
+      common_misuse: "在控制器/视图内直接实现领域规则（AP1）；同一系统混用 MVC 与 MVVM 而不声明数据流方向；把 MVC 当作分层（STY-007）的同义词——三分是交互职责结构，分层是抽象层级结构，二者可并存但不可互替（人工判断）。"
+
+  - entry_id: STY-013
+    kind: STY
+    name: 管道-过滤器
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.1-管道-过滤器", verified: true}
+        - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "1", verified: true}
+    typical_reversibility: costly      # 人工判断：改用其他结构须重排管道拓扑与全部过滤器间数据契约（过滤器接口即契约面）
+    applicability:
+      problem_space:                   # 骨架源：1.2.1「适用条件（摘要）」列 +「包络要点」列的不适用声明（否定式登记）
+        - "[批处理、流处理、ETL（抽取-变换-装载）或编译器类系统]"
+        - "[各步可独立变换]"
+        - "¬[交互式响应为必需]（母本明示：不适合交互式系统）"
+        - "¬[强共享状态为必需]（母本明示：不适合强共享状态系统）"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space: []
+    envelope:                          # 骨架源：「可重用性↑、可并行↑」；「可重用性」映射可修改性族、「可并行」映射可伸缩性族（G-ENV-1）
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "单步变换替换 → touched_units = 1（该过滤器），且 touched_units(其余过滤器) = 0（过滤器无状态、仅经声明的数据流交互）；前提：过滤器间无隐式共享状态——AP1 成立时该上界失效"
+        source: {source_type: row_id, value: "1.2.1-管道-过滤器", verified: true}
+      - metric: "可伸缩性：单位资源增量带来的容量增量"
+        bound_expr: "capacity(r + Δr) − capacity(r) ∝ |可并行的过滤器段|（「可并行↑」的参数化形态：并行度上界 = 管道图中可并行段数）；串行依赖段不随 Δr 增长"
+        source: {source_type: row_id, value: "1.2.1-管道-过滤器", verified: true}
+    cost_profile:
+      latency_budget_delta: "P99 = Σ_{f ∈ 串行段} latency(f) + Σ 缓冲/传输项；并行段取 max_{f ∈ 段} latency(f) 而非 Σ（参数：过滤器数、并行度、缓冲策略）"
+      failure_modes: ["过滤器间隐式共享状态（无状态假设失守 → 可替换性与并行度两个上界同时失效）", "管道内全局错误处理缺失（单步失败无统一处置路径）", "批处理边界处的部分失败与重跑语义未定义"]   # 前两项骨架源 1.2.1 反模式列；第三项人工判断
+      consistency_impact: "无共享状态为默认；跨步骤的数据一致性由管道的事务/重跑边界决定，属方面 4 输入"   # 人工判断
+      observability_requires: ["各过滤器输入/输出可采样（定位失败步骤的前提）", "步骤级错误、重试与丢弃量可观测"]
+      ops_cost: "[无独立运维面；成本落在管道调度与批/流作业治理（重跑、补数、背压）]"
+      skill_prerequisites: ["过滤器间数据契约设计（schema 与流式语义）", "管道级错误处理与重跑语义设计"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 母本对本行无叠加声明、1.2.5 无涉本风格的冲突行；MJ-5/MJ-9 同 STY-010。注：1.2.3 共享数据行「仅限批处理交接」与本行适用域相邻，但母本未登记为风格对 → 不入 compatibility（禁造规范）
+    constraints_imposed:
+      - {target_aspect: 2, constraint: "风格收窄分解策略可行集：分解单元为过滤器，须无状态且以数据契约（而非共享存储）交互", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）；并行度上界即伸缩性目标的可达性界", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集；人类层：投影视图必须表达所选风格（管道拓扑与过滤器边界须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.1「典型反模式」列（本行两项，不增补）
+      - pattern_id: STY-013-AP1
+        description: "过滤器间隐式共享状态"
+        detection_predicate: "∃ f1, f2: [f1, f2 为管道内过滤器] ∧ depends_on(f1, f2, data, ·) ∧ ¬[该数据经声明的管道数据流传递]"
+        signal_level: P1               # 人工判断：违反「无状态变换单元」的定义性约束；1.2.5 无本风格冲突行 → 不满足 MJ-4 的 P0 判据。若在 dependency_rule 登记「过滤器间禁止旁路数据依赖」，则构成 V1 违例直接来源，升 P0（登记义务见 gaps: G-STY-4）
+      - pattern_id: STY-013-AP2
+        description: "管道内全局错误处理缺失"
+        detection_predicate: "∃ pipe: [pipe 为已声明管道] ∧ [pipe 无全局错误处理声明] ∧ ∃ f: [f ∈ pipe] ∧ [f 的失败无处置路径（重试/跳过/中止/死信）]"
+        signal_level: P1               # 结构漂移限期整改（0.14 P1）：缺失处置路径直接影响可用性族指标（MTTR）
+        # M4 修正（MJ-12）：原书写 ¬declared(error_handling(pipe))。error_handling 非 x.5 登记谓词名（母本 1.2.1
+        # 管道-过滤器行仅以自然语言给出「管道内全局错误处理缺失」这一反模式名）→ 本地造词，改方括号事实占位，VG-04。
+    formal_anchor:
+      - {property_id: V1, role: implements}     # 过滤器间依赖规则可经 dependency_rule 登记（条件性，见 STY-013-AP1 注）
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 1, support_claim: "管道-过滤器风格的词汇与定义（母本登记：1.2.1 抽象结构风格词汇表含分层、管道-过滤器、黑板、微内核、Broker）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：过滤器可独立替换与重用（变更触达面收敛到单个过滤器），无状态假设使可并行段的容量随资源增量线性增长；代价：母本明示不适合交互式与强共享状态系统——批处理/流处理形态下延迟为各串行段之和，且管道级错误处理与重跑语义是必须显式设计的额外面。"
+      typical_scenarios: "ETL（抽取-变换-装载）与批处理作业、流处理管道、编译器与代码转换类系统、各步可独立变换且步间以数据契约交互的处理链。"
+      common_misuse: "在交互式请求路径上使用管道-过滤器（母本明示不适用）；过滤器经全局变量/共享表传递中间结果（AP1，同时摧毁可替换性与并行度）；只做步骤串接而不设计管道级错误处置（AP2）；以共享数据库作为步间交接手段而未走方面 3 的共享数据适用条件（1.2.3 共享数据行）。"
+
+  # ══════════ 子维度二：部署/运行单元风格（1.2.2）→ STY-014…STY-019 ══════════
+  # 通用说明一：1.2.2 表列名为「适用条件（摘要）」，未区分三空间；除微服务行自带
+  #   「多团队（交付空间硬过滤器，见 1.3）」标注外，其余行按 1.3 三空间定义归类（归类为人工判断），
+  #   无据者留空（禁臆造）→ gaps: G-STY-1 勘察义务。
+  # 通用说明二：1.2.2 表无「施加约束」列 → 本块 constraints_imposed 经 1.4 施加表提取；
+  #   1.4 表未给本风格实例的行只登记通用行（6/10），实例化措辞为人工判断 → gaps: G-STY-2。
+  # 通用说明三：子维度内取值互斥（一个 scope 在 1.2.2 表内至多取一行）→ 不逐对登记互斥（MJ-5）。
+  #   「单体 → 模块化单体」的演进关系**不入 compatibility**：relation 封闭枚举
+  #   （hard_conflict|tension|composable|requires）无「演进为」语义，requires 是非对称要求关系、
+  #   与「保留未来拆分选项」（@1353）的事实不符；该事实经 STY-023（演进式元方法）+ 0.10
+  #   临时保守通道条件 (i) 的登记默认值 + bib 23（MonolithFirst）表达 → MJ-8。
+
+  - entry_id: STY-014
+    kind: STY
+    name: 单体
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions
+    provenance:
+      origin: hybrid                   # 骨架=1.2.2 表格行（compiled 视图）＋界式/谓词人工转写（manual）
+      source_pointers:
+        - {source_type: row_id, value: "1.2.2-单体", verified: true}
+        - {source_type: clause_id, value: "1.2.2", verified: true}
+        - {source_type: clause_id, value: "1.2", verified: true}
+        - {source_type: clause_id, value: "1.3", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "2", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+    typical_reversibility: bounded     # 人工判断：迁出本风格可增量执行（先建模块边界 → STY-015 → 再按需拆分），无不可逆承诺；但迁移触达面为单元内全部依赖，故非 free
+    applicability:
+      problem_space:                   # 骨架源：1.2.2「适用条件（摘要）」列；空间归类依 1.3（人工判断）
+        - "[领域未充分理解]（方面 2 输入不足时的保守侧）"
+        - "[延迟敏感]（1.3 问题空间：质量属性优先级为首要驱动）"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space:
+        - "[小团队]（1.3 交付空间：团队规模与认知负荷——微服务类风格硬过滤器的否定侧；归类为人工判断，母本列未标空间）"
+    envelope:                          # 骨架源：1.2.2「包络要点」列（进程内调用／无独立伸缩／一次故障全局倒）；metric 词汇取 6.2.1；转写规则见 MJ-2
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(req) = Σ 单元内调用开销，跨单元网络跳数 = 0（母本：进程内调用，延迟最低）；与 STY-016 的 0.8 下界（跨单元调用约为同进程调用的 10–100 倍）构成对照项；参数：单元内调用路径长度、共享资源竞争"
+        source: {source_type: row_id, value: "1.2.2-单体", verified: true}
+      - metric: "可伸缩性：单位资源增量带来的容量增量"
+        bound_expr: "capacity(r + Δr) − capacity(r) 的实现粒度 = 整个部署单元（母本：无独立伸缩）——不存在按单元子集伸缩的容量增量通道；参数：单元副本数、单副本容量、负载分布"
+        source: {source_type: row_id, value: "1.2.2-单体", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "单个单元级故障的影响面比例 = 1（母本：一次故障全局倒）；SLO 提升通道限于单元级冗余，不含单元内隔离通道；参数：副本数 n、故障域分布、恢复策略（MTTR）"
+        source: {source_type: row_id, value: "1.2.2-单体", verified: true}
+    cost_profile:
+      latency_budget_delta: "无跨单元网络项（进程内调用）；延迟预算落在单元内调用路径与共享资源竞争（参数：单元内组件数、连接池/锁竞争）"
+      failure_modes: ["单体内部无模块化（大泥球）→ 变更触达面失去边界收敛", "单元级故障影响面 = 全部流量（一次故障全局倒）", "整体发布 → 变更前置时间与发布风险随单元规模增长"]   # 前两项骨架源 1.2.2 反模式列/包络要点列；第三项人工判断（单一部署单元的直接后果）
+      consistency_impact: "ACID 事务可用（母本包络要点）：本地事务即可满足强一致，无需分布式协调——方面 4/5 的最简可行侧"
+      observability_requires: ["单元内组件级调用与错误可观测（无部署边界天然分区，须以模块/组件维度切分）", "共享资源（连接池/锁/存储）竞争计量"]
+      ops_cost: "[单一制品、单一发布通道 → 运维面最小；成本随单元规模上升而在发布编排与故障隔离侧增长]"
+      skill_prerequisites: ["单元内模块化纪律（边界声明与穿透门禁）", "共享数据与本地事务边界治理"]
+      aggregation_semantics: itemwise
+    compatibility:                     # 对侧已登记的行不重复（MJ-5/MJ-9）：STY-006（@1.2.3-共享数据行）、STY-008、STY-009 均已登记本条目为 peer
+      - peer_entry: STY-007
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.1", verified: true}   # 骨架源 @1344：「单体内每一层内部也可以是六边形」——措辞以单体与分层并存为前提（人工判断：语义蕴含，非逐字叠加声明）
+      - peer_entry: STY-015
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.2-模块化单体", verified: true}   # 骨架源：模块化单体定义 =「单部署单元 + 内部强制模块边界」→ 本风格的部署形态可与模块边界叠加（镜像行见 STY-015；relation 判读见块头 MJ-8）
+    constraints_imposed:               # 交叉表源：1.4「施加约束」表（单体行 + 无修饰的通用行 6/10）
+      - {target_aspect: 2, constraint: "分解可纯逻辑边界（1.4 施→2 单体行）：分解单元不必映射部署单元", level: hard}
+      - {target_aspect: 3, constraint: "进程内调用可用（1.4 施→3 单体行）：跨单元契约规则不适用于本风格内部", level: soft}   # 表标「硬/软按条」：许可性条款判读为软（MJ-4）
+      - {target_aspect: 4, constraint: "共享数据库可用（1.4 施→4 单体行）：本地事务与 ACID 为默认一致性手段", level: soft}   # 同上（MJ-4）
+      - {target_aspect: 5, constraint: "进程内编排、本地事务可用（1.4 施→5 单体行）：不触发分布式协调必答项", level: soft}   # 同上（MJ-4）
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）；可用性上界尤其约束高可用目标（1.3：高可用 → 无单点故障要求 → 排除部分单体形态）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（style/deployed_on，单元数 = 1）；人类层：投影视图必须表达所选风格", level: hard}
+    anti_patterns:                     # 骨架源：1.2.2「典型反模式」列（本行一项，不增补）
+      - pattern_id: STY-014-AP1
+        description: "单体内部无模块化（大泥球）"
+        detection_predicate: "∃ u, c1, c2: unit(u) ∧ [c1, c2 属 u] ∧ depends_on(c1, c2, call, ·) ∧ ¬declared(boundary_type(c1, ·)) ∧ ¬declared(boundary_type(c2, ·))"
+        signal_level: P1               # 人工判断（MJ-4）：1.2.5 无涉本风格的冲突行、1.5 V 系列无对应硬性质 → 不满足 P0 判据；结构漂移限期整改。若内部边界经 boundary_type + dependency_rule 登记，则穿透构成 V1 违例直接来源，升 P0（登记义务见 gaps: G-STY-4）
+    formal_anchor:                     # 交叉表源：1.5 V1–V5
+      - {property_id: V2, role: implements}     # connects(u1,u2,p) 面在单元数 = 1 时最小（进程内调用），协议自洽检查退化为端点契约检查
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 3, support_claim: "1.2.2 部署风格权衡的元方法（母本登记提取面：1.2.2/1.2.3 分布式风格权衡的元方法——子维度级，本行属其覆盖面；单体为权衡的基线侧）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 2, support_claim: "风格对比与架构决策方法（母本登记提取面为子维度级，未限定行）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：进程内调用使延迟项最小、ACID 本地事务可用（一致性成本最低），单一制品使运维面与发布通道最小；代价：容量增量只能以整个单元为粒度获得（无独立伸缩），且单元级故障影响面为全部流量（一次故障全局倒）。母本把本行列为演进式元方法的起点侧语境（1.2.4 默认起点为模块化单体，见 STY-015/STY-023 与 bib 23），即本风格的可逆性优势是其被选为起点的主要理由。"
+      typical_scenarios: "小团队与领域尚未充分理解的系统（方面 2 输入不足）、延迟敏感与强一致要求的系统、负载无独立伸缩需求的系统、初创期以最小运维面换取迭代速度的场景。"
+      common_misuse: "在无模块边界的单元内长期堆积职责（AP1 大泥球），使后续拆分失去可行集；以单体承载需要独立伸缩的异构负载（伸缩粒度错配）；在多团队组织内坚持单体（1.3 交付空间过滤器的反向误用：团队数与单元数错配 → 变更排队与认知负荷超载）。"
+
+  - entry_id: STY-015
+    kind: STY
+    name: 模块化单体
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.2-模块化单体", verified: true}
+        - {source_type: clause_id, value: "1.2.2", verified: true}
+        - {source_type: clause_id, value: "1.2.4", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.10", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "2", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+        - {source_type: bib_id, value: "23", verified: true}
+    typical_reversibility: bounded     # 人工判断：模块边界即未来拆分线（@1353「保留未来拆分选项」）→ 迁出成本以边界契约面为上界，优于 STY-014 的无边界形态
+    applicability:
+      problem_space:                   # 骨架源：1.2.2「适用条件（摘要）」列
+        - "[需要结构纪律但无分布式必要]（母本：中小团队想要结构纪律但无分布式必要）"
+        - "[领域未充分理解但需保留演进选项]（人工判断：@1353「保留未来拆分选项」+ 1.2.4 演进式默认起点 @1388 的合取读法）"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space:
+        - "[中小团队]（1.3 交付空间：团队规模与认知负荷；归类为人工判断，母本列未标空间）"
+    envelope:                          # 骨架源：「单体的性能/事务优势 + 接近微服务的可修改性；保留未来拆分选项」三个分句 → 三项界（MJ-2）
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(req) = Σ 单元内调用开销，跨单元网络跳数 = 0（「单体的性能优势」：与 STY-014 同型，模块边界不引入网络项）；参数：模块间调用路径长度、边界契约的转发开销"
+        source: {source_type: row_id, value: "1.2.2-模块化单体", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "模块内变更 → touched_units ≤ |units(m)| + |boundary_contracts(m)|（「接近微服务的可修改性」的参数化落点）；前提：模块边界经 boundary_type 登记且穿透受门禁约束——AP1 成立时该上界退化为 STY-014 形态（无边界收敛）"
+        source: {source_type: row_id, value: "1.2.2-模块化单体", verified: true}
+      - metric: "可修改性：典型变更的实现成本（跨边界契约变更数）"
+        bound_expr: "模块 → 部署单元的迁移成本上界 = |boundary_contracts(m)|（「保留未来拆分选项」的参数化落点：拆分红利取决于既有边界契约面，内部无需重切分）；参数：模块间穿透依赖数（AP1 成立时该项发散）"
+        source: {source_type: row_id, value: "1.2.2-模块化单体", verified: true}
+    cost_profile:
+      latency_budget_delta: "无跨单元网络项；+ 模块边界契约的一次分派/校验开销（参数：边界数与契约实现形态）"
+      failure_modes: ["模块边界只在文档里、代码里随意穿透（AP1）→ 可修改性与拆分选项两个上界同时失效", "单元级故障影响面 = 全部流量（与 STY-014 同型：一次故障全局倒）", "模块划分与实际变更热点错位（边界未对齐 volatility）"]   # 第一项骨架源 1.2.2 反模式列；第二项源自单一部署单元定义；第三项人工判断
+      consistency_impact: "ACID 事务可用（「单体的性能/事务优势」的事务侧）：跨模块的强一致可经本地事务满足，无需分布式协调"
+      observability_requires: ["模块归属与边界穿透可查（boundary_type/depends_on 登记面）", "模块级变更触达面计量（拆分决策的事实源，联动 9.4 演化观测）"]
+      ops_cost: "[单一制品、单一发布通道（与 STY-014 同型）；额外成本落在边界门禁工具与模块级度量建设]"
+      skill_prerequisites: ["模块边界设计（对齐语义边界与变更率）", "边界穿透的自动化门禁（依赖规则校验）"]
+      aggregation_semantics: itemwise
+    compatibility:                     # 对侧已登记不重复（MJ-5/MJ-9）：STY-008（@611 段）、STY-009 均已登记本条目为 peer（evidence 1.2.1 @1344）
+      - peer_entry: STY-014
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.2-模块化单体", verified: true}   # 骨架源：本行定义 =「单部署单元 + 内部强制模块边界（方面 2 的逻辑单元）」→ 单体的部署形态与模块边界叠加（镜像行见 STY-014）
+      - peer_entry: STY-023
+        relation: composable
+        evidence: {source_type: clause_id, value: "1.2.4", verified: true}      # 骨架源 @1388/@1391：演进式元方法「默认起点：模块化单体」，且该默认值是 0.10 临时保守通道条件 (i) 所指的登记默认值之一；relation 取 composable（枚举无「提名/推荐」语义，方向性说明为本注释）
+    constraints_imposed:               # 交叉表源：1.4 施加表（单体行适用——本风格为单部署单元）+ 本行定义的强制模块边界
+      - {target_aspect: 2, constraint: "分解可纯逻辑边界（1.4 施→2 单体行），且内部模块边界须强制：模块为方面 2 的逻辑单元，边界须可登记（boundary_type）并可校验", level: hard}   # 后半句骨架源本行定义「内部强制模块边界」
+      - {target_aspect: 3, constraint: "进程内调用可用（1.4 施→3 单体行）；模块间契约仍须显式声明（方面 3 消费，为未来拆分预留边界契约面）", level: soft}   # 前半交叉表源，后半人工判断
+      - {target_aspect: 4, constraint: "共享数据库可用（1.4 施→4 单体行）；模块对表的访问宜经模块自有接口收敛（拆分选项的前提）", level: soft}   # 前半交叉表源，后半人工判断
+      - {target_aspect: 5, constraint: "进程内编排、本地事务可用（1.4 施→5 单体行）", level: soft}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（style/deployed_on + 模块边界经 2.5 boundary_type 表达）；人类层：投影视图必须表达所选风格（模块边界须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.2「典型反模式」列（本行一项，不增补）
+      - pattern_id: STY-015-AP1
+        description: "模块边界只在文档里，代码里随意穿透"
+        detection_predicate: "∃ m1, m2, c1, c2: unit(m1) ∧ unit(m2) ∧ boundary_type(m1, ·) ∧ boundary_type(m2, ·) ∧ [c1 属 m1] ∧ [c2 属 m2] ∧ depends_on(c1, c2, call, ·) ∧ ¬[该依赖经 m1/m2 声明的边界契约]"
+        signal_level: P1               # 人工判断（MJ-4）：违反本风格定义性约束「内部强制模块边界」，但 1.2.5 无涉本风格的冲突行、1.5 未登记模块边界方向谓词（VG-03）→ 无 V1 可绑定，定 P1；若在 dependency_rule 登记模块间禁止穿透，则构成 V1 违例直接来源，升 P0（登记义务见 gaps: G-STY-4）
+    formal_anchor:
+      - {property_id: V1, role: implements}     # 模块边界可经 boundary_type + dependency_rule 登记 → V1 校验面（条件性，见 AP1 注）
+      - {property_id: V2, role: implements}
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 3, support_claim: "1.2.2 部署风格权衡的元方法（母本登记提取面为子维度级：1.2.2/1.2.3 分布式风格权衡的元方法）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 2, support_claim: "风格对比与架构决策方法（母本登记提取面为子维度级，未限定行）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 23, support_claim: "1.2.4 演进式元方法的默认起点论证；0.10 临时保守通道条件 (i) 的登记默认值来源（母本登记提取面逐字对应：默认起点即模块化单体，@1388/@1391）", compile_usage: narrative_only, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：以单体的性能/事务优势（网络跳数 = 0、ACID 可用）换取接近微服务的可修改性（变更触达面被模块边界收敛），并保留未来拆分选项（迁移成本上界 = 边界契约面）；代价：模块边界必须被工具门禁强制，否则退化为大泥球（AP1），且单元级故障影响面仍为全部流量。母本把本风格登记为演进式元方法的默认起点（1.2.4）与 0.10 临时保守通道的登记默认值之一——即『不确定时先取本风格』是有出处的默认，不是缺省填充。"
+      typical_scenarios: "中小团队需要结构纪律但无分布式必要的系统、领域边界尚在收敛但需保留拆分选项的系统、强一致与低延迟要求排除分布式形态的系统、演进式落地（STY-023）的默认起点。"
+      common_misuse: "只画模块图不建门禁（AP1）；以模块名为由引入跨模块共享表直访（削弱拆分选项）；在组织已多团队、负载需独立伸缩时仍停留在本风格（1.3 交付空间/问题空间过滤器未复核）；把「模块化单体」当作微服务的等价替代而不登记 envelope 差异（伸缩粒度与故障影响面两项上界不同）。"
+
+  - entry_id: STY-016
+    kind: STY
+    name: 微服务
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.2-微服务", verified: true}
+        - {source_type: clause_id, value: "1.2.2", verified: true}
+        - {source_type: clause_id, value: "1.2.5", verified: true}
+        - {source_type: clause_id, value: "1.3", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+        - {source_type: bib_id, value: "4", verified: true}
+        - {source_type: bib_id, value: "5", verified: true}
+        - {source_type: bib_id, value: "9", verified: true}
+        - {source_type: bib_id, value: "17", verified: true}
+        - {source_type: bib_id, value: "19", verified: true}
+    typical_reversibility: costly      # 人工判断：合并已拆分服务须重建共享数据与事务边界（1.4 施→4「每服务自有数据库为默认」的逆操作），且组织侧运维结构与团队归属已随之调整（Conway 反向锁定）
+    applicability:
+      problem_space:                   # 骨架源：1.2.2「适用条件（摘要）」列
+        - "[领域边界清晰]（方面 2 输入充分；1.4 接收约束行：限界上下文清晰且团队多 → 微服务可行）"
+      current_space: []                # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space:                  # 骨架源：本行自带空间标注「多团队（交付空间硬过滤器，见 1.3）」
+        - "[多团队]（1.3 交付空间硬过滤器：团队规模与认知负荷；假设不满足时本风格不可选，无论技术上多先进）"
+        - "[组织具备独立运维能力]（1.3：每种部署风格隐含组织假设——微服务假设多团队、独立运维、成熟基础设施）"
+    envelope:                          # 骨架源：0.8 @198 的微服务包络示例（前两项逐字对应）+ 1.2.2「包络要点」列「独立伸缩/部署↑」
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(req) ≥ P99_inproc(req) + Σ_{hops ∈ 跨单元路径} network_hop，其中跨单元调用引入的网络延迟项下界约为同进程调用的 10–100 倍（0.8 唯一给定的参数化数值）；参数：调用链跳数、协议、序列化形态"
+        source: {source_type: clause_id, value: "0.8", verified: true}
+      - metric: "可伸缩性：单位资源增量带来的容量增量"
+        bound_expr: "capacity(r + Δr) − capacity(r) 的实现粒度 = 单个服务（0.8：单元可独立伸缩，增益项）；上界 ∝ |可独立伸缩的服务数|；前提：服务间无共享伸缩约束（共享数据库/共享配额时该上界退化为整体粒度）"
+        source: {source_type: clause_id, value: "0.8", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time(服务内变更) ≤ verify(svc) + deploy(svc)，与其他服务的发布解耦（「独立伸缩/部署↑」的部署侧落点）；跨服务契约变更 → lead_time = Σ_{受影响服务} (verify + deploy)；参数：契约扇出数、消费者驱动契约测试覆盖"
+        source: {source_type: row_id, value: "1.2.2-微服务", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 每次跨单元调用一项网络延迟（下界约为同进程调用的 10–100 倍，0.8）；参数：调用链跳数、协议与序列化形态"
+      failure_modes: ["分布式单体（服务间强耦合必须同步部署）→ 独立部署/独立伸缩两个上界同时失效", "纳米服务（拆分过细）→ 跨单元跳数与运维面同时膨胀", "跨单元最终一致下的对账/补偿缺失", "部分失败与重试放大（级联失败）"]   # 前两项骨架源 1.2.2 反模式列；第三项交叉表源 0.8「跨单元一致性降级为最终一致」+ 1.2.5 微服务×2PC 冲突行；第四项人工判断
+      consistency_impact: "跨单元一致性降级为最终一致（0.8）；需强一致 → 引入分布式事务且代价单列；「跨单元 2PC 作为默认一致性手段」是 1.2.5 硬冲突行（应改用 Saga 类或重审部署风格）→ 见顶层 pending_conflict_rows"
+      observability_requires: ["跨单元调用链追踪（分布式 trace 与关联 ID）", "服务级 SLO 与错误预算计量", "部署单元 ↔ 团队归属可查（owned_by，分布式单体检测的前提）"]
+      ops_cost: "[运维复杂度↑↑（母本原文）：每服务独立发布通道、容量治理、故障演练与基础设施自动化；成本随服务数上升，且 1.3 预算条为分布式基础设施与可观测性成本上限]"
+      skill_prerequisites: ["服务边界切分（对齐限界上下文）", "分布式协调设计（Saga 类补偿、幂等、超时预算）", "消费者驱动契约测试", "分布式可观测性建设"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 对侧已登记本条目为 peer 的行不重复（MJ-5/MJ-9）：STY-003（@1.4 语境）、STY-006（tension，@1.2.3-共享数据行）、STY-007（@1319）、STY-008、STY-009（@1344）。1.2.5 硬冲突行「微服务 × 跨单元 2PC 作为默认一致性手段」不入本字段：其 peer 为一致性/协调类方法条目（CSL 批未建），M9 要求 peer 存在 → 登记于顶层 pending_conflict_rows 待回填
+    constraints_imposed:               # 交叉表源：1.4「施加约束」表（微服务行 2/3/4/5/8 + 通用行 6/10）
+      - {target_aspect: 2, constraint: "分解单元必须一一映射部署单元（1.4 施→2 微服务行）", level: hard}
+      - {target_aspect: 3, constraint: "跨单元禁止以进程内调用为主手段（1.4 施→3 微服务行）", level: hard}
+      - {target_aspect: 4, constraint: "每服务自有数据库为默认（1.4 施→4 微服务行）；偏离须显式记录并满足 1.2.3 共享数据行的适用条件（STY-006）", level: hard}   # 表标「硬/软按条」：本条为默认值 + 偏离须记录 → 判读为硬（MJ-4）
+      - {target_aspect: 5, constraint: "分布式协调是必答题（1.4 施→5 微服务行）：协调机制须显式选型（编排/协同/Saga 类）并登记", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）；延迟下界与最终一致项尤其约束强一致/低延迟目标（1.3：强一致 → 收缩分布范围，微服务降权）", level: hard}
+      - {target_aspect: 8, constraint: "消费者驱动契约测试必备（1.4 施→8 微服务行）", level: soft}   # 1.4 表标本行为软
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（style/deployed_on/connects 全面启用）；人类层：投影视图必须表达所选风格（部署单元边界与网络交互须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.2「典型反模式」列（本行两项，不增补）
+      - pattern_id: STY-016-AP1
+        description: "分布式单体（服务间强耦合必须同步部署）"
+        detection_predicate: "∃ u1, u2: unit(u1) ∧ unit(u2) ∧ [u1, u2 属不同服务] ∧ depends_on(u1, u2, deploy, ·)"
+        signal_level: P1               # 人工判断（MJ-4）：使 envelope 的独立部署/独立伸缩两项上界失效 → 结构漂移限期整改；1.2.5 未将本反模式登记为冲突行、1.5 无「必须同步部署」谓词（VG-01 workaround：以 depends_on(·,·,deploy,·) 表达）→ 不满足 P0 判据
+      - pattern_id: STY-016-AP2
+        description: "纳米服务（拆分过细）"
+        detection_predicate: "∃ u: unit(u) ∧ [u 的职责粒度低于团队可独立运维的阈值] ∧ [u 的拆分未带来独立变更或独立伸缩收益]"
+        signal_level: P1               # 人工判断（MJ-4）：无 V 系列硬绑定与 1.2.5 冲突行 → 非 P0；方括号内两项为待勘察事实（VG-02：粒度谓词缺失 → 占位符 + M15 勘察义务，禁填无出处阈值）
+    formal_anchor:
+      - {property_id: V2, role: implements}     # connects(u1,u2,p) 与 allowed_protocols(S) 的自洽检查在本风格全面启用
+      - {property_id: V3, role: triggers}       # 1.2.5「微服务 × 跨单元 2PC 作为默认一致性手段 → 冲突」进入冲突矩阵检查（peer 条目待建，见 pending_conflict_rows）
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 4, support_claim: "微服务适用/不适用条件；1.3 组织假设过滤器（母本登记提取面逐字对应）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 3, support_claim: "1.2.2 部署风格权衡的元方法（母本登记提取面：1.2.2/1.2.3 分布式风格权衡的元方法）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 5, support_claim: "部署 × 通信组合模式（Saga、CQRS、事件驱动）——本风格与通信/一致性方法组合的模式来源（母本登记提取面逐字对应）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 9, support_claim: "S6 团队认知负荷；1.3 交付空间硬过滤器（母本登记提取面逐字对应，支撑 delivery_space 的多团队硬过滤器）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 19, support_claim: "微服务采纳的实证约束（母本登记提取面逐字对应；驱动因素与障碍的从业者调查）", compile_usage: case_study, trust_grade: "[已核验]"}
+      - {bib_id: 17, support_claim: "Conway 定律；1.3 交付空间过滤器（母本登记为 narrative_only：概念性引用，不作 envelope/detection_predicate 出处）", compile_usage: narrative_only, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：单元可独立伸缩与独立部署（容量增量粒度 = 单服务，变更前置时间与其他服务解耦）；代价：跨单元调用引入网络延迟项（0.8 给定下界约为同进程调用的 10–100 倍）、跨单元一致性降级为最终一致、运维复杂度↑↑。母本把本风格的可选性交给交付空间硬过滤器：组织假设（多团队、独立运维、成熟基础设施）不满足时本风格不可选，无论技术上多先进（1.3，Conway 定律反向用作可行性判据）。"
+      typical_scenarios: "多团队且领域边界清晰的系统、需要按服务独立伸缩的异构负载、需要独立部署以缩短变更前置时间的组织、具备成熟基础设施与独立运维能力的组织。"
+      common_misuse: "在单团队/低运维能力组织内采用本风格（1.3 硬过滤器未过 → 假设不成立）；服务间共享数据库或必须同步部署（AP1 分布式单体，同时摧毁两项上界）；拆分粒度过细而无独立变更收益（AP2 纳米服务）；以跨单元 2PC 作为默认一致性手段（1.2.5 硬冲突行，须改用 Saga 类或重审部署风格）；先拆服务后建可观测性与契约测试（1.4 施→8 的软约束被当作可选项）。"
+
+  - entry_id: STY-017
+    kind: STY
+    name: SOA
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.2-SOA", verified: true}
+        - {source_type: clause_id, value: "1.2.2", verified: true}
+        - {source_type: clause_id, value: "1.2.3", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "2", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+    typical_reversibility: costly      # 人工判断：中介承载的路由/转换/治理策略与全部参与方契约绑定，去中介化须重建点对点契约面
+    applicability:
+      problem_space:                   # 骨架源：1.2.2「适用条件（摘要）」列
+        - "[企业级异构系统集成]（与 1.2.3 Broker 中介行「异构集成、需要集中策略点」同源语境）"
+      current_space:
+        - "[既有异构系统存量与既定中间件/平台]（1.3 现状空间：既有中间件/平台限定通信风格候选；归类为人工判断，母本列未标空间）"
+      delivery_space: []               # 母本本行未给交付空间条件（G-STY-1）
+    envelope:                          # 骨架源：「互操作性↑；中介成为瓶颈/单点」；「互操作性」无 6.2.1 属性族 → 映射可修改性族（G-ENV-1）
+      - metric: "可修改性：典型变更的实现成本（跨边界契约变更数）"
+        bound_expr: "新增/替换参与方 → 跨边界契约变更数 ≤ 1（中介侧路由/转换策略）+ |该参与方自身契约面|，既有参与方内部变更数 = 0（「互操作性↑」的参数化落点：集成点集中于中介）；参数：参与方数、中介路由/转换规则数"
+        source: {source_type: row_id, value: "1.2.2-SOA", verified: true}
+      - metric: "吞吐量"
+        bound_expr: "throughput(system) ≤ throughput(中介集群)（「中介成为瓶颈」：集中式消息路由/转换使全局吞吐上界由中介容量决定）；参数：中介节点数、消息体量、路由/转换规则复杂度"
+        source: {source_type: row_id, value: "1.2.2-SOA", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "中介单点故障的影响面比例 = 经中介的流量占比（「中介成为单点」）；SLO 提升通道 = 中介集群冗余与故障域分布；参数：中介冗余配置、参与方降级路径"
+        source: {source_type: row_id, value: "1.2.2-SOA", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 每交互一次中介跳（路由/转换开销）；参数：消息体量、路由规则数、转换复杂度"
+      failure_modes: ["中介单点故障（经中介流量全局不可用）", "中介成为吞吐瓶颈", "ESB 承载业务逻辑 → 中介变更频繁且高风险（AP1）"]   # 三项均骨架源：1.2.2 包络要点列 + 反模式列
+      consistency_impact: "中介不改变一致性级别；若中介承载状态转换/业务规则则引入新的一致性边界（应视为 AP1）"   # 人工判断（与 STY-005 同型）
+      observability_requires: ["中介级流量/延迟/错误计量", "路由与转换策略变更审计", "参与方到中介的连接健康度"]
+      ops_cost: "[中介集群高可用运维 + 集中策略点治理；集中式 → 单点运维压力高（与 STY-005 同型）]"
+      skill_prerequisites: ["中介产品运维（ESB 平台）", "路由/转换策略设计", "集中策略点的权限与变更治理"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - peer_entry: STY-005
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.3-Broker 中介", verified: true}   # 骨架源：本行定义含「ESB（企业服务总线：集中式消息路由/转换/治理中介）」→ ESB 为 Broker 中介的实例形态；对侧 STY-005 已登记同一事实（镜像行，非新增命题），relation 取 composable（人工判断：母本未声明必选）
+    constraints_imposed:               # 交叉表源：1.4 施加表（通用行 6/10）；1.4 表无 SOA 实例 → 按本行定义人工实例化（G-STY-2）
+      - {target_aspect: 2, constraint: "分解单元为服务，服务间交互经中介路由（本行定义「服务化 + ESB/中介治理」的实例化）", level: hard}   # 人工实例化（1.4 施→2 未给 SOA 行）
+      - {target_aspect: 3, constraint: "跨单元契约须与中介的路由/转换能力自洽（V2 消费面）", level: hard}   # 人工实例化（1.4 施→3 未给 SOA 行）
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）；中介吞吐/单点两项上界尤其约束高吞吐与高可用目标", level: hard}
+      - {target_aspect: 9, constraint: "ESB 承载业务逻辑属守护对象（反模式 → G 规则播种）", level: soft}   # 交叉表源：本行反模式列 + STY-005 同型登记
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（connects 须含中介端点）；人类层：投影视图必须表达所选风格（中介与参与方的星型拓扑须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.2「典型反模式」列（本行一项，不增补）
+      - pattern_id: STY-017-AP1
+        description: "ESB 承载业务逻辑"
+        detection_predicate: "∃ b, d: [b 为 ESB/中介单元] ∧ unit(b) ∧ responsibility(b, d) ∧ [d 为业务规则（非路由/转换/策略）]"
+        signal_level: P1               # 人工判断（MJ-4）：与 STY-005-AP1 同型（业务逻辑沉积在中介里）；1.2.5 无涉本风格的冲突行、1.5 无对应硬性质 → 不满足 P0 判据；结构漂移限期整改（使中介吞吐/可用性两项上界随业务变更频繁失效）
+    formal_anchor:
+      - {property_id: V2, role: implements}     # 参与方 ↔ 中介的协议须属 allowed_protocols(S)
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 3, support_claim: "1.2.2 部署风格权衡的元方法（母本登记提取面为子维度级：1.2.2/1.2.3 分布式风格权衡的元方法——本行与 1.2.3 Broker 行的权衡同属其覆盖面）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 2, support_claim: "风格对比与架构决策方法（母本登记提取面为子维度级，未限定行）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：异构系统集成的契约转换集中于中介，新增参与方的跨边界契约变更数被收敛（互操作性↑）；代价：全局吞吐上界由中介容量决定、中介单点故障影响面为经中介的全部流量，且中介成为集中策略点后其变更风险与治理成本上升。母本将 ESB 明确定义为「集中式消息路由/转换/治理中介」，故本风格与 1.2.3 的 Broker 中介（STY-005）共享同一组包络代价与反模式。"
+      typical_scenarios: "企业级异构系统集成（多套既有系统、多协议/多数据格式）、需要集中策略点（安全/路由/审计）的集成场景、既有中间件平台限定通信风格候选的棕地项目（1.3 现状空间）。"
+      common_misuse: "把业务规则写进 ESB 的路由/转换脚本（AP1）；以中介单点承载全部关键流量而不建集群冗余与降级路径；在绿地小团队场景选用本风格（适用条件为企业级异构集成，不匹配时中介成本无对应收益）；把 SOA 与微服务混为一谈而不登记 envelope 差异（本风格的吞吐上界由中介决定，微服务的伸缩粒度为单服务）。"
+
+  - entry_id: STY-018
+    kind: STY
+    name: Serverless / FaaS
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.2-Serverless / FaaS", verified: true}
+        - {source_type: clause_id, value: "1.2.2", verified: true}
+        - {source_type: clause_id, value: "1.2.5", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+    typical_reversibility: costly      # 人工判断：函数粒度 + 平台托管伸缩 + 状态外置三者共同绑定平台编程模型与托管设施，迁出须重建运行时与状态层
+    applicability:
+      problem_space:                   # 骨架源：1.2.2「适用条件（摘要）」列
+        - "[突发/稀疏负载]（负载形态：闲置期占比高）"
+        - "[事件驱动天然契合]（工作负载以事件触发为自然形态）"
+      current_space:
+        - "[平台托管能力可用且被组织接受]（人工判断归类：母本定义含「平台托管伸缩」，其可用性属现状/制度事实；1.3 现状锁定规则 0.11 在此高频适用）"
+      delivery_space: []               # 母本本行未给交付空间条件（G-STY-1）；1.3「无人值守/低运维能力 → 排除重运维风格」是否涵盖本行母本未明示 → 不臆造
+    envelope:                          # 骨架源：「零闲置成本、自动伸缩；冷启动延迟、执行时长限制、状态外置强制」；metric 词汇取 6.2.1
+      - metric: "可伸缩性：单位资源增量带来的容量增量"
+        bound_expr: "capacity 增量由平台自动伸缩承担（无需预留容量）；上界 ∝ 平台伸缩速率与并发配额，伸缩操作时长由平台决定而非本地决策；参数：请求到达率、并发配额、冷启动时长"
+        source: {source_type: row_id, value: "1.2.2-Serverless / FaaS", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99 ≥ P99_warm + P(cold_start) × cold_start_latency（「冷启动延迟」进入尾延迟）；参数：调用稀疏度、平台预热策略、运行时初始化量"
+        source: {source_type: row_id, value: "1.2.2-Serverless / FaaS", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "闲置期资源占用 = 0（「零闲置成本」的参数化形态）；单次执行时长 ≤ [平台执行时长上界]、并发 ≤ [平台并发配额]（方括号为待勘察平台参数，VG-02/M15）；超限流程不可承载 → 1.2.5 硬冲突（STY-018-AP1）"
+        source: {source_type: row_id, value: "1.2.2-Serverless / FaaS", verified: true}
+    cost_profile:
+      latency_budget_delta: "+ 冷启动项（稀疏调用下进入 P99）；参数：运行时初始化量、平台预热策略、调用频率"
+      failure_modes: ["长时运行有状态流程（1.2.5 硬冲突行，AP1）", "冷启动导致的尾延迟抖动", "状态外置强制下的托管存储依赖与一致性/延迟代价", "平台配额与执行时长限制造成的静默截断"]   # 第一项骨架源 1.2.2 反模式列 + 1.2.5；第二/三项源自包络要点列；第四项人工判断
+      consistency_impact: "状态外置强制 → 函数实例不得承载跨调用状态，一致性由托管存储与事件重放语义决定（方面 4/5 输入）；重复投递须以幂等应对（联动 5.5 idempotent）"   # 骨架源「状态外置强制」+ 人工判断
+      observability_requires: ["函数级调用、冷启动与执行时长计量", "跨函数/跨事件的调用链追踪（平台侧 trace 与关联 ID）", "配额触顶与截断事件可观测"]
+      ops_cost: "[基础设施运维由平台托管（无集群运维面）；成本转移到配额治理、冷启动优化、平台锁定评估与账单侧可观测性]"
+      skill_prerequisites: ["函数粒度切分与事件触发建模", "状态外置设计（托管存储/事件日志）", "幂等与重复投递处置", "平台配额与冷启动的性能治理"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - peer_entry: STY-003
+        relation: composable
+        evidence: {source_type: row_id, value: "1.2.2-Serverless / FaaS", verified: true}   # 骨架源：本行适用条件「事件驱动天然契合」+ 定义「事件触发」→ 部署风格与通信/协调风格（事件驱动，发布订阅）的适配声明；relation 取 composable（人工判断：母本措辞为「契合」而非「必选」，不构成 requires）
+    constraints_imposed:               # 交叉表源：1.4 施加表（通用行 6/10）；本风格实例源自本行定义与包络要点列（G-STY-2）
+      - {target_aspect: 2, constraint: "分解单元为函数粒度、以事件触发为入口（本行定义「函数粒度、事件触发」的实例化）", level: hard}   # 人工实例化（1.4 施→2 未给本风格行）
+      - {target_aspect: 4, constraint: "状态外置强制：函数实例不得承载跨调用状态，状态须外置到托管存储/事件日志", level: hard}   # 骨架源：包络要点列「状态外置强制」
+      - {target_aspect: 5, constraint: "长时运行有状态流程不可由本风格承载（1.2.5 硬冲突行）→ 须改用其他部署风格或经批准例外覆盖（has_approved_exception）", level: hard}   # 交叉表源 1.2.5
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）；执行时长/并发配额与冷启动项尤其约束低延迟与长流程目标", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（style/deployed_on，节点侧为平台托管）；人类层：投影视图必须表达所选风格（触发器 → 函数 → 托管状态的路径须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.2「典型反模式」列（本行一项，母本自带「硬冲突，见 1.2.5」标注）
+      - pattern_id: STY-018-AP1
+        description: "长时运行有状态流程"
+        detection_predicate: "∃ f, p: unit(f) ∧ [f 为函数粒度的平台托管单元] ∧ responsibility(f, p) ∧ [p 为长时运行且需跨调用保持状态的流程] ∧ ([p 的单次执行时长 > 平台执行时长上界] ∨ [p 的状态无法外置]) ∧ ¬has_approved_exception(·, ·, ·)"
+        signal_level: P0               # 交叉表源（MJ-4 判据）：1.2.5 硬冲突行「Serverless × 长时运行有状态流程 → 冲突（执行时长限制）」+ 未批准例外 → V3 硬失败 → 0.14 P0 检出即阻塞。例外覆盖须走 1.2.5 机制（完整 ADR + 可推翻指标，登记为 has_approved_exception）；无出处的覆盖 = 纪律一违例
+    formal_anchor:
+      - {property_id: V2, role: implements}     # 触发器/协议端点须属 allowed_protocols(S)
+      - {property_id: V3, role: implements}     # 1.2.5 硬冲突行的条目化落点即 AP1（conflict_matrix(hard) ∧ active ∧ ¬has_approved_exception）
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 3, support_claim: "1.2.2 部署风格权衡的元方法（母本登记提取面为子维度级：1.2.2/1.2.3 分布式风格权衡的元方法——执行时长/状态外置类权衡属其覆盖面）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：闲置期资源占用为零、容量增量由平台自动伸缩承担（无需预留与集群运维），事件触发形态与事件驱动通信天然契合；代价：冷启动项进入尾延迟、执行时长与并发配额构成硬上界、状态外置强制把一致性责任推给托管存储与幂等设计。母本把「长时运行有状态流程」登记为硬冲突（1.2.5）而非一般反模式——即本风格的适用边界是可机器判定的阻塞项，不是权衡建议。"
+      typical_scenarios: "突发/稀疏负载（流量峰谷差大、闲置期长）、事件驱动的处理管道（对象存储/消息/流触发）、无需长时状态的短时任务（Webhook、异步作业、定时任务）、以最小运维面换取按量成本的场景。"
+      common_misuse: "把长时运行有状态流程塞进函数（AP1，P0 阻塞项）；以函数内全局变量/临时目录承载跨调用状态（违反状态外置强制）；忽略冷启动对 P99 的影响而在延迟敏感路径使用；未登记配额与执行时长上界即宣称弹性无上限（envelope 第三项被当作无条件收益）。"
+
+  - entry_id: STY-019
+    kind: STY
+    name: 边缘-中心混合
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.2-边缘-中心混合", verified: true}
+        - {source_type: clause_id, value: "1.2.2", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: "3", verified: true}
+    typical_reversibility: costly      # 人工判断：计算放置与数据主权约束共同决定单元到节点映射，回迁须重建数据放置与同步链路
+    applicability:
+      problem_space:                   # 骨架源：1.2.2「适用条件（摘要）」列
+        - "[物联网]（大量分布式采集端与带宽约束）"
+        - "[低延迟交互]（响应路径不可经中心往返）"
+        - "[数据主权约束]（合规要求数据不出辖区；母本定义亦含「按…合规要求…分布」）"
+      current_space:
+        - "[存在边缘节点基础设施且运维可达]（人工判断归类：母本包络要点列「边缘运维可达性差」的反面即现状前提；1.3 现状空间）"
+      delivery_space: []               # 母本本行未给交付空间条件（G-STY-1）
+    envelope:                          # 骨架源：「延迟↓、带宽↓；一致性管理复杂度↑」；metric 词汇取 6.2.1（带宽 → 性能族资源占用；一致性无属性族 → 归 cost_profile，G-ENV-1）
+      - metric: "延迟分位数 P99"
+        bound_expr: "边缘承载的请求：P99 ≥ P99_edge 且不含回源网络项；需回源的请求：P99 ≥ P99_edge + network_hop(edge→center)；整体上界由回源比例决定（「延迟↓」的参数化落点）；参数：边缘节点覆盖、回源比例、边缘侧处理能力"
+        source: {source_type: row_id, value: "1.2.2-边缘-中心混合", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "回源带宽 = 总流量 × 回源比例（「带宽↓」的参数化落点：边缘处理/聚合把带宽消耗压到回源侧）；参数：边缘聚合率、数据新鲜度要求、缓存策略"
+        source: {source_type: row_id, value: "1.2.2-边缘-中心混合", verified: true}
+    cost_profile:
+      latency_budget_delta: "边缘路径：无回源项；回源路径：+ 一次 edge→center 网络跳（参数：回源比例、链路质量）"
+      failure_modes: ["边缘节点承担需要全局视图的决策（AP1）→ 决策基于不完整状态", "一致性管理复杂度↑：边缘与中心的状态收敛依赖同步策略（部分失败/乱序/重放）", "边缘运维可达性差 → 故障检测与恢复时长（MTTR）显著高于中心侧", "数据主权约束下的放置错误（合规风险）"]   # 第一/二/三项骨架源 1.2.2 反模式列 + 包络要点列；第四项人工判断（源自适用条件「数据主权约束」）
+      consistency_impact: "一致性管理复杂度↑（母本原文）：边缘与中心间为最终一致形态，收敛时长由同步策略决定（参数：边缘节点数、同步频率、冲突解决规则）；6.2.1 无一致性属性族 → 该代价归本字段而非 envelope（G-ENV-1）"
+      observability_requires: ["边缘节点健康度与可达性观测（运维可达性差的前提补偿）", "边缘 ↔ 中心同步滞后与冲突计量", "数据放置与辖区归属可查（合规校验面）"]
+      ops_cost: "[边缘运维可达性差（母本原文）：节点分散、物理可达性低、更新与故障恢复须远程批量执行；成本随边缘节点数上升]"
+      skill_prerequisites: ["计算放置决策（按延迟/带宽/合规切分）", "边缘-中心数据同步与冲突解决设计", "远程批量运维与可观测性建设"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 母本对本行无叠加声明、1.2.5 无涉本风格的冲突行；MJ-5/MJ-9 同 STY-013。注：本风格与通信/协调风格（如事件驱动）的组合在实践中常见，但母本未登记 → 不入本字段（禁造规范）
+    constraints_imposed:               # 交叉表源：1.4 施加表（通用行 6/10）；本风格实例源自本行定义与 1.2.2 部署切分线判定规则（G-STY-2）
+      - {target_aspect: 2, constraint: "单元到节点映射属本子维度决策面（1.2.2 切分线规则：决策改变部署单元数量/单元边界/单元到节点映射/网络边界/协议端点拓扑 → 归方面 1）；计算放置按延迟/带宽/合规要求切分", level: hard}
+      - {target_aspect: 4, constraint: "数据放置须满足合规/数据主权要求（本行定义「按…合规要求…分布」+ 适用条件「数据主权约束」）：辖区归属为硬约束，不得以性能理由覆盖", level: hard}
+      - {target_aspect: 6, constraint: "本条目 envelope = 质量目标可达性上界（V4 消费）；回源比例同时决定延迟与带宽两项上界", level: hard}
+      - {target_aspect: 10, constraint: "机器层：1.5 拓扑谓词集（deployed_on 为核心登记面，节点角色须可辨）；人类层：投影视图必须表达所选风格（边缘/中心两区与同步链路须可辨）", level: hard}
+    anti_patterns:                     # 骨架源：1.2.2「典型反模式」列（本行一项，不增补）
+      - pattern_id: STY-019-AP1
+        description: "边缘节点承担需要全局视图的决策"
+        detection_predicate: "∃ u, n, d: unit(u) ∧ deployed_on(u, n) ∧ [n 为边缘节点] ∧ responsibility(u, d) ∧ [d 为需要全局状态视图的决策]"
+        signal_level: P1               # 人工判断（MJ-4）：1.2.5 无涉本风格的冲突行、1.5 无对应硬性质 → 不满足 P0 判据；结构漂移限期整改（决策基于不完整状态，直接影响正确性与一致性收敛）。节点角色（边缘/中心）谓词缺失 → 方括号占位 + VG-03/M15
+    formal_anchor:
+      - {property_id: V2, role: implements}     # 边缘 ↔ 中心的 connects(u1,u2,p) 须属 allowed_protocols(S)（弱链路下协议选择是校验面）
+      - {property_id: V4, role: consumed_by}
+      - {property_id: V5, role: implements}
+    references:
+      - {bib_id: 3, support_claim: "1.2.2 部署风格权衡的元方法（母本登记提取面为子维度级：1.2.2/1.2.3 分布式风格权衡的元方法——计算放置与一致性代价的权衡属其覆盖面）；母本未给本行专属提取面 → 不追加其他书目（M6 禁止以不承载该主张的文献充当出处）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：把响应路径与数据聚合压到边缘，延迟上界不含回源项、回源带宽按回源比例收敛，并满足数据主权类合规要求；代价：一致性管理复杂度↑（边缘与中心为最终一致，收敛时长由同步策略决定）、边缘运维可达性差使 MTTR 显著高于中心侧。母本把「边缘节点承担需要全局视图的决策」列为本风格的典型反模式——即放置决策的判据是『该决策需要多大范围的状态视图』，而非『哪一侧算力更近』。"
+      typical_scenarios: "物联网与大规模采集端场景、低延迟交互（工业控制、实时媒体、就近接入）、数据主权/辖区合规约束下的数据放置、带宽受限或链路不稳定环境。"
+      common_misuse: "在边缘节点做需要全局视图的调度/定价/风控决策（AP1）；以性能理由覆盖数据辖区约束（constraints 施→4 为硬）；未建边缘可观测性即上线（运维可达性差 → 故障不可诊断）；把边缘-中心混合当作单纯 CDN 缓存（忽略状态同步与一致性收敛的设计责任）。"
+
+  # ══════════ 子维度四：风格选择元方法（1.2.4）→ STY-020…STY-024 ══════════
+  # 通用说明一（无包络/无反模式骨架源）：1.2.4 表仅三列（元方法｜过程定义｜适用条件），
+  #   **无「包络要点」列、无「典型反模式」列** → 本块 envelope 与 anti_patterns 均无骨架源。
+  #   envelope: [] 依 kind_profile_STY 的 entry_level_exemptions（STY-020…STY-024 豁免 C-ENV）
+  #   ＋ README §5 的 C-ENV 范围（仅源行属 1.2.1/1.2.2/1.2.3 的条目）双保险；
+  #   anti_patterns: [] 因母本未给反模式列（禁造规范），过程性误用一律落 narrative.common_misuse
+  #   ——0.17.7 门槛 3：不可在白板谓词上求值的反模式即叙事，降为 narrative 内容。
+  # 通用说明二（cost_profile 的「不适用」登记）：七字段为 kind 剖面必填（M2 fields_complete），
+  #   元方法不进入运行时路径 → latency_budget_delta / consistency_impact 显式登记「不适用」
+  #   而非留空（留空 = 字段缺失，M2 不放行；填运行时数值 = 假精确，0.17.7 门槛 2 拒绝），
+  #   过程性代价落 failure_modes / observability_requires / ops_cost / skill_prerequisites → MJ-11。
+  # 通用说明三（与 0.18.2 S 步骤的对应为人工判断）：STY-021 ↔ S2 约束排除（同名同操作）、
+  #   STY-020 ↔ S4 包络校验、STY-024 ↔ S1 applicability 求值 + S5 排序、STY-023 ↔ S5 分支二
+  #   （CH-B 推迟）——名称与操作同构，母本未显式登记该映射 → MJ-10。仅用作 provenance 指针
+  #   与注释论证，不据此新增任何规范命题。
+  # 通用说明四（compatibility 只登记 @1391 典型链的相邻对）：母本原文「元方法可组合
+  #   （典型：约束排除 → 质量属性驱动 → 模式匹配排序 → 演进式落地）」→ 登记链内相邻对
+  #   021↔020、020↔024、024↔023（双向镜像闭合，M9 peer 全部在本批入库）；
+  #   链外各对（含 STY-022 与任何条目）母本未实例化 → 不登记（禁造规范）。
+  # 通用说明五（1.4 施加表的风格实例行不在本块重复登记）：施→2/3/4/5/8 的实例措辞
+  #   均以具体风格为主语（单体 →…／微服务 →…／事件驱动 →…），经本方法**产出的**风格条目
+  #   传导，元方法条目只登记过程性约束（施→1）、质量属性输入面（施→6，仅 STY-020）、
+  #   守护规则消费面（施→9，仅 STY-021）与通用行（施→10）。
+  # 通用说明六（适用条件列未区分三空间）：按 1.3 三空间定义归类（人工判断）——
+  #   「新系统／棕地项目」归现状空间，「初创团队」「团队能力」归交付空间，其余归问题空间；
+  #   「作为以上各方法的子步骤统一执行」是执行位序而非三空间条件 → 落 constraints_imposed。
+  # 通用说明七（V3 的登记位）：1.2.5 冲突矩阵是四子维度组合的强制元数据，任何元方法的产出
+  #   都须过 V3；本块只在 STY-021（其 S2(ii) 硬冲突对检验是 V3 在选型期的执行形态）登记
+  #   role: implements，其余四条登记 V5 triggers（风格定案属高影响，纪律二）。
+
+  - entry_id: STY-020
+    kind: STY
+    name: 质量属性驱动（风格选择元方法）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.4-质量属性驱动", verified: true}
+        - {source_type: clause_id, value: "1.2.4", verified: true}
+        - {source_type: clause_id, value: "0.18.2", verified: true}   # S4 包络校验（MJ-10 人工判断：同构对应）
+        - {source_type: clause_id, value: "1.4", verified: true}       # 接收表方面 6 行（软→硬）＋施加表通用行
+        - {source_type: clause_id, value: "1.5", verified: true}       # V4/V5
+        - {source_type: clause_id, value: "6.2.1", verified: true}     # 属性族与指标封闭词汇
+        - {source_type: bib_id, value: "12", verified: true}
+    typical_reversibility: free      # 人工判断：元方法不落地结构，改选 = 重跑选择过程；free 指无结构性回退代价，非指无留痕义务（0.18.3 纪律 3：禁止静默重跑，重跑须推进版本向量并留痕）
+    applicability:
+      problem_space:                 # 骨架源：1.2.4「适用条件」列（归类依 1.3，人工判断，见块头通用说明六）
+        - "[质量属性已量化（方面 6 输入充分：六要素场景在案）]"
+      current_space:
+        - "[新系统（无既有结构锁定，0.11 现状空间锁定集为空）]"
+      delivery_space: []             # 母本本行未给交付空间条件（G-STY-1）
+    envelope: []                     # 剖面豁免：kind_profile_STY.entry_level_exemptions（STY-020…STY-024，check C-ENV）；元方法不改变质量属性包络，而是产生包络判定的输入 → 无 0.8 意义上的可参数化界可声明，强行填写即假精确（0.17.7 门槛 2）
+    cost_profile:
+      latency_budget_delta: "不适用（元方法不进入运行时路径，无延迟项）；运行时延迟面由本方法产出的风格条目（STY-001…STY-019）的 latency_budget_delta 承载"   # MJ-11
+      failure_modes: ["适用条件不满足即执行：质量属性未量化 → 属性到风格特征的映射退化为主观判断，产出无出处（0.4 门槛失败 → FM-1）", "属性间冲突未求交即取单属性最优 → 可行集偏窄或为空（FM-4 全候选排除）", "以属性优先级替代包络判定：跳过 bound_expr 代入场景参数 → 目标可达性无据，V4 不可校验（假精确）"]   # 三项人工判断（源自过程定义的三个操作环节：映射、求交、可达性判定）
+      consistency_impact: "不适用（无运行时一致性面）；产出的部署/通信风格决定一致性形态，属方面 4 输入"   # MJ-11
+      observability_requires: ["属性 → 风格特征映射表逐条可查且带出处（0.4）", "求交过程留痕：可行集、被排除的属性/候选及依据（0.18.3 纪律 2 步骤日志）", "逐候选三值判定（reachable / reachable_with_cost / unreachable）与 cost_ledger 可查（S4 输出）"]
+      ops_cost: "[无独立运维面；成本落在属性量化（6.2 六要素场景编写）与映射表的维护/复核]"
+      skill_prerequisites: ["质量属性场景量化（6.2 六要素）", "属性 → 风格特征映射的判据能力（须用 6.2.1 封闭指标词汇，禁自造属性族）", "包络判定与三值裁决（0.18.2 S4）＋不可达时的升级处置（FM-5 → CH-D）"]
+      aggregation_semantics: itemwise
+    compatibility:                   # 骨架源：1.2.4 @1391「元方法可组合（典型：约束排除 → 质量属性驱动 → 模式匹配排序 → 演进式落地）」；只登记链内相邻对（块头通用说明四）
+      - {peer_entry: STY-021, relation: composable, evidence: "1.2.4 @1391 典型链『约束排除 → 质量属性驱动』：本条为链中后继（镜像登记于 STY-021）"}
+      - {peer_entry: STY-024, relation: composable, evidence: "1.2.4 @1391 典型链『质量属性驱动 → 模式匹配排序』：本条为链中前驱（镜像登记于 STY-024）"}
+    constraints_imposed:
+      - {target_aspect: 6, constraint: "属性映射与求交结果构成 S4 包络校验的候选集输入；目标须落在候选风格包络内，全部候选包络均不含目标 → 升级裁决（1.4 接收表方面 6 行：软→硬），**禁止自动降目标或假装可达**（S4 失败分支）", level: hard}
+      - {target_aspect: 1, constraint: "产出的四子维度组合须经 1.2.5 冲突矩阵自洽性检查（V3）并走批准路径（纪律二 → V5）；元方法不豁免任一检查", level: hard}
+      - {target_aspect: 10, constraint: "机器层：映射、求交与 verdict 表入 selection_log / step_log（0.18.2 S4 输出）；人类层：投影视图必须表达所选风格（1.4 施→10 通用行，经产出风格传导）", level: hard}
+    anti_patterns: []                # 母本 1.2.4 表无「典型反模式」列 → 无骨架源（块头通用说明一）；过程性误用见 narrative.common_misuse
+    formal_anchor:
+      - {property_id: V4, role: triggers}     # 求交得可行集 = candidate_styles → 触发 ∀ quality_goal g: g ∈ ⋃ envelope(candidate_styles)
+      - {property_id: V5, role: triggers}     # 风格定案属高影响决策（纪律二）→ ∃ approved(ADR(S))
+    references:
+      - {bib_id: 12, support_claim: "质量属性驱动的风格选择元方法（1.2.4）——母本登记提取面与本行逐字对应（行级提取面，非子维度级推定）", compile_usage: metadata_extraction, trust_grade: "[已核验（联网核验时间 2026-09-13，Pearson 官方页面）]"}   # 母本另登记中文影印/翻译版（机械工业出版社 2023，ISBN 978-7-111-71680-8 `[已核验]`）为替代锚点
+    narrative:
+      benefit_cost_analysis: "收益：把风格选择从『流行度驱动』转为『目标可达性驱动』——每个质量属性映射到使其可达/受损的风格特征后求交，可行集的每个成员都有属性层面的辩护理由，且产出直接供给 S4 包络校验与 V4。代价：前提是质量属性已量化（方面 6 输入充分），量化本身是本方法最贵的一环；属性数量上升时求交易得空集（FM-4），须回退到约束排除或升级裁决；母本把适用域限定为『新系统』——棕地场景下既有结构锁定会吞掉大部分候选，此时约束排除法（STY-021）是更合适的入口。"
+      typical_scenarios: "新系统（greenfield）的风格定型、质量属性目标已写成六要素场景且彼此有明确优先级的场合、需要在多个候选风格间给出可辩护取舍的项目、作为 @1391 典型链中约束排除之后的第二步（在硬约束过滤后的幸存集上做属性求交）。"
+      common_misuse: "在质量属性未量化时执行（映射退化为主观偏好，产出无出处）；只做单属性最优而不求交（忽略属性间冲突，可行集偏窄）；以属性优先级排序替代 bound_expr 代入判定（跳过 S4 → 目标可达性无据）；求交得空集时自行放宽属性目标（母本明示禁止自动降目标，须走 FM-5 → CH-D 升级）；在棕地项目上以本方法为唯一入口（现状空间锁定未消费）。"
+
+  - entry_id: STY-021
+    kind: STY
+    name: 约束排除法（风格选择元方法）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.4-约束排除法", verified: true}
+        - {source_type: clause_id, value: "1.2.4", verified: true}
+        - {source_type: clause_id, value: "0.18.2", verified: true}   # S2 约束排除（同名同操作，MJ-10）
+        - {source_type: clause_id, value: "1.4", verified: true}       # 接收表方面 9 行（守护规则为硬）＋外部强加决策行
+        - {source_type: clause_id, value: "1.5", verified: true}       # V3/V5
+        - {source_type: clause_id, value: "0.11", verified: true}      # 现状空间锁定（棕地）
+    typical_reversibility: free      # 人工判断：同 STY-020（改选元方法 = 重跑选择过程，无结构性回退代价；0.18.3 纪律 3 禁止静默重跑）
+    applicability:
+      problem_space:                 # 骨架源：1.2.4「适用条件」列
+        - "[硬约束多而目标弹性大]"
+      current_space:
+        - "[棕地项目（既有平台/系统约束在位 → 0.11 现状空间锁定集非空）]"
+      delivery_space:
+        - "[团队能力构成硬约束来源之一]（母本过程定义列举的三类硬约束『合规、现状平台、团队能力』分属问题/现状/交付三空间——归类为人工判断）"
+    envelope: []                     # 剖面豁免：kind_profile_STY.entry_level_exemptions（STY-020…STY-024，check C-ENV）
+    cost_profile:
+      latency_budget_delta: "不适用（元方法不进入运行时路径，无延迟项）；运行时面由产出的风格条目承载"   # MJ-11
+      failure_modes: ["硬约束清单不完备：未装配外部强加决策（『必须用微服务/必须上 Serverless』类）→ 排除漏项，产出在强加约束下不可行", "把软约束当硬约束排除 → 过度排除（FM-4 全候选排除）；0.18.2 S2 明示『软约束失败 = 降权记录，不排除』", "排除无依据指针：每个排除须附约束 ID + 条目字段指针，缺失则 ADR 被拒候选节不可核验（0.5）", "以排除替代批准：外部强加须走 CH-A 完整分析（强加不等于免检，1.4 接收表）"]   # 四项人工判断（源自 S2 的四个操作环节）
+      consistency_impact: "不适用（无运行时一致性面）；产出的部署/通信风格决定一致性形态，属方面 4 输入"   # MJ-11
+      observability_requires: ["排除记录逐条可查：被排除候选 + 理由 + 依据指针（约束 ID + 条目字段指针）", "硬约束清单及其出处可查（0.4；含外部强加登记与生效守护规则集）", "软约束降权记录可查（降权值入 S5）", "全排除 → FM-4/CH-D 升级声明留痕（排除性约束清单 + 裁决选项空间）"]
+      ops_cost: "[无独立运维面；成本落在硬约束清单的维护、出处核验与外部强加决策的登记跟踪]"
+      skill_prerequisites: ["硬/软约束分级判读（1.4 两表 + 0.18.2 S2；『硬/软按条』行须逐条判读 → MJ-4）", "排除依据指针登记（约束 ID + 条目字段指针）", "全排除时的升级处置（FM-4 → CH-D：修订目标/放宽强加/追加投入/注册表扩充）"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - {peer_entry: STY-020, relation: composable, evidence: "1.2.4 @1391 典型链『约束排除 → 质量属性驱动』：本条为链中前驱（镜像登记于 STY-020）"}
+    constraints_imposed:
+      - {target_aspect: 1, constraint: "排除以硬约束为限；软约束失败 = 降权记录不排除（0.18.2 S2），降权值入 S5——本方法不得被用作『以软约束淘汰候选』的正当化", level: hard}
+      - {target_aspect: 9, constraint: "守护规则（P0/P1）属硬约束来源（1.4 接收表方面 9 行，级别硬）→ 排除检验必须消费生效守护规则集；演化观测数据为软（仅作风格重审提议的事实源）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：排除记录入 selection_log（step_log + exclusion_record 谓词）；人类层：ADR 被拒候选节须引用排除记录（0.5 必备节）", level: hard}
+    anti_patterns: []                # 母本 1.2.4 表无「典型反模式」列（块头通用说明一）
+    formal_anchor:
+      - {property_id: V3, role: implements}   # 人工判断：S2(ii)「检验候选集内部及候选×已定条目的 compatibility(hard_conflict) 对」是 V3（不存在未被批准例外覆盖的硬冲突）在选型期的执行形态
+      - {property_id: V5, role: triggers}
+    references: []                   # 母本未给本行登记提取面：书目 12/13 的登记面分别限定于「质量属性驱动的风格选择元方法（1.2.4）」与「演进式元方法（1.2.4）」，不含约束排除法。候选书目 2 的登记面为「风格对比与架构决策方法」（未限定行），但母本未将其指向 1.2.4 → 不擅自扩张解释面（M6 禁止以不承载该主张的文献充当出处）；登记为文献缺口待人工裁决 → gaps: G-STY-5
+    narrative:
+      benefit_cost_analysis: "收益：在硬约束密集的场景下最省认知成本——不必先量化全部质量属性，只需把合规、现状平台、团队能力三类硬约束逐条过筛，剩余即候选；排除记录天然是 ADR 被拒候选节的素材，且每条排除都带约束 ID 与字段指针，可核验性强。代价：本方法只保证『不违反硬约束』，不保证『质量目标可达』——它不产出可达性判定，须由 S4 包络校验（STY-020 的落点）补齐；硬约束清单的完备性是单点风险，漏一条外部强加决策就会放行不可行方案；过度排除（把软约束当硬约束）会直接触发 FM-4。"
+      typical_scenarios: "棕地项目改造（既有平台与技术栈锁定）、强合规行业（金融/医疗/政务的辖区与审计约束）、外部强加决策在案（『必须上某云/必须用某框架』）、团队能力短板明确、作为 @1391 典型链的第一步（先用硬约束收缩候选集，再做属性求交与排序）。"
+      common_misuse: "把软约束（如 1.4 施→8 验证策略适配）当硬约束直接排除候选；排除不附依据指针（被拒候选节沦为叙事）；漏装外部强加决策或对强加决策免检（母本明示『强加不等于免检』，须走 CH-A 完整分析）；排除后即用剩余集定案（跳过 S4 包络校验与纪律二批准）；全排除时自行放宽约束而不升级（母本要求 FM-4 → CH-D，枚举排除性约束清单 + 裁决选项空间）。"
+
+  - entry_id: STY-022
+    kind: STY
+    name: 领域驱动（风格选择元方法）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.4-领域驱动", verified: true}
+        - {source_type: clause_id, value: "1.2.4", verified: true}
+        - {source_type: clause_id, value: "1.2.2", verified: true}   # 部署切分线判定规则（@1359–1364）
+        - {source_type: clause_id, value: "1.4", verified: true}       # 接收表方面 2 行（软）＋施加表通用行
+        - {source_type: clause_id, value: "1.5", verified: true}       # V5
+        - {source_type: bib_id, value: "7", verified: true}
+    typical_reversibility: free      # 人工判断：方法可换（重跑选择过程）；但其产出绑定方面 2 的分解边界，若分解已定案则重跑受上游已定决策约束（0.18.2 S0 血缘查询）
+    applicability:
+      problem_space:                 # 骨架源：1.2.4「适用条件」列
+        - "[领域复杂]"
+        - "[方面 2 输入充分（领域分解边界／限界上下文已在案）]"
+      current_space: []              # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space: []
+    envelope: []                     # 剖面豁免：kind_profile_STY.entry_level_exemptions（STY-020…STY-024，check C-ENV）
+    cost_profile:
+      latency_budget_delta: "不适用（元方法不进入运行时路径，无延迟项）；跨上下文交互的延迟面由产出的 1.2.2/1.2.3 风格条目承载"   # MJ-11
+      failure_modes: ["方面 2 输入不足即执行：领域分解边界未定 → 限界上下文候选沦为主观划界（本方法的唯一输入面失守）", "把『候选一个部署单元』读作强制一一映射：母本用词为『候选』，强制映射等价于以领域边界替代 1.2.2 部署切分线判定规则", "跨上下文的通信结构未导出（只导出部署单元、不导出交互形态）→ 方面 3 输入缺口", "领域边界模糊时仍推分布式风格（1.4 接收表方面 2 行：领域边界模糊 → 分布式风格降权）"]   # 四项人工判断（第一/二项源自过程定义用词，第三项源自『部署与通信结构』双产出，第四项源自 1.4 接收表）
+      consistency_impact: "不适用（无运行时一致性面）；上下文间的一致性形态由产出的通信风格决定（1.2.3），属方面 4 输入"   # MJ-11
+      observability_requires: ["限界上下文 → 部署单元候选映射表可查（含偏离项及其理由）", "跨上下文交互的通信结构导出依据可查（落 1.2.3 取值）", "方面 2 输入的版本与出处可查（分解边界定案指针）"]
+      ops_cost: "[无独立运维面；成本落在领域分解边界的维护与上下文映射的复核（方面 2 变更须触发本方法产出重审）]"
+      skill_prerequisites: ["限界上下文识别（方面 2 的 S1 领域驱动分解）", "语义边界判据（2.2.2）", "上下文映射 → 部署/通信结构导出（1.2.2 切分线规则 + 1.2.3 取值）"]
+      aggregation_semantics: itemwise
+    compatibility: []                # @1391 典型链未含本方法，母本亦未登记本方法与链内各方法的组合实例 → 不登记（块头通用说明四，禁造规范）。注：本方法产出的组合仍须过 1.2.5 冲突矩阵（constraints 施→1）
+    constraints_imposed:
+      - {target_aspect: 2, constraint: "部署与通信结构从方面 2 的领域分解边界导出；每个限界上下文『候选』一个部署单元——候选 ≠ 强制，偏离须留痕（母本用词为『候选』→ 软，MJ-4 判读：许可性/候选性条款 → 软）", level: soft}
+      - {target_aspect: 1, constraint: "部署切分线仍按 1.2.2 判定规则（决策改变部署单元数量/单元边界/单元到节点映射/网络边界/协议端点拓扑 → 归方面 1）；领域边界不自动等于部署边界，产出的组合须过 1.2.5 冲突矩阵（V3）并走批准（纪律二 → V5）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：上下文 → 部署单元候选映射与导出依据入 selection_log；人类层：投影视图必须表达所选风格（1.4 施→10 通用行，经产出风格传导）", level: hard}
+    anti_patterns: []                # 母本 1.2.4 表无「典型反模式」列（块头通用说明一）
+    formal_anchor:
+      - {property_id: V5, role: triggers}     # 风格定案属高影响决策（纪律二）；V3 的登记位见块头通用说明七
+    references:
+      - {bib_id: 7, support_claim: "母本登记提取面为「S1 领域驱动分解；2.2.2 语义边界判据」——本行过程定义直接消费该两面（『从方面 2 的领域分解边界导出』『限界上下文＝统一领域模型适用的语义边界』）；母本未给本行 1.2.4 行级提取面，故本条为登记面的下游应用而非行级逐字对应（如实标注，不夸大）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：当领域复杂且方面 2 已给出可信的分解边界时，本方法把风格选择锚定在语义边界上——部署单元与限界上下文对齐可避免跨单元协调成本爆炸（1.4 接收表方面 2 行的理由），且通信结构随上下文映射自然导出，方面 1/2/3 的输入输出链最短。代价：强依赖方面 2 的输入质量，分解未定案时本方法无从执行；母本用词是『候选一个部署单元』而非『必须』——领域边界只是部署切分的输入之一，1.2.2 的切分线判定规则（团队、伸缩、故障隔离、数据主权）仍须独立过一遍；领域边界模糊时按 1.4 应给分布式风格降权，此时强行使用本方法会产出过度分布化的方案。"
+      typical_scenarios: "领域复杂且已有事件风暴/领域建模产出的系统（方面 2 输入充分）、业务子域之间交互形态清晰、需要在多个限界上下文间决定部署粒度与通信结构、DDD 语境下的架构定型与上下文映射（含防腐层/共享内核等关系）落地。"
+      common_misuse: "在方面 2 未定案时先用本方法『倒推』分解边界（输入输出倒置）；把『候选一个部署单元』执行成强制一一映射（忽略团队认知负荷与伸缩粒度，等价于绕过 1.2.2 切分线规则）；只导出部署单元不导出通信结构（方面 3 缺口）；领域边界模糊时仍推微服务（1.4 明示应降权）；以领域名词直接充当部署单元名而不做切分线判定（投影上看似对齐，运行时跨单元协调成本失控）。"
+
+  - entry_id: STY-023
+    kind: STY
+    name: 演进式（风格选择元方法）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.4-演进式", verified: true}
+        - {source_type: clause_id, value: "1.2.4", verified: true}
+        - {source_type: clause_id, value: "0.10", verified: true}    # 临时保守通道条件 (i) 的登记默认值
+        - {source_type: clause_id, value: "0.18.2", verified: true}  # S5 分支二（CH-B 三择，MJ-10）
+        - {source_type: clause_id, value: "0.18.3", verified: true}  # 纪律 4「默认不是免检」
+        - {source_type: clause_id, value: "1.5", verified: true}     # V5
+        - {source_type: bib_id, value: "13", verified: true}
+        - {source_type: bib_id, value: "23", verified: true}
+    typical_reversibility: bounded   # 人工判断：元方法本身可换（重跑选择过程），但其产出含默认起点「模块化单体」（STY-015，typical_reversibility = bounded）与切换点预留；若切换点未参数化预留，改选其他元方法的产出不可低成本回退 → 取 bounded 而非 free
+    applicability:
+      problem_space:                 # 骨架源：1.2.4「适用条件」列
+        - "[需求不确定性高]"
+      current_space: []              # 母本本行未给现状空间条件（G-STY-1）
+      delivery_space:
+        - "[初创团队]"
+    envelope: []                     # 剖面豁免：kind_profile_STY.entry_level_exemptions（STY-020…STY-024，check C-ENV）
+    cost_profile:
+      latency_budget_delta: "不适用（元方法不进入运行时路径，无延迟项）；默认起点（模块化单体 STY-015）的延迟面为进程内调用形态，切换后的形态由目标风格条目承载"   # MJ-11
+      failure_modes: ["未显式预留演化路径与切换点即声称演进式 → 推迟退化为无据拖延（CH-B 要求参数化切换点 + LRM）", "把『默认起点：模块化单体』当免检通道（0.18.3 纪律 4：任何默认候选只改变 S5 先验权重，S1–S4 全步骤照跑）", "推迟不可逆决定但未登记可推翻指标与保守假设 ADR → 0.10 临时保守通道条件不满足", "切换点到达后不执行切换（既成结构固化 → 迁移代价随时间上升，@1353『保留未来拆分选项』失效）"]   # 四项人工判断（第一/三项源自过程定义与 CH-B 同构声明，第二项源自 0.18.3 纪律 4，第四项源自切换点语义）
+      consistency_impact: "不适用（无运行时一致性面）；默认起点的一致性形态见 STY-015（进程内/本地事务可用），切换后由目标风格决定"   # MJ-11
+      observability_requires: ["演化路径与切换点在案可查（参数化触发条件 + LRM）", "推迟项清单与其保守假设 ADR 可查（0.10 临时保守通道条件 (i)/(ii)）", "可推翻指标的观测数据（触发切换点重审的事实源）", "默认起点的偏离记录（偏离登记默认值须留痕）"]
+      ops_cost: "[切换点重审与迁移执行成本：推迟不等于免除，迁移代价随既成结构固化上升（参数：切换点数量、间隔时长、期间累积的结构耦合）]"
+      skill_prerequisites: ["切换点参数化与 LRM（最后责任时刻）设定", "可推翻指标登记（CH-B 保守界的选择）", "不可逆性判读（typical_reversibility 为先验，上下文证据可覆写但覆写须有出处，0.18.2 S6(i)）"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - {peer_entry: STY-024, relation: composable, evidence: "1.2.4 @1391 典型链『模式匹配排序 → 演进式落地』：本条为链末（镜像登记于 STY-024）"}
+      - {peer_entry: STY-015, relation: composable, evidence: "1.2.4 @1388 过程定义『默认起点：模块化单体』＋ @1391『演进式的默认起点「模块化单体」是临时保守通道（0.10 权力条款第三条）的条件 (i) 所指的「登记默认值」之一』（镜像登记于 STY-015）"}
+    constraints_imposed:
+      - {target_aspect: 1, constraint: "默认起点「模块化单体」是 0.10 临时保守通道条件 (i) 的登记默认值：偏离须按该通道记录；且默认不免检——只改变 S5 先验权重，S1–S4 全步骤照跑（0.18.3 纪律 4）", level: hard}
+      - {target_aspect: 1, constraint: "被推迟的不可逆决定须附参数化切换点 + LRM + 可推翻指标（CH-B 同构，@1388）；产出的组合仍须过 1.2.5 冲突矩阵（V3）并走批准（纪律二 → V5）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：切换点、推迟项与可推翻指标入 selection_log（step_log 留痕）；人类层：投影视图必须表达所选风格，且演化路径/切换点须在人类可读产出中可辨（1.4 施→10 通用行 + 本行『显式预留』要求）", level: hard}
+    anti_patterns: []                # 母本 1.2.4 表无「典型反模式」列（块头通用说明一）
+    formal_anchor:
+      - {property_id: V5, role: triggers}     # 风格定案属高影响决策（纪律二）；V3 的登记位见块头通用说明七
+    references:
+      - {bib_id: 13, support_claim: "演进式元方法（1.2.4）；与 CH-B 推迟处置的同构关系——母本登记提取面与本行逐字对应（行级提取面）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 23, support_claim: "1.2.4 演进式元方法的默认起点论证；0.10 临时保守通道条件 (i) 的登记默认值来源——母本登记提取面与本行『默认起点：模块化单体』逐字对应", compile_usage: narrative_only, trust_grade: "[已核验]"}   # compile_usage=narrative_only 依母本登记（概念性引用，不作为编译字段填充来源）
+    narrative:
+      benefit_cost_analysis: "收益：在需求不确定性高、团队规模小的场景下，把『错误代价最高、最难逆转』的风格决策（1.1）拆成可回退的小步——从最小可行架构出发，显式预留演化路径与切换点，推迟不可逆决定；母本明示它与 CH-B 的推迟处置同构，即演进式就是『推迟模式』在风格层的实例，因此它天然带一套已定义的纪律（参数化切换点、LRM、可推翻指标、保守假设 ADR）。默认起点选『模块化单体』不是偏好而是登记默认值：它保留了未来拆分选项（@1353），使切换点的迁移代价有上界。代价：推迟不等于免除——切换点重审与迁移执行的成本随既成结构固化而上升；『显式预留』是硬要求，未参数化切换点的演进式只是拖延；且默认起点不免检（0.18.3 纪律 4），S1–S4 全步骤照跑，本方法省不掉选择过程本身。"
+      typical_scenarios: "初创团队与早期产品（需求不确定性高）、棕地改造的分阶段推进、需要在合规/预算约束下先上线再演化的系统、作为 @1391 典型链的落地环节（约束排除 → 质量属性驱动 → 模式匹配排序 → 演进式落地）、任何以 CH-B 推迟处置的架构决策点在风格层的对应场合。"
+      common_misuse: "以『演进式』为名不做选择（无切换点、无 LRM、无可推翻指标 → 退化为无据拖延）；把默认起点当免检通道（跳过 S1–S4，违反 0.18.3 纪律 4）；偏离登记默认值而不记录（0.10 临时保守通道条件不满足）；切换点到达后不执行切换（结构固化，『保留未来拆分选项』失效）；把演进式等同于『先写大泥球以后再说』（默认起点是模块化单体，模块边界与依赖方向从第一天起就是守护面，见 STY-015-AP1）。"
+
+  - entry_id: STY-024
+    kind: STY
+    name: 模式匹配（风格选择元方法）
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: row_id, value: "1.2.4-模式匹配", verified: true}
+        - {source_type: clause_id, value: "1.2.4", verified: true}
+        - {source_type: clause_id, value: "1.1", verified: true}     # 纪律一（防幻觉第一守卫，@1312）
+        - {source_type: clause_id, value: "0.18.2", verified: true}  # S1 applicability 求值 + S5 排序（MJ-10）
+        - {source_type: clause_id, value: "0.18.3", verified: true}  # 纪律 1 禁即兴
+        - {source_type: clause_id, value: "6.2.3", verified: true}   # 权重（外部指定无带宽；业务推导 ±20%）
+        - {source_type: clause_id, value: "1.5", verified: true}     # V5
+    typical_reversibility: free      # 人工判断：同 STY-020/021（改选/重跑匹配无结构性回退代价；0.18.3 纪律 3 禁止静默重跑）
+    applicability:
+      problem_space:                 # 母本「适用条件」列给的不是三空间触发条件，而是执行位序与强制性 → 位序在此登记为条件、强制性落 constraints_imposed（块头通用说明六）
+        - "[作为 STY-020/021/022/023 的子步骤统一执行（母本原文『作为以上各方法的子步骤统一执行』；无独立触发的三空间条件 → G-STY-1）]"
+      current_space: []
+      delivery_space:
+        - "[执行者为 Agent（母本原文『对 Agent 是强制步骤（纪律一）』→ 使用者为 Agent 时本步骤不可省略，0.10 权力条款同旨）]"
+    envelope: []                     # 剖面豁免：kind_profile_STY.entry_level_exemptions（STY-020…STY-024，check C-ENV）
+    cost_profile:
+      latency_budget_delta: "不适用（元方法不进入运行时路径，无延迟项）；运行时面由被匹配的风格条目承载"   # MJ-11
+      failure_modes: ["问题特征向量含未过出处门槛的事实（0.4 → FM-1 证据缺口，该事实须剔除；剔除致决策不可达 → FM-3）", "适用条件谓词的缺失值按『假』处理 → 沉默排除幻觉（0.18.2 S1 明示『未知 ≠ 假』：事实缺失时标 unknown，候选保留并附勘察义务）", "以匹配度排序替代包络判定与批准（跳过 S4 三值判定与 S5 不可区分处置 → 假精确；跳过纪律二批准 → V5 违例）", "候选非来自注册表条目（开放生成 → 纪律一违例，防幻觉第一守卫失效）", "不可区分时按名义分择一（|Δscore| ≤ 传导不确定区间 → 母本明示禁止，须走 CH-B 三择）"]   # 五项人工判断（前两项源自 S1 判定纪律，第三/五项源自 S4/S5，第四项源自纪律一原文）
+      consistency_impact: "不适用（无运行时一致性面）；匹配产出的风格组合决定一致性形态，属方面 4 输入"   # MJ-11
+      observability_requires: ["逐候选 applicability 求值记录可查（哪些谓词真/假/未知，未知项附勘察义务）", "问题特征向量逐条带出处可查（0.4）", "匹配度得分、权重及其来源可查（6.2.3：外部指定权重无带宽；业务推导权重 ±20%）", "不可区分判定结果与 CH-B 三择裁决留痕"]
+      ops_cost: "[无独立运维面；成本落在问题特征向量的装配与出处核验、适用条件谓词的求值记录维护]"
+      skill_prerequisites: ["问题特征向量装配（三空间事实 + 出处门槛）", "适用条件谓词求值与三值记录（真/假/未知，禁沉默排除）", "匹配度排序与不可区分判定（|Δscore| ≤ 传导不确定区间，0.18.2 S5）"]
+      aggregation_semantics: itemwise
+    compatibility:
+      - {peer_entry: STY-020, relation: composable, evidence: "1.2.4 @1391 典型链『质量属性驱动 → 模式匹配排序』：本条为链中后继（镜像登记于 STY-020）"}
+      - {peer_entry: STY-023, relation: composable, evidence: "1.2.4 @1391 典型链『模式匹配排序 → 演进式落地』：本条为链中前驱（镜像登记于 STY-023）"}
+    constraints_imposed:
+      - {target_aspect: 1, constraint: "对 Agent 为强制步骤（纪律一，@1312）：每一个候选必须来自方法注册表中登记的风格条目（带适用条件元数据），**禁止开放生成**；每一个入选/落选必须引用三空间事实（公理 A2）", level: hard}
+      - {target_aspect: 1, constraint: "匹配度排序不得替代规程其余步骤：不得增步、跳步、改序、在步骤内引入规程外判据（0.18.3 纪律 1，规程偏离 = FM-14）；排序结果仍须过 S4 包络校验、S5 不可区分处置与纪律二批准", level: hard}
+      - {target_aspect: 10, constraint: "机器层：逐候选求值记录与得分入 selection_log / step_log（偏离检测 = 步骤序列 vs 规程 schema 静态比对）；人类层：排序表与被拒候选须可投影（ADR 被拒候选节引用）", level: hard}
+    anti_patterns: []                # 母本 1.2.4 表无「典型反模式」列（块头通用说明一）；纪律一违例（开放生成）为规程级守护对象，不在本条目重复登记（禁造规范）
+    formal_anchor:
+      - {property_id: V5, role: triggers}     # 风格定案属高影响决策（纪律二）；V3 的登记位见块头通用说明七
+    references: []                   # 母本未给本行登记提取面：书目 12/13 的登记面分别限定于「质量属性驱动的风格选择元方法（1.2.4）」与「演进式元方法（1.2.4）」；书目 1 的登记面为 1.2.1 词汇表；均不含模式匹配。候选书目 2（登记面「风格对比与架构决策方法」，未限定行）母本未指向 1.2.4 → 不擅自扩张解释面（M6）；与 STY-021 同登记为文献缺口 → gaps: G-STY-5
+    narrative:
+      benefit_cost_analysis: "收益：把风格选择变成可机器执行的匹配问题——问题特征向量 × 各风格条目的适用条件谓词 → 匹配度排序，使『候选从何而来』有唯一合法答案（注册表条目），从而封死 Agent 凭训练语料流行度自由提案的路径；这也是纪律一（防幻觉第一守卫）在方法层的执行形态。作为其他四个元方法的子步骤统一执行，它让约束排除、质量属性驱动、领域驱动、演进式的候选筛选共用同一套求值与留痕机制。代价：结论质量完全取决于两个输入面——特征向量的事实必须过出处门槛，适用条件谓词必须可求值；谓词所需事实缺失时只能标 unknown（候选保留 + 勘察义务），因此本方法常产出『待定』而非『定案』；匹配度排序不是可达性判定，包络校验（S4）与批准（纪律二）一步都省不掉；权重带不确定区间，得分接近时禁止按名义分择一。"
+      typical_scenarios: "任何风格选型决策点（0.18.1 全覆盖）的候选装配与排序、Agent 执行的选型（强制步骤）、作为 @1391 典型链的第三步（属性求交后的匹配度排序）、需要为 ADR 被拒候选节提供逐候选求值记录的场合、注册表条目扩充后的候选面复核（0.17.6 种子重验证联动）。"
+      common_misuse: "开放生成候选或引入注册表外风格（纪律一违例）；把 unknown 当 false 处理造成沉默排除（S1 明示『未知 ≠ 假』）；特征向量混入无出处事实（FM-1）；以匹配度最高即定案（跳过 S4/S5 与纪律二批准）；得分差在传导不确定区间内仍按名义分择一（假精确，须走 CH-B 三择）；在步骤内引入规程外判据或改序（FM-14）。"
+
+# ============================================================================
+# 注册表级台账（README §2：注册表级信息一律置于顶层节，不进入条目）
+#
+# 本区不含规范命题。每一项或为「母本已有规定的执行留痕」，或为「缺口/人工判断
+# 的显式登记」，均带母本指针。需要新增或修改命题者一律走 R2 → 母本修订（0.13），
+# 不得在此处造法（0.17.1：表格与条目冲突以条目为准，冲突登记为成文法缺陷 FM-12）。
+# ============================================================================
+
+# ---------------------------------------------------------------------------
+# 一、缺口台账（与 profiles.yaml: gaps、predicate_vocabulary.yaml: vocabulary_gaps 联动）
+# ---------------------------------------------------------------------------
+gaps:
+  - gap_id: G-STY-1
+    type: 骨架源不足（适用条件的现状/交付空间事实缺失）
+    statement: "母本 1.2.1–1.2.4 四表的『适用条件』列以问题空间条件为主；现状空间（棕地/在役单体/既有中间件与平台）与交付空间（团队规模与能力、运维能力）条件未逐行给出。1.3『现状空间驱动／交付空间驱动』只给方向性事实（如『既有中间件/平台限定通信风格候选』『无人值守/低运维能力 → 排除重运维风格』），是否逐行涵盖各风格母本未明示。"
+    impact: "受影响条目的 applicability.current_space / delivery_space 留空 []（行内注 G-STY-1，逐条清单由 project.py 汇总）。S1 求值时该两维不参与过滤 → 候选面偏宽，由 S2 约束排除、S4 包络校验与纪律二批准兜住。留空不得被读作『该维不适用』（unknown ≠ false，0.18.6 M15）。"
+    affected: "STY-001…STY-024 中标注 G-STY-1 的 applicability 空列表（本批绝大多数条目）"
+    route: "勘察补录（三空间事实须过 0.4 出处门槛）；若需母本表增设列 → R2 提议（表格变更 = 高影响，不本地扩表）"
+    status: open
+
+  - gap_id: G-STY-2
+    type: 交叉表源不足（1.4 约束接口表无风格实例行）
+    statement: "1.4 施加表以方面为行、以『施→N』为列，仅单体与微服务两行给出风格实例措辞；SOA、Serverless、边缘计算、管道-过滤器等风格各自施加什么未逐风格给出，且表内多行标『硬/软按条』要求逐条判读。"
+    impact: "本批只登记 1.4 表的通用行（施→6 守护规则、施→10 可观测/投影）与母本明文的两行风格实例；其余风格的 constraints_imposed 实例化措辞为人工判断（provenance.origin=hybrid），行内注 G-STY-2，判读规则见 MJ-4。"
+    affected: "STY-005、STY-006、STY-011、STY-013、STY-017、STY-018、STY-019 等的 constraints_imposed"
+    route: "R2 提议：1.4 表补风格实例行，或明示『实例化措辞由条目承载、表只定方面级 obligation』"
+    status: open
+
+  - gap_id: G-ENV-1
+    type: 封闭词汇映射（6.2.1 指标族不覆盖母本包络用语）
+    statement: "6.2.1 指标封闭词汇只含四族：性能（延迟分位数 P50/P99、吞吐量、资源占用）、可用性/可靠性（SLO、错误预算、MTTR、RPO、RTO）、可修改性（典型变更的实现成本：触达单元数/跨边界契约变更数、变更前置时间）、可伸缩性（单位资源增量带来的容量增量、伸缩操作时长）。母本 1.2.x『包络要点』列使用『可测试性↑↑』『可重用性↑』『可扩展性↑↑』『灵活性↑』『可预测性↓』『可调试性↓』『互操作性↑』『带宽↓』『一致性管理复杂度↑』等用语，无对应指标族。"
+    impact: "envelope.metric 只能取封闭词汇 → 按语义映射到最相近族，并在行内注记映射理由（例：『可测试性↑↑』→ 可修改性族，落点为核心可脱离适配器单测的变更成本；『可重用性↑』→ 可修改性族；『可扩展性↑↑』→ 可修改性族；『带宽↓』→ 性能族资源占用；『一致性管理复杂度↑』无指标族 → 归 cost_profile.consistency_impact 而非 envelope）。映射为人工判断，不得被读作母本已登记该指标族。"
+    affected: "STY-008（可测试性）、STY-011（可重用性/可并行）、STY-012（可扩展性）、STY-013（灵活性/可调试性）、STY-017（互操作性）、STY-019（带宽/一致性）等 envelope 与 cost_profile 行"
+    route: "R2 提议扩 6.2.1 指标族或明示映射表；扩表前禁止本地新增 metric 名（M3 词汇封闭）"
+    status: open
+
+  - gap_id: G-STY-3
+    type: 参考资料源缺失（M6 出处门槛无法满足）
+    statement: "STY-012（MVC）在母本参考文献登记提取面中无合法来源：书目 1 的登记面为 1.2.1 词汇表（分层、管道-过滤器、黑板、微内核、Broker），不含 MVC；书目 2 的登记面为『风格对比与架构决策方法』，未登记 MVC 章节。"
+    impact: "该条 references: []（0.17.8 M6 严格式 ∀ reference ∈ E: … 对空集平凡为真；禁止以不承载该主张的文献充当出处）。条目其余字段以母本行为骨架源，不受影响。"
+    affected: "STY-012"
+    route: "勘察补书目并按 0.12 定 compile_usage → 母本参考文献表扩充（高影响，走 R2/ADR）"
+    status: open
+
+  - gap_id: G-STY-4
+    type: 登记义务（boundary/dependency_rule 未登记 → 信号级无法升 P0）
+    statement: "0.14 的 P0 判据要求违例源为『1.2.5 未批准例外的冲突行』或『V 系列硬性质违例的直接来源』。V1（无违例环）绑定 1.5 的 dependency_rule / layer_of 谓词，而单体内部边界、模块化单体的模块边界、管道-过滤器的过滤器旁路三处的依赖规则在母本未登记为可判定规则（与 VG-03 词汇缺口同源）。"
+    impact: "STY-011-AP2（黑板隐式协议）、STY-013-AP1（过滤器旁路数据依赖）、STY-014-AP1（单体内部边界穿透）、STY-015-AP1（模块边界穿透）暂定 P1（结构漂移限期整改）。相应 dependency_rule 一旦登记在案，该违例即构成 V1 违例直接来源 → 按 MJ-4 判据升 P0。升级属守护规则改级 = 注册表变更（完整 ADR + 批准，0.13/9.2.2），不在本批自行执行。"
+    affected: "STY-011、STY-013、STY-014、STY-015 的 anti_patterns.signal_level"
+    route: "勘察三处边界的依赖规则事实 → R2 提议 1.5 补 boundary/dependency_rule 登记面"
+    status: open
+
+  - gap_id: G-STY-5
+    type: 参考资料源缺失（子维度四元方法无行级登记提取面）
+    statement: "STY-021（约束排除法）与 STY-024（模式匹配）在母本参考文献提取面中无行级来源：书目 12 限定『质量属性驱动的风格选择元方法（1.2.4）』、书目 13 限定『演进式元方法（1.2.4）』、书目 23 限定『演进式元方法的默认起点论证 + 0.10 条件 (i) 登记默认值』；书目 2 的登记面『风格对比与架构决策方法』未限定行，但母本未将其指向 1.2.4。"
+    impact: "两条 references: []；不擅自扩张书目 2 的解释面（M6 + 禁造规范）。母本 1.2.4 表本身即骨架源，故 applicability/cost_profile/compatibility/constraints 等字段不受影响；缺口只落在『无外部文献佐证』这一事实的显式登记。"
+    affected: "STY-021、STY-024"
+    route: "人工裁决（书目 2 的登记面是否涵盖 1.2.4 全表）→ R2 提议澄清；澄清前保持留空"
+    status: open
+
+# ---------------------------------------------------------------------------
+# 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
+# ---------------------------------------------------------------------------
+status_transitions:
+  - transition_id: ST-STY-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024]
+    date: "2026-09-18"
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+    note: "seed 条目被选型消费时，决策 ADR 自动附注『依据种子条目，待重验证』（0.17.5）；重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。本简记不替代 seed→active 的重验证记录。"
+
+# ---------------------------------------------------------------------------
+# 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）
+# ---------------------------------------------------------------------------
+waivers:
+  - waiver_id: WV-STY-E3-01
+    rule: "E3（母本 @4008）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"
+    violation_fact: "本批 24 条 STY 条目经 ST-STY-01 迁移为 seed（人工种子通道，0.17.6(1)），其 formal_anchor 引用的硬性质（1.5 的 V1–V5、0.17.8 的 M 系列）尚无 FVR 条目与检查程序接线：本目录的 scripts/project.py 只做注册表静态自检（M2/M3/M4/M6/M9 + C 系列），不是 FVR 运行器，也不产生 first_full_run 证据 → 『引用 seed 条目的性质』不满足 E3 的 wired ∧ first_full_run has evidence。合法性出处：0.17.6(2)（母本明文规定 seed 期本项按 Waiver 机制登记限期豁免）。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的全部条目（本批 STY-001…STY-024）的 formal_anchor 所引用的硬性质实例。不含 active 条目、不含豁免期内新增的性质、不含 E3 以外的编译规范性质（E1/E2/E4 不在本 Waiver 范围）。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径：(1) project.py 自检全过（本批，见 ST-STY-01 evidence）→ (2) 编译器对 seed 条目执行『人工条目 vs 编译条目』重验证，差异按 0.17.6(3) 三分类处置 → (3) 建立 FVR 条目并为 V1–V5 与 M 系列接线，首次全量运行留证（E3 的 first_full_run has evidence）→ (4) 逐条 seed→active（diff 为空 = 低影响简记；diff 非空按三分类分别定级）。本 Waiver 在 (3) 完成时闭合。"
+    risk_quantification: "触及面：24 条 × formal_anchor 引用的 5 项 V 性质（V1 无违例环、V2 协议自洽、V3 无未批准例外的硬冲突、V4 目标可达性、V5 批准路径已走）。利息形态：硬性质违例的检出时机从『运行时/编译期自动检出』退化为『评审期人工核验』，检出延迟 = 一个决策周期；漏检后果按 V 性质分级——V3/V5 漏检 = 未批准例外的硬冲突或未经批准的风格定案进入实现（0.14 P0 面）。缓解：(i) 0.17.5 强制 ADR 附注『依据种子条目，待重验证』；(ii) 本批全部 P0/P1 信号级判读带母本指针与 MJ-4 判据留痕，可逐条人工复核；(iii) 1.2.5 冲突矩阵中 peer 条目未建的两行已显式登记于 pending_conflict_rows（不静默丢弃）；(iv) project.py 的 M9/C-ST 静态自检覆盖 peer 存在性与状态资格两项可机器判定面。"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "9.2.2 规定『P0 级违例的 Waiver 仅当违例源为外部不可控时可批』。本项违例源为内部（bootstrap 期状态），但豁免通道由母本 0.17.6(2) 明文设立，属制度性豁免而非 P0 违例的裁量豁免；该边界争议按 9.2.2『边界争议由评审点五裁决并留痕台账』提交裁决，防止『制度性豁免』被扩宽侵蚀 E3 刚性。"
+      status: pending          # 登记即申请；Agent 不自行批准（0.10 第一条 / 1.1 纪律二）
+    status: pending
+
+# ---------------------------------------------------------------------------
+# 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
+#     禁止留默认值假充来源。此处集中登记判读规则，条目行内只引 MJ 编号。）
+# ---------------------------------------------------------------------------
+manual_judgments:
+  - id: MJ-1
+    subject: STY 批编号裁决（分块序）
+    judgment: "母本反例 18-A 已发布引用 STY-04（事件溯源）。按 0.22 承诺一（编号一经发布永不复用、不重排），STY 批不按母本表序连续编号，而采分块序：子维度三（1.2.3）= STY-001…006，使『事件溯源 + CQRS』= STY-004；子维度一（1.2.1）= STY-007…013；子维度二（1.2.2）= STY-014…019；子维度四（1.2.4）= STY-020…024。书写统一为三位数字，母本 STY-04 与 STY-004 为同一 entry_id 的两种书写形态，母本零改动。"
+    basis: "0.22 承诺一；README §4 裁决表；用户裁决（AskUserQuestion，选项『分块序，锚定 STY-004』）"
+    affected: "全部 24 条的 entry_id"
+    provenance: manual
+
+  - id: MJ-2
+    subject: 方向性摘要 → 参数化界的转写规则
+    judgment: "母本包络要点列只有方向（↑/↓/↑↑）与代价描述，无参数化公式。转写规则：(i) metric 取 6.2.1 封闭词汇（映射见 G-ENV-1）；(ii) bound_expr 写成含参数的不等式或等式，参数名显式（如 overhead_L、N、freshness_window），禁填无出处的具体数值（0.17.7 门槛 2：无出处的性能宣称 = 假精确，拒绝准入）；(iii) 母本一句多分句时拆为多项界（如 STY-015 三分句 → 三项）；(iv) source 指向母本行（row_id）+ 条款（clause_id），文献佐证按各条 references 登记面。"
+    basis: "0.8 包络定义；0.17.7 门槛 2；6.2.1 指标封闭词汇；0.17.6(1) 骨架源限定（『包络只有 ↑/↓ 方向、无参数化公式』）"
+    affected: "STY-001…STY-019 的 envelope（子维度四条目豁免，见 profiles.yaml entry_level_exemptions）"
+    provenance: manual
+
+  - id: MJ-3
+    subject: 1.2.5 冲突行术语 → 条目的映射
+    judgment: "1.2.5『事件溯源 × 强同步查询语义 → 张力（读模型最终一致）』的对侧『强同步查询语义』不是 1.2.1–1.2.3 表中的风格行名，而是问题空间要求。映射：在本批内以 STY-001（请求-响应/同步调用风格）为 peer 登记 tension，evidence 引 1.2.5 原行并注明映射为人工判断。1.2.5『严格分层 × 高性能内层直访』的对侧『高性能内层直访』同型处理（登记于 STY-007，peer 指向其自身松弛分层变体的处置措辞）。"
+    basis: "1.2.5 四行原文（@1399-1402）；0.17.2 compatibility.peer_entry 须为条目（M9 要求 peer 存在）"
+    affected: "STY-004、STY-001、STY-007"
+    provenance: manual
+
+  - id: MJ-4
+    subject: 硬/软级别与 signal_level 的逐条判读规则
+    judgment: "1.4 两表多行标『硬/软按条』，母本未逐条给出。判读规则：禁止性条款（『不得』『禁止』『必须』）→ hard；默认值 + 偏离须显式记录 → hard；许可性/可用性条款（『可用』『可享有』）→ soft；候选性条款（『候选一个部署单元』）→ soft。anti_patterns.signal_level 判读：P0 = 该反模式是 1.2.5 未批准例外的冲突行，或 1.5 V 系列硬性质违例的直接来源；P1 = 违反风格定义性约束但无 V 系列可绑定（限期整改，超期升 P0）；P2 = 需阈值 + 趋势窗口双判据的结构漂移线索。"
+    basis: "0.14 守护分级（P0 即阻塞／P1 限期／P2 双判据）；1.4 两表『硬/软按条』标注；1.2.5；1.5 V1–V5"
+    affected: "全部条目的 constraints_imposed.level 与 anti_patterns.signal_level"
+    provenance: manual
+
+  - id: MJ-5
+    subject: 子维度内取值互斥的登记方式
+    judgment: "同一子维度表内的风格行是同一 scope 上的互斥取值（一个 scope 在 1.2.1 表内至多取一行），母本未将其登记为 compatibility 的 hard_conflict 对。判读：取值互斥属类型系统性质，不逐对登记（否则 1.2.1 七行需 21 对、1.2.2 六行需 15 对，且无 1.2.5 依据 = 造规范）。互斥性在 S1 由 applicability 求值与 scope 唯一性保证。另：compatibility 采镜像登记闭合——对侧条目已登记本条为 peer 的行不在本条重复登记（行内注明对侧位置），M9 只要求 peer 存在，不要求双向冗余。"
+    basis: "1.2.1/1.2.2/1.2.3 表的『一个 scope 取一行』语义；1.2.5 只登记跨子维度冲突对；0.17.8 M9；禁造规范（0.4/纪律一）"
+    affected: "STY-010、STY-011、STY-012、STY-013、STY-014、STY-016 等的 compatibility: []"
+    provenance: manual
+
+  - id: MJ-6
+    subject: 黑板风格 @1342 附注的性质与 P 级判读
+    judgment: "母本 1.2.1 黑板行的附注（框架自身使用黑板 ≠ 目标系统绑定黑板，自我对应限定措辞）属叙事层说明，不是条目间关系 → 不登记为 compatibility。黑板隐式协议反模式（STY-011-AP2）的信号级：1.2.5 四冲突行均不涉黑板、1.5 V 系列无对应硬性质 → 不满足 MJ-4 的 P0 判据，定 P1。**本项含一处对前序设计稿的改判：原稿记 P0，复核后改判 P1，改判理由即上述判据缺失；按 0.14『不许运行时即兴改级』，此次改级发生在条目首次入库前（尚非注册表变更），留痕于此。**"
+    basis: "1.2.1 黑板行附注；1.2.5；1.5；0.14 分级纪律"
+    affected: "STY-011"
+    provenance: manual
+
+  - id: MJ-7
+    subject: 『同上』类省略措辞的展开
+    judgment: "母本表内『同上』『同六边形』等省略措辞按表内上一有效行展开：STY-009（同心圆/整洁架构）的适用条件『同上；强调领域模型在中心』展开为 STY-008（六边形）行的适用条件 + 本行增量；包络要点『同六边形』展开为与 STY-008 同型的界形态（参数按本行术语重写）。展开结果在行内注明指向的源行。"
+    basis: "1.2.1 表 STY-009 行原文；0.4（展开不得引入源行以外的事实）"
+    affected: "STY-009"
+    provenance: manual
+
+  - id: MJ-8
+    subject: 1.2.2 部署风格间的关系登记边界
+    judgment: "(i) 1.2.2 表内互斥不枚举（同 MJ-5）。(ii) 母本『单体 → 模块化单体』的演进关系（0.10 临时保守通道条件 (i) 的登记默认值 + 书目 23 MonolithFirst）不登记为 compatibility 的 composable/requires：演进是时间序列上的决策路径，不是同一时刻的组合关系；登记为 STY-015 的 narrative 与 STY-023 的 compatibility（元方法 ↔ 默认起点风格）已足够表达。(iii) STY-014 与 STY-015 之间登记 composable，依据是模块化单体的定义本身（单部署单元 + 内部强制模块边界），evidence 引 1.2.2 行。"
+    basis: "1.2.2 表；0.10 临时保守通道；书目 23 登记提取面；0.17.2 compatibility 语义（组合同存，非时序）"
+    affected: "STY-014、STY-015、STY-023"
+    provenance: manual
+
+  - id: MJ-9
+    subject: 跨子维度正交性与 composable 的界线
+    judgment: "母本 @1319 明示四子维度正交（外层微服务 + 内部六边形 + 服务间事件驱动 + 整体分层治理）。判读：正交性 = 组合合法性的一般前提，不构成条目级 composable 声明；否则任意跨子维度条目对都需登记（24 条 → 数百对），且母本只对具体组合给了依据（@1344 六边形/同心圆 × 微服务、1.2.3 共享数据行 × 单体）。故只登记母本有明文依据的对，其余留空并在行内注明依据（组合自洽性由 1.2.5 冲突矩阵经 V3 校验，不依赖 composable 声明的完备性）。"
+    basis: "@1319 正交性原文；@1344；1.2.3 共享数据行；1.5 V3"
+    affected: "STY-010、STY-011、STY-013、STY-016、STY-017、STY-019 等的 compatibility"
+    provenance: manual
+
+  - id: MJ-10
+    subject: 1.2.4 元方法与 0.18.2 S 步骤的同构对应
+    judgment: "母本未显式登记该映射。判读为同构对应（仅作 provenance 指针与注释论证，不改变任何字段语义）：STY-021 约束排除法 ↔ S2（约束过滤，含『软约束失败 = 降权记录不排除』与外部强加走 CH-A）；STY-020 质量属性驱动 ↔ S4（消费包络做可达性判定，V4 联动）；STY-024 模式匹配 ↔ S1（applicability 求值，unknown ≠ false）+ S5（排序与不可区分处置）；STY-023 演进式 ↔ S5 分支二（CH-B 推迟处置，附参数化切换点 + LRM + 可推翻指标）。用途：解释元方法条目为何以规程步骤为 source_pointer；不得被读作『执行元方法即等于执行规程』（0.18.3 纪律 1：不得增步、跳步、改序）。"
+    basis: "1.2.4 表 + @1391 组合链；0.18.2 S0–S6；0.18.3 规程纪律；0.18.4 风格选型变体要点"
+    affected: "STY-020、STY-021、STY-022、STY-023、STY-024 的 provenance.source_pointers 与 narrative"
+    provenance: manual
+
+  - id: MJ-11
+    subject: 元方法条目 cost_profile 的『不适用』登记模式
+    judgment: "cost_profile 七字段按剖面为必填（M2）。子维度四元方法不进入运行时路径，latency_budget_delta 与 consistency_impact 无 0.8 意义上的可声明量。判读：显式登记字符串『不适用（理由）』+ 指明该面的实际承载者（被产出/被匹配的风格条目），而非留空（留空 = M2 缺失）或填运行时数值（= 假精确，0.17.7 门槛 2）。过程性代价落其余五字段（failure_modes / observability_requires / ops_cost / skill_prerequisites / aggregation_semantics=itemwise）。"
+    basis: "0.17.2 cost_profile 七字段；profiles.yaml kind_profile_STY 与 entry_level_exemptions；0.17.7 门槛 2"
+    affected: "STY-020…STY-024 的 cost_profile"
+    provenance: manual
+
+  - id: MJ-12
+    subject: M4 自检暴露的本地造词修正（compat_policy / schema / error_handling）
+    judgment: "投影脚本规格预检（M4 词汇封闭自检）暴露三处 detection_predicate 使用了母本 x.5 谓词表未登记的谓词形态，属本地造词（README §3.1 / 编译规范 2.3 封闭集纪律明令禁止）。逐个溯源：(i) compat_policy 在母本仅为 3.5 contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state) 的实参槽名（@1996），以实参槽名充当谓词不成立；(ii) schema 在母本为契约工件名（3.2.1『schema + 语义条款』），非谓词；(iii) error_handling 母本全无登记（1.2.1 管道行仅自然语言反模式名）。处置：三处 ¬declared(X(y)) 形态统一改为方括号事实占位符（如 [ep 的契约未登记版本化/兼容策略]），语义按 M15 转勘察义务（unknown → 候选保留 + 勘察义务，禁沉默排除）；词汇缺口登记 VG-04，走 R2 提议候选。"
+    basis: "README §3.1 词汇封闭；编译规范 2.3 封闭集纪律（发现缺失 → 不得本地造词）；0.17.8 M4；母本 3.5 contract 谓词签名（@1996）；3.2.1；1.2.1 管道行"
+    affected: "STY-010-AP1、STY-011-AP1、STY-013-AP2 的 detection_predicate"
+    provenance: manual
+
+# ---------------------------------------------------------------------------
+# 五、未闭合的冲突矩阵行（1.2.5 是风格条目的强制元数据；peer 条目未建者不得
+#     写入 compatibility —— M9 要求 peer_entry 存在。此节为待回填台账。）
+# ---------------------------------------------------------------------------
+pending_conflict_rows:
+  # 1.2.5 四行的处置全景：两行已在条目层闭合，两行登记于此。
+  closed_in_entries:
+    - {row: "事件溯源 × 强同步查询语义 → 张力（读模型最终一致）", disposition: "已条目化：STY-004 compatibility（peer STY-001，relation tension），映射判读见 MJ-3"}
+    - {row: "严格分层 × 高性能内层直访 → 张力（需松弛分层 + 权衡承认 ADR）", disposition: "已条目化：STY-007（松弛分层变体 + 权衡承认 ADR 措辞落 constraints_imposed/narrative）"}
+  open_rows:
+    - row_id: PCR-1
+      matrix_row: "Serverless × 长时运行有状态流程 → 冲突（执行时长限制），硬"
+      peer_status: "对侧不是风格条目，而是问题空间事实（工作负载特征）→ 无 peer_entry 可指"
+      disposition: "已在条目层以反形态闭合：STY-018-AP1（signal_level: P0，检出即阻塞），exception 覆盖须走 1.2.5 机制（完整 ADR + 可推翻指标，登记为 has_approved_exception）。本行为 1.2.5 台账镜像，保留以供冲突矩阵投影时对齐，不写入 compatibility。"
+      source: {source_type: clause_id, value: "1.2.5", verified: true}
+    - row_id: PCR-2
+      matrix_row: "微服务 × 跨单元 2PC 作为默认一致性手段 → 冲突（应改用 Saga 类，或重审部署风格），硬"
+      peer_status: "对侧为一致性/协调类方法条目（kind=CSL），CSL 批未建 → M9 不放行"
+      disposition: "待回填：CSL 批入库后在 STY-016 的 compatibility 增 hard_conflict 行（peer = 对应 CSL 条目），并在对侧镜像登记。当前该冲突已在 STY-016 的 cost_profile.consistency_impact 与 formal_anchor（V3 triggers）中留指针，不静默丢弃。"
+      blocking: "CSL 批（母本已发布引用 CSL-03，编号须先解既有引用，README §4）"
+      source: {source_type: clause_id, value: "1.2.5", verified: true}
+
+# ---------------------------------------------------------------------------
+# 六、勘察义务（注册表侧）。区分两类义务：
+#   (a) 入库期义务 —— 母本未给、需人工勘察才能补全注册表字段者，登记于此（SO-x）；
+#   (b) 决策期义务 —— 条目内方括号 […] 事实占位（M15：求值为 unknown 时候选保留 +
+#       勘察义务登记，禁沉默排除），逐条枚举由 project.py 汇总输出
+#       projections/勘察义务清单.md，本节不重复登记（避免与生成物双写）。
+# ---------------------------------------------------------------------------
+survey_obligations:
+  - obligation_id: SO-1
+    kind: 入库期
+    obligation: "补录各风格条目的现状空间与交付空间适用条件事实（须过 0.4 出处门槛：现状勘察产物/既有 ADR/团队能力事实），回填 applicability.current_space / delivery_space 的空列表。"
+    gap_ref: G-STY-1
+    consumer: "0.18.2 S1（applicability 求值；unknown ≠ false → 候选保留）"
+    trigger_rule: "M15 + FM-1（必需事实缺失且无勘察登记 = 证据缺口）"
+    status: open
+
+  - obligation_id: SO-2
+    kind: 入库期
+    obligation: "勘察并登记三处边界的依赖规则（单体内部边界、模块化单体的模块边界、管道-过滤器的过滤器旁路），使 V1（无违例环）可绑定；登记后按 MJ-4 判据将相关反模式由 P1 升 P0（升级 = 守护规则改级，走完整 ADR + 批准）。"
+    gap_ref: G-STY-4
+    consumer: "1.5 V1；0.14 守护分级；9.2.1 信号汇聚"
+    trigger_rule: "M15；0.14『不许运行时即兴改级』（升级走注册表变更）"
+    status: open
+
+  - obligation_id: SO-3
+    kind: 入库期
+    obligation: "补勘文献来源并定 compile_usage：STY-012（MVC，书目 1/2 登记面均不覆盖）、STY-021 与 STY-024（1.2.4 元方法无行级提取面；含书目 2 登记面是否涵盖 1.2.4 的人工裁决）。补入须走母本参考文献表扩充（0.12『扩充』语义裁决 + 高影响批准）。"
+    gap_ref: G-STY-3, G-STY-5
+    consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
+    trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
+    status: open
+
+  - obligation_id: SO-4
+    kind: 入库期
+    obligation: "补齐谓词词汇（predicate_vocabulary.yaml: VG-01 部署类依赖谓词、VG-02 粒度可判定谓词、VG-03 依赖方向控制族方向谓词 + 模块边界方向 + 拓扑方位/节点角色、VG-04 契约形态声明族谓词〔契约兼容策略/schema/管道全局错误处理的声明态〕）。补齐前相关 detection_predicate 以 depends_on workaround 与方括号占位表达，语义等价性由人工判断登记（VG-04 的三处造词修正见 MJ-12）；补齐后按 MJ-4 复核 signal_level（STY-008-AP2、STY-009-AP1、STY-015-AP1 明记『词汇补齐后升 P0』）。"
+    gap_ref: "predicate_vocabulary.yaml: vocabulary_gaps VG-01/VG-02/VG-03/VG-04"
+    consumer: "0.17.8 M4（detection_predicate 词汇封闭 = 可执行）；编译规范 2.3 谓词名注册"
+    trigger_rule: "M4；R2（发现词汇缺失 → 提议候选，不得本地造词）"
+    status: open
+
+  - obligation_id: SO-5
+    kind: 入库期
+    obligation: "补齐 6.2.1 指标族与母本包络用语的映射裁定（G-ENV-1 列出的九项用语），或扩 6.2.1 指标族。裁定前 envelope.metric 按最相近族登记并在行内注记映射理由，不得本地新增 metric 名。"
+    gap_ref: G-ENV-1
+    consumer: "0.17.8 M3（bound_expr 参数化 + source 过出处门槛）；6.2 质量属性卡片"
+    trigger_rule: "M3；R2"
+    status: open
+
+  - obligation_id: SO-6
+    kind: 决策期（汇总义务）
+    obligation: "条目内全部方括号事实占位（三空间条件、平台参数、粒度阈值等）在选型时逐条求值：真/假/未知三值记录入 selection_log；未知者候选保留并登记勘察任务（M15），禁沉默排除；无出处阈值禁填（0.17.7 门槛 2）。逐占位符枚举与计数由 project.py 生成 projections/勘察义务清单.md，本节只登记汇总义务本身。"
+    gap_ref: "README §3.3 事实占位符约定；VG-02"
+    consumer: "0.18.2 S1/S4；0.18.6 M15；0.20.2 FM-1"
+    trigger_rule: "M15（unknown → 候选保留 ∧ 勘察义务登记）"
+    status: open
