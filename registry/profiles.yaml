@@ -1,0 +1,585 @@
+# kind 剖面（元注册条目）——数据侧权威
+#
+# 依据：母本 0.17.2「字段完备性按 kind 剖面…kind profile 本身是注册表条目（元注册），变更走 0.13」；
+#       0.17.8 谓词 kind_profile(kind, required_fields, optional_fields)；0.17.3 kind 封闭枚举；
+#       0.18.4 各方面实例化映射；0.8 包络声明义务。
+# 条目 schema 逐字采用 0.17.2，不重定义、不扩展、不裁剪（编译规范 2.4）。
+#
+# 书写形态（数据侧约定，见 README §2/§5 C-KP）：
+#   1. 元条目 entry_id = kind_profile_{KIND}（0.17.8 谓词以 kind 为键）；describes_kind = 被剖面的 kind。
+#   2. 剖面以「通用必填 + 逐 kind 增量」书写，避免 17 份重复；scripts/project.py 物化为
+#      每个 kind 的 required_fields / optional_fields 两列表（C-KP 判据），并据此执行 M2。
+#      物化公式：required_fields = common_required − optional − not_applicable + required_extra
+#   3. optional / not_applicable 每项必须带 reason 与 provenance（0.17.6 第四层：人工判断兜底，
+#      禁默认值假充）；无母本依据者 provenance.origin = manual。
+#   4. status=draft 的剖面表示其字段适用性缺母本依据，缺口已登记于 gaps，不得用于放行 seed 条目。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: "1.0.0"
+  schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
+  kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
+
+# ── 通用必填（全 kind；来源逐条标注）──
+common_required:
+  identity:                       # 0.17.2 身份与状态层；S5/S6 消费 typical_reversibility（0.17.4）
+    source: {source_type: clause_id, value: "0.17.2", verified: true}
+    fields:
+      - entry_id
+      - kind
+      - name
+      - version
+      - status
+      - provenance
+      - typical_reversibility
+  applicability:                  # S1 候选装配 + S3 三空间过滤（0.17.4）
+    source: {source_type: clause_id, value: "0.17.4", verified: true}
+    fields:
+      - applicability.problem_space
+      - applicability.current_space
+      - applicability.delivery_space
+  envelope:                       # S4 包络校验（0.17.4）；0.8「每种方法条目必须声明包络」
+    source: {source_type: clause_id, value: "0.8", verified: true}
+    fields: [envelope]
+  cost_profile:                   # S4 卡片聚合 + S5 排序 + S3 技能前提（0.17.4）
+    source: {source_type: clause_id, value: "0.17.4", verified: true}
+    fields:
+      - cost_profile.latency_budget_delta
+      - cost_profile.failure_modes
+      - cost_profile.consistency_impact
+      - cost_profile.observability_requires
+      - cost_profile.ops_cost
+      - cost_profile.skill_prerequisites
+      - cost_profile.aggregation_semantics
+  relations:                      # S2 约束排除（0.17.4）；1.4 施加/接收约束表；方面 9 G 规则播种
+    source: {source_type: clause_id, value: "0.17.4", verified: true}
+    fields:
+      - compatibility
+      - constraints_imposed
+      - anti_patterns
+      - formal_anchor
+      - references
+  narrative:                      # 0.17.2 人类解释层；M5 narrative_sync 抽查对象
+    source: {source_type: clause_id, value: "0.17.2", verified: true}
+    fields:
+      - narrative.benefit_cost_analysis
+      - narrative.typical_scenarios
+      - narrative.common_misuse
+
+profiles:
+
+  # ── 方面 1 ──
+  - entry_id: kind_profile_STY
+    describes_kind: STY
+    name: 架构风格 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "1.2", verified: true}
+        - {source_type: clause_id, value: "1.2.5", verified: true}
+        - {source_type: clause_id, value: "1.4", verified: true}
+        - {source_type: clause_id, value: "1.5", verified: true}
+    seed_source:
+      clause_id: "1.2"
+      table_rows: "1.2.1（7 行）/1.2.2（6 行）/1.2.3（6 行）/1.2.4（5 行）"
+      entry_id_range: "STY-001…STY-024（分块序，裁决见 README §4）"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S2 最重（compatibility 矩阵 + 冲突对检验）；S4 消费风格包络（V4 联动）"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions:
+      - scope: "STY-020…STY-024（1.2.4 风格选择元方法）"
+        field: envelope
+        check: C-ENV
+        reason: "元方法不改变质量属性包络，而是产生包络判定的输入（1.2.4 行内容为选择方法而非结构/部署/通信形态）；无 0.8 意义上的可参数化界可声明，强行填写即假精确（0.17.7 门槛 2）"
+        provenance: manual
+    narrative:
+      note: "compatibility 必填的加重依据是 1.2.5 冲突矩阵（硬/软冲突登记的条目化）；constraints_imposed 依据 1.4「施加约束」表方面 1 行；formal_anchor 依据 1.5 V1–V5。"
+
+  # ── 方面 2 ──
+  - entry_id: kind_profile_DEC
+    describes_kind: DEC
+    name: 分解策略 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "2.2", verified: true}
+        - {source_type: clause_id, value: "2.5", verified: true}
+    seed_source:
+      clause_id: "2.2"
+      table_rows: "[待勘察：2.2 行数与行名，DEC 批次读取时填实]"
+      entry_id_range: "[待裁决：须先解母本既有引用 DEC-02/DEC-03/DEC-05]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S1 候选 = DEC 条目；S4 加跑 W 系列（W1–W6）作为可达性一部分"
+    required_extra: []
+    optional:
+      - field: cost_profile.latency_budget_delta
+        reason: "分解策略的延迟影响经由部署/通信风格间接产生（跨单元调用项属 STY 包络，0.8）；在 DEC 条目直接声明易与 STY 包络重复计数。条目确有直接延迟影响时仍应显式填写。"
+        provenance: manual
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "formal_anchor 主锚 2.5 W1–W7（W3 认知负荷条件硬约束、W4 数据单一所有者）；envelope.metric 多取 modifiability / cognitive_load / change_propagation 类而非 latency。"
+
+  # ── 方面 3 ──
+  - entry_id: kind_profile_CTR
+    describes_kind: CTR
+    name: 契约形态/治理策略 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "3.2.1", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}
+    seed_source:
+      clause_id: "3.2.1/3.2.2"
+      table_rows: "[待勘察：CTR 批次读取时填实]"
+      entry_id_range: "[待裁决：母本存在叙述式引用 CTR-gRPC，非 entry_id 形态]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S2 消费风格硬约束（1.4 接收）；S4 检验 X 系列；CDC 要求按 X4 分级入 cost_profile"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "compatibility 须登记对上游 STY 条目的 requires/hard_conflict 关系（1.4 接收约束：方面 1 → 方面 3 硬）；formal_anchor 主锚 X 系列；0.18.4 明定 CDC 要求按 X4 分级写入 cost_profile。"
+
+  # ── 方面 4（四 kind 共用一行 0.18.4 规程变体）──
+  - entry_id: kind_profile_OWN
+    describes_kind: OWN
+    name: 数据所有权模式 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "4.2.1", verified: true}
+        - {source_type: clause_id, value: "0.18.7", verified: true}
+    seed_source:
+      clause_id: "4.2.1"
+      table_rows: "[待勘察：OWN 批次读取时填实]"
+      entry_id_range: "[待裁决：母本 0.18.7 正例已发布 OWN-01…OWN-04（两位数形态）]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "逐数据集合迭代执行；S6 恒为高影响（批准注册类目）；一致性级别选择 S5 前强制「业务语义论证」工件（Y3）"
+    required_extra: []
+    optional:
+      - field: cost_profile.latency_budget_delta
+        reason: "所有权归属本身不引入请求路径延迟项；延迟影响经由 CSL/DFL 条目表达，在 OWN 重复声明将导致 S4 ledger 双计（0.17.2 aggregation_semantics 语义）。"
+        provenance: manual
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "0.18.7 正例已给出 OWN-01…OWN-04 的字段消费示范（S3 保守界、S6 完整 ADR），OWN 批次须与该示范一致；W4（数据单一所有者）为主锚。"
+
+  - entry_id: kind_profile_STP
+    describes_kind: STP
+    name: 存储拓扑 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "4.2.2", verified: true}
+    seed_source:
+      clause_id: "4.2.2"
+      table_rows: "[待勘察：STP 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "存储拓扑直接决定访问延迟与一致性可达界，故 cost_profile.latency_budget_delta 与 envelope 均不降级为选填。"
+
+  - entry_id: kind_profile_CSL
+    describes_kind: CSL
+    name: 一致性机制 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "4.2.3", verified: true}
+        - {source_type: clause_id, value: "1.2.5", verified: true}
+    seed_source:
+      clause_id: "4.2.3"
+      table_rows: "[待勘察：CSL 批次读取时填实]"
+      entry_id_range: "[待裁决：母本反例 18-A 已发布 CSL-03（两位数形态）]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "逐数据集合迭代执行；一致性级别选择 S5 前强制「业务语义论证」工件（Y3）"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "1.2.5 硬冲突行「微服务 × 跨单元 2PC 默认」的对侧条目属本 kind；该冲突在 STY 批次仅登记于 method_registry.yaml 顶层台账（peer 不存在 → M9 不得放行），CSL 批次落地时闭合。"
+
+  - entry_id: kind_profile_DFL
+    describes_kind: DFL
+    name: 数据流动机制 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "4.2.4", verified: true}
+    seed_source:
+      clause_id: "4.2.4"
+      table_rows: "[待勘察：DFL 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "CDC/事件流类条目的 delivery_semantics 与 idempotency 前提须在 applicability.current_space 表达（5.5 谓词词汇）。"
+
+  # ── 方面 5（四 kind 共用一行 0.18.4 规程变体）──
+  - entry_id: kind_profile_CRD
+    describes_kind: CRD
+    name: 协调风格/长流程模式 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "5.2.1", verified: true}
+        - {source_type: clause_id, value: "5.2.2", verified: true}
+    seed_source:
+      clause_id: "5.2.1/5.2.2"
+      table_rows: "[待勘察：CRD 批次读取时填实]"
+      entry_id_range: "[待裁决：母本已发布 CRD-02；另有叙述式 CRD-Saga]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S5 先验权重消费风格默认；S4 卡片聚合最重（Z7 联动）"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "1.4 接收约束：方面 5 受方面 1 为硬（CH-E 通道）；compatibility 须登记对上游 STY 条目的 requires 关系。0.18.3(4)「默认不是免检」适用于风格默认协同。"
+
+  - entry_id: kind_profile_RLP
+    describes_kind: RLP
+    name: 可靠性模式 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "5.2.3", verified: true}
+    seed_source:
+      clause_id: "5.2.3"
+      table_rows: "[待勘察：RLP 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S4 卡片聚合最重（Z7 联动）"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "cost_profile.failure_modes 是本 kind 的决策核心（重试/超时/舱壁引入的新失败模式），不得以叙事代替清单。"
+
+  - entry_id: kind_profile_SCH
+    describes_kind: SCH
+    name: 调度/时间语义策略 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "5.2.4", verified: true}
+        - {source_type: clause_id, value: "5.5", verified: true}
+    seed_source:
+      clause_id: "5.2.4"
+      table_rows: "[待勘察：SCH 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "timeout_budget 与 cost_profile.latency_budget_delta 必须同参数（5.5 谓词），避免两处真相（0.9）。"
+
+  - entry_id: kind_profile_CFG
+    describes_kind: CFG
+    name: 配置治理策略 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "5.2.6", verified: true}
+    seed_source:
+      clause_id: "5.2.6"
+      table_rows: "[待勘察：CFG 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S5 先验权重消费风格默认；flag 谓词入白板（5.5）"
+    required_extra: []
+    optional:
+      - field: cost_profile.latency_budget_delta
+        reason: "配置治理策略一般不改变请求路径延迟；其运行时开销已在 cost_profile.observability_requires / ops_cost 表达。条目确引入延迟项（如运行时特性开关求值）时仍须显式填写。"
+        provenance: manual
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "特性开关类条目须在 applicability.delivery_space 声明 CI/观测前提（S3 过滤消费）。"
+
+  # ── 方面 6 ──
+  - entry_id: kind_profile_QAT
+    describes_kind: QAT
+    name: 质量战术 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "6.2.5", verified: true}
+        - {source_type: clause_id, value: "6.5", verified: true}
+    seed_source:
+      clause_id: "6.2.5"
+      table_rows: "[待勘察：QAT 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S1 候选 = QAT 条目按目标属性过滤；S4 = 战术卡片 vs 剩余预算"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "envelope.metric 必须与 6.5 goal(g, metric, bound, priority, weight, weight_source, band) 的 metric 同词汇，否则 S4 的 tactic_card 消费无法对齐（6.5 envelope(method, metric, bound_expr) 谓词即本字段的白板形态）。"
+
+  # ── 方面 8 ──
+  - entry_id: kind_profile_VFM
+    describes_kind: VFM
+    name: 验证手段 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "8.2", verified: true}
+    seed_source:
+      clause_id: "8.2"
+      table_rows: "[待勘察：VFM 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S3 主导（CI/测试能力过滤）；T1 悬置禁令 = S1 空集时 FM-3 不得以「降级性质」逃逸"
+    required_extra: []
+    optional:
+      - field: cost_profile.latency_budget_delta
+        reason: "验证手段的延迟影响多属运行时观测开销，已由 cost_profile.observability_requires 表达；仅在手段本身进入请求路径（如在线校验）时填写。"
+        provenance: manual
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "envelope.metric 取验证效能类指标（检出能力/覆盖/误报率）；若 8.2 未提供可参数化界，条目按 0.17.7 门槛 2 不得升 seed（无出处的性能宣称 = 假精确）。"
+
+  # ── 方面 9（DPS 属选型 kind；GRD 不属）──
+  - entry_id: kind_profile_DPS
+    describes_kind: DPS
+    name: 部署策略 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.18.4", verified: true}
+        - {source_type: clause_id, value: "9.2.5", verified: true}
+    seed_source:
+      clause_id: "9.2.5"
+      table_rows: "[待勘察：DPS 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "S3 主导（on-call/观测能力）；G3 注册完整性在 S6 检验"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    entry_level_exemptions: []
+    narrative:
+      note: "cost_profile.observability_requires 与 skill_prerequisites 是本 kind 的 S3 主过滤字段；formal_anchor 主锚 G 系列与 9.2.1 守护分级。"
+
+  - entry_id: kind_profile_GRD
+    describes_kind: GRD
+    name: 守护规则模板 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: draft            # 字段适用性缺母本依据，见 gaps KP-G3
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.17.4", verified: true}
+        - {source_type: clause_id, value: "9.2", verified: true}
+        - {source_type: clause_id, value: "9.2.1", verified: true}
+    seed_source:
+      clause_id: "9.2"
+      table_rows: "[待勘察：GRD 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "[缺口：0.18.4 未登记方面 9 守护规则模板的规程变体——GRD 由方面 9 消费而非 0.18 选型规程（0.17.4 消费者二）]"
+    required_extra:
+      - anti_patterns            # 规则体：detection_predicate + signal_level（0.17.4 消费者二「直接播种 G 规则」）
+      - formal_anchor            # 0.14/9.2.1 分级锚点
+    optional: []
+    not_applicable: []
+    undecided_fields: [envelope, cost_profile, compatibility, constraints_imposed, applicability]
+    entry_level_exemptions: []
+    narrative:
+      note: "本剖面为 draft：GRD 条目是否须声明 0.8 包络、是否须填 applicability 三空间，母本无明文（0.8 表述为「每种方法条目」，守护规则模板是否属「方法条目」待澄清）→ gaps KP-G3。"
+
+  # ── 方面 10 ──
+  - entry_id: kind_profile_PRJ
+    describes_kind: PRJ
+    name: 投影词汇/规则 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: draft            # 仅 latency_budget_delta 的 N-A 有母本明文，其余待澄清
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+    seed_source:
+      clause_id: "10.2.2"
+      table_rows: "[待勘察：PRJ 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "[缺口：0.18.4 未登记方面 10 的规程变体]"
+    required_extra: []
+    optional: []
+    not_applicable:
+      - field: cost_profile.latency_budget_delta
+        reason: "母本 0.17.2 明示例：「projection_vocabulary 条目无 latency_budget_delta」——本项为唯一有明文依据的 N-A 判定"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+    undecided_fields: [envelope, cost_profile.consistency_impact, cost_profile.ops_cost, compatibility, applicability.delivery_space]
+    entry_level_exemptions: []
+    narrative:
+      note: "术语不一致已登记 gaps KP-G4（0.17.2 用「projection_vocabulary」，0.17.3 kind 名为 PRJ/「投影词汇/规则」）。"
+
+  # ── 治理 ──
+  - entry_id: kind_profile_GOV
+    describes_kind: GOV
+    name: 治理模板（ADR 亚型、简记格式等）· kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: draft            # 字段适用性缺母本依据，见 gaps KP-G3
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.5", verified: true}
+        - {source_type: clause_id, value: "7.2.3", verified: true}
+    seed_source:
+      clause_id: "0.5/7.2.3"
+      table_rows: "[待勘察：GOV 批次读取时填实]"
+      entry_id_range: "[待裁决]"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "[缺口：0.18.4 未登记治理模板的规程变体——GOV 由 0.13/方面 7 消费（0.17.4 消费者四）]"
+    required_extra: []
+    optional: []
+    not_applicable: []
+    undecided_fields: [envelope, cost_profile, compatibility, constraints_imposed, applicability]
+    entry_level_exemptions: []
+    narrative:
+      note: "治理模板（ADR 亚型、简记格式）不改变系统质量属性包络，但「不改变」需母本明文方可作 N-A 判定，否则为默认值假充（0.17.6 第四层禁令）→ gaps KP-G3。"
+
+# ── 剖面级缺口（R2 澄清候选；不静默造规则）──
+gaps:
+  - gap_id: KP-G1
+    type: 成文法歧义（0.17.6 差异分类 c）
+    statement: "0.17.3 末句承诺「每 kind 的选取算法剖面（哪些步骤必填哪些字段）在 0.18.4 实例化映射中登记」，但 0.18.4 实为 8 行「规程变体要点」，粒度是方面而非 kind（方面 4 一行覆盖 OWN/STP/CSL/DFL 四 kind，方面 5 一行覆盖 CRD/RLP/SCH/CFG 四 kind），且未覆盖 GRD/PRJ/GOV；「哪些步骤必填哪些字段」在母本中无逐 kind 明文。"
+    impact: "本文件的 required/optional 划分只能以 0.17.2 schema + 0.17.4 消费映射 + 0.18.4 变体要点为依据推得，逐 kind 细分为人工判断（provenance.origin=hybrid/manual）。"
+    route: R2 提议澄清候选
+    status: open
+  - gap_id: KP-G2
+    type: 自指循环
+    statement: "0.17.8 M2 = ∀E(status ≠ draft) 按 kind 剖面完备；而 kind profile 本身是注册表条目（0.17.2 元注册），其自身完备性若也按剖面判定即自指。母本未定元条目的判据。"
+    impact: "本目录以 README §5 C-KP 临时约定：元条目完备性 = required_fields/optional_fields 两列表在案（物化自 common_required + 增量），不受 M2 按 kind 剖面判定；元条目 id 形态 kind_profile_{KIND} 不受 C-ID 的 {kind前缀}-{序号} 格式约束。"
+    route: R2 提议澄清候选
+    status: open
+  - gap_id: KP-G3
+    type: 适用性无据
+    statement: "非 0.18 选型路径的 kind（GRD/PRJ/GOV）是否须声明 0.8 包络与 cost_profile，母本无明文；0.8 表述为「每种方法条目」，未界定「方法条目」是否含守护规则模板/投影规则/治理模板。"
+    impact: "三个剖面 status=draft，undecided_fields 明列；这些 kind 的条目在缺口闭合前不得声明 status=seed（README §5 C-ST）。"
+    route: R2 提议澄清候选
+    status: open
+  - gap_id: KP-G4
+    type: 术语不一致（0.17.6 差异分类 c）
+    statement: "0.17.2 举例用「projection_vocabulary 条目」，0.17.3 封闭枚举中对应 kind 前缀为 PRJ、名称为「投影词汇/规则」；两处术语未对齐。"
+    impact: "本文件按 PRJ 理解该例，并将其作为唯一有明文依据的 not_applicable 判定登记。"
+    route: R2 提议澄清候选
+    status: open

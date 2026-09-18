@@ -1,0 +1,124 @@
+# 谓词词汇表：母本机器层谓词清单的数据侧投影（M4 词汇封闭校验用）
+#
+# 性质声明：本文件**不是**规范来源。权威在母本各 x.5 形式化锚点节与
+# 0.17.8 / 0.18.6 / 0.20.4 / 0.21.6 / 10.5；本文件是其逐条投影，供 project.py 校验
+# applicability 谓词与 anti_patterns.detection_predicate 是否使用了未登记谓词名
+# （编译规范 2.3「谓词名注册」：发现缺失 → R2 提议，不得本地造词）。
+#
+# 自校验：project.py 对每条 source.value 反查母本正文，指针不可查 → 报错（防幻觉）。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  schema_ref: "编译规范 2.3 谓词模式 BNF；母本 0.17.8 / 0.18.6 / 1.5 / 2.5 / 5.5 / 6.5"
+  registry_version: {major: 1, minor: 0, patch: 0}
+  note: "新增谓词名 = R2 提议（成文法谓词未登记），不得在本文件本地扩词"
+
+syntax:
+  connectives: ["∧", "∨", "¬", "→"]
+  quantifiers: ["∀", "∃"]
+  wildcard: "·"
+  fact_placeholder_brackets: true   # […] = 待勘察事实占位符；unknown → M15 候选保留 + 勘察义务
+
+predicates:
+  # ── 方面 1（1.5）──
+  - {name: style, arity: 2, source: {source_type: clause_id, value: "1.5", verified: true}, note: "style(scope, S)；S 为四子维度取值组合"}
+  - {name: deployed_on, arity: 2, source: {source_type: clause_id, value: "1.5", verified: true}}
+  - {name: connects, arity: 3, source: {source_type: clause_id, value: "1.5", verified: true}, note: "connects(unit1, unit2, protocol)"}
+  - {name: layer_of, arity: 2, source: {source_type: clause_id, value: "1.5", verified: true}}
+  - {name: dependency_rule, arity: 3, source: {source_type: clause_id, value: "1.5", verified: true}, note: "dependency_rule(L1, L2, allowed|forbidden)"}
+  - {name: envelope, arity: 3, source: {source_type: clause_id, value: "1.5", verified: true}, note: "envelope(S, metric, bound_expr)；方面 6 侧同名谓词 envelope(method, metric, bound_expr)（6.5）"}
+  - {name: imposed_by, arity: 2, source: {source_type: clause_id, value: "1.5", verified: true}}
+  - {name: has_approved_exception, arity: 3, source: {source_type: clause_id, value: "1.5", verified: true}, note: "冲突矩阵例外覆盖（1.2.5）；复合标识符不豁免注册检查（编译规范 2.3 封闭集纪律 2）"}
+  - {name: conflict_matrix, arity: 1, source: {source_type: clause_id, value: "1.5", verified: true}, note: "V3 公式内使用形态 conflict_matrix(hard)"}
+
+  # ── 方面 2（2.5）──
+  - {name: unit, arity: 1, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: owned_by, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: responsibility, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: depends_on, arity: 4, source: {source_type: clause_id, value: "2.5", verified: true}, note: "kind: call|data|event|deploy|team；weight: 频次/强度"}
+  - {name: hides, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: volatility, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: boundary_type, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: seam, arity: 1, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: dsm, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
+
+  # ── 方面 5（5.5）──
+  - {name: interaction_flow, arity: 3, source: {source_type: clause_id, value: "5.5", verified: true}, note: "kind: sync_chain|orchestrated|choreographed|hybrid"}
+  - {name: orchestrator, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: saga, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: step_class, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: compensation, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: idempotent, arity: 1, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: delivery_semantics, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: idempotency, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: timeout_budget, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: flag, arity: 4, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: quality_impact_card, arity: 2, source: {source_type: clause_id, value: "5.5", verified: true}}
+  - {name: time_semantics, arity: 3, source: {source_type: clause_id, value: "5.5", verified: true}}
+
+  # ── 方面 6（6.5）──
+  - {name: quality_scenario, arity: 6, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: goal, arity: 7, source: {source_type: clause_id, value: "6.5", verified: true}, note: "goal(g, metric, bound, priority, weight, weight_source, band)；质量属性优先级的登记谓词"}
+  - {name: score, arity: 3, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: card_consumed, arity: 3, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: verdict, arity: 2, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: cost_ledger, arity: 2, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: escalation, arity: 2, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: tactic, arity: 2, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: tactic_card, arity: 2, source: {source_type: clause_id, value: "6.5", verified: true}}
+  - {name: error_budget, arity: 4, source: {source_type: clause_id, value: "6.5", verified: true}}
+
+  # ── 注册表与选型规程（0.17.8 / 0.18.6）──
+  - {name: registry_entry, arity: 7, source: {source_type: clause_id, value: "0.17.8", verified: true}}
+  - {name: kind_profile, arity: 3, source: {source_type: clause_id, value: "0.17.8", verified: true}}
+  - {name: selection_log, arity: 3, source: {source_type: clause_id, value: "0.17.8", verified: true}}
+  - {name: seed_revalidation, arity: 3, source: {source_type: clause_id, value: "0.17.8", verified: true}}
+  - {name: narrative_claim, arity: 3, source: {source_type: clause_id, value: "0.17.8", verified: true}}
+  - {name: selection_procedure, arity: 3, source: {source_type: clause_id, value: "0.18.6", verified: true}}
+  - {name: step_log, arity: 7, source: {source_type: clause_id, value: "0.18.6", verified: true}}
+  - {name: exclusion_record, arity: 3, source: {source_type: clause_id, value: "0.18.6", verified: true}}
+  - {name: verdict_table, arity: 3, source: {source_type: clause_id, value: "0.18.6", verified: true}}
+
+formula_words:
+  # 编译规范 2.3「公式约定词内建语义表」——封闭集，非白板谓词，M4 校验豁免
+  - {name: approved, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: declared, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: registered, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: sourced, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: compatible, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: has, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: now, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+
+clause_defined_predicates:
+  # 编译规范 2.3 封闭集纪律 3②：条款定义检查谓词，锚定条款，运行期判定归 FVR
+  - {name: independently_verifiable, source: {source_type: clause_id, value: "2.5", verified: true}}
+  - {name: cognitive_load, source: {source_type: clause_id, value: "2.5", verified: true}, note: "W3 公式内使用"}
+  - {name: capacity, source: {source_type: clause_id, value: "2.5", verified: true}, note: "W3 公式内使用"}
+  - {name: team, source: {source_type: clause_id, value: "2.5", verified: true}, note: "W3 公式内使用"}
+  - {name: measurable, source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q1 公式内使用"}
+  - {name: has_six_elements, source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q1 公式内使用"}
+  - {name: parameterized, source: {source_type: clause_id, value: "0.17.8", verified: true}, note: "M3 公式内使用"}
+  - {name: executable, source: {source_type: clause_id, value: "0.17.8", verified: true}, note: "M4 公式内使用"}
+  - {name: fields_complete, source: {source_type: clause_id, value: "0.17.8", verified: true}, note: "M2 公式内使用"}
+  - {name: active, source: {source_type: clause_id, value: "1.5", verified: true}, note: "V3 公式内使用（active(S1)）"}
+
+vocabulary_gaps:
+  # 检测谓词书写中发现的词汇缺口 → R2 提议候选（不得本地造词），与 method_registry.yaml gaps 台账联动
+  - id: VG-01
+    missing_need: "「必须同步部署/独立部署」的谓词形态（分布式单体检测需要）"
+    workaround: "以 2.5 depends_on(M1, M2, deploy, ·) 表达部署类依赖；语义等价性由人工判断登记"
+    route: "R2 提议候选（成文法谓词未登记）"
+  - id: VG-02
+    missing_need: "「拆分粒度过细（纳米服务）」「职责粒度过细」的可判定谓词"
+    workaround: "方括号事实占位符 + M15 勘察义务"
+    route: "R2 提议候选"
+  - id: VG-03
+    missing_need: "依赖方向控制族的方向谓词：(i) 端口方向（六边形的核心 → 端口 ← 适配器，『核心不依赖任何外部技术』的可判定形态）；(ii) 环方向（同心圆/整洁架构『依赖只能指向内层』，layer_of 只给层归属、不给层间方向序）；(iii) 模块边界方向（单体内部边界、模块化单体的模块间禁止穿透）；(iv) 拓扑方位/节点角色（边缘计算的边缘节点 vs 中心，Broker/SOA 的中介角色）。1.5 已登记 dependency_rule 与 layer_of，但四者均无法以其现有元数据表达方向违例。"
+    workaround: "以 2.5 depends_on(A, B, ·, ·) 表达依赖存在性 + 方括号事实占位符标注方向约束（M15 勘察义务）；相关 anti_patterns.signal_level 暂按 P1 登记，并在行内注明『词汇补齐后按 V1 同型升 P0』（method_registry.yaml: gaps G-STY-4、manual_judgments MJ-4）"
+    affected: "method_registry.yaml STY-008-AP2（@633/635）、STY-009-AP1（@711）、STY-015-AP1、STY-019-AP1"
+    route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）"
+  - id: VG-04
+    missing_need: "契约形态声明族谓词：(i) 契约版本化/兼容策略的声明态（扩展点契约是否登记 compat_policy——注意 compat_policy 在母本仅为 3.5 contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state) 的实参槽名（@1996），以实参槽名充当谓词属本地造词）；(ii) 数据 schema 的声明态（黑板写入项是否有 schema 声明——schema 在母本为契约工件名（3.2.1『schema + 语义条款』），非 x.5 登记谓词）；(iii) 管道全局错误处理的声明态（pipe 是否有全局错误处理声明、步骤失败是否有处置路径——error_handling 母本全无登记，1.2.1 管道行仅自然语言反模式名）。三者均为『声明存在性』判据，1.5 已登记的 declared(...) 族不覆盖契约形态细分。"
+    workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务，禁沉默排除）；修正判读登记 method_registry.yaml manual_judgments MJ-12"
+    affected: "method_registry.yaml STY-010-AP1、STY-011-AP1、STY-013-AP2 的 detection_predicate"
+    route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）"
