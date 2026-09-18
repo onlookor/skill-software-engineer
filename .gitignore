@@ -1,0 +1,13 @@
+# 参考资料库：按 AGENTS.MD 位于兄弟目录 ../resources，不纳入本仓库；
+# 若被挂载或软链到本目录内，同名规则同样忽略。
+resources/
+/resources/
+
+# 系统与编辑器杂物
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+*.tmp
+.tmp/
