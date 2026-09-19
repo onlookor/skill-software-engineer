@@ -123,7 +123,7 @@ todo 3.8 的产出目录，也是母本 0.17 方法空间注册表的**实体**�
 - 母本：**设计上完备，运行上待接地**；走查覆盖矩阵 60/60 完整闭合。
 - 编译规范：单 Agent/人工种子阶段范围定稿；**唯一未闭合项 #9 并发协议**为多 Agent 阶段条件触发。
 - todo：3.1–3.4、3.6、3.9 已完成；**3.5 待真实项目；3.8 已启动**——首批 STY 架构风格 24 条入库为 `seed`（`registry/`：硬检查失败 0、软警告 0、指针反查 522 个 miss 0、事实占位符 166 处已汇总为勘察义务清单）；其余 16 个 kind 待续批（DEC/OWN/CRD/CSL 批须先解母本既有已发布引用，模式见 `registry/README.md` §4）。
-- **待人工裁决**：Waiver `WV-STY-E3-01`（E3 FVR 全覆盖在 seed 期的限期豁免，母本 0.17.6(2) 设立通道）五要素齐备、`approval.status: pending`——批准是人的裁决（9.2.2／0.10 权力条款），Agent 与工具不自行批准。
+- **Waiver `WV-STY-E3-01` 已批准（2026-09-18，评审点五裁决）**：E3 FVR 全覆盖在 seed 期的限期豁免（母本 0.17.6(2) 设立通道），五要素齐备，`status: active`，LRM＝编译器首次成功运行。边界裁定＝该通道属**制度性豁免**，9.2.2 G2 的 `external_cause` 前置只约束对 P0 违例的裁量豁免；裁决附**防扩宽条款**（个案限定、后续 kind 批次须各自单独申请、E3 刚性不降），全文留痕于 `registry/method_registry.yaml` waivers 节。
 - **3.8 启动前参考资料复核结论（2026-09-18 复扫＋联网核查）**：
   - 原编译阻塞级残余缺口 **#22（Palermo 洋葱架构）已封闭**（本地新增 part 1–4 原文 EPUB；在线在位）；**#48（Feature Toggles）已封闭**（本地新增原文全文 EPUB；署名经核验更正为 Pete Hodgson；在线结构一致）。
   - **#51（Azure Cloud design patterns 目录）已封闭至目录级**（本地目录页存档含 Scheduler Agent Supervisor 条目；该模式专页详情需时再归档）；**#33（Confluent Schema Registry）已升至专页级锚定**（概览页＋兼容性规则专页 `fundamentals/schema-evolution` 全文存档均在位，Platform 8.3，七类兼容性与三格式汇总表齐备——3.8 启动动作已履行，编译规范 4.1 提取暂停解除）。
