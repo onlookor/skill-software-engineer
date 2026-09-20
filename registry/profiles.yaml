@@ -120,8 +120,8 @@ profiles:
         - {source_type: clause_id, value: "2.5", verified: true}
     seed_source:
       clause_id: "2.2"
-      table_rows: "[待勘察：2.2 行数与行名，DEC 批次读取时填实]"
-      entry_id_range: "[待裁决：须先解母本既有引用 DEC-02/DEC-03/DEC-05]"
+      table_rows: "2.2.1（8 行，S1 业务领域 … S8 风险）"
+      entry_id_range: "DEC-001…DEC-008（表序，S1…S8 ↔ DEC-001…008；母本既有引用已解耦：正例 20-1 经 R2 修订为 DEC-05（按变更频率），承诺三 DEC-03 举例表序自洽；裁决见 README §4.2 与 MJ-13/MJ-15）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S1 候选 = DEC 条目；S4 加跑 W 系列（W1–W6）作为可达性一部分"
@@ -179,8 +179,8 @@ profiles:
         - {source_type: clause_id, value: "0.18.7", verified: true}
     seed_source:
       clause_id: "4.2.1"
-      table_rows: "[待勘察：OWN 批次读取时填实]"
-      entry_id_range: "[待裁决：母本 0.18.7 正例已发布 OWN-01…OWN-04（两位数形态）]"
+      table_rows: "4.2.1（4 行）"
+      entry_id_range: "OWN-001…OWN-004（表序，与母本 0.18.7 正例 18-B 已发布候选集 1:1 一致，母本零改动；裁决见 README §4.2 与 MJ-13）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "逐数据集合迭代执行；S6 恒为高影响（批准注册类目）；一致性级别选择 S5 前强制「业务语义论证」工件（Y3）"
@@ -235,8 +235,8 @@ profiles:
         - {source_type: clause_id, value: "1.2.5", verified: true}
     seed_source:
       clause_id: "4.2.3"
-      table_rows: "[待勘察：CSL 批次读取时填实]"
-      entry_id_range: "[待裁决：母本反例 18-A 已发布 CSL-03（两位数形态）]"
+      table_rows: "4.2.3（5 行）"
+      entry_id_range: "CSL-001…CSL-005（表行序，最终一致 = CSL-004；母本反例 18-A 已发布引用经 R2 修订为 CSL-04（最终一致），锚点已对齐；裁决见 README §4.2 与 MJ-13/MJ-15）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "逐数据集合迭代执行；一致性级别选择 S5 前强制「业务语义论证」工件（Y3）"
@@ -289,8 +289,8 @@ profiles:
         - {source_type: clause_id, value: "5.2.2", verified: true}
     seed_source:
       clause_id: "5.2.1/5.2.2"
-      table_rows: "[待勘察：CRD 批次读取时填实]"
-      entry_id_range: "[待裁决：母本已发布 CRD-02；另有叙述式 CRD-Saga]"
+      table_rows: "5.2.1（4 行）/5.2.2（4 行）"
+      entry_id_range: "CRD-001…CRD-008（分块序：5.2.1 = CRD-001…004、5.2.2 = CRD-005…008；CRD-002 = 协同（choreography），与母本已发布 CRD-02（事件协同）一致，母本零改动；叙述式 CRD-Saga 为 5.2.2 行称呼、非 entry_id，等同判断见 MJ-14，裁决见 README §4.2）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S5 先验权重消费风格默认；S4 卡片聚合最重（Z7 联动）"
