@@ -369,4 +369,4 @@
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；cost_profile: 人工判断
 
 ---
-生成于 2026-09-22T22:37:56｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`24116399c67f`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
+生成于 2026-09-22T22:57:09｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`cc5ec190aa57`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
