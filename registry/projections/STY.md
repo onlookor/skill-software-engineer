@@ -2,7 +2,7 @@
 
 > 本文件由 `scripts/project.py` 自动生成（机器层→人类层同源投影，母本 0.9／编译规范 E2），**禁止手改**；修改 registry/ 任一源后重跑 `python3 scripts/project.py --project`。
 
-- 批次：种子批次一：STY（kind 前缀见 0.17.3 首行）
+- 批次：种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）
 - 版本：registry_version 1.0.0
 - 编号：README §4 裁决的分块序，锚定 STY-004（母本反例 18-A 既有引用一致，MJ-1）；母本零改动。
 - 卡片仅为紧凑投影；字段全量与逐字措辞以 method_registry.yaml 为准。
@@ -366,7 +366,7 @@
 - **施加约束** 3 项：方面 1←对 Agent 为强制步骤（纪律一，@1312）：每一个候选必须来自方法…；方面 1←匹配度排序不得替代规程其余步骤：不得增步、跳步、改序、在步骤内引入规程外…；方面 10←机器层：逐候选求值记录与得分入 selection_log / step…
 - **formal_anchor**：V5(triggers)
 - **叙事（收益-成本）**：收益：把风格选择变成可机器执行的匹配问题——问题特征向量 × 各风格条目的适用条件谓词 → 匹配度排序，使『候选从何而来』有唯一合法答案（注册表条目），从而封死 Agent 凭训练语料流行度自由提案的…
-- **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；cost_profile: 人工判断；narrative: 人工判断；status: 人工判断
+- **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；cost_profile: 人工判断
 
 ---
-生成于 2026-09-20T22:11:35｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`06ffd76fb531`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`df7c72c7037d`
+生成于 2026-09-22T22:37:56｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`24116399c67f`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
