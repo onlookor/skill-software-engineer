@@ -22,14 +22,14 @@
 meta:
   law_file: ../软件工程元框架成文法.md
   registry_version: {major: 1, minor: 0, patch: 0}
-  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）"
+  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）"
   schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
   kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
   seed_channel_source: {source_type: clause_id, value: "0.17.6", verified: true}
   metric_vocabulary_source: {source_type: clause_id, value: "6.2.1", verified: true}
   signal_level_source: {source_type: clause_id, value: "0.14", verified: true}
-  entry_count: 24
-  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）；其余 16 kind 待后续批次"
+  entry_count: 28
+  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）；其余 15 kind 待后续批次"
 
 entries:
 
@@ -1694,6 +1694,284 @@ entries:
       typical_scenarios: "任何风格选型决策点（0.18.1 全覆盖）的候选装配与排序、Agent 执行的选型（强制步骤）、作为 @1391 典型链的第三步（属性求交后的匹配度排序）、需要为 ADR 被拒候选节提供逐候选求值记录的场合、注册表条目扩充后的候选面复核（0.17.6 种子重验证联动）。"
       common_misuse: "开放生成候选或引入注册表外风格（纪律一违例）；把 unknown 当 false 处理造成沉默排除（S1 明示『未知 ≠ 假』）；特征向量混入无出处事实（FM-1）；以匹配度最高即定案（跳过 S4/S5 与纪律二批准）；得分差在传导不确定区间内仍按名义分择一（假精确，须走 CH-B 三择）；在步骤内引入规程外判据或改序（FM-14）。"
 
+  # ══════════ 种子批次二：数据所有权模式（4.2.1）→ OWN-001…OWN-004 ══════════
+  # 编号＝4.2.1 表行序，与母本 0.18.7 正例 18-B 已发布候选集 1:1 一致（MJ-13 (i)，母本零改动）。
+  # 18-B「消费字段」（@640-641）按 0 基索引对齐：OWN-003.applicability.delivery_space[1]、
+  # OWN-001.cost_profile.ops_cost、OWN-001/002.typical_reversibility（同级）、
+  # OWN-004.applicability.problem_space[1]（MJ-16）。
+
+  - entry_id: OWN-001
+    kind: OWN
+    name: "单一所有者（single writer）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-OWN-01）
+    provenance:
+      origin: hybrid                   # 骨架=4.2.1 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "4.2.1-单一所有者（single writer）", verified: true}
+        - {source_type: clause_id, value: "4.2.1", verified: true}
+        - {source_type: clause_id, value: "4.3", verified: true}
+        - {source_type: clause_id, value: "4.4", verified: true}
+        - {source_type: clause_id, value: "4.5", verified: true}
+        - {source_type: clause_id, value: "2.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: clause_id, value: "0.18.7", verified: true}   # 正例 18-B：S5 保守界消费 ops_cost 与 typical_reversibility（@628）
+    typical_reversibility: free      # 人工判断：逻辑所有权声明是可逆决策先做，物理迁移才是不可逆事实（4.3 现状锁定 / 4.6 示例一关键句）；18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：4.2.1「适用条件」列原文
+        - "默认模式；W4/Y1 的直接实现"
+      current_space:                   # 交叉表源：4.3 现状空间驱动「多系统重复存储（同一数据多处权威 = 现状勘察必须产出的冲突清单）」的负形态
+        - "[既有存储可干净归属单一写入负责单元（现状勘察无同一数据多处权威的冲突清单）]"
+      delivery_space: []               # 4.2.1 本行无交付空间条件、4.3 交付空间驱动不含所有权归属项；留空不读作「该维不适用」（G-STY-1 同型，M15）
+    envelope:                          # 骨架源：4.2.1 行「定义/备注」；metric 取 6.2.1 封闭词汇既有书写形态；界形参数化＝人工判断（MJ-2 同型，无具体数值）
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "Δconsumer_set ⊆ consumers(D)：他者经所有者契约访问 → 变更触达单元数上界 |consumers(D)|"
+        source: {source_type: row_id, value: "4.2.1-单一所有者（single writer）", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99_direct(D) ≤ P99_via_repl(D)：直读所有者为最短访问路径，经副本的读路径延迟不优于直读"
+        source: {source_type: row_id, value: "4.2.1-单一所有者（single writer）", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "SLO_undocumented → SLO_documented：访问路径契约化（Y2）→ 服务质量承诺可登记可计量"
+        source: {source_type: row_id, value: "4.2.1-单一所有者（single writer）", verified: true}
+    cost_profile:
+      latency_budget_delta: "不适用（kind_profile_OWN.optional：所有权归属本身不引入请求路径延迟项，延迟影响经 CSL/DFL 条目表达，在本 kind 重复声明将致 S4 ledger 双计）"
+      failure_modes: ["所有权含糊（写入责任单元未定案即存在写路径）", "绕过所有者的直写流量（Y2 违例 → 方面 9 所有权违例守护对象）", "直读负载集中于所有者单元（读扩展受限时按 4.2.1 行 2 演进为授权读副本，不得引入共享写）"]
+      consistency_impact: "写权单一 → 写路径无跨单元一致性协调；读侧复制的一致性级别归方面 4 的 CSL 条目声明（Y3），本条目不重复声明级别"
+      observability_requires: ["写路径流量可观测（全部写经所有者单元 → 旁路直写可检出）", "访问路径登记可查（access_path：consumer/path_kind/contract）"]
+      ops_cost: "[随数据集合数量与访问路径契约数上升；无副本一致性运维项，四行中最低]"   # 18-B S5 保守界消费字段（ops_cost(OWN-01) < ops_cost(OWN-02)）
+      skill_prerequisites: ["数据契约的语义条款设计（schema/值域/空值/敏感性/新鲜度，4.2.5）", "所有权边界处的边界校验策略选择（拒绝/隔离/降级，4.2.5）"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 1.2.5 冲突矩阵无 OWN 行；4.2.1 表内取值互斥不枚举（MJ-5 判据）；跨 kind 无母本明文依据不登记（MJ-9 判据）
+    constraints_imposed:               # 交叉表源：4.4「施加约束」表（本 kind 全体七行，逐条适用于本 kind 各条目；级别取表内「级别」列）
+      - {target_aspect: 2, constraint: "数据归属现状回馈分解：现状数据不可干净归属时，S4 策略受约束、拆分序列须按数据迁移可行性排序", level: soft}
+      - {target_aspect: 3, constraint: "数据契约的 schema 与语义条款（单位/值域/空值/敏感性/新鲜度）由本方面供给", level: hard}
+      - {target_aspect: 5, constraint: "一致性模型 → 协调模式可行集：跨所有者强一致需求 → Saga + 业务补偿，或回溯方面 1 重审部署风格（Y6 的下游消费路径）", level: hard}
+      - {target_aspect: 6, constraint: "一致性级别声明与新鲜度条款 → 质量判定的代价计入项", level: soft}
+      - {target_aspect: 8, constraint: "不变式 → 对账验证项；血缘 → 派生数据可重建性测试；边界校验 → 契约测试的数据面", level: soft}
+      - {target_aspect: 9, constraint: "数据漂移守护对象：schema 漂移（实际 schema 偏离注册契约）、所有权违例（绕过所有者的直写流量）、共享写例外超期", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Y 谓词集 + 血缘图；人类层：覆盖谓词子集 {Y 谓词集、血缘} 的投影视图（受众问题 = 数据所有权与流动；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: OWN-001-AP1
+        description: "所有权含糊：数据集合的写入责任单元未定案即存在写路径"
+        detection_predicate: "∃ D: dataset(D) ∧ ¬owner(D, ·) ∧ [存在写入该数据集合的流量]"
+        signal_level: P1               # 违反 Y1 前提（所有者未声明）但尚不构成 Y1/Y2 违例的直接来源；限期整改，超期升 P0（MJ-4 判据）
+    formal_anchor:                     # 交叉表源：4.5 可验证性质 / 2.5 W 系列
+      - {property_id: Y1, role: implements}     # 单一所有权的数据域实现（|{M : owner(D, M)}| = 1）
+      - {property_id: Y2, role: implements}     # 他者经所有者契约访问
+      - {property_id: W4, role: consumed_by}    # 分解层数据单一所有者检查消费本模式（4.4 接收约束：方面 2 硬）
+    references: []                     # G-OWN-1：本行无行级书目登记提取面（书目 41 的登记面限定 4.2.1「数据产品」行）
+    narrative:
+      benefit_cost_analysis: "收益：语义最简单的所有权形态——写权唯一，一致性协调与访问控制都收敛到所有者单元；是 W4/Y1 的直接实现，也是现状锁定期「逻辑所有权先行」的落点（可逆决策先做）。代价：读负载集中于所有者单元，读扩展只能走授权副本/视图（不得引入共享写）；旁路直写必须可检出，否则 Y1/Y2 的守护退化为纸面声明。"
+      typical_scenarios: "默认所有权形态（4.2.1 适用条件列）；18-B 正例 S5 的入选条目（与 OWN-002 得分不可区分 → CH-B 保守界择 ops_cost 更低者）；棕地「逻辑所有权先行 + 物理迁移推迟」的过渡形态（4.6 示例一）。"
+      common_misuse: "以「读扩展」为由引入第二写入者（应走 OWN-002 授权读副本）；把「默认模式」读作无需登记 access_path（Y2 仍要求访问路径契约化）；以逻辑所有权声明替代物理迁移却无最后负责时刻（滑向 OWN-004 的常态化共享写）。"
+
+  - entry_id: OWN-002
+    kind: OWN
+    name: "所有者 + 授权读副本"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-OWN-01）
+    provenance:
+      origin: hybrid                   # 骨架=4.2.1 表行＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "4.2.1-所有者 + 授权读副本", verified: true}
+        - {source_type: clause_id, value: "4.2.1", verified: true}
+        - {source_type: clause_id, value: "4.3", verified: true}
+        - {source_type: clause_id, value: "4.4", verified: true}
+        - {source_type: clause_id, value: "4.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: clause_id, value: "0.18.7", verified: true}   # 正例 18-B：S4 副本新鲜度 unknown → 勘察义务；S5 与 OWN-01 不可区分（@627-628）
+    typical_reversibility: free      # 人工判断：撤销副本读路径即回到单一所有者形态，无不可逆事实；与 OWN-001 同级（18-B S5「reversibility 同级」）
+    applicability:
+      problem_space:                   # 骨架源：4.2.1「适用条件」列（读负载高、可容忍副本延迟）
+        - "[读负载高且消费方可容忍副本延迟]"
+      current_space: []                # 4.3 现状空间驱动无本行专属条件（G-STY-1 同型，M15：留空 ≠ 不适用）
+      delivery_space: []               # 同上（G-STY-1 同型）
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99_replica(D) ≤ P99_direct(D)：授权读副本为读负载分流 → 读路径延迟不劣于直读所有者"
+        source: {source_type: row_id, value: "4.2.1-所有者 + 授权读副本", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "freshness_window ≤ Δ_read：副本新鲜度窗口写入数据契约（4.2.1 备注）→ 消费方按声明窗口容忍旧值"
+        source: {source_type: row_id, value: "4.2.1-所有者 + 授权读副本", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "read_load_owner ↓：引入副本后所有者单元读负载单调不增 → 变更排期不受读峰值挤压"
+        source: {source_type: row_id, value: "4.2.1-所有者 + 授权读副本", verified: true}
+    cost_profile:
+      latency_budget_delta: "不适用（kind_profile_OWN.optional：同 OWN-001；副本引入的读延迟界由 envelope 承载，不重复计入本字段）"
+      failure_modes: ["写权旁落：副本/物化视图侧出现直写流量（Y1/Y2 硬违例的直接来源）", "新鲜度条款缺失：副本窗口未写入数据契约 → 消费方读到不可预期旧值", "副本重建能力未登记：派生读模型不可重建 = 隐式权威（Y7 漂移信号）"]
+      consistency_impact: "写路径仍单点（无跨单元协调）；读侧一致性 = 副本新鲜度语义，级别声明归 CSL 条目（Y3），本条目只承载新鲜度条款义务"
+      observability_requires: ["副本新鲜度计量（实测窗口对照契约条款）", "授权关系可查（access_path 的 path_kind ∈ {replica, view}）"]
+      ops_cost: "[较单一所有者增加副本同步与新鲜度监控运维项；写权仍单点故无跨单元协调项]"   # 18-B S5 保守界比较对象（ops_cost(OWN-01) < ops_cost(OWN-02)）
+      skill_prerequisites: ["数据契约新鲜度条款设计（4.2.1 备注）", "副本/物化视图的重建演练（Y7 可重建性登记项）"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 同 OWN-001 行内注（MJ-5 表内互斥不枚举 / MJ-9 跨 kind 无明文不登记）
+    constraints_imposed:               # 交叉表源：4.4「施加约束」表七行（同 OWN-001）
+      - {target_aspect: 2, constraint: "数据归属现状回馈分解：现状数据不可干净归属时，S4 策略受约束、拆分序列须按数据迁移可行性排序", level: soft}
+      - {target_aspect: 3, constraint: "数据契约的 schema 与语义条款（单位/值域/空值/敏感性/新鲜度）由本方面供给", level: hard}
+      - {target_aspect: 5, constraint: "一致性模型 → 协调模式可行集：跨所有者强一致需求 → Saga + 业务补偿，或回溯方面 1 重审部署风格（Y6 的下游消费路径）", level: hard}
+      - {target_aspect: 6, constraint: "一致性级别声明与新鲜度条款 → 质量判定的代价计入项", level: soft}
+      - {target_aspect: 8, constraint: "不变式 → 对账验证项；血缘 → 派生数据可重建性测试；边界校验 → 契约测试的数据面", level: soft}
+      - {target_aspect: 9, constraint: "数据漂移守护对象：schema 漂移（实际 schema 偏离注册契约）、所有权违例（绕过所有者的直写流量）、共享写例外超期", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Y 谓词集 + 血缘图；人类层：覆盖谓词子集 {Y 谓词集、血缘} 的投影视图（受众问题 = 数据所有权与流动；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: OWN-002-AP1
+        description: "写权旁落：经授权读副本/物化视图的直写流量"
+        detection_predicate: "∃ D, c: access_path(D, c, replica, ·) ∧ [该访问路径存在写流量]"
+        signal_level: P0               # Y1/Y2 硬性质违例的直接来源（MJ-4 P0 判据；4.5 触发条件含 access_path 谓词变更）
+    formal_anchor:
+      - {property_id: Y1, role: implements}     # 写权仍单一
+      - {property_id: Y2, role: implements}     # 副本读路径亦须契约化（access_path 登记 path_kind）
+      - {property_id: Y7, role: triggers}       # 副本为派生物 → 可重建性登记义务（软性质，P2）
+      - {property_id: W4, role: consumed_by}
+    references: []                     # G-OWN-1 同型（书目 41 登记面不含本行）
+    narrative:
+      benefit_cost_analysis: "收益：读负载分流而写权仍单点——一致性协调成本不增，只增副本新鲜度一项契约条款；是 OWN-001 在读扩展受限时的唯一合法演进步（4.2.1 行 1 备注「读可扩展（副本/视图），写不可共享」）。代价：副本是派生物，重建能力（Y7）与新鲜度窗口都必须登记，否则退化为隐式权威；新鲜度不可核验时 S4 只能标 unknown + 勘察义务（18-B S4 推荐侧即此形态）。"
+      typical_scenarios: "读负载高且消费方可容忍副本延迟（4.2.1 适用条件列）；18-B 正例 S4/S5 中与 OWN-001 加权得分不可区分的对照候选（落选于 CH-B 保守界）。"
+      common_misuse: "把副本当第二权威（直写）；新鲜度窗口口头承诺不入数据契约；以「读副本」名义掩盖共享写例外（应走 OWN-004 并附退出计划）。"
+
+  - entry_id: OWN-003
+    kind: OWN
+    name: "数据产品"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-OWN-01）
+    provenance:
+      origin: hybrid                   # 骨架=4.2.1 表行＋4.3 三空间驱动交叉表源＋书目 41 参考资料源
+      source_pointers:
+        - {source_type: row_id, value: "4.2.1-数据产品", verified: true}
+        - {source_type: clause_id, value: "4.2.1", verified: true}
+        - {source_type: clause_id, value: "4.3", verified: true}
+        - {source_type: clause_id, value: "4.4", verified: true}
+        - {source_type: clause_id, value: "4.5", verified: true}
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: clause_id, value: "0.18.7", verified: true}   # 正例 18-B：S1 消费 delivery_space[1]「∃平台团队」= 假 → 排除（@624）
+        - {source_type: bib_id, value: "41", verified: true}
+    typical_reversibility: bounded   # 人工判断：SLO、发现元数据与消费契约一经发布，撤销受既有消费方约束（非自由逆转，亦非不可逆事实）
+    applicability:
+      problem_space:                   # 骨架源：4.2.1「适用条件」列；谓词形态转写＝人工判断（consumer_set 系 3.5 contract 实参槽名，不得充当谓词 → 集合记法，MJ-12 同型纪律）
+        - "∃ consumer_set: |consumer_set| ≥ 2 ∧ [消费方异构（分析/ML/运营）] → 数据产品化候选"
+        - "[数据产品化意图在案（对外提供数据服务、分析驱动业务）]"   # 交叉表源：4.3 问题空间驱动第 2 项原文
+      current_space: []                # 4.3 现状空间驱动无本行专属条件（G-STY-1 同型）
+      delivery_space:                  # 交叉表源：4.3 交付空间驱动「数据团队组织形态 → 数据产品模式的组织前提」
+        - "[数据消费方多且异构的组织结构在案（分析/ML/运营分属不同团队）]"
+        - "∃ platform_team: team(platform_team) ∧ [平台团队提供自助基础设施与联邦治理支撑（数据网格四原则的组织前提）]"   # 0 基 [1] = 18-B S1 消费字段（@624/@640）；假 → 排除并留痕
+    envelope:
+      - metric: "可用性目标（SLO）"
+        bound_expr: "SLO_declared(D) ∧ monitored(D)：4.2.1 行定义含「SLO」→ SLO 已声明且可计量（未声明 = Y3 同型违例）"
+        source: {source_type: row_id, value: "4.2.1-数据产品", verified: true}
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "|Δcontract_count| ≥ 1：任一语义条款变更须以消费契约变更形态过全部消费方边界 → 变更成本随消费方数放大"
+        source: {source_type: row_id, value: "4.2.1-数据产品", verified: true}
+    cost_profile:
+      latency_budget_delta: "不适用（kind_profile_OWN.optional：同 OWN-001；产品化不改变请求路径延迟项）"
+      failure_modes: ["空壳产品化：无平台团队支撑即宣告数据产品（4.3：幻觉条目，走 0.4 证据门槛审查）", "治理成本失衡：消费规模未证明成本合理即选用（4.2.1 备注：治理成本最高）", "SLO 不可计量：声明在案但无监控 → 消费方无从主张"]
+      consistency_impact: "消费契约声明新鲜度与一致性语义（级别声明归 CSL 条目，Y3）；本条目承载「一致性声明须对消费方公开」的义务，不重复声明级别"
+      observability_requires: ["SLO 声明与计量在案", "发现元数据可查（消费方可自助定位）", "消费契约逐消费方登记（access_path 全覆盖）"]
+      ops_cost: "[随消费契约数与消费方数量上升；含发现元数据与 SLO 运营项，4.2.1 四行中最高]"
+      skill_prerequisites: ["数据产品运营（SLO/发现元数据/消费契约维护）", "平台团队自助基础设施的运维支撑能力（4.3 交付空间硬前提）"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 同 OWN-001 行内注（MJ-5/MJ-9）
+    constraints_imposed:               # 交叉表源：4.4「施加约束」表七行（同 OWN-001）
+      - {target_aspect: 2, constraint: "数据归属现状回馈分解：现状数据不可干净归属时，S4 策略受约束、拆分序列须按数据迁移可行性排序", level: soft}
+      - {target_aspect: 3, constraint: "数据契约的 schema 与语义条款（单位/值域/空值/敏感性/新鲜度）由本方面供给", level: hard}
+      - {target_aspect: 5, constraint: "一致性模型 → 协调模式可行集：跨所有者强一致需求 → Saga + 业务补偿，或回溯方面 1 重审部署风格（Y6 的下游消费路径）", level: hard}
+      - {target_aspect: 6, constraint: "一致性级别声明与新鲜度条款 → 质量判定的代价计入项", level: soft}
+      - {target_aspect: 8, constraint: "不变式 → 对账验证项；血缘 → 派生数据可重建性测试；边界校验 → 契约测试的数据面", level: soft}
+      - {target_aspect: 9, constraint: "数据漂移守护对象：schema 漂移（实际 schema 偏离注册契约）、所有权违例（绕过所有者的直写流量）、共享写例外超期", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Y 谓词集 + 血缘图；人类层：覆盖谓词子集 {Y 谓词集、血缘} 的投影视图（受众问题 = 数据所有权与流动；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: OWN-003-AP1
+        description: "空壳产品化：无组织前提的数据产品宣告"
+        detection_predicate: "∃ D: dataset(D) ∧ [宣称按数据产品运营] ∧ ¬(∃ platform_team: team(platform_team))"
+        signal_level: P1               # 适用性事实缺位（交付空间谓词为假）而非硬性质违例的直接来源；限期补组织前提或回落 OWN-001 候选（MJ-4 判据）
+    formal_anchor:
+      - {property_id: Y3, role: implements}     # SLO 与一致性声明显式化（对消费方公开）
+      - {property_id: Y2, role: implements}     # 消费契约 = 访问路径契约化的产品化形态
+      - {property_id: Y7, role: consumed_by}    # 派生消费视图的可重建性检查消费本模式
+    references:                        # 参考资料源：书目 41 的登记提取面限定 4.2.1「数据产品」行（其余三行见 G-OWN-1）
+      - {bib_id: 41, support_claim: "数据产品模式与数据网格四原则（领域所有权 + 数据即产品 + 自助平台 + 联邦治理）的组织模式定位；本地提取以专著为准", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：把数据集合升级为带所有者团队、SLO、发现元数据与消费契约的产品，异构消费方（分析/ML/运营）可自助接入而不逐一谈判；一致性声明由此对消费方公开（Y3 的产品化承载）。代价：治理成本为四行之最，仅在消费规模证明成本合理时选用（4.2.1 备注）；无平台团队支撑时它是幻觉条目（4.3），须按 0.4 证据门槛排除并留痕。"
+      typical_scenarios: "数据消费方多且异构、数据网格语境（4.2.1 适用条件列）；18-B 正例 S1 中因交付空间谓词「∃平台团队」= 假（O-3）被排除并记录于 ADR 被拒候选节的候选。"
+      common_misuse: "先宣告产品化、后补组织前提（顺序颠倒 = 幻觉条目）；以「数据产品」名义行共享库之实（写权未单点，Y1 违例）；只登记 SLO 不接监控（不可计量 = 无承诺）。"
+
+  - entry_id: OWN-004
+    kind: OWN
+    name: "共享写（治理例外）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-OWN-01）
+    provenance:
+      origin: hybrid                   # 骨架=4.2.1 表行＋4.3 现状锁定交叉表源＋0.6 CH-B 参数化
+      source_pointers:
+        - {source_type: row_id, value: "4.2.1-共享写（治理例外）", verified: true}
+        - {source_type: clause_id, value: "4.2.1", verified: true}
+        - {source_type: clause_id, value: "4.3", verified: true}
+        - {source_type: clause_id, value: "4.4", verified: true}
+        - {source_type: clause_id, value: "4.5", verified: true}
+        - {source_type: clause_id, value: "4.6", verified: true}
+        - {source_type: clause_id, value: "0.6", verified: true}   # CH-B 推迟模式（退出计划 + 最后负责时刻）
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: clause_id, value: "0.18.7", verified: true}   # 正例 18-B：S1 消费 problem_space[1]「遗留迁移过渡期」= 真 → 保留 + 退出计划义务（@624）
+    typical_reversibility: costly    # 人工判断：多单元写入形成的交叉状态收敛需迁移工程（4.6 示例一：物理迁移是不可逆事实），非自由逆转
+    applicability:
+      problem_space:                   # 骨架源：4.2.1「适用条件」列原文「**仅限**遗留迁移过渡期」；[0] 负形态＝人工判断（防误用面，M15）
+        - "[非迁移过渡期：常态化共享写不属本方法适用域（= 分布式单体信号）]"
+        - "[遗留迁移过渡期]"            # 0 基 [1] = 18-B S1 消费字段（@624/@641）
+      current_space:                   # 交叉表源：4.3 现状锁定（既有共享库短期不可拆 → 逻辑所有权先行 + 物理迁移推迟）
+        - "[退出计划与最后负责时刻可在迁移里程碑前闭合（LRM 可绑定）]"
+      delivery_space: []               # 4.3 交付空间驱动无本行专属条件（G-STY-1 同型）
+    envelope:
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time_exit ≤ deadline：退出计划的执行前置时间不晚于最后负责时刻（CH-B 参数化切换点）"
+        source: {source_type: row_id, value: "4.2.1-共享写（治理例外）", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "now ≤ deadline ∨ escalation_filed：到期未迁移 → 升级裁决（Y8 原文界形）"
+        source: {source_type: row_id, value: "4.2.1-共享写（治理例外）", verified: true}
+    cost_profile:
+      latency_budget_delta: "不适用（kind_profile_OWN.optional：同 OWN-001；多写协调的延迟代价归 consistency_impact 与 CSL/CRD 条目，避免 S4 双计）"
+      failure_modes: ["例外常态化：过渡期结束后共享写延续（= 分布式单体信号）", "例外超期：deadline 到期未迁移且未升级裁决（Y8 违例 → 自动升 P0 + CH-C(2)）", "退出计划缺失：设立共享写时无最后负责时刻（CH-B 推迟模式要件不满足）"]
+      consistency_impact: "多单元写同一存储 → 一致性协调成本最高形态（4.2.1 定义）；仅过渡期容忍，级别声明仍归 CSL 条目（Y3），本条目不重复声明级别"
+      observability_requires: ["shared_write_exception 登记可查（退出计划 + deadline）", "到期告警接入升级裁决通道（CH-C(2)）", "过渡期交叉表清单在案（4.6 示例一：例外仅覆盖过渡期交叉表）"]
+      ops_cost: "[随共享写单元数与过渡期时长上升；含升级裁决通道与到期告警维护]"
+      skill_prerequisites: ["退出计划与迁移里程碑管理（CH-B 参数化切换点 + LRM）", "过渡期双写/对账的临时工程能力（4.2.5 对账验证）"]
+      aggregation_semantics: itemwise
+    compatibility: []                  # 同 OWN-001 行内注（MJ-5/MJ-9）；18-B S2「OWN-04 × CRD-02 无冲突对」待 CRD 批入库后按 M9 回填（不静默丢弃，见 PCR 同型纪律）
+    constraints_imposed:               # 交叉表源：4.4「施加约束」表七行（同 OWN-001）
+      - {target_aspect: 2, constraint: "数据归属现状回馈分解：现状数据不可干净归属时，S4 策略受约束、拆分序列须按数据迁移可行性排序", level: soft}
+      - {target_aspect: 3, constraint: "数据契约的 schema 与语义条款（单位/值域/空值/敏感性/新鲜度）由本方面供给", level: hard}
+      - {target_aspect: 5, constraint: "一致性模型 → 协调模式可行集：跨所有者强一致需求 → Saga + 业务补偿，或回溯方面 1 重审部署风格（Y6 的下游消费路径）", level: hard}
+      - {target_aspect: 6, constraint: "一致性级别声明与新鲜度条款 → 质量判定的代价计入项", level: soft}
+      - {target_aspect: 8, constraint: "不变式 → 对账验证项；血缘 → 派生数据可重建性测试；边界校验 → 契约测试的数据面", level: soft}
+      - {target_aspect: 9, constraint: "数据漂移守护对象：schema 漂移（实际 schema 偏离注册契约）、所有权违例（绕过所有者的直写流量）、共享写例外超期", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Y 谓词集 + 血缘图；人类层：覆盖谓词子集 {Y 谓词集、血缘} 的投影视图（受众问题 = 数据所有权与流动；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: OWN-004-AP1
+        description: "常态化共享写：过渡期外的多单元写同一存储"
+        detection_predicate: "∃ D, M1, M2: dataset(D) ∧ owner(D, M1) ∧ owner(D, M2) ∧ ¬(M1 = M2) ∧ ¬shared_write_exception(D, ·, ·)"
+        signal_level: P0               # Y1 硬性质违例的直接来源（MJ-4 P0 判据；4.5 Y1 例外须批准 + 退出计划）
+      - pattern_id: OWN-004-AP2
+        description: "共享写例外超期：到期未迁移且未升级裁决"
+        detection_predicate: "∃ D: shared_write_exception(D, ·, deadline) ∧ ¬(now ≤ deadline) ∧ ¬escalation(D, ·)"
+        signal_level: P0               # Y8 硬（超期自动升级裁决，CH-C(2)）；escalation 谓词属 6.5 登记词汇
+    formal_anchor:
+      - {property_id: Y1, role: consumed_by}    # 本条目是 Y1 的批准例外形态（has_approved(shared_write_exception(D))）
+      - {property_id: Y8, role: implements}     # 共享写例外不超期
+      - {property_id: W4, role: consumed_by}
+    references: []                     # G-OWN-1 同型（书目 41 登记面不含本行）
+    narrative:
+      benefit_cost_analysis: "收益：遗留迁移过渡期内唯一合法的多写形态，为物理迁移换取时间（0.11 现状锁定 + 4.6 示例一：逻辑所有权先行、物理迁移推迟）；例外登记使 Y1 在过渡期仍可判定而非静默失效。代价：必须附退出计划 + 最后负责时刻（CH-B 推迟模式），到期未迁移即自动升级裁决（Y8）；一致性协调成本为四行最高；常态化共享写是分布式单体信号，不属本方法。"
+      typical_scenarios: "遗留共享库迁移过渡期（4.6 示例一的过渡期交叉表）；18-B 正例中因 problem_space 谓词「遗留迁移过渡期」= 真（K-17）而保留、并作为过渡期辅助形态并行登记（LRM = CRM 迁移里程碑）的候选。"
+      common_misuse: "以「过渡」名义设立无退出计划/无最后负责时刻的共享写；过渡期结束后不回收（例外常态化）；以共享写规避所有权定案（应先走 OWN-001 逻辑所有权先行）。"
+
 # ============================================================================
 # 注册表级台账（README §2：注册表级信息一律置于顶层节，不进入条目）
 #
@@ -1754,6 +2032,14 @@ gaps:
     route: "人工裁决（书目 2 的登记面是否涵盖 1.2.4 全表）→ R2 提议澄清；澄清前保持留空"
     status: open
 
+  - gap_id: G-OWN-1
+    type: 参考资料源缺失（OWN 行级书目提取面仅覆盖数据产品行）
+    statement: "母本参考文献中书目 41（Dehghani）的登记提取面为 4.2.1『数据产品』模式与数据网格四原则（compile_usage=metadata_extraction，[已核验]）；4.2.1 其余三行（单一所有者／所有者+授权读副本／共享写治理例外）无任何行级书目登记面。"
+    impact: "OWN-001/OWN-002/OWN-004 的 references: []（M6 对空集平凡为真；禁止以不承载该主张的文献充当出处）；书目 41 的登记面不得扩张至其余三行。三条的其余字段以 4.2.1 表行为骨架源，不受影响。"
+    affected: "OWN-001、OWN-002、OWN-004"
+    route: "勘察补书目并按 0.12 定 compile_usage → 母本参考文献表扩充（高影响，走 R2/ADR）"
+    status: open
+
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
 # ---------------------------------------------------------------------------
@@ -1763,7 +2049,8 @@ status_transitions:
     to: seed
     scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
             STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
-            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024]
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16）；STY 批 24 条的迁移事实与日期不变
     date: "2026-09-18"
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -1774,6 +2061,24 @@ status_transitions:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
     note: "seed 条目被选型消费时，决策 ADR 自动附注『依据种子条目，待重验证』（0.17.5）；重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。本简记不替代 seed→active 的重验证记录。"
+
+  - transition_id: ST-OWN-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004]   # check_ledgers 双向相等要求全集（MJ-16）；OWN 批实际迁移对象为本四条
+    date: "2026-09-22"   # OWN 批入库日（本简记的登记日）；STY 批的 2026-09-18 见 ST-STY-01
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+    note: "本批迁移对象为 OWN-001…OWN-004（4.2.1 表序，编号裁决见 MJ-13 (i)）；scope 含 STY 24 条系 check_ledgers 全集要求的形式面（MJ-16），STY 批的迁移事实已由 ST-STY-01 登记。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
 
 # ---------------------------------------------------------------------------
 # 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）
@@ -1800,6 +2105,24 @@ waivers:
       ruling: "批准。边界裁定：0.17.6(2) 明文设立的 E3 bootstrap 豁免属**制度性豁免**（母本预先设立的通道，五要素齐备即可申请），9.2.2 G2 的 `external_cause` 前置只约束评审点五对 P0 违例的**裁量豁免**，不适用于母本明文通道；故本项 `external_cause: false` 不构成驳回理由。另记：G2 前置为『P0 级违例』，而级别（P0/P1/P2）是守护规则注册表条目的字段（9.2.2 条目形态），E3 的守护规则条目尚未建立、级别未定，本裁决不预设该定级结果。"
       anti_widening: "本裁决为**个案边界裁定**，不得援引为先例扩宽『外部原因』或『制度性豁免』的范围：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次的 seed 期 E3 豁免须各自单独申请（同通道，仍需五要素齐备＋批准），不自动沿用本项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。"
     status: active             # SM-WV：pending → active（批准生效，豁免期内）；闭合条件见 remediation_plan (3)
+
+  - waiver_id: WV-OWN-E3-01
+    rule: "E3（母本 @4008）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"
+    violation_fact: "OWN 批 4 条条目（OWN-001…OWN-004）经 ST-OWN-01 迁移为 seed（人工种子通道，0.17.6(1)），其 formal_anchor 引用的硬性质（4.5 的 Y1/Y2/Y3/Y8 与 W4）尚无 FVR 条目与检查程序接线：本目录的 scripts/project.py 只做注册表静态自检（M2/M3/M4/M6/M9 + C 系列），不是 FVR 运行器，也不产生 first_full_run 证据 → 『引用 seed 条目的性质』不满足 E3 的 wired ∧ first_full_run has evidence。合法性出处：0.17.6(2)（母本明文规定 seed 期本项按 Waiver 机制登记限期豁免）。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道，五要素齐备＋批准），不沿用前项、不自动生效。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 OWN-001…OWN-004 四条的 formal_anchor 所引用的硬性质实例（Y1 单一所有权或批准例外、Y2 访问路径契约化、Y3 一致性声明、Y8 共享写例外不超期、W4 数据单一所有者）。不含 active 条目、不含 STY 批（由 WV-STY-E3-01 承担）、不含其他 kind 批次（各批另单独申请）、不含 E3 以外的编译规范性质（E1/E2/E4 不在本 Waiver 范围）。口径注：WV-STY-E3-01 scope 中『status=seed 的全部条目』为其批准时点（2026-09-18，seed 仅 STY 24 条）的口径，按防扩宽条款 (ii) 不随本批外延至 OWN 四条；OWN 四条的豁免范围由本项独立承担，两项 scope 不重叠。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径同 WV-STY-E3-01：(1) project.py 自检全过（本批，见 ST-OWN-01 evidence）→ (2) 编译器对 seed 条目执行『人工条目 vs 编译条目』重验证，差异按 0.17.6(3) 三分类处置 → (3) 建立 FVR 条目并为 Y 系列与 W4 接线，首次全量运行留证（E3 的 first_full_run has evidence）→ (4) 逐条 seed→active（diff 为空 = 低影响简记；diff 非空按三分类分别定级）。本 Waiver 在 (3) 完成时闭合。"
+    risk_quantification: "触及面：4 条 × formal_anchor 引用的硬性质（W4 数据单一所有者；Y1 单一所有权或批准例外；Y2 访问路径契约化；Y3 一致性声明；Y8 共享写例外不超期）。利息形态：硬性质违例的检出时机从『运行时/编译期自动检出』退化为『评审期人工核验』，检出延迟 = 一个决策周期；漏检后果按性质分级——Y1/Y2/Y8 漏检 = 所有权违例或共享写例外超期进入实现（0.14 P0 面）。缓解：(i) 0.17.5 强制 ADR 附注『依据种子条目，待重验证』；(ii) 本批 P0/P1 信号级判读带 4.5 性质指针与 MJ-4 判据留痕，可逐条人工复核；(iii) 正例 18-B 的消费字段（OWN-01.cost_profile.ops_cost、OWN-03.applicability.delivery_space[1]、OWN-04.applicability.problem_space[1]、OWN-01/02.typical_reversibility）已按 0 基索引逐一对齐并留痕（MJ-16）；(iv) project.py 的 M9/C-ST/C-ENV 静态自检覆盖 peer 存在性、状态资格与 OWN 剖面 envelope 非空义务三项可机器判定面；(v) 累计口径——本项与前项合计覆盖 28 条 seed 条目，两项 scope 互不重叠，豁免面按批次逐项登记，不合并、不互相援引。"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定的边界结论（0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免），本项不另启同一争点的重复裁决；按防扩宽条款 (i)，本项仅援引该结论适用于母本明文通道场合，不将其扩张为一般先例。"
+      status: pending            # 登记即申请；批准是人的裁决（0.10 第一条 / 1.1 纪律二），Agent 与工具不自行批准
+    status: pending              # SM-WV：pending →（批准后）active；批准前本项不生效，OWN 四条的 seed 资格不以本 Waiver 获批为前提（C-ST 只查硬检查）
 
 # ---------------------------------------------------------------------------
 # 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
@@ -1909,6 +2232,13 @@ manual_judgments:
     judgment: "缺陷一（CSL）：反例 18-A @646 原发布 `CSL-03（最终一致流动机制）`；4.2.3 表行序下 CSL-03 = 因果一致、最终一致 = CSL-04；「流动机制」系 DFL kind（4.2.4 数据流动机制）跨用语；示例场景（事件溯源 × 账务 × 逐笔可重算）语义指向最终一致。缺陷二（DEC）：正例 20-1 @870 原发布 `DEC-05（事件驱动分解）`；2.2.1 八策略表无「事件驱动分解」行，该词全文仅此示例一处；表序下 DEC-05 = S5 按变更频率（判据输入 = 问题空间的需求易变性评估）。两处均属表格与已发布引用不一致 = FM-12 同型（README §7：冲突登记为成文法缺陷）。处置（评审点五人类裁决两次答复）：CSL 批 = 选项 b 立即 R2 修订反例——@646 改为 `CSL-04（最终一致）`；DEC 批 = 选项 c 表序入库 + 立即 R2 修订母本示例，改写幅度 = 选项 A 最小自洽改写（策略语境由「事件基础设施运维能力」整体换为「变更频率 × 易变性数据」，保留全部结构要素：S0 事实与 FM-1 触发、S1 重入谓词、S3 可推翻佐证、注释块、消费字段，共 @868/870/872/877/883 五处）。改写幅度判定依据：仅替换描述符会使示例内部失洽（事实/勘察/消费字段均围绕事件基础设施，而 S5 判据输入是问题空间易变性评估）；「改引用 ID」路径经核实不可行（S1…S8 无一行承载事件基础设施谓词）。修订纪律 = 0.22.3 R2 措辞澄清通道，零新增规范命题、编号不重排；单行本（机械抽印本）按出处头纪律以同文替换同步 6 处，抽印记录追加 changlog。波及面核查（不改动）：archieve/revise.md 为历史档案不改；编译规范 @678 `DEC-5` 系故意构造的不存在反例不改；承诺三 @1159「按 DEC-03 执行」举例不受影响（表序下 DEC-03 = S3 条目存在，引用自洽）；母本行数 4426 与围栏 216 不变。"
     basis: "0.22.3 R2 通道；FM-12（0.20）；README §7；4.2.3/4.2.4/2.2.1 源表；反例 18-A（@646）；正例 20-1（@866-886）；单行本出处头（@1-5）"
     affected: "母本 @646/@868/@870/@872/@877/@883；单行本对应 6 处；PCR-2 blocking；kind_profile_CSL/DEC 的 seed_source"
+    provenance: manual
+
+  - id: MJ-16
+    subject: OWN 批三项形式面对齐裁决——18-B 消费字段的 0 基索引、简记 scope 全集口径、索引产物文案与非 STY 卡片投影覆盖的处置
+    judgment: "(i) **18-B 消费字段按 0 基索引对齐**：母本正例 18-B 的消费字段清单（@640-641）以 `OWN-03.applicability.delivery_space[1]; OWN-01.cost_profile.ops_cost; OWN-01/02.typical_reversibility; OWN-04.applicability.problem_space[1]` 形式发布，索引为 0 基（脚本求值口径）。本批逐一对齐——OWN-003.delivery_space 的第 2 项（[1]）为平台团队存在性事实（∃ platform_team）、OWN-004.problem_space 的第 2 项（[1]）为遗留迁移过渡期占位、OWN-001.cost_profile.ops_cost 为『四行中最低』的保守界、OWN-001/OWN-002.typical_reversibility 同为 free（S5 排序消费面）。纪律：清单以索引指称，故**列表项顺序不得调换**（调换即改指称对象）；后续批次若需重排某条目列表项，须同步核对全部已发布消费字段并留痕。(ii) **简记 scope 全集口径**：check_ledgers 对每条状态迁移简记独立要求 scope 与『全部 status=to 条目集』双向相等（project.py @1032-1044），故 ST-STY-01 的 scope 由 24 条扩至 28 条、ST-OWN-01 同口径登记全集。此为检查器口径的形式面，不改变迁移事实：STY 24 条的迁移事实与日期仍由 ST-STY-01 承载、OWN 四条由 ST-OWN-01 承载，两条 note 分别注明本批实际迁移对象；scope 字段随注册表全集演进而同步，不构成对既有简记历史记录的重写（编号与已发布引用不动，0.22 承诺一）。(iii) **索引产物陈旧文案与卡片投影覆盖不在本批改**：projections/索引.md 产物表的『STY 24 条』为 project.py @1473 硬编码字面量；另 `render_sty` 只渲 1.2.x 子维度，故 OWN 四条在人类层只以 索引.md 条目清单行与 自检报告.md 逐条矩阵呈现，**无 STY.md 同型的卡片视图**（0.9/E2 的人类层同源投影对非 STY kind 尚缺卡片级产物）。两项均属投影器（脚本）侧改动，须与后续批次合并为独立的脚本改动批次（含注入测试重跑），本批不动脚本。条目数的权威载体 = method_registry.yaml meta.entry_count（check_meta 与实际条目数强校验），读者不应以该文案为计数权威。"
+    basis: "母本正例 18-B（@621-641，消费字段 @640-641）；project.py check_ledgers（@1032-1044）、render_index 产物表（@1473）、check_meta entry_count 强校验（@910-961）；0.22 承诺一（编号与已发布引用不复用/不重排）；README §2（注册表级信息一律入顶层台账节，不进条目）"
+    affected: "OWN-001…OWN-004 的 typical_reversibility 与 applicability/cost_profile 列表项顺序；ST-STY-01 与 ST-OWN-01 的 scope；projections/索引.md 产物表文案（留待脚本改动批次）"
     provenance: manual
 
 # ---------------------------------------------------------------------------

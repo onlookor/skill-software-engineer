@@ -9,7 +9,7 @@
 
 meta:
   law_file: ../软件工程元框架成文法.md
-  schema_ref: "编译规范 2.3 谓词模式 BNF；母本 0.17.8 / 0.18.6 / 1.5 / 2.5 / 5.5 / 6.5"
+  schema_ref: "编译规范 2.3 谓词模式 BNF；母本 0.17.8 / 0.18.6 / 1.5 / 2.5 / 4.5 / 5.5 / 6.5"
   registry_version: {major: 1, minor: 0, patch: 0}
   note: "新增谓词名 = R2 提议（成文法谓词未登记），不得在本文件本地扩词"
 
@@ -41,6 +41,18 @@ predicates:
   - {name: boundary_type, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
   - {name: seam, arity: 1, source: {source_type: clause_id, value: "2.5", verified: true}}
   - {name: dsm, arity: 2, source: {source_type: clause_id, value: "2.5", verified: true}}
+
+  # ── 方面 4（4.5）──
+  - {name: dataset, arity: 1, source: {source_type: clause_id, value: "4.5", verified: true}}
+  - {name: owner, arity: 2, source: {source_type: clause_id, value: "4.5", verified: true}, note: "权威所有权：W4 的数据域投影；方面 2 分解层检查为 owned_by（2.5）"}
+  - {name: access_path, arity: 4, source: {source_type: clause_id, value: "4.5", verified: true}, note: "access_path(D, consumer, path_kind, contract_C)；path_kind: api|event|replica|view"}
+  - {name: consistency_level, arity: 2, source: {source_type: clause_id, value: "4.5", verified: true}, note: "level ∈ 4.2.3 表"}
+  - {name: consistency_rationale, arity: 2, source: {source_type: clause_id, value: "4.5", verified: true}, note: "降级纪律要求的业务语义论证（4.2.3）"}
+  - {name: data_flow, arity: 4, source: {source_type: clause_id, value: "4.5", verified: true}, note: "mechanism ∈ 4.2.4 表（数据流；5.5 交互流为 interaction_flow）"}
+  - {name: data_lineage, arity: 3, source: {source_type: clause_id, value: "4.5", verified: true}, note: "数据血缘；7.5 决策血缘为 decision_lineage"}
+  - {name: sensitivity, arity: 2, source: {source_type: clause_id, value: "4.5", verified: true}, note: "tag: pii|regulated|internal|public"}
+  - {name: invariant, arity: 3, source: {source_type: clause_id, value: "4.5", verified: true}}
+  - {name: shared_write_exception, arity: 3, source: {source_type: clause_id, value: "4.5", verified: true}, note: "共享写治理例外：退出计划 + 最后负责时刻（CH-B 推迟模式）"}
 
   # ── 方面 5（5.5）──
   - {name: interaction_flow, arity: 3, source: {source_type: clause_id, value: "5.5", verified: true}, note: "kind: sync_chain|orchestrated|choreographed|hybrid"}

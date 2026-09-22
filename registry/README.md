@@ -10,7 +10,7 @@
 |---|---|---|
 | `profiles.yaml` | 17 个 kind 的字段剖面（元注册条目，0.17.2「字段完备性按 kind 剖面」、0.17.8 `kind_profile(kind, required_fields, optional_fields)`）＋剖面级缺口台账（KP-G1…G4，R2 澄清候选） | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的**数据侧投影**（供 M4 词汇封闭校验） | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；本文件每条带 clause 指针，`project.py` 反向核验指针在母本中可查 |
-| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
+| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条，共 28 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
 | `scripts/project.py` | 自检（M2/M3/M4/M5/M6/M9 ＋本目录登记的 C 系列）＋同源投影（0.9/E2：人类层由机器层生成，不手写） | 工具；不含规范命题 |
 | `projections/*.md` | 生成物：人类可读投影视图＋自检报告 | **生成物，禁手改**；改源后重跑 `project.py` |
 
