@@ -22,14 +22,14 @@
 meta:
   law_file: ../软件工程元框架成文法.md
   registry_version: {major: 1, minor: 0, patch: 0}
-  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）"
+  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）"
   schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
   kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
   seed_channel_source: {source_type: clause_id, value: "0.17.6", verified: true}
   metric_vocabulary_source: {source_type: clause_id, value: "6.2.1", verified: true}
   signal_level_source: {source_type: clause_id, value: "0.14", verified: true}
-  entry_count: 33
-  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）；其余 14 kind 待后续批次"
+  entry_count: 41
+  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）；其余 13 kind 待后续批次"
 
 entries:
 
@@ -1344,6 +1344,9 @@ entries:
       - peer_entry: STY-003
         relation: composable
         evidence: {source_type: row_id, value: "1.2.2-Serverless / FaaS", verified: true}   # 骨架源：本行适用条件「事件驱动天然契合」+ 定义「事件触发」→ 部署风格与通信/协调风格（事件驱动，发布订阅）的适配声明；relation 取 composable（人工判断：母本措辞为「契合」而非「必选」，不构成 requires）
+      - peer_entry: CRD-007
+        relation: hard_conflict
+        evidence: {source_type: clause_id, value: "1.2.5", verified: true}   # CRD 批回填（PCR-1 双向闭合，MJ-17 (ii)）：1.2.5 冲突矩阵行「Serverless × 长时运行有状态流程 → 冲突（执行时长限制），硬」；对侧为 CRD-007（流程管理器，长时运行有状态流程的协调形态）。原 PCR-1 判定「对侧不是风格条目而是问题空间事实 → 无 peer_entry 可指」，CRD-007 入库后该判断被推翻 → PCR-1 移入 closed_in_entries，对侧同步登记（MJ-18 留痕）。例外覆盖须走 1.2.5 机制（完整 ADR + 可推翻指标，登记为 has_approved_exception）
     constraints_imposed:               # 交叉表源：1.4 施加表（通用行 6/10）；本风格实例源自本行定义与包络要点列（G-STY-2）
       - {target_aspect: 2, constraint: "分解单元为函数粒度、以事件触发为入口（本行定义「函数粒度、事件触发」的实例化）", level: hard}   # 人工实例化（1.4 施→2 未给本风格行）
       - {target_aspect: 4, constraint: "状态外置强制：函数实例不得承载跨调用状态，状态须外置到托管存储/事件日志", level: hard}   # 骨架源：包络要点列「状态外置强制」
@@ -1947,7 +1950,7 @@ entries:
       ops_cost: "[随共享写单元数与过渡期时长上升；含升级裁决通道与到期告警维护]"
       skill_prerequisites: ["退出计划与迁移里程碑管理（CH-B 参数化切换点 + LRM）", "过渡期双写/对账的临时工程能力（4.2.5 对账验证）"]
       aggregation_semantics: itemwise
-    compatibility: []                  # 同 OWN-001 行内注（MJ-5/MJ-9）；18-B S2「OWN-04 × CRD-02 无冲突对」待 CRD 批入库后按 M9 回填（不静默丢弃，见 PCR 同型纪律）
+    compatibility: []                  # 同 OWN-001 行内注（MJ-5/MJ-9）。CRD 批已闭合留痕（不静默丢弃）：反例 18-B S2 的对侧 CRD-002（协同（choreography），即母本已发布叙述中的「CRD-02 事件协同」，MJ-14）已入库，检验结果为「**无冲突对**」——「无关系」按 MJ-5/MJ-9（禁造规范）不登记任何 compatibility 项，CRD-002 侧亦不列 OWN-004；原「待 CRD 批入库后按 M9 回填」的义务于本批履行完毕，M9 无待检项
     constraints_imposed:               # 交叉表源：4.4「施加约束」表七行（同 OWN-001）
       - {target_aspect: 2, constraint: "数据归属现状回馈分解：现状数据不可干净归属时，S4 策略受约束、拆分序列须按数据迁移可行性排序", level: soft}
       - {target_aspect: 3, constraint: "数据契约的 schema 与语义条款（单位/值域/空值/敏感性/新鲜度）由本方面供给", level: hard}
@@ -2273,7 +2276,7 @@ entries:
       ops_cost: "[随补偿步数与参与单元数上升；须承担补偿编排正确性的验证成本（Z3 每步有出路）]"
       skill_prerequisites: ["Saga 补偿设计（compensable/retriable/pivot 三分类与关键步排序，Z3）", "预扣/预留模式的业务建模（超时值作为契约条款）", "幂等性设计（补偿动作与重试的合取要求，Z3）"]
       aggregation_semantics: itemwise
-    compatibility: []                  # 1.2.5 冲突矩阵无本行；4.2.3 表内级别取值互斥不枚举（MJ-5 判据）。母本明文「Saga（方面 5）」指向 CRD kind 的协调模式条目（5.2.2 表，CRD 批未建）→ M9 不放行，故本批留空；该关系为 requires 而非冲突矩阵行，不入 pending_conflict_rows（该台账限 1.2.5 矩阵行），待 CRD 批入库时按 MJ-9 判据回填并留痕
+    compatibility: []                  # 1.2.5 冲突矩阵无本行；4.2.3 表内级别取值互斥不枚举（MJ-5 判据）。CRD 批已闭合留痕：母本明文「Saga（方面 5）」的对侧已入库（CRD-005 编排式 Saga / CRD-006 协同式 Saga / CRD-008 预扣-预留），三者的 requires 关系**由 CRD 侧条目单方承载**（MJ-17 (iii)），本条按 MJ-5 镜像纪律不重复登记 → 本字段维持空集并非「关系未登记」，而是「登记位在对侧」；M9 双向存在性已由 CRD 侧满足。该关系为 requires 而非 1.2.5 冲突矩阵行，故始终不入 pending_conflict_rows（该台账限矩阵行）
     constraints_imposed:               # 交叉表源：4.4「施加约束」表（方面 4 全体七行，与 CSL-001 逐字相同）
       - {target_aspect: 2, constraint: "数据归属现状回馈分解：现状数据不可干净归属时，S4 策略受约束、拆分序列须按数据迁移可行性排序", level: soft}
       - {target_aspect: 3, constraint: "数据契约的 schema 与语义条款（单位/值域/空值/敏感性/新鲜度）由本方面供给", level: hard}
@@ -2297,6 +2300,677 @@ entries:
       benefit_cost_analysis: "收益：全局原子性不可得时唯一能达成终态正确的形态（4.2.3 定义列）——以 Saga（方面 5）与预扣/预留模式把原子性从存储层移到业务层，同时是 Y6 冲突信号的正向出路（saga_candidate）。4.6 示例二给出完整形态：库存单元在本地事务内预扣、订单单元成功后确认失败后释放；牺牲＝窗口期内被预扣库存对展示层不可用，下限合法性来源＝预扣使超卖在存储层不可能（硬规则满足）且可见性损失有界（预扣超时自动释放，超时值为契约条款），Z3 与 Y6 同时闭合。代价：每个可补偿步须有补偿动作且幂等（Z3 硬），补偿语义一经流程消费即形成业务依赖（逆转成本高），失败面从『事务回滚』变为『补偿编排正确性』。"
       typical_scenarios: "跨所有者单元的长流程（4.2.3 选择条件列，见 4.6 示例二扣库存 + 建订单）；Y6 冲突信号触发后的处置路径之一；业务硬规则要求终态正确而存储层原子性不可得的场合（预扣/预留模式）。"
       common_misuse: "以补偿替代所有权定案或部署风格重审（跨单元原子性需求应先经 Y6 审查，两条出路都不走即为违例）；补偿步无幂等设计（Z3 违例，重试放大）；关键步之前留有不可补偿步骤（pivot_ordering_valid 失效）；预扣超时值留在实现里而不入契约条款（可见性损失失去有界性依据）。"
+
+# ══════════════════════════════════════════════════════════════════════════
+# kind: CRD（行为/协调模式，5.2.1 通信协调四行 + 5.2.2 长流程四行）→ CRD-001…CRD-008
+# 分块序：先 5.2.1 表序四行（CRD-001…004），后 5.2.2 表序四行（CRD-005…008）（MJ-13 (ii)）
+# constraints_imposed 八条一律逐字承载 5.4「施加约束」表全体七行（方面 5 → 1/3/4/6/8/9/10）
+# ══════════════════════════════════════════════════════════════════════════
+
+  - entry_id: CRD-001
+    kind: CRD
+    name: "编排（orchestration）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.1-编排（orchestration）", verified: true}
+        - {source_type: clause_id, value: "5.2.1", verified: true}
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
+        - {source_type: clause_id, value: "5.3", verified: true}     # 三空间驱动与双使用者条款
+        - {source_type: clause_id, value: "5.4", verified: true}     # 接收约束表（方面 1 行）＋施加约束表全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z1/Z7/Z8 与 interaction_flow/orchestrator 谓词来源
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 44, verified: true}
+        - {source_type: bib_id, value: 45, verified: true}
+    typical_reversibility: costly      # 人工判断：编排者与参与者间的命令契约一经投产即形成双向依赖（5.4 施→3 契约登记需求），逆转须重设流程边界与契约而非仅改配置
+    applicability:
+      problem_space:                   # 骨架源：5.2.1「适用条件」列原文
+        - "步骤多、需集中留痕与集中监控的跨单元流程（5.2.1 适用条件列）；合规域要求可审计轨迹时本形态升权（5.4 接收约束表外部强加行：合规流程要求如支付类强制审计轨迹，硬）"
+        - "[流程含分支/并行/人工步骤且需单一集中观测点（5.2.1 质量影响列：可观测性集中）]"
+      current_space:                   # 骨架源：5.2.1「实现手段」列＋5.3 现状勘察条款
+        - "[已有 BPM/工作流引擎资产或编排器运行时可复用（现状勘察：5.3 双使用者条款要求现状空间可核验）]"
+        - "0.11 现状锁定：既有集成形态（集中式总线/调度器）在案时本条目的引入成本下降"
+      delivery_space:                  # 骨架源：5.4 接收约束方面 6 行＋施加约束方面 8 行
+        - "[编排者运行时的可观测性栈成熟度（追踪覆盖率界的前提，5.4 施→6 卡片为强制消费项）]"
+        - "[运维值班能力可承载编排者单点故障的响应（可用性界的组织前提）]"
+    envelope:
+      - metric: "可观测性：追踪覆盖率"
+        bound_expr: "追踪覆盖率（编排流程） ≥ 追踪覆盖率（无中央协调形态） → 编排者提供单一集中观测点（5.2.1 质量影响列「可观测性集中」），覆盖率单调优于协同形态"
+        source: {source_type: row_id, value: "5.2.1-编排（orchestration）", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99（流程） = Σ 各步骤卡片 latency_budget_delta + 步骤自身业务耗时 + 编排者跳数开销（5.2.5 Σ 消费路径）→ 每跳经编排者中转，延迟随步骤数单调不增下界为直连形态"
+        source: {source_type: clause_id, value: "5.2.5", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性（流程） ≤ min（编排者可用性, ∧ 各参与者可用性） → 编排者是新增单点，其可用性构成流程可用性的上界（Z8 要求状态持久化 ∧ 崩溃可恢复以缓解）"
+        source: {source_type: row_id, value: "5.2.1-编排（orchestration）", verified: true}
+    cost_profile:
+      latency_budget_delta: "= Σ 各步骤卡片 latency_budget_delta + 编排者中转开销（5.2.5 明文：每个行为/协调模式条目必须携带卡片；流程延迟预算按 Σ 聚合）"
+      failure_modes: ["编排者状态未持久化（崩溃即流程丢失 → Z8 违例）", "编排者成为可用性单点（可用性界收紧）", "参与者契约随编排者版本联动变更（5.4 施→3 契约登记需求的变更放大面）", "以编排承载步骤少而稳定的流程（无谓引入中央组件，MJ-4 P1）"]
+      consistency_impact: "流程状态（协调者状态机）是数据集合，受 Y1–Y8 全约束，其所有者 = 编排者单元（5.4 施→4 硬）；跨单元一致性由编排者按序推进达成，不改变各单元本地一致性级别声明（CSL 批不重复承载）"
+      observability_requires: ["编排者流程实例状态与步骤进度可查（orchestrator / step_class 谓词在案，5.5）", "卡片 observability_requires 不得退化（5.4 施→9 协调漂移守护对象）", "跨单元追踪链贯通（追踪覆盖率界的度量前提）"]
+      ops_cost: "[随编排者实例数与流程步骤数上升；须承担编排者单点的高可用部署与状态持久化运维成本（Z8）]"
+      skill_prerequisites: ["流程建模（状态机与步骤分类，5.2.2 三分类纪律）", "编排者-参与者命令契约设计（5.4 施→3）", "流程状态持久化与崩溃恢复（Z8）"]
+      aggregation_semantics: additive  # 5.2.5 Σ 消费路径：步骤卡片延迟按加和聚合
+    compatibility:
+      - peer_entry: STY-014
+        relation: composable
+        evidence: {source_type: row_id, value: "5.4-方面 1（风格）", verified: true}   # 接收约束方面 1 行「单体 → 进程内编排 + 本地事务可用」；措辞为许可性「可用」→ composable 而非 requires（MJ-4 判据，与 STY-018→STY-003 先例同型）
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-001-AP1
+        description: "协调者状态未持久化即承载长流程（崩溃即流程丢失）"
+        detection_predicate: "∃ F, M: interaction_flow(F, ·, orchestrated) ∧ orchestrator(F, M) ∧ ¬[M 的流程状态持久化 ∧ 崩溃可恢复]"
+        signal_level: P0               # Z8 硬性质（∀ orchestrated flow: orchestrator_state durable ∧ recoverable）违例的直接来源 → 0.14 P0 检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: CRD-001-AP2
+        description: "以编排承载步骤少而稳定的流程（无谓引入中央组件）"
+        detection_predicate: "∃ F: interaction_flow(F, ·, orchestrated) ∧ [F 的步骤数少且流程稳定] ∧ ¬[F 需集中留痕]"
+        signal_level: P1               # 违反 5.2.1 适用条件列的选择纪律（步骤多、需集中留痕），但无 Z 系列硬性质可绑定 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: Z1, role: implements}      # 跨单元交互显式建模（编排者是显式建模的载体）
+      - {property_id: Z8, role: implements}      # 编排流程的协调者状态持久化 ∧ 可恢复
+      - {property_id: X1, role: consumed_by}     # 5.4 施→3：编排者与参与者间的命令契约进入契约注册
+      - {property_id: Z7, role: consumed_by}     # 卡片被方面 6 消费且不得违反包络
+    references:
+      - {bib_id: 44, support_claim: "企业集成模式（编排/流程管理器与消息通道的原始分类面）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 45, support_claim: "5.2.1 协调风格二分（母本 5.7 书目 45 行级登记提取面，本条为二分的『编排』一极）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-09-20 在线复核在位；本文本地无存档，二分内容由书目 4《Building Microservices》第 2 版第 4 章本地承载，编译提取以书目 4 为本地来源——母本 5.7 逐字，不得在注册表侧降级为存疑/narrative_only）"}
+    narrative:
+      benefit_cost_analysis: "收益：步骤多且需集中留痕的流程获得单一集中观测点（5.2.1 质量影响列「可观测性集中」），追踪覆盖率单调优于协同形态；流程分支/并行/人工步骤可在编排者内显式建模，合规审计轨迹（5.4 外部强加行）有天然落点。代价：编排者是新增可用性单点，可用性界收紧为 min（编排者, ∧ 参与者）；每跳经编排者中转，延迟按 Σ 步骤卡片加编排者开销累积（5.2.5）；编排者状态必须持久化且崩溃可恢复（Z8 硬），运维成本随之上升；编排者与参与者间的命令契约形成双向依赖（5.4 施→3），逆转成本高。"
+      typical_scenarios: "跨单元长流程需集中监控与审计（合规域，如支付类流程）；含分支/并行/人工步骤的业务流程；既有集成形态已为集中式（0.11 现状锁定）时的自然延伸；步骤多且流程易变的场合（变更集中在编排者而非散落于各参与者）。"
+      common_misuse: "以编排承载步骤少而稳定的流程（引入无谓单点，AP2）；编排者状态只存内存（Z8 违例，AP1）；把编排者当作绕过单元所有权的直写通道（违 Y2/5.4 施→4：流程状态所有者 = 协调者单元，业务数据仍归各自所有者）；参与者契约未登记（X1 违例，5.4 施→3）；卡片 observability_requires 随迭代退化（5.4 施→9 协调漂移守护对象）。"
+
+  - entry_id: CRD-002
+    kind: CRD
+    name: "协同（choreography）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.1-协同（choreography）", verified: true}
+        - {source_type: clause_id, value: "5.2.1", verified: true}
+        - {source_type: clause_id, value: "5.2.5", verified: true}
+        - {source_type: clause_id, value: "5.3", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z1/Z2/Z7 与 delivery_semantics/idempotency 谓词来源
+        - {source_type: clause_id, value: "1.4", verified: true}     # 事件驱动风格 → 协同默认（5.4 接收约束方面 1 行）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 44, verified: true}
+        - {source_type: bib_id, value: 45, verified: true}
+    typical_reversibility: costly      # 人工判断：事件契约与消费端幂等约定一经多方订阅即形成隐式耦合网，逆转须协调全部消费者而非单方改动
+    applicability:
+      problem_space:                   # 骨架源：5.2.1「适用条件」列原文
+        - "步骤少、各单元自治、无需集中留痕的跨单元流程（5.2.1 适用条件列）"
+        - "[单元间以事件为界面且各方演进节奏独立（5.2.1 质量影响列：耦合度低）]"
+      current_space:                   # 骨架源：5.4 接收约束方面 1 行（事件驱动 → 协同默认）
+        - "部署/通信风格已为事件驱动（发布订阅）→ 协同为默认协调形态（5.4 接收约束方面 1 行，硬/软按条）"
+        - "[消息中间件与事件注册表在案（事件契约登记的现状前提，X1）]"
+      delivery_space:                  # 骨架源：5.2.1 质量影响列「可观测性分散」＋5.3 交付空间条款
+        - "无分布式追踪能力时协同流程不可运维（5.2.1 质量影响列的交付面推论）→ 追踪能力缺失即硬降权"
+        - "[事件回放与乱序/重复/丢失注入的验证能力在案（5.4 施→8：事件驱动 → 回放与乱序注入必备，承接 1.4）]"
+    envelope:
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "跨边界契约变更数（协同） ≥ min（各单元事件契约变更数） → 无中央协调点可吸收变更，各方事件契约独立演进但互相构成下界（5.2.1 质量影响列「耦合度低」的代价面）"
+        source: {source_type: row_id, value: "5.2.1-协同（choreography）", verified: true}
+      - metric: "可观测性：追踪覆盖率"
+        bound_expr: "追踪覆盖率（协同流程） ≤ 追踪覆盖率（中央协调形态） → 可观测性分散（5.2.1 质量影响列），覆盖率上界受限于跨单元追踪链的可拼接性"
+        source: {source_type: row_id, value: "5.2.1-协同（choreography）", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性（协同流程） 单调不增于中央协调形态 → 无编排者单点，可用性界由 ∧ 各参与者可用性给出，单调优于编排形态"
+        source: {source_type: clause_id, value: "5.2.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "= Σ 各步骤卡片 latency_budget_delta + 事件投递与消费延迟（5.2.5 明文：每个行为/协调模式条目必须携带卡片；无编排者中转跳）"
+      failure_modes: ["异步交互未声明投递语义（Z2 违例）", "消费端未声明幂等而投递语义非至多一次（Z2 违例，重复消费放大）", "流程隐式化（无中央留痕 → 故障定位依赖跨单元追踪拼接）", "隐式时序假设再现（5.4 施→9 协调漂移守护对象）"]
+      consistency_impact: "无中央协调者状态；跨单元一致性由各单元本地事务 + 事件投递语义合成，最终一致的达成依赖 Z2（投递语义声明 ∧ 消费端幂等）闭合；一致性级别声明仍归 CSL 批不重复承载"
+      observability_requires: ["跨单元分布式追踪链可拼接（覆盖率界上界的度量前提）", "事件流与订阅关系可查（interaction_flow / delivery_semantics 谓词在案，5.5）", "卡片 observability_requires 不得退化（5.4 施→9）"]
+      ops_cost: "[随订阅方数量上升；须承担事件回放与乱序注入的常态化验证成本（5.4 施→8：事件驱动 → 必备）]"
+      skill_prerequisites: ["事件契约设计（投递语义作为契约条款，5.4 接收约束方面 3 行）", "消费端幂等设计（Z2）", "分布式追踪与事件流观测（可观测性分散的补偿手段）"]
+      aggregation_semantics: itemwise  # 无中央累加点：各单元卡片按项独立评估，不做加和（5.2.1 质量影响列「可观测性分散」的聚合推论）
+    compatibility:
+      - peer_entry: STY-003
+        relation: requires
+        evidence: {source_type: row_id, value: "5.2.1-协同（choreography）", verified: true}   # 定义列以事件交换为界面（各方订阅事件、无中央协调者）→ 协同须以事件驱动（发布订阅）通信风格为前提；kind_profile_CRD.narrative.note 明文「compatibility 须登记对上游 STY 条目的 requires 关系」
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；本条目为事件驱动的默认协调形态 → 回放与乱序注入在本条目上取硬（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-002-AP1
+        description: "异步交互未声明投递语义，或投递语义非至多一次而消费端未声明幂等"
+        detection_predicate: "∃ I: interaction_flow(·, ·, choreographed) ∧ (¬declared(delivery_semantics(I, ·)) ∨ [delivery_semantics(I, ·) ≠ at_most_once ∧ ¬idempotency(I, ·)])"
+        signal_level: P0               # Z2 硬性质（∀ async interaction: declared(delivery_semantics) ∧ (semantics ≠ at_most_once → idempotency_declared(consumer))）违例的直接来源 → 检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: CRD-002-AP2
+        description: "以协同承载步骤多或需集中留痕的流程（流程隐式化不可维护）"
+        detection_predicate: "∃ F: interaction_flow(F, ·, choreographed) ∧ ([F 的步骤数 > 注册上限] ∨ [F 需集中留痕（合规审计要求）])"
+        signal_level: P1               # 违反 5.2.1 适用条件列的选择纪律（步骤少、无需集中留痕），但无 Z 系列硬性质可绑定 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: Z1, role: implements}      # 跨单元交互显式建模（协同以事件契约显式化各方交互）
+      - {property_id: Z2, role: implements}      # 异步交互投递语义声明 ∧ 消费端幂等
+      - {property_id: X1, role: consumed_by}     # 5.4 施→3：事件契约进入契约注册
+      - {property_id: Z7, role: consumed_by}     # 卡片被方面 6 消费且不得违反包络
+    references:
+      - {bib_id: 44, support_claim: "事件驱动协作与消息通道的原始分类面（协同形态的实现手段来源）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 45, support_claim: "5.2.1 协调风格二分（母本 5.7 书目 45 行级登记提取面，本条为二分的『协同』一极）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-09-20 在线复核在位；本文本地无存档，二分内容由书目 4《Building Microservices》第 2 版第 4 章本地承载，编译提取以书目 4 为本地来源——母本 5.7 逐字，不得在注册表侧降级为存疑/narrative_only）"}
+    narrative:
+      benefit_cost_analysis: "收益：各单元自治演进、无中央单点，可用性界由 ∧ 参与者给出而单调优于编排形态（5.2.1 质量影响列「耦合度低」）；事件驱动风格下为默认协调形态（5.4 接收约束方面 1 行），无需额外引入中央组件。代价：可观测性分散，追踪覆盖率上界受跨单元追踪链可拼接性限制，无分布式追踪能力时不可运维（硬降权）；流程隐式化，故障定位与合规留痕均无集中落点；每条异步交互必须声明投递语义且消费端声明幂等（Z2 硬），事件契约的多方订阅使逆转须协调全部消费者；常态化承担事件回放与乱序/重复/丢失注入的验证成本（5.4 施→8：事件驱动 → 必备）。"
+      typical_scenarios: "事件驱动（发布订阅）风格下的跨单元协作（5.4 接收约束方面 1 行：事件驱动 → 协同默认）；步骤少而各单元演进节奏独立的场合；无需集中留痕的域（合规域外的开放域）；单元数多而交互稀疏的分布形态。"
+      common_misuse: "以协同承载步骤多或需集中留痕的流程（AP2，流程隐式化不可维护）；异步交互不声明投递语义或消费端不声明幂等（Z2 违例，AP1）；无分布式追踪能力即上线协同流程（可观测性分散无补偿手段）；以隐式时序假设替代显式建模（Z1 违例，5.4 施→9 守护对象）；把「无编排者」误读为「无流程状态」（有本地流程状态者仍受 5.4 施→4 全约束）。"
+
+  - entry_id: CRD-003
+    kind: CRD
+    name: "同步调用链"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.1-同步调用链", verified: true}
+        - {source_type: clause_id, value: "5.2.1", verified: true}
+        - {source_type: clause_id, value: "5.2.5", verified: true}
+        - {source_type: clause_id, value: "5.3", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z1/Z4/Z5/Z7 与 timeout_budget 谓词来源
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 44, verified: true}
+    typical_reversibility: bounded     # 人工判断：链深与超时分配可逐跳调整而不改动单元职责与数据归属，逆转成本有界（改动面限于调用方超时配置与链路拓扑）
+    applicability:
+      problem_space:                   # 骨架源：5.2.1「适用条件」列原文
+        - "调用方需即时结果、链路短且时序确定的跨单元交互（5.2.1 适用条件列）"
+        - "[请求-响应语义足以表达交互且无需异步解耦（5.2.1 质量影响列：延迟可预算）]"
+      current_space:                   # 骨架源：5.4 接收约束方面 1 行＋方面 3 行
+        - "同步请求-响应通信风格在案（5.4 接收约束方面 1 行：风格决定协调可行集）"
+        - "[链上各跳的注册契约在案（5.4 接收约束方面 3 行：每条跨单元交互有注册契约，投递语义是契约条款，硬）]"
+      delivery_space:                  # 骨架源：5.4 接收约束方面 6 行（延迟预算、可用性目标、错误预算）
+        - "[链上各跳的延迟预算与超时值可观测（Z4 条件硬界的度量前提）]"
+        - "[链深注册上限的漂移观测能力在案（Z5 软界为 P2 信号，需阈值 + 趋势双判据）]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "Σ timeout_budget（path） ≤ sla_bound（path） ∧ ∀ 相邻级: t_downstream < t_upstream − propagation（Z4 逐字界形）→ 链延迟按跳加和，超时预算必须闭合且不得倒挂"
+        source: {source_type: clause_id, value: "5.5", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性（链） = Π 各跳可用性 → 单调不增于链深（每增一跳乘一因子），链深是可用性的直接决定量"
+        source: {source_type: row_id, value: "5.2.1-同步调用链", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "sync_chain_depth（F） ≤ registered_max_depth（Z5 软界） → 链深越阈为 P2 漂移信号，越阈 + 趋势上升双判据方告警"
+        source: {source_type: clause_id, value: "5.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "= Σ 各步骤卡片 latency_budget_delta + 各跳网络与序列化开销（5.2.5 明文：每个行为/协调模式条目必须携带卡片；同步链的延迟按跳严格加和）"
+      failure_modes: ["超时预算不闭合或相邻级倒挂（Z4 违例，上游先超时 → 重试风暴）", "链深越注册上限（Z5 软界，可用性乘积下降 + 变更触达面扩大）", "调用方阻塞等待导致线程/连接资源耗尽（同步语义的固有面）", "链上某跳无注册契约（X1 违例，5.4 接收约束方面 3 行）"]
+      consistency_impact: "不引入流程状态（无协调者状态机、无 Saga 日志）→ 5.4 施→4 的流程状态所有权条款在本条目上无落点；跨单元一致性由调用方按返回码处置，各单元本地一致性级别声明不变（CSL 批不重复承载）"
+      observability_requires: ["逐跳延迟与超时值可观测（Z4 界的度量前提）", "链深可度量且与注册上限可比（Z5 漂移信号的前提）", "跨单元追踪链贯通（同步链的追踪覆盖率天然较高，5.2.1 质量影响列）"]
+      ops_cost: "[随链深上升；须承担超时值治理与链深漂移观测的常态成本（Z4/Z5）]"
+      skill_prerequisites: ["超时预算分配（逐跳递减与传播余量，Z4）", "链深治理与注册上限登记（Z5）", "同步调用的断路与降级设计（5.4 施→8 超时与断路行为测试）"]
+      aggregation_semantics: additive  # 5.2.5 Σ 消费路径：逐跳延迟严格加和
+    compatibility:
+      - peer_entry: STY-001
+        relation: requires
+        evidence: {source_type: row_id, value: "5.2.1-同步调用链", verified: true}   # 定义列以同步请求-响应为界面 → 本条目须以同步请求-响应通信风格为前提（kind_profile_CRD.narrative.note 明文：compatibility 须登记对上游 STY 条目的 requires 关系）
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；本条目为同步形态 → 超时与断路行为测试在本条目上取硬，事件回放项不适用（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-003-AP1
+        description: "链深超注册上限而无漂移观测（越阈 + 趋势双判据缺失）"
+        detection_predicate: "∃ F: interaction_flow(F, ·, sync_chain) ∧ [F 的链深 > registered_max_depth] ∧ [链深趋势上升]"
+        signal_level: P2               # Z5 软性质（sync_chain_depth(F) ≤ registered_max_depth）→ P2 漂移信号，须阈值 + 趋势双判据方告警（MJ-4 P2 判据，母本 5.5 Z5 明文）
+      - pattern_id: CRD-003-AP2
+        description: "超时预算不闭合或相邻级超时倒挂"
+        detection_predicate: "∃ p: timeout_budget(p, ·) ∧ (¬[Σ timeout_budget（p） ≤ sla_bound（p）] ∨ ∃ 相邻级: ¬[t_downstream < t_upstream − propagation])"
+        signal_level: P1               # Z4 为条件硬性质（有 SLA 声明时生效）→ 无硬性质违例的无条件来源，取 P1（MJ-4 判据：违反风格定义性约束但无硬性质可绑定）
+    formal_anchor:
+      - {property_id: Z5, role: implements}      # 链深不越注册上限（软界，漂移信号）
+      - {property_id: Z1, role: implements}      # 跨单元交互显式建模（链上各跳有注册契约）
+      - {property_id: Z4, role: consumed_by}     # 超时预算闭合界消费本条目的逐跳超时分配
+      - {property_id: Z7, role: consumed_by}     # 卡片被方面 6 消费且不得违反包络
+    references:
+      - {bib_id: 44, support_claim: "同步请求-响应通道与调用链的原始分类面（母本登记提取面）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：调用方获得即时结果，语义最简、无需引入中央协调组件或事件基础设施；追踪覆盖率天然较高（同步链逐跳可串接，5.2.1 质量影响列）；不产生流程状态，5.4 施→4 的所有权约束无落点，治理面最小。代价：可用性按 Π 各跳单调不增于链深，链深成为可用性与变更触达面的直接决定量（Z5 软界）；超时预算必须逐跳闭合且相邻级不得倒挂（Z4 条件硬），治理不当即上游先超时引发重试风暴；调用方阻塞等待占用线程/连接资源，长链路下资源耗尽风险上升；链深与超时值的调整虽为有界逆转，但须以注册上限登记与漂移观测为前提。"
+      typical_scenarios: "查询类跨单元交互（调用方需即时结果）；链路短且时序确定的场合（5.2.1 适用条件列）；同步请求-响应风格已定案的项目（5.4 接收约束方面 1 行）；无需异步解耦且不产生长流程状态的交互。"
+      common_misuse: "以同步调用链承载长流程或多分支流程（应回溯方面 5 选型，AP2 同型风险）；超时值逐跳等值设置或倒挂（Z4 违例，AP2）；链深增长无注册上限与漂移观测（Z5 违例，AP1）；链上某跳无注册契约即上线（X1 违例，5.4 接收约束方面 3 行）；以重试替代断路设计（5.4 施→8 超时与断路行为测试缺项）。"
+
+  - entry_id: CRD-004
+    kind: CRD
+    name: "混合（宏观编排 + 微观协同）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.1-混合（宏观编排 + 微观协同）", verified: true}
+        - {source_type: clause_id, value: "5.2.1", verified: true}
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响列「两种卡片的并集」的 Σ 消费路径
+        - {source_type: clause_id, value: "5.3", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z1/Z7/Z8 与 interaction_flow(kind: hybrid) 取值来源
+        - {source_type: clause_id, value: "1.4", verified: true}     # 事件驱动 → 微观协同侧的承接
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 44, verified: true}
+    typical_reversibility: costly      # 人工判断：宏观/微观边界划分一经定案即决定契约密度分布与留痕落点，逆转须重划域边界而非仅改协调实现
+    applicability:
+      problem_space:                   # 骨架源：5.2.1「适用条件」列原文
+        - "同一系统内并存合规域（需集中留痕）与开放域（各单元自治演进）的跨单元流程（5.2.1 适用条件列）"
+        - "[宏观流程需集中监控而域内响应用事件协同即可（5.2.1 定义列）]"
+        - "[合规审计要求与单元自治要求同时成立且不可归一（5.4 接收约束外部强加行 + 方面 1 行的合取）]"
+      current_space:                   # 骨架源：5.4 接收约束方面 1 行（事件驱动 → 协同默认）
+        - "事件驱动（发布订阅）风格在案 → 微观协同侧有默认承接（5.4 接收约束方面 1 行，MJ-14：「事件协同」= 5.2.1「协同（choreography）」）"
+        - "[编排器运行时与事件基础设施并存在案（两种协调形态的现状前提同时成立）]"
+      delivery_space:                  # 骨架源：5.2.1 质量影响列「两种卡片的并集」
+        - "[分布式追踪能力覆盖宏观与微观两侧（并集口径的观测前提，缺一侧即不可运维）]"
+        - "[边界处的契约登记与事件回放验证能力同时在案（5.4 施→3 + 施→8）]"
+    envelope:
+      - metric: "可观测性：追踪覆盖率"
+        bound_expr: "追踪覆盖率（混合流程） = min（宏观编排侧覆盖率, 微观协同侧覆盖率） + 边界项 → 并集口径下覆盖率由较弱一侧决定（5.2.1 质量影响列「两种卡片的并集」）"
+        source: {source_type: row_id, value: "5.2.1-混合（宏观编排 + 微观协同）", verified: true}
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "跨边界契约变更数（混合） ≥ 跨边界契约变更数（宏观侧） + 跨边界契约变更数（边界处） → 边界划分新增契约登记面（5.4 施→3：编排者与参与者间的命令契约、事件契约）"
+        source: {source_type: row_id, value: "5.2.1-混合（宏观编排 + 微观协同）", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99（混合流程） = Σ 宏观侧步骤卡片 latency_budget_delta + Σ 微观侧事件投递延迟 → 两侧按各自聚合语义加和（5.2.5 Σ 消费路径）"
+        source: {source_type: clause_id, value: "5.2.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "= Σ 宏观侧步骤卡片 latency_budget_delta + Σ 微观侧事件投递延迟（5.2.5 明文：每个行为/协调模式条目必须携带卡片；两侧并集口径）"
+      failure_modes: ["跨域主流程无集中留痕（合规审计轨迹缺失 → 5.4 外部强加行硬违例）", "边界处契约密度不足（隐式跨域时序假设再现，5.4 施→9 守护对象）", "宏观编排者状态未持久化（Z8 违例）", "两侧观测口径不一致导致并集不可拼接（追踪覆盖率界失效）"]
+      consistency_impact: "宏观侧流程状态（编排者状态机）受 5.4 施→4 全约束、所有者 = 编排者单元；微观侧无中央状态、由 Z2 闭合；跨域一致性由边界处的契约条款衔接，两侧一致性级别声明仍归 CSL 批不重复承载"
+      observability_requires: ["宏观侧流程实例状态可查（orchestrator / step_class 谓词在案，5.5）", "微观侧事件流与订阅关系可查（interaction_flow / delivery_semantics 谓词在案）", "两侧追踪口径统一且边界可拼接（min + 边界项界的度量前提）", "卡片 observability_requires 不得退化（5.4 施→9）"]
+      ops_cost: "[为两种形态运维成本之和并加边界治理成本；须同时承担编排者高可用（Z8）与事件回放/乱序注入验证（5.4 施→8）]"
+      skill_prerequisites: ["域边界划分（合规域与开放域的识别与定案）", "编排与协同两种形态的联合建模（5.2.2 步骤三分类纪律同样适用）", "边界契约设计（命令契约与事件契约并存，5.4 施→3）"]
+      aggregation_semantics: itemwise  # 5.2.1 质量影响列原文为「两种卡片的并集」→ 并集非加和，按项独立评估（MJ-19：母本未给并集的算术聚合式，不本地造法）
+    compatibility:
+      - peer_entry: STY-003
+        relation: requires
+        evidence: {source_type: row_id, value: "5.2.1-混合（宏观编排 + 微观协同）", verified: true}   # 定义列「域内响应用事件协同」→ 微观侧须以事件驱动（发布订阅）为前提；MJ-14：母本叙述中的「事件协同」即 5.2.1 表的「协同（choreography）」
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；本条目微观侧为事件驱动 → 回放与乱序注入在本条目上取硬（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-004-AP1
+        description: "跨域主流程未集中留痕（合规域落在微观协同侧）"
+        detection_predicate: "∃ F: interaction_flow(F, ·, hybrid) ∧ [F 含合规域子流程] ∧ ¬∃ M: orchestrator(F, M)"
+        signal_level: P0               # Z1（跨单元交互显式建模）＋ 5.4 接收约束外部强加行（合规流程要求如支付类强制审计轨迹，硬）双据 → 检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: CRD-004-AP2
+        description: "边界处契约密度不足（隐式跨域时序假设）"
+        detection_predicate: "∃ F, u1, u2: interaction_flow(F, ·, hybrid) ∧ unit(u1) ∧ unit(u2) ∧ depends_on(u1, u2, ·, ·) ∧ ¬[u1、u2 间的边界交互有注册契约]"
+        signal_level: P1               # X1 硬性质的 covers 谓词未登记（predicate_vocabulary VG 系列同型）→ 词汇补齐前无法机器求值，按 MJ-12 取 P1 并留占位；补齐后升 P0
+    formal_anchor:
+      - {property_id: Z1, role: implements}      # 跨单元交互显式建模（宏观侧集中留痕的落点）
+      - {property_id: Z8, role: implements}      # 宏观编排者状态持久化 ∧ 可恢复
+      - {property_id: X1, role: consumed_by}     # 5.4 施→3：命令契约与事件契约同时进入契约注册
+      - {property_id: Z7, role: consumed_by}     # 两种卡片的并集被方面 6 消费
+    references:
+      - {bib_id: 44, support_claim: "编排与事件驱动协作并存的分类面（混合形态的两侧实现手段来源）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：合规域的集中留痕与开放域的单元自治可同时满足（5.2.1 适用条件列），避免为全域统一形态而在某一侧付出过高代价；宏观流程有单一集中观测点，微观域内响应无需经中央中转，延迟与可用性界在两侧各取其优。代价：追踪覆盖率按 min（两侧） + 边界项给出，由较弱一侧决定，观测口径必须统一否则并集不可拼接；边界划分新增契约登记面（5.4 施→3 命令契约与事件契约并存），跨边界契约变更数不低于宏观侧与边界处之和；运维成本为两种形态之和并加边界治理成本（编排者高可用 Z8 + 事件回放验证 5.4 施→8）；边界划分一经定案即决定契约密度分布，逆转须重划域边界（costly）。"
+      typical_scenarios: "同一系统内并存合规域（支付/审计类，5.4 外部强加行）与开放域（各单元自治演进）；宏观流程需集中监控而域内响应用事件协同即可（5.2.1 定义列）；既有编排器运行时与事件基础设施并存（0.11 现状锁定）；单元自治要求与审计要求同时成立且不可归一的场合。"
+      common_misuse: "把合规域放进微观协同侧（无集中留痕，AP1 → 5.4 外部强加行硬违例）；边界处不登记契约而依赖隐式时序假设（AP2，5.4 施→9 守护对象）；两侧观测口径不一致导致追踪并集不可拼接（覆盖率界失效）；以混合形态回避域边界定案（边界划分是本条目的前提而非产物）；宏观编排者状态只存内存（Z8 违例）。"
+
+  - entry_id: CRD-005
+    kind: CRD
+    name: "Saga（编排式）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.2 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.2-Saga（编排式）", verified: true}
+        - {source_type: clause_id, value: "5.2.2", verified: true}   # 步骤三分类纪律（compensable/retriable/pivot）＋关键设计规则列
+        - {source_type: clause_id, value: "5.2.5", verified: true}
+        - {source_type: clause_id, value: "5.3", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z3/Z7/Z8 与 saga/step_class/compensation/idempotent 谓词来源
+        - {source_type: clause_id, value: "4.2.3", verified: true}   # 补偿一致（业务级）→ CSL-005 的 requires 对侧（MJ-17 (iii)）
+        - {source_type: clause_id, value: "4.6", verified: true}     # 示例二：扣库存 + 建订单
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 47, verified: true}
+    typical_reversibility: costly      # 人工判断：步骤三分类与补偿动作一经流程消费即形成业务依赖（对账、补偿编排、Saga 日志均以此为前提），逆转须重设流程而非仅改协调实现
+    applicability:
+      problem_space:                   # 骨架源：5.2.2「适用条件」列原文
+        - "跨单元长流程且各步可在业务上定义补偿动作（5.2.2 适用条件列）；全局原子性不可得而终态正确必须达成（Y6 冲突信号的正向出路，4.2.3）"
+        - "[步骤数多或需集中留痕 → 编排式而非协同式（5.2.2 关键设计规则列的对偶判据）]"
+      current_space:                   # 骨架源：5.2.2「实现手段」列（编排器 + Saga 日志）
+        - "[编排器运行时与 Saga 日志存储在案（协调者状态持久化的现状前提，Z8）]"
+        - "[各参与单元的本地事务边界可识别且补偿动作有业务落点（4.2.3 现状勘察面，CSL-005 同源）]"
+      delivery_space:                  # 骨架源：5.4 施加约束方面 8 行（补偿路径测试）
+        - "[补偿路径测试与超时/断路行为测试能力在案（5.4 施→8 行为验证要求）]"
+        - "[Saga 日志的运维值班与对账能力在案（流程状态所有者 = 协调者单元，5.4 施→4）]"
+    envelope:
+      - metric: "可用性目标（SLO）"
+        bound_expr: "终态可达界 = ∧_{步骤} 有出路：∀ saga step: step_class ∈ {compensable, retriable, pivot} ∧ (compensable → ∃ compensation ∧ idempotent) ∧ pivot_ordering_valid（Z3 逐字界形）→ 长流程终态正确的服务质量界"
+        source: {source_type: clause_id, value: "5.5", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99（Saga） = Σ 各步骤卡片 latency_budget_delta + 步骤自身业务耗时 + 逆序补偿上界（∃ 失败时按 pivot 逆序逐步补偿）→ 补偿路径的延迟不劣于正向路径（5.2.5 Σ 消费路径）"
+        source: {source_type: clause_id, value: "5.2.5", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time（流程变更） ≥ lead_time（需重判步骤的重分类） → 步骤三分类一经定案即约束补偿动作与关键步排序（Z3），变更前置时间以需重判步骤数为下界"
+        source: {source_type: row_id, value: "5.2.2-Saga（编排式）", verified: true}
+    cost_profile:
+      latency_budget_delta: "= Σ 各步骤卡片 latency_budget_delta + 编排器推进开销 + 逆序补偿上界（5.2.5 明文：每个行为/协调模式条目必须携带卡片；补偿路径按 Σ 聚合）"
+      failure_modes: ["步骤三分类不明即上线（5.2.2 步骤分类纪律：分类不明 = Z3 违例 = 阻塞）", "可补偿步缺补偿动作或补偿动作非幂等（Z3 违例，重试放大）", "关键步（pivot）之前留有不可补偿步骤（pivot_ordering_valid 失效）", "编排器状态或 Saga 日志未持久化（Z8 违例，崩溃即流程丢失）"]
+      consistency_impact: "终态正确而非过程原子（4.2.3 补偿一致语义）；Saga 日志是数据集合，受 Y1–Y8 全约束，其所有者 = 编排器单元（5.4 施→4 硬）；本条目是 CSL-005（补偿一致，业务级）在方面 5 的协调形态实现，级别选择的逆转成本由 CSL-005 承载，本条目不重复计入"
+      observability_requires: ["Saga 步骤状态、step_class 与补偿动作可查（saga / step_class / compensation 谓词在案，5.5）", "Saga 日志持久化且可回放（Z8 + 5.4 施→8 补偿路径测试）", "卡片 observability_requires 不得退化（5.4 施→9）"]
+      ops_cost: "[随步骤数与补偿分支数上升；须承担补偿编排正确性的验证成本与 Saga 日志的对账运维（Z3 每步有出路）]"
+      skill_prerequisites: ["步骤三分类（compensable/retriable/pivot）与关键步排序纪律（5.2.2 步骤分类纪律，Z3）", "补偿动作的幂等设计（Z3 合取要求）", "编排器状态与 Saga 日志的持久化与崩溃恢复（Z8）"]
+      aggregation_semantics: additive  # 5.2.5 Σ 消费路径：步骤卡片延迟按加和聚合（补偿路径同为 Σ）
+    compatibility:
+      - peer_entry: CSL-005
+        relation: requires
+        evidence: {source_type: row_id, value: "4.2.3-补偿一致（业务级）", verified: true}   # 4.2.3 实现手段列明文「Saga（方面 5）」→ 补偿一致（业务级）的达成须以本条目为协调形态；requires 关系由 CRD 侧承载（MJ-17 (iii)），CSL-005 侧按 MJ-5 镜像纪律不重复登记
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；本条目为编排式 → 补偿路径测试与超时/断路行为测试取硬，事件回放项按通信风格定（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-005-AP1
+        description: "步骤三分类不明即上线（compensable/retriable/pivot 未声明）"
+        detection_predicate: "∃ S, st: saga(S, ·) ∧ st ∈ S ∧ ¬declared(step_class(st, ·))"
+        signal_level: P0               # 5.2.2 步骤分类纪律明文「分类不明 = Z3 违例 = 阻塞」→ Z3 硬性质违例的直接来源，检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: CRD-005-AP2
+        description: "可补偿步缺补偿动作，或补偿动作非幂等"
+        detection_predicate: "∃ S, st, c: saga(S, ·) ∧ step_class(st, compensable) ∧ (¬compensation(st, c) ∨ ¬idempotent(c))"
+        signal_level: P0               # Z3 硬性质（compensable → ∃ compensation ∧ idempotent）违例的直接来源 → 检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: CRD-005-AP3
+        description: "编排器状态或 Saga 日志未持久化"
+        detection_predicate: "∃ S, M: saga(S, ·) ∧ orchestrator(S, M) ∧ ¬[M 的协调者状态持久化 ∧ 崩溃可恢复]"
+        signal_level: P0               # Z8 硬性质 ＋ 5.2.2 关键设计规则列（编排式须有持久化的协调者状态）双据 → 检出即阻塞（MJ-4 P0 判据）
+    formal_anchor:
+      - {property_id: Z3, role: implements}      # 长流程每步有出路（三分类 + 补偿 + 幂等 + 关键步排序）
+      - {property_id: Z8, role: implements}      # 编排式流程的协调者状态持久化 ∧ 可恢复
+      - {property_id: Y6, role: consumed_by}     # 跨所有者强一致冲突的 saga_candidate 出路消费本条目
+      - {property_id: Z7, role: consumed_by}     # 卡片被方面 6 消费且不得违反包络
+    references:
+      - {bib_id: 47, support_claim: "Saga 模式的原始文献面（长流程补偿与编排式协调，母本登记提取面）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：跨单元长流程在全局原子性不可得时达成终态正确（4.2.3 定义列），是 Y6 冲突信号的正向出路（saga_candidate）；编排式提供集中留痕与集中的补偿编排落点，步骤多或需审计的场合优于协同式（5.2.2 关键设计规则列的对偶判据）；Z3 与 Z8 同时闭合使失败面从「不可恢复」降为「按 pivot 逆序补偿」。代价：每个可补偿步须有补偿动作且幂等（Z3 硬），步骤三分类一经定案即约束后续变更（前置时间以需重判步骤数为下界）；Saga 日志是受 Y1–Y8 全约束的数据集合且所有者 = 编排器单元（5.4 施→4），须承担持久化、崩溃恢复与对账运维；补偿语义一经流程消费即形成业务依赖，逆转成本高；延迟按 Σ 步骤卡片加逆序补偿上界累积（5.2.5）。"
+      typical_scenarios: "跨所有者单元的长流程（4.2.3 选择条件列，见 4.6 示例二扣库存 + 建订单）；Y6 冲突信号触发后的处置路径之一；步骤数多或需集中留痕/审计的补偿型流程（编排式而非协同式，5.2.2 关键设计规则列）；业务硬规则要求终态正确而存储层原子性不可得的场合。"
+      common_misuse: "步骤三分类不明即上线（AP1，5.2.2 明文「分类不明 = Z3 违例 = 阻塞」）；可补偿步无补偿动作或补偿动作非幂等（AP2，重试放大）；关键步之前留有不可补偿步骤（pivot_ordering_valid 失效）；编排器状态或 Saga 日志只存内存（AP3，Z8 违例）；以 Saga 替代所有权定案或部署风格重审（跨单元原子性需求应先经 Y6 审查，两条出路都不走即为违例，CSL-005 同型）；把 Saga 日志当作绕过所有者的直写通道（违 5.4 施→4）。"
+
+  - entry_id: CRD-006
+    kind: CRD
+    name: "Saga（协同式）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.2 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.2-Saga（协同式）", verified: true}
+        - {source_type: clause_id, value: "5.2.2", verified: true}   # 关键设计规则列原文「仅适合步骤少（注册上限，默认 ≤4）且无需集中留痕的流程」
+        - {source_type: clause_id, value: "5.2.5", verified: true}
+        - {source_type: clause_id, value: "5.3", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z2/Z3/Z5/Z7 与 saga/delivery_semantics/idempotency 谓词来源
+        - {source_type: clause_id, value: "1.4", verified: true}     # 事件驱动风格 → 协同默认的承接
+        - {source_type: clause_id, value: "4.2.3", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 47, verified: true}
+    typical_reversibility: costly      # 人工判断：事件契约与补偿事件的多方订阅一经投产即形成隐式耦合网，逆转须协调全部参与者而非单方改动
+    applicability:
+      problem_space:                   # 骨架源：5.2.2「适用条件」列＋关键设计规则列原文
+        - "步骤少（注册上限，默认 ≤4）且无需集中留痕的跨单元长流程（5.2.2 关键设计规则列原文）；否则流程隐式化不可维护"
+        - "[各参与单元自治且补偿可由事件触发而非中央指令（5.2.2 适用条件列）]"
+      current_space:                   # 骨架源：5.4 接收约束方面 1 行（事件驱动 → 协同默认）
+        - "事件驱动（发布订阅）风格在案 → 协同式为默认承接（5.4 接收约束方面 1 行）"
+        - "[各单元本地事务边界可识别且补偿事件有业务落点（4.2.3 现状勘察面，CSL-005 同源）]"
+      delivery_space:                  # 骨架源：5.4 施加约束方面 8 行（事件驱动 → 回放与乱序注入必备）
+        - "事件回放与乱序/重复/丢失注入的验证能力在案（5.4 施→8：事件驱动 → 必备，承接 1.4）→ 缺失即硬降权"
+        - "[跨单元分布式追踪能力在案（流程隐式化的唯一观测补偿手段，CRD-002 同型）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "步骤数（Saga） ≤ 注册上限（5.2.2 关键设计规则列，默认 ≤4） → 越阈即流程隐式化不可维护；与 Z5 registered_max_depth 同源词汇、不同谓词面（MJ-19）"
+        source: {source_type: clause_id, value: "5.2.2", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "终态可达界 = ∧_{步骤} 有出路：∀ saga step: step_class ∈ {compensable, retriable, pivot} ∧ (compensable → ∃ compensation ∧ idempotent) ∧ pivot_ordering_valid（Z3 逐字界形）→ 无中央协调者，终态可达由各单元补偿事件的合取给出"
+        source: {source_type: clause_id, value: "5.5", verified: true}
+      - metric: "可观测性：追踪覆盖率"
+        bound_expr: "追踪覆盖率（协同式 Saga） ≤ 追踪覆盖率（编排式 Saga） → 无集中留痕（5.2.2 关键设计规则列），覆盖率上界受跨单元事件链可拼接性限制"
+        source: {source_type: row_id, value: "5.2.2-Saga（协同式）", verified: true}
+    cost_profile:
+      latency_budget_delta: "= Σ 各步骤卡片 latency_budget_delta + 补偿事件投递与消费延迟（5.2.5 明文：每个行为/协调模式条目必须携带卡片；无编排器推进开销）"
+      failure_modes: ["补偿事件未声明投递语义或消费端未声明幂等（Z2 违例，补偿重复执行）", "步骤数越注册上限（流程隐式化不可维护，5.2.2 关键设计规则列）", "步骤三分类不明（Z3 违例）", "无集中留痕导致补偿链断裂时无法定位（可观测性分散的失败面）"]
+      consistency_impact: "终态正确而非过程原子（4.2.3 补偿一致语义）；无中央 Saga 日志 → 5.4 施→4 的流程状态条款落在各单元本地流程状态上（所有者 = 各自单元）；跨单元一致性由 Z2（投递语义声明 ∧ 消费端幂等）与 Z3 合成，级别选择的逆转成本由 CSL-005 承载不重复计入"
+      observability_requires: ["跨单元事件链可拼接（追踪覆盖率界上界的度量前提）", "各单元本地步骤状态与补偿动作可查（saga / step_class / compensation 谓词在案，5.5）", "卡片 observability_requires 不得退化（5.4 施→9）"]
+      ops_cost: "[随参与单元数上升；须承担事件回放与乱序/重复/丢失注入的常态化验证成本（5.4 施→8：事件驱动 → 必备），且无集中留痕使故障定位成本高于编排式]"
+      skill_prerequisites: ["步骤三分类与关键步排序纪律（5.2.2 步骤分类纪律，Z3）", "补偿事件的投递语义与消费端幂等设计（Z2）", "事件回放与乱序注入验证（5.4 施→8）"]
+      aggregation_semantics: itemwise  # 无中央累加点：各单元卡片按项独立评估（5.2.2 关键设计规则列「无集中留痕」的聚合推论，CRD-002 同型）
+    compatibility:
+      - peer_entry: STY-003
+        relation: requires
+        evidence: {source_type: row_id, value: "5.2.2-Saga（协同式）", verified: true}   # 定义列以事件交换推进补偿 → 须以事件驱动（发布订阅）通信风格为前提（kind_profile_CRD.narrative.note 明文：compatibility 须登记对上游 STY 条目的 requires 关系）
+      - peer_entry: CSL-005
+        relation: requires
+        evidence: {source_type: row_id, value: "4.2.3-补偿一致（业务级）", verified: true}   # 4.2.3 实现手段列明文「Saga（方面 5）」→ 补偿一致（业务级）的达成须以 Saga 协调形态为前提；requires 关系由 CRD 侧承载（MJ-17 (iii)），CSL-005 侧按 MJ-5 镜像纪律不重复登记
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；本条目为事件驱动 → 回放、乱序注入与补偿路径测试在本条目上一律取硬（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-006-AP1
+        description: "以协同式承载步骤多或需集中留痕的流程（流程隐式化不可维护）"
+        detection_predicate: "∃ S: saga(S, ·) ∧ ¬∃ M: orchestrator(S, M) ∧ ([S 的步骤数 > 注册上限] ∨ [S 需集中留痕（合规审计要求）])"
+        signal_level: P1               # 违反 5.2.2 关键设计规则列的选择纪律（步骤少、无需集中留痕），但注册上限的步骤数界无 Z 系列硬性质直接绑定（Z5 面为链深）→ P1（MJ-4 判据）
+      - pattern_id: CRD-006-AP2
+        description: "补偿事件未声明投递语义，或消费端未声明幂等"
+        detection_predicate: "∃ I: interaction_flow(·, ·, choreographed) ∧ saga(·, ·) ∧ (¬declared(delivery_semantics(I, ·)) ∨ [delivery_semantics(I, ·) ≠ at_most_once ∧ ¬idempotency(I, ·)])"
+        signal_level: P0               # Z2 硬性质违例的直接来源（补偿重复执行 → 终态不可达）→ 检出即阻塞（MJ-4 P0 判据，CRD-002-AP1 同型）
+    formal_anchor:
+      - {property_id: Z3, role: implements}      # 长流程每步有出路（三分类 + 补偿 + 幂等 + 关键步排序）
+      - {property_id: Z2, role: implements}      # 补偿事件的投递语义声明 ∧ 消费端幂等
+      - {property_id: Z5, role: consumed_by}     # 步骤数上界与链深上界同源词汇（registered_max_depth / 注册上限）而谓词面不同（MJ-19）
+      - {property_id: Z7, role: consumed_by}     # 卡片被方面 6 消费且不得违反包络
+    references:
+      - {bib_id: 47, support_claim: "Saga 模式的原始文献面（协同式补偿与事件驱动推进，母本登记提取面）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：各单元自治推进补偿、无中央协调者单点，可用性界由各单元合取给出；事件驱动风格下为 Saga 的默认承接形态（5.4 接收约束方面 1 行），无需引入编排器运行时与集中 Saga 日志。代价：仅适合步骤少（注册上限，默认 ≤4）且无需集中留痕的流程，越阈即流程隐式化不可维护（5.2.2 关键设计规则列原文）；追踪覆盖率上界低于编排式，无分布式追踪能力时补偿链断裂无法定位；每条补偿事件必须声明投递语义且消费端声明幂等（Z2 硬），否则补偿重复执行使终态不可达；常态化承担事件回放与乱序/重复/丢失注入验证（5.4 施→8：事件驱动 → 必备）；事件契约多方订阅使逆转须协调全部参与者（costly）。"
+      typical_scenarios: "步骤少（≤ 注册上限）的跨单元补偿流程（5.2.2 关键设计规则列）；事件驱动（发布订阅）风格已定案且各单元自治演进；无需集中留痕的开放域（合规域应走编排式，CRD-005）；参与单元少而补偿语义清晰的场合。"
+      common_misuse: "以协同式承载步骤多或需集中留痕的流程（AP1，5.2.2 关键设计规则列明文禁止）；补偿事件不声明投递语义或消费端不声明幂等（AP2，Z2 违例）；步骤三分类不明（Z3 违例，CRD-005-AP1 同型）；无分布式追踪能力即上线（流程隐式化无观测补偿）；以隐式事件时序假设替代显式建模（Z1 违例，5.4 施→9 守护对象）；把「无编排器」误读为「无流程状态」（各单元本地流程状态仍受 5.4 施→4 全约束）。"
+
+  - entry_id: CRD-007
+    kind: CRD
+    name: "流程管理器（process manager）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.2 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.2-流程管理器（process manager）", verified: true}
+        - {source_type: clause_id, value: "5.2.2", verified: true}   # 关键设计规则列（人工步骤须有超时与代理规则）
+        - {source_type: clause_id, value: "5.2.5", verified: true}
+        - {source_type: clause_id, value: "5.3", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z3/Z4/Z7/Z8 与 orchestrator/timeout_budget 谓词来源
+        - {source_type: clause_id, value: "1.2.5", verified: true}   # 冲突矩阵：Serverless × 长时运行有状态流程 → 冲突（硬）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+    typical_reversibility: costly      # 人工判断：状态机定义与人工步骤的超时/代理规则一经投产即有在途实例，逆转须迁移在途实例而非仅改配置
+    applicability:
+      problem_space:                   # 骨架源：5.2.2「适用条件」列原文
+        - "含人工步骤、分支与并行的长流程且需集中管理流程状态（5.2.2 适用条件列）；编排式 Saga 的泛化（定义列）"
+        - "[流程状态机需显式建模且步骤超时须纳入延迟预算（5.2.2 关键设计规则列）]"
+      current_space:                   # 骨架源：5.2.2「实现手段」列（工作流引擎 + 状态机）
+        - "[工作流引擎或状态机运行时在案且支持状态持久化（Z8 的现状前提）]"
+        - "[人工步骤的执行者与代理规则在组织上可指定（5.2.2 关键设计规则列的组织前提）]"
+      delivery_space:                  # 骨架源：1.2.5 冲突矩阵（Serverless × 长时运行有状态流程）
+        - "部署风格核验：Serverless / FaaS 不可承载长时运行有状态流程（1.2.5 硬冲突行，PCR-1）→ 该风格下本条目直接排除，除非走 1.2.5 例外机制（完整 ADR + 可推翻指标）"
+        - "[人工步骤的值班与升级通道在案（超时与代理规则的运维前提，5.4 接收约束方面 6 行）]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99（流程） = Σ 各步骤卡片 latency_budget_delta + 人工步骤超时上界 → 人工步骤的超时值构成延迟预算的主导项；并行分支的聚合式母本未给（5.2.5 只给 Σ 语义）→ 本条目不本地补充（MJ-19）"
+        source: {source_type: clause_id, value: "5.2.5", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "lead_time（流程变更） ≥ lead_time（状态机状态数变更的重验） → 状态机显式建模使变更触达面可数，前置时间以状态数为下界（含在途实例迁移）"
+        source: {source_type: row_id, value: "5.2.2-流程管理器（process manager）", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "Σ timeout_budget（path） ≤ sla_bound（path） ∧ ∀ 相邻级: t_downstream < t_upstream − propagation（Z4 逐字界形）→ 人工步骤超时值必须纳入预算闭合，不得倒挂"
+        source: {source_type: clause_id, value: "5.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "= Σ 各步骤卡片 latency_budget_delta + 人工步骤超时上界 + 状态机推进开销（5.2.5 明文：每个行为/协调模式条目必须携带卡片；并行分支聚合式母本未给，不本地补充，MJ-19）"
+      failure_modes: ["长时运行有状态流程落在函数粒度的平台托管单元（1.2.5 硬冲突，V3 硬失败）", "人工步骤无超时值与代理规则（流程无限期挂起，Z4 预算不闭合）", "状态机未显式建模即承载分支/并行流程（Z1 违例，流程不可验证）", "流程管理器状态未持久化（Z8 违例，在途实例丢失）"]
+      consistency_impact: "流程状态机与在途实例是数据集合，受 Y1–Y8 全约束，其所有者 = 流程管理器单元（5.4 施→4 硬）；人工步骤的中间态对下游可见，跨单元一致性由状态机按序推进达成，各单元本地一致性级别声明不变（CSL 批不重复承载）"
+      observability_requires: ["流程实例状态、状态机当前位置与在途实例可查（orchestrator / step_class 谓词在案，5.5）", "人工步骤的挂起时长与超时值可观测（Z4 界的度量前提）", "卡片 observability_requires 不得退化（5.4 施→9）"]
+      ops_cost: "[为编排式之上再加人工步骤治理成本（超时值、代理规则、值班升级通道）；在途实例迁移使版本升级成本高于 CRD-001]"
+      skill_prerequisites: ["流程状态机建模（状态、转移、分支与并行的显式化，Z1）", "人工步骤的超时与代理规则设计（5.2.2 关键设计规则列，Z4）", "在途实例的状态迁移与崩溃恢复（Z8）"]
+      aggregation_semantics: additive  # 5.2.5 Σ 消费路径：步骤卡片延迟按加和聚合（并行分支聚合式母本未给，不本地造法，MJ-19）
+    compatibility:
+      - peer_entry: STY-018
+        relation: hard_conflict
+        evidence: {source_type: clause_id, value: "1.2.5", verified: true}   # 1.2.5 冲突矩阵行「Serverless × 长时运行有状态流程 → 冲突（执行时长限制），硬」；本条目为长时运行有状态流程的协调形态 → 与函数粒度平台托管单元硬冲突。PCR-1 双向闭合：原 PCR-1 判定「对侧不是风格条目而是问题空间事实 → 无 peer_entry 可指」，本条目入库后该判断被推翻，故在此登记对侧并把 PCR-1 移入 closed_in_entries（MJ-18 留痕）。例外覆盖须走 1.2.5 机制（完整 ADR + 可推翻指标，登记为 has_approved_exception）
+      - peer_entry: CRD-005
+        relation: requires
+        evidence: {source_type: row_id, value: "5.2.2-流程管理器（process manager）", verified: true}   # 定义列明文「编排式 Saga 的泛化」→ 本条目以编排式 Saga 的补偿与三分类纪律为前提；同表内非互斥的泛化关系（MJ-5 例外：母本明文依据，非取值互斥对）
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；本条目 → 超时与断路行为测试取硬（人工步骤超时是主导项），事件回放与补偿路径项按所依赖的协调形态定（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-007-AP1
+        description: "长时运行有状态流程落在函数粒度的平台托管单元（STY-018-AP1 的方面 5 镜像）"
+        detection_predicate: "∃ f, F: unit(f) ∧ [f 为函数粒度的平台托管单元] ∧ interaction_flow(F, ·, orchestrated) ∧ orchestrator(F, f) ∧ ([F 的单次执行时长 > 平台执行时长上界] ∨ [F 的状态无法外置]) ∧ ¬has_approved_exception(·, ·, ·)"
+        signal_level: P0               # 交叉表源（MJ-4 判据）：1.2.5 硬冲突行「Serverless × 长时运行有状态流程 → 冲突（执行时长限制）」+ 未批准例外 → V3 硬失败 → 0.14 P0 检出即阻塞；与 STY-018-AP1 双向镜像（MJ-17 (ii)）
+      - pattern_id: CRD-007-AP2
+        description: "人工步骤无超时值与代理规则（流程无限期挂起）"
+        detection_predicate: "∃ F, s: interaction_flow(F, ·, orchestrated) ∧ [s 为 F 的人工步骤] ∧ ¬declared(timeout_budget(s, ·)) ∧ ¬[s 有代理规则]"
+        signal_level: P1               # 违反 5.2.2 关键设计规则列（人工步骤须有超时与代理规则）；Z4 为条件硬性质（有 SLA 声明时生效）→ 无无条件硬性质来源，取 P1（MJ-4 判据，CRD-003-AP2 同型）
+      - pattern_id: CRD-007-AP3
+        description: "状态机未显式建模即承载分支/并行流程"
+        detection_predicate: "∃ F: interaction_flow(F, ·, orchestrated) ∧ [F 含分支或并行路径] ∧ ¬[F 的状态机显式建模]"
+        signal_level: P1               # Z1 的 explicitly_modeled 谓词未登记（predicate_vocabulary VG 系列同型）→ 词汇补齐前无法机器求值，按 MJ-12 取 P1 并留占位；补齐后按 Z1 硬性质升 P0
+    formal_anchor:
+      - {property_id: Z3, role: implements}      # 长流程每步有出路（继承编排式 Saga 的三分类纪律）
+      - {property_id: Z8, role: implements}      # 流程管理器状态与在途实例持久化 ∧ 可恢复
+      - {property_id: Z4, role: consumed_by}     # 超时预算闭合界消费人工步骤超时值
+      - {property_id: V3, role: consumed_by}     # 1.2.5 冲突矩阵的部署风格一致性性质消费本条目的长时运行有状态特征
+      - {property_id: Z7, role: consumed_by}     # 卡片被方面 6 消费且不得违反包络
+    references: []                     # 书目 47 的登记面为 5.2.2 表的 Saga 两行，不含本行；书目 44 的登记面为 5.2.1/5.2.3；书目 50 的 compile_usage 为 narrative_only，不得充作决策性出处（M6）→ 本条留空并登记 G-CRD-1，待人工裁决补勘文献来源后回填（SO-7）
+    narrative:
+      benefit_cost_analysis: "收益：编排式 Saga 的泛化（5.2.2 定义列），把人工步骤、分支与并行纳入同一状态机，流程状态集中且可验证（Z1 显式建模的落点）；人工步骤的超时值进入延迟预算使 P99 可预算（Z4）；状态机显式化使变更触达面可数（前置时间以状态数为下界）。代价：长时运行有状态特征与 Serverless / FaaS 部署风格硬冲突（1.2.5，V3 硬失败），部署风格须先核验；人工步骤超时值构成延迟预算主导项，无超时与代理规则即流程无限期挂起；在途实例使版本升级与逆转成本高于 CRD-001（状态机变更须迁移在途实例）；并行分支的卡片聚合式母本未给（5.2.5 只给 Σ 语义），本条目不本地补充（MJ-19）→ 并行分支的延迟界在词汇与规范补齐前不可机器求值。"
+      typical_scenarios: "含人工审批/人工操作步骤的跨单元长流程（5.2.2 适用条件列）；含分支与并行路径且需集中管理流程状态的场合；编排式 Saga 需扩展至人工步骤时（定义列的泛化关系）；合规域要求可审计轨迹且流程状态须长期留存的场合（5.4 外部强加行）。"
+      common_misuse: "在 Serverless / FaaS 部署风格下承载本条目（1.2.5 硬冲突，AP1 → V3 硬失败；例外须走 1.2.5 机制登记 has_approved_exception）；人工步骤不设超时值与代理规则（AP2，流程无限期挂起）；以隐式约定替代状态机显式建模（AP3，Z1 违例）；流程管理器状态只存内存（Z8 违例，在途实例丢失）；把在途实例当作可丢弃数据（版本升级前未迁移）；本地补充并行分支的卡片聚合式（母本未给，MJ-19 禁造规范）。"
+
+  - entry_id: CRD-008
+    kind: CRD
+    name: "预扣/预留（reservation）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.2 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "5.2.2-预扣/预留（reservation）", verified: true}
+        - {source_type: clause_id, value: "5.2.2", verified: true}   # 关键设计规则列（预扣须有超时自动释放，防泄漏）
+        - {source_type: clause_id, value: "5.2.5", verified: true}
+        - {source_type: clause_id, value: "5.3", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}     # 接收约束方面 4 行「跨所有者强一致 → Saga/预扣或回溯方面 1」
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z3/Z4/Z7 与 saga/timeout_budget 谓词来源
+        - {source_type: clause_id, value: "4.2.3", verified: true}
+        - {source_type: clause_id, value: "4.6", verified: true}     # 示例二：预扣使超卖在存储层不可能 + 可见性损失有界
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.14", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+    typical_reversibility: bounded     # 人工判断：预扣语义以契约条款（超时值、释放规则）为界，改动面限于本单元与资源所有者单元的契约条款，不须重设业务流程；一致性级别选择的逆转成本（costly）由 CSL-005 另计，本条目不重复承载（防双计）
+    applicability:
+      problem_space:                   # 骨架源：5.2.2「适用条件」列原文
+        - "资源竞争需在存储层排除超卖而全局原子性不可得（5.2.2 适用条件列；4.6 示例二的下限合法性来源）"
+        - "[可见性损失可接受且有界（窗口期内被预扣资源对展示层不可用，4.6 示例二的牺牲）]"
+      current_space:                   # 骨架源：5.2.2「实现手段」列（预扣记录 + 超时释放）
+        - "[资源所有者单元的本地事务边界可识别且预扣记录可在本地事务内落盘（4.2.3 现状勘察面，CSL-005 同源）]"
+        - "[超时自动释放的定时能力在案（5.2.2 关键设计规则列「防泄漏」的现状前提）]"
+      delivery_space:                  # 骨架源：5.4 接收约束方面 6 行（延迟预算、错误预算）
+        - "[预扣超时值与释放事件可观测（可见性损失窗口界的度量前提）]"
+        - "[预扣记录的对账与泄漏巡检能力在案（5.2.2 关键设计规则列「防泄漏」的运维前提）]"
+    envelope:
+      - metric: "可观测性：追踪覆盖率"
+        bound_expr: "可见性损失窗口 ≤ 预扣超时值 → 超时自动释放使窗口有界（4.6 示例二的下限合法性来源：预扣使超卖在存储层不可能 ∧ 可见性损失有界）"
+        source: {source_type: clause_id, value: "4.6", verified: true}
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99（预扣 + 确认/释放） = 两次本地原子操作之和 → 无跨单元事务协调开销，延迟界优于分布式提交形态（5.2.5 Σ 消费路径的两步特例）"
+        source: {source_type: clause_id, value: "5.2.5", verified: true}
+      - metric: "可修改性：跨边界契约变更数"
+        bound_expr: "预扣超时值变更 ≥ 1 项跨边界契约变更 → 超时值是契约条款而非实现细节（4.6 示例二），变更须触及资源消费方"
+        source: {source_type: row_id, value: "5.2.2-预扣/预留（reservation）", verified: true}
+    cost_profile:
+      latency_budget_delta: "= 预扣操作 + 确认/释放操作两次本地原子操作之和（5.2.5 明文：每个行为/协调模式条目必须携带卡片；无跨单元协调跳）"
+      failure_modes: ["预扣无超时自动释放（资源泄漏 → 5.2.2 关键设计规则列「防泄漏」违例，Z3 每步有出路失效）", "预扣超时值留在实现里而不入契约条款（可见性损失失去有界性依据，4.6 示例二）", "确认/释放路径缺失导致预扣永久占用（Z3 违例）", "以预扣替代所有权定案（跨所有者强一致需求未经 Y6 审查）"]
+      consistency_impact: "预扣记录是数据集合，受 Y1–Y8 全约束，其所有者 = 资源所有者单元（5.4 施→4 硬：流程状态的所有者 = 协调者单元，本条目协调者即资源所有者）；窗口期内被预扣资源对展示层不可用（4.6 示例二的牺牲），硬规则满足（超卖在存储层不可能）；级别选择的逆转成本由 CSL-005 承载，本条目不重复计入"
+      observability_requires: ["预扣记录、超时值与释放事件可查（saga / timeout_budget 谓词在案，5.5）", "可见性损失窗口可度量（窗口 ≤ 预扣超时值界的前提）", "卡片 observability_requires 不得退化（5.4 施→9）"]
+      ops_cost: "[随预扣资源种类上升；须承担泄漏巡检与对账的常态成本（5.2.2 关键设计规则列「防泄漏」）]"
+      skill_prerequisites: ["预扣/预留模式的业务建模（超时值作为契约条款，4.6 示例二）", "超时自动释放的定时与幂等设计（Z3）", "可见性损失的有界性论证（下限合法性来源）"]
+      aggregation_semantics: itemwise  # 两次本地原子操作按项独立评估，无跨单元累加点（5.2.5 Σ 的两步特例，不做加和聚合）
+    compatibility:
+      - peer_entry: CSL-005
+        relation: requires
+        evidence: {source_type: row_id, value: "4.2.3-补偿一致（业务级）", verified: true}   # 5.4 接收约束方面 4 行「跨所有者强一致 → Saga/预扣或回溯方面 1」把预扣与 Saga 并列为补偿一致（业务级）的达成手段；4.2.3 实现手段列明文「预扣/预留模式」→ requires 关系由 CRD 侧承载（MJ-17 (iii)），CSL-005 侧按 MJ-5 镜像纪律不重复登记
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，CRD 八条逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；本条目 → 超时行为测试与释放路径（补偿路径）测试取硬，事件回放项按所依赖的通信风格定（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: CRD-008-AP1
+        description: "预扣无超时自动释放（资源泄漏）"
+        detection_predicate: "∃ D, s: dataset(D) ∧ saga(D, s) ∧ [s 为预扣/预留语义] ∧ ¬[s 有超时自动释放]"
+        signal_level: P0               # Z3 硬性质（长流程每步有出路）＋ 5.2.2 关键设计规则列「防泄漏」双据 → 检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: CRD-008-AP2
+        description: "预扣超时值留在实现里而不入契约条款"
+        detection_predicate: "∃ D, C: dataset(D) ∧ [D 含预扣记录] ∧ ¬declared(timeout_budget(·, C))"
+        signal_level: P1               # 违反 5.4 施→3 契约登记需求与 4.6 示例二的下限合法性来源（超时值为契约条款），但无 Z 系列硬性质直接绑定 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: Z3, role: implements}      # 每步有出路（确认/释放两条出路 + 超时自动释放）
+      - {property_id: Y6, role: consumed_by}     # 跨所有者强一致冲突的出路之一（5.4 接收约束方面 4 行：Saga/预扣）
+      - {property_id: Z4, role: consumed_by}     # 超时预算闭合界消费预扣超时值
+      - {property_id: Z7, role: consumed_by}     # 卡片被方面 6 消费且不得违反包络
+    references: []                     # 书目 36 的登记面为 4.2.3 表行（CSL-005 已承载），按 G-CSL-1 同型纪律「表级面不下探」不扩张至 5.2.2 行；书目 47 的登记面为 Saga 两行，不含预扣/预留行 → 本条留空并登记 G-CRD-1，待人工裁决补勘文献来源后回填（SO-7）
+    narrative:
+      benefit_cost_analysis: "收益：在存储层排除超卖而不需跨单元原子提交（4.6 示例二的下限合法性来源：预扣使超卖在存储层不可能 ∧ 可见性损失有界），延迟界为两次本地原子操作之和，优于分布式提交形态；与 Saga 并列为跨所有者强一致需求（Y6 冲突信号）的正向出路（5.4 接收约束方面 4 行）；逆转成本有界（预扣语义以契约条款为界，改动面限于本单元与资源所有者单元）。代价：窗口期内被预扣资源对展示层不可用（4.6 示例二的牺牲），须论证可见性损失有界；预扣必须有超时自动释放（5.2.2 关键设计规则列「防泄漏」，Z3 每步有出路），否则资源泄漏；超时值是契约条款而非实现细节（变更须触及资源消费方，跨边界契约变更数 ≥ 1）；预扣记录受 Y1–Y8 全约束且所有者 = 资源所有者单元（5.4 施→4），须承担泄漏巡检与对账运维。"
+      typical_scenarios: "资源竞争需在存储层排除超卖（4.6 示例二：库存单元预扣 + 订单单元确认/释放）；Y6 冲突信号触发后与 Saga 并列的处置路径（5.4 接收约束方面 4 行）；全局原子性不可得而业务硬规则要求终态正确的场合；可见性损失可接受且有界的资源预留场景。"
+      common_misuse: "预扣无超时自动释放（AP1，资源泄漏 → Z3 违例）；超时值留在实现里而不入契约条款（AP2，可见性损失失去有界性依据）；确认/释放路径缺失导致预扣永久占用（Z3 违例）；以预扣替代所有权定案或部署风格重审（跨单元原子性需求应先经 Y6 审查，CSL-005 同型）；把预扣记录当作绕过所有者的直写通道（违 5.4 施→4：所有者 = 资源所有者单元）。"
 
 # ============================================================================
 # 注册表级台账（README §2：注册表级信息一律置于顶层节，不进入条目）
@@ -2374,6 +3048,14 @@ gaps:
     route: "人工裁决（书目 35 的表级谱系面可否充当 4.2.3 行级出处，G-STY-5 同型 route）：裁决为可 → 五行统一补 35 并撤销本项；裁决为否或澄清前 → 保持留空，另勘察补行级书目并按 0.12 定 compile_usage → 母本参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。"
     status: open
 
+  - gap_id: G-CRD-1
+    type: 参考资料源缺失（5.2.2 行级书目登记面仅覆盖 Saga 两行；表级面不下探）
+    statement: "母本 5.7 中与方面五相关的登记提取面共四项：书目 44（Hohpe & Woolf, Enterprise Integration Patterns）＝『5.2.1/5.2.3 消息与协调模式词汇表（跨方面 3/5 的共享源头）』——**行级覆盖 5.2.1 全表四行**，登记面文句不及 5.2.2；书目 45（Lewis & Fowler, \"Microservices\"）＝『5.2.1 协调风格二分』——**行级覆盖二分的两行（编排／协同）**，母本同时注明本文本地无存档、二分内容由书目 4《Building Microservices》第 2 版第 4 章本地承载、编译提取仍以书目 4 为本地来源（该注明是提取来源的事实说明，非信任级下调，注册表侧不得改写为存疑）；书目 47（Richardson, \"Saga pattern\"）＝『5.2.2 编排式/协同式 Saga 与步骤分类的操作化』——**行级**指向 5.2.2 的 Saga 两行，登记面文句未及同表另两行；书目 50（OMG BPMN 2.0.2）的 compile_usage 为 narrative_only 且登记面为『5.6 示例三 BPMN 记法』，按 0.12 分级不得充作条目决策性出处（M6）。故 5.2.2 的「流程管理器（process manager）」与「预扣/预留（reservation）」两行无任何行级书目登记面（与 G-OWN-1、G-CSL-1 同型：一表之内只有部分行有行级出处）。"
+    impact: "CRD-007/CRD-008 的 references: []（0.17.8 M6 严格式 ∀ reference ∈ E 对空集平凡为真；0.17.7 门槛 6 要求文献载明所支撑主张，禁止以不承载该主张的文献充当出处）。**表级面不下探纪律**（承 G-CSL-1）：书目 47 的 Saga 面不得充当流程管理器行的行级出处——尽管 5.2.2 定义列明文『编排式 Saga 的泛化』，该泛化关系是条目间 compatibility 的依据（已登记为 CRD-007 → CRD-005 的 requires），不构成书目登记面的扩张依据；书目 36（Garcia-Molina & Salem, Sagas）的登记面为 4.2.3 表行且已由 CSL-005 承载，同不扩张至 5.2.2 的预扣/预留行。两条的其余字段以 5.2.2 表行为骨架源（5.4/5.5/4.6/1.2.5 为交叉表源），不受影响；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）。5.2.1 四行不受影响（CRD-001…004 均有行级面）。"
+    affected: "CRD-007、CRD-008（references 空列表）；CRD-001…CRD-006 不受影响（书目 44 覆盖 5.2.1 全表四行、书目 45 覆盖二分两行、书目 47 覆盖 5.2.2 的 Saga 两行）"
+    route: "人工裁决（书目 47 的登记面可否依 5.2.2 定义列的『泛化』文句下探至流程管理器行，G-STY-5/G-CSL-1 同型 route）：裁决为可 → CRD-007 补 47 并撤销该项；裁决为否或澄清前 → 保持留空，另勘察补行级书目（流程管理器与预扣/预留的原始文献面）并按 0.12 定 compile_usage → 母本 5.7 参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。登记为 SO-7（入库期义务，consumer M6）。"
+    status: open
+
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
 # ---------------------------------------------------------------------------
@@ -2385,7 +3067,8 @@ status_transitions:
             STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
             STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
             OWN-001, OWN-002, OWN-003, OWN-004,
-            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01 承载，本简记对其无事实主张
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01 承载，本简记对其无事实主张
     date: "2026-09-18"
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -2404,7 +3087,8 @@ status_transitions:
             STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
             STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
             OWN-001, OWN-002, OWN-003, OWN-004,
-            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005]   # check_ledgers 双向相等要求全集（MJ-16）；OWN 批实际迁移对象为本四条；CSL 五条的迁移事实由 ST-CSL-01 承载
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # check_ledgers 双向相等要求全集（MJ-16）；OWN 批实际迁移对象为本四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01 承载
     date: "2026-09-22"   # OWN 批入库日（本简记的登记日）；STY 批的 2026-09-18 见 ST-STY-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -2423,7 +3107,8 @@ status_transitions:
             STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
             STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
             OWN-001, OWN-002, OWN-003, OWN-004,
-            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005]   # check_ledgers 双向相等要求全集（MJ-16）；CSL 批实际迁移对象为末 5 条
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # check_ledgers 双向相等要求全集（MJ-16）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01 承载
     date: "2026-09-23"   # CSL 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-016 ↔ CSL-001 的 hard_conflict 对（1.2.5 冲突行，PCR-2 闭合）同提交回填。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -2434,7 +3119,29 @@ status_transitions:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
         - {source_type: clause_id, value: "4.2.3", verified: true}
-    note: "本批迁移对象为 CSL-001…CSL-005（4.2.3 一致性模型表行序：强一致/会话一致/因果一致/最终一致/补偿一致（业务级），编号裁决见 MJ-13 (iii)，母本反例 18-A 引用已由 R2 修订对齐为 CSL-04，见 MJ-15）；scope 含 STY 24 条与 OWN 4 条系 check_ledgers 全集要求的形式面（MJ-16），两批的迁移事实已分别由 ST-STY-01、ST-OWN-01 登记。E3 面另单独申请 WV-CSL-E3-01（防扩宽条款 (ii)，scope 覆盖 Y3/Y6/V3/Z3/W4 五项引用面）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。CSL-001/002/003 的 references 为空列表系书目行级登记面缺失（G-CSL-1）：kind_profile_CSL 的 required 含 references，而 has_path 口径下空列表＝字段在案（project.py @170-177），故三条以空列表 + 行内注显式登记即满足 M2，缺口按 G-CSL-1 走勘察路径补书目，不以本地造引充数（0.4 禁假精确）。CSL-005 与 CRD-Saga 的 requires 关系待 CRD 批回填（MJ-17 (iii)）。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
+    note: "本批迁移对象为 CSL-001…CSL-005（4.2.3 一致性模型表行序：强一致/会话一致/因果一致/最终一致/补偿一致（业务级），编号裁决见 MJ-13 (iii)，母本反例 18-A 引用已由 R2 修订对齐为 CSL-04，见 MJ-15）；scope 含 STY 24 条与 OWN 4 条系 check_ledgers 全集要求的形式面（MJ-16），两批的迁移事实已分别由 ST-STY-01、ST-OWN-01 登记。E3 面另单独申请 WV-CSL-E3-01（防扩宽条款 (ii)，scope 覆盖 Y3/Y6/V3/Z3/W4 五项引用面）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。CSL-001/002/003 的 references 为空列表系书目行级登记面缺失（G-CSL-1）：kind_profile_CSL 的 required 含 references，而 has_path 口径下空列表＝字段在案（project.py @170-177），故三条以空列表 + 行内注显式登记即满足 M2，缺口按 G-CSL-1 走勘察路径补书目，不以本地造引充数（0.4 禁假精确）。CSL-005 与 CRD-Saga 的 requires 关系待 CRD 批回填（MJ-17 (iii)）——**CRD 批已履行**：CRD-005/CRD-006/CRD-008 各自登记对 CSL-005 的 requires，CSL-005 侧按 MJ-5 镜像纪律维持空集并在行内注留痕，闭合记录见 ST-CRD-01。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
+
+  - transition_id: ST-CRD-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004,
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为末 8 条
+    date: "2026-09-24"   # CRD 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-018 ↔ CRD-007 的 hard_conflict 对（1.2.5 冲突行，PCR-1 闭合）同提交回填；CRD-005/CRD-006/CRD-008 → CSL-005 的 requires 由 CRD 侧单方承载（MJ-17 (iii)），CRD-007 → CRD-005 的 requires 依 5.2.2 定义列『编排式 Saga 的泛化』（MJ-5 例外：母本明文依据，非同表取值互斥对）。"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+        - {source_type: clause_id, value: "5.2.1", verified: true}
+        - {source_type: clause_id, value: "5.2.2", verified: true}
+    note: "本批迁移对象为 CRD-001…CRD-008（分块序：先 5.2.1 表序四行＝编排（orchestration）／协同（choreography）／同步调用链／混合（宏观编排 + 微观协同），后 5.2.2 表序四行＝Saga（编排式）／Saga（协同式）／流程管理器（process manager）／预扣-预留（reservation），编号裁决见 MJ-13 (ii)；母本已发布叙述中的「CRD-02 事件协同」＝本批 CRD-002，见 MJ-14）；scope 含 STY 24 条、OWN 4 条、CSL 5 条系 check_ledgers 全集要求的形式面（MJ-16 (ii)），三批的迁移事实已分别由 ST-STY-01、ST-OWN-01、ST-CSL-01 登记。E3 面另单独申请 WV-CRD-E3-01（WV-STY-E3-01 防扩宽条款 (ii)：不沿用前三项、不自动生效；八条 formal_anchor 共引用 Z1/Z2/Z3/Z4/Z5/Z7/Z8/X1/Y6/V3 十项性质，而该 Waiver 的 scope 只及于其中**硬性质面**——7 项 20 实例＋条件硬 Z4 的 3 实例，Z5（软）与 Z7（升级型）不产生 E3 义务故不在 scope 内，见该项 scope 明文）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。八条的 envelope 一律非空（C-ENV：kind_profile_CRD 的 entry_level_exemptions 为空集，5.2.1/5.2.2 不在豁免条款内），24 项 bound_expr 全为关系式而非具体数值（M3）；18 条 detection_predicate 中未在 predicate_vocabulary 登记的词（registered_max_depth／sla_bound／covers／explicitly_modeled）一律以半角方括号占位（M4 + MJ-12），对应升级路径见 G-STY-4 同型纪律与 VG 登记面。CRD-007/CRD-008 的 references 为空列表系 5.2.2 行级书目登记面缺失（G-CRD-1，登记为 SO-7）：kind_profile_CRD 的 required 含 references，而 has_path 口径下空列表＝字段在案（project.py @170-177），故两条以空列表 + 行内注显式登记即满足 M2，不以本地造引充数（0.4 禁假精确）；书目 45 的信任级与 compile_usage 逐字承母本 5.7（已核验／metadata_extraction），注册表侧不得降级。本批同时闭合两项跨批留痕：(i) OWN-004 的反例 18-B S2「OWN-04 × CRD-02 无冲突对」检验完毕，结论为『无关系』→ 两侧均不登记 compatibility（MJ-5/MJ-9 禁造规范），原「待 CRD 批回填」义务履行完毕；(ii) PCR-1（Serverless × 长时运行有状态流程 → 冲突，硬）由 STY-018 ↔ CRD-007 双向 compatibility 闭合，原 peer_status『对侧不是风格条目而是问题空间事实 → 无 peer_entry 可指』的判断被 CRD-007 入库推翻 → 移入 closed_in_entries（MJ-18），至此 1.2.5 冲突矩阵四行全部在条目层闭合、open_rows 为空集。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
 
 # ---------------------------------------------------------------------------
 # 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）
@@ -2505,6 +3212,28 @@ waivers:
       ruling: "批准。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道），9.2.2 五要素齐备、scope 与前两项（STY 24 条面、OWN 4 条面）互不重叠，故按已裁定的同一边界结论准予豁免：0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免，本项 external_cause=false 不构成障碍。批准仅及于本项 scope 明列的 5 项硬性质引用面（Y3/Y6/V3/Z3/W4 在 CSL-001…CSL-005 的 formal_anchor 实例），不扩张为一般先例（防扩宽条款 (i)）；CRD/DEC 及其余 12 个 kind 的 seed 期 E3 豁免仍须各自单独申请（条款 (ii)），本项批准不作为其援引依据。deadline 为事件型（LRM＝编译器首次成功运行），不虚构日历期限（0.4 禁假精确）；超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver（条款 (iii)）。另记：E3 的守护规则条目仍未建立、级别未定，本裁决同样不预设该定级结果；CSL-005 → CRD-Saga 的 requires 回填（MJ-17 (iii)）待 CRD 批，Z3 面证据口径已在本项 remediation_plan 预定，批准不改变该口径。"
       anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（CRD/DEC 及其余 12 个 kind）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前两项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前两项累计覆盖 33 条 seed 条目，三项**独立生效、独立闭合、互不援引**；同名性质（V3/W4）在不同批次的引用面各自计息，不合并豁免。"
     status: active             # SM-WV：pending → active（2026-09-24 批准生效，豁免期内）；闭合条件见 remediation_plan (3)；CSL 五条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
+
+  - waiver_id: WV-CRD-E3-01
+    rule: "E3（母本 @4008）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"
+    violation_fact: "CRD 批 8 条条目（CRD-001…CRD-008，5.2.1 四行＋5.2.2 四行，按 MJ-13 (ii) 分块序）经 ST-CRD-01 迁移为 seed（人工种子通道，0.17.6(1)），其 formal_anchor 引用的硬性质（5.5 的 Z1 显式建模＋契约在册、Z2 投递语义与幂等必答、Z3 长流程每步有出路、Z8 协调者可恢复；1.5 的 X1 无未登记跨单元交互、V3 无未批准例外的硬冲突；4.5 的 Y6 跨单元强一致＝冲突信号）尚无 FVR 条目与检查程序接线：本目录的 scripts/project.py 只做注册表静态自检（M2/M3/M4/M6/M9 + C 系列），不是 FVR 运行器，也不产生 first_full_run 证据 → 『引用 seed 条目的性质』不满足 E3 的 wired ∧ first_full_run has evidence。合法性出处：0.17.6(2)（母本明文规定 seed 期本项按 Waiver 机制登记限期豁免）。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道，五要素齐备＋批准），不沿用前三项、不自动生效。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 CRD-001…CRD-008 八条的 formal_anchor 所引用的硬性质实例，共 7 项 20 个实例——Z1 跨单元交互显式建模＋契约在册（CRD-001/002/003/004 implements，4 个）、Z2 投递语义与幂等必答（CRD-002/006 implements，2 个）、Z3 长流程每步有出路（CRD-005/006/007/008 implements，4 个）、Z8 协调者可恢复（CRD-001/004/005/007 implements，4 个）、X1 无未登记跨单元交互（CRD-001/002/004 consumed_by，3 个）、Y6 跨单元强一致＝冲突信号（CRD-005/008 consumed_by，2 个）、V3 无未批准例外的硬冲突（CRD-007 consumed_by，1 个）；级别依据＝母本 5.5/1.5/4.5 各性质行明文标注（X1 @2009 无未登记跨单元交互为硬，Z1/Z2/Z3/Z8 为硬）。另 **Z4 超时预算闭合为条件硬**（5.5 明文：SLA 上界与传播开销估计过 0.4 证据门槛时为硬，否则降软＋保守界），其 3 个 consumed_by 实例（CRD-003/007/008）按条件硬一并纳入本项 scope，级别最终由 Z4 的证据门槛判定而非本 Waiver 预设。**不在本项 scope 内**：Z5 调用链深度上限（5.5 明定『软』，P2 漂移信号，CRD-003 implements／CRD-006 consumed_by 共 2 个实例）与 Z7 质量预算校验（5.5 明定『升级型』，失败汇入 0.15 升级路径，八条各 consumed_by 共 8 个实例）——E3 只约束 property(hard)，软性质与升级型性质不产生 E3 义务，故不计入豁免面。不含 active 条目、不含 STY 批（WV-STY-E3-01 承担）、不含 OWN 批（WV-OWN-E3-01 承担）、不含 CSL 批（WV-CSL-E3-01 承担）、不含其他 kind 批次（各批另单独申请）、不含 E3 以外的编译规范性质（E1/E2/E4 不在本 Waiver 范围）。口径注：前三项 scope 均为其各自批准时点（2026-09-18 seed 仅 STY 24 条；2026-09-22 seed 为 STY＋OWN 28 条；2026-09-24 seed 为 STY＋OWN＋CSL 33 条）的口径，按防扩宽条款 (ii) 不随本批外延至 CRD 八条；CRD 八条的豁免范围由本项独立承担，四项 scope 互不重叠。**Z3 专项口径**：WV-CSL-E3-01 的 scope 只覆盖 CSL-005 对 Z3 的 consumed_by 引用，CRD-005/006/007/008 对 Z3 的 implements 引用由本项独立承担，两项不互相援引、不重复计息。**Y6 专项口径**：WV-STY-E3-01／WV-CSL-E3-01 已分别覆盖各自批次对 Y6 的引用面（CSL-001 triggers、CSL-005 implements），本项只覆盖 CRD-005/CRD-008 的 consumed_by 实例。**V3 专项口径**：WV-STY-E3-01（STY-016 triggers）与 WV-CSL-E3-01（CSL-001 consumed_by）已覆盖前批次引用面，本项只覆盖 CRD-007 的 consumed_by 实例（1.2.5 PCR-1 行的对侧，见 MJ-18）。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径同前三项：(1) project.py 自检全过（本批，见 ST-CRD-01 evidence）→ (2) 编译器对 seed 条目执行『人工条目 vs 编译条目』重验证，差异按 0.17.6(3) 三分类处置 → (3) 建立 FVR 条目并为 Z1/Z2/Z3/Z4/Z8/X1/Y6/V3 接线，首次全量运行留证（E3 的 first_full_run has evidence）→ (4) 逐条 seed→active（diff 为空 = 低影响简记；diff 非空按三分类分别定级）。本 Waiver 在 (3) 完成时闭合。本批特有前置：(a) **Z4 先定级再接线**——Z4 为条件硬，(3) 的接线范围取决于 SLA 上界与传播开销估计是否过 0.4 证据门槛；门槛未过则 Z4 降软＋取注册表保守默认（可推翻指标＝实测传播延迟），本项 scope 内 Z4 的 3 个实例随之出栈，不需接线，该出栈以简记留痕而非静默缩减。(b) **四个未登记谓词的 R2 登记**——Z1 的 explicitly_modeled、X1 的 covers、Z4 的 sla_bound、Z5 的 registered_max_depth 均见于母本 x.5 公式内而未入 predicate_vocabulary.yaml 的 clause_defined_predicates（裁决与理由见 MJ-19 (i)），故 Z1/X1/Z4 三面在词汇补齐前无法机器求值，(3) 的全量运行证据只能覆盖已登记谓词面；补齐属注册表变更（走 R2 提议＋完整 ADR＋批准），不在本批执行，亦不以本 Waiver 的批准为前提。(c) CSL-005 → CRD-Saga 的 requires 关系已由本批 CRD-005/006/008 单方承载（MJ-17 (iii) 已履行），Z3 面的跨批留空已闭合，(3) 可对该面全量求值。"
+    risk_quantification: "触及面：8 条 × formal_anchor 引用的硬性质，共 7 项 20 个硬性质实例（Z1 4、Z2 2、Z3 4、Z8 4、X1 3、Y6 2、V3 1）＋ Z4 条件硬 3 个实例。利息形态：硬性质违例的检出时机从『运行时/编译期自动检出』退化为『评审期人工核验』，检出延迟 = 一个决策周期；漏检后果按性质分级——Z1 漏检 = 跨单元交互隐式化（无集中留痕）即进入实现，合规域的强加审计要求（5.4 接收约束外部强加行，硬）落空；Z2 漏检 = 事件/补偿消息的投递语义与消费端幂等未声明即上线（5.2.1/5.2.2 定义列明文『必答』，重复消费与重复补偿直接进入生产）；Z3 漏检 = 长流程步骤缺三分类（pivot/compensable/retryable）或缺出路（方面 5 硬）；Z8 漏检 = 协调者/流程管理器状态不可恢复，在途实例在故障后丢失（5.5 硬）；X1 漏检 = 跨单元交互未进契约注册表即定案（1.5 硬，契约密度不足）；Y6 漏检 = 跨所有者单元的强一致需求未触发冲突信号（4.5 硬）；V3 漏检 = 1.2.5 硬冲突行（Serverless × 长时运行有状态流程，PCR-1）未经批准例外即两方同时 active（0.14 P0 面）；Z4 漏检 = 超时预算不闭合或相邻级倒挂（上游先超时 → 重试风暴），级别待证据门槛判定。缓解：(i) 0.17.5 强制 ADR 附注『依据种子条目，待重验证』；(ii) 本批 P0/P1/P2 信号级判读带 5.5/1.5/4.5 性质指针与 MJ-4 判据留痕，可逐条人工复核（18 条 detection_predicate 全部标级，其中四个未登记谓词面按 MJ-12 取 P1 并留方括号占位，明记『补齐后升 P0』）；(iii) 1.2.5 冲突矩阵 PCR-1 已于本批双向闭合（STY-018 ↔ CRD-007，M9 同提交），原 peer_status 判读被推翻的留痕见 MJ-18 (ii)，open_rows 为空集 → 四行全闭合，无静默丢弃；(iv) project.py 的 M9/C-ST/C-ENV/M2/M3/M4/M6 静态自检覆盖 peer 存在性、状态资格、CRD 剖面 envelope 非空义务、pattern_id 与 target_aspect 形态、bound_expr 参数化（24 项）、谓词词汇封闭、references 分级七项可机器判定面（本批 CRD 八条 envelope 全部非空，M3 全过）；(v) 累计口径——本项与前三项合计覆盖 **41** 条 seed 条目，四项 scope 互不重叠，豁免面按批次逐项登记，不合并、不互相援引。"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经 WV-OWN-E3-01、WV-CSL-E3-01 复用的边界结论（0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免），本项不另启同一争点的重复裁决；按防扩宽条款 (i)，本项仅援引该结论适用于母本明文通道场合，不将其扩张为一般先例。"
+      status: pending          # 登记即申请（2026-09-24）；批准是人的裁决，Agent 与工具不自行批准——0.10 第一条 / 1.1 纪律二；批准前 waiver status 保持 pending
+      approved_by: null
+      approved_date: null
+      ruling: null
+      anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（DEC 及其余 12 个 kind）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前三项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前三项累计覆盖 41 条 seed 条目，四项**独立生效、独立闭合、互不援引**；同名性质（Z3/Y6/V3）在不同批次的引用面各自计息，不合并豁免。本项亦不预设两个未决事项的结果：E3 的守护规则条目仍未建立、级别未定；Z4 的条件硬级别仍待 0.4 证据门槛判定（remediation_plan (a)）。"
+    status: pending            # SM-WV：pending →（批准后）active；CRD 八条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
 
 # ---------------------------------------------------------------------------
 # 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
@@ -2630,22 +3359,34 @@ manual_judgments:
     affected: "STY-016 compatibility 与 formal_anchor（V3 triggers 注）；CSL-001 compatibility 与 formal_anchor（V3 consumed_by）；CSL-005 compatibility（留空）；pending_conflict_rows（PCR-2 → closed_in_entries）"
     provenance: manual
 
+  - id: MJ-18
+    subject: PCR-1 的 peer 判读推翻与双向闭合（1.2.5「Serverless × 长时运行有状态流程」行）＋母本对 CRD 的已发布指称形态
+    judgment: "(i) **peer = CRD-007（流程管理器）**。1.2.5 该行原文『Serverless × 长时运行有状态流程 → 冲突（执行时长限制），硬』的对侧『长时运行有状态流程』在 CRD kind 入库后已有条目承载：CRD-007 的 applicability.problem_space 明记长时运行有状态流程特征（状态机推进＋在途实例持久化），其 Z8（协调者可恢复）与 5.2.2 定义列（『编排式 Saga 的泛化』）共同构成该工作负载特征的条目化落点。故回填形态＝STY-018 compatibility 增 hard_conflict 行（peer CRD-007）＋ CRD-007 对侧镜像（同提交，M9），PCR-1 移入 closed_in_entries，open_rows 为空集 → 1.2.5 四行全部在条目层闭合。(ii) **原 peer_status 判读被推翻，以新增登记留痕而不改写历史**：原 PCR-1 记『对侧不是风格条目，而是问题空间事实（工作负载特征）→ 无 peer_entry 可指』，该结论成立于 CRD kind 未入库的时点（彼时确无条目可指），并非判读错误；CRD-007 入库使其失效。按 0.22 承诺一（已发布编号与引用不复用、不重排）与台账历史不重写纪律，处置＝在 closed_in_entries 的 disposition 中显式注明『原 peer_status 判读经 CRD 批推翻，见 MJ-18』，不删除、不改写原 open_rows 文本的判读内容。(iii) **母本对 CRD 的已发布指称有两类形态，均不产生 MJ-16 (i) 的数值索引顺序锁定义务**：① entry_id 叙述式仅一处（母本 @625 反例 18-B S2『已定条目 CRD-02（事件协同）』），映射为 CRD-002（母本两位书写＝注册表三位书写，同一 entry_id，MJ-14 同型；『事件协同』＝5.2.1『协同（choreography）』行），检验结果为无冲突对（OWN-004 侧留痕已闭合）；② kind 级消费字段七处（@2328 CRD-Saga 步骤注册表、@2610 CRD-Saga 注册表 pivot/compensable 标记、@2626 CRD.applicability.problem_space[域驱动来源]、@2642 CRD.kind 条目.cost_profile.ops_cost、@2670 CRD 协调卡片条目{condition_predicate, hard_directive, else_directive}、@2743 CRD 协调风格条目.cost_profile、@2952 CRD/编排器.quality_impact_card.latency_budget_delta），指称对象为 kind 而非单一条目，故不锁定任何条目的列表项位次。其中 @2626 的 `problem_space[域驱动来源]` 与 @2643 的 `delivery_space[引擎运维能力]=unknown` 为**符号下标**（非 0 基数值索引），语义是存在性要求而非位次要求：CRD 八条凡被该消费面引用者，须在对应空间中保留承载该事实的项（以方括号占位表达 unknown，M15），重排其余项不破坏该指称。纪律：后续批次若母本出现 `CRD-00x.field[i]` 形态的数值索引消费字段，仍按 MJ-16 (i) 锁定列表项顺序。"
+    basis: "母本 1.2.5（@1399-1404，Serverless 行 @1402）、5.2.2（流程管理器行）、5.5 Z8、反例 18-B（@621-641，S2 @625）、5.6 示例二/示例三消费字段（@2626、@2642-2643）、方面 5/6/9 消费字段（@2328、@2610、@2670、@2743、@2952）；0.17.2 compatibility（peer_entry 须存在，M9 双向）；0.22 承诺一（编号与已发布引用不复用/不重排）；MJ-14（母本两位书写＝注册表三位书写）；MJ-16 (i)（数值索引消费字段锁定列表项顺序）"
+    affected: "STY-018 compatibility（增 CRD-007 hard_conflict 行）；CRD-007 compatibility（对侧镜像）；CRD-002（18-B S2 无冲突对留痕）；pending_conflict_rows（PCR-1 → closed_in_entries，open_rows 空集）；CRD 八条的 applicability 三空间列表项顺序（不受锁定，除符号下标项须保留）"
+    provenance: manual
+
+  - id: MJ-19
+    subject: CRD 批三项判读——四个母本公式内谓词的登记裁决、「注册上限」与 Z5 registered_max_depth 的同源异面、并行分支聚合式不本地造法
+    judgment: "(i) **covers／explicitly_modeled／sla_bound／registered_max_depth 四词本批不登记入 predicate_vocabulary.yaml，维持方括号占位**。事实认定：四词均逐字出现于母本 x.5 的性质公式内——covers 于 X1（@2009『∃C ∈ registry: covers(C,u1,u2)』）与 Z1（@2575）、explicitly_modeled 于 Z1（@2575）、sla_bound 于 Z4（@2583）、registered_max_depth 于 Z5（@2586），与 clause_defined_predicates 既有十项（如 active 注『V3 公式内使用』、parameterized 注『M3 公式内使用』）**同型**，属 R2 可提议的登记候选，而非 MJ-12 意义的本地造词。裁决不扩词的理由是**后果而非资格**：登记该四词将直接触发 CRD-004-AP2（covers 面）与 CRD-007-AP3（explicitly_modeled 面）的 signal_level 由 P1 升 P0（两条行内注已明记『补齐后升 P0』），信号级升级＝守护规则改级，按 0.14『不许运行时即兴改级』＋ SO-2／G-STY-4 同型纪律须走完整 ADR＋批准，不在数据批次内自行执行；且词汇表扩充会波及既有 STY 批的 VG-01…VG-04 处置口径，应与 SO-4 的补齐动作合并为一个独立的词汇批次统一裁决。留痕不静默丢弃：本项即留痕载体，四词的候选身份、母本行指针与升级路径在此登记，M4 面以半角方括号包裹（outside_brackets 剔除，自检不误报），M6 面不受影响。**不新增 VG 编号**：VG-01…VG-04 已覆盖『谓词缺失 → 方括号占位＋补齐后按 MJ-4 复核 signal_level』的处置形态，本批四词复用该形态；若人工裁决认为需独立 VG 项，走 R2 提议。(ii) **「注册上限（默认 ≤4）」与 Z5 的 registered_max_depth 同源词汇、不同谓词面，不得合并实例**：Z5 公式为 `sync_chain_depth(F) ≤ registered_max_depth`（@2586），谓词面是**调用链深度**；5.2.2 关键设计规则列的『仅适合步骤少（注册上限，默认 ≤4）』谓词面是**Saga 步骤数**。二者共用『注册上限』词汇但约束对象不同，故 CRD-003（同步调用链）取 `Z5: implements`（链深面的直接承载），CRD-006（协同式 Saga）取 `Z5: consumed_by`（步骤数面消费同一上界词汇），不得因同名而将 CRD-006 升为 implements、亦不得据 CRD-003 推断步骤数面已被 Z5 硬约束。信号级：CRD-006-AP2 取 P1（步骤数界无 Z 系列硬性质直接绑定，Z5 面为链深且 5.5 明定为软），CRD-003-AP1 取 P2（Z5 软性质 → 越阈＋趋势上升双判据方告警，MJ-4 P2 判据）。『默认 ≤4』为母本逐字给出的具体数值，故 bound_expr 引之合法（0.17.7 门槛 2 只禁无出处数值），但仍以参数化形态表达（『≤ 注册上限』＋括注默认值），不将 4 写死为唯一界。(iii) **并行分支的卡片聚合式母本未给 → 不本地造法**：5.2.5 只给 Σ（加和）语义，未给并行分支的聚合规则（max／关键路径／期望值等均无母本依据）。CRD-007 的 envelope bound_expr、cost_profile.latency_budget_delta 与 aggregation_semantics 三处显式声明该缺口（『并行分支的聚合式母本未给，不本地补充』），aggregation_semantics 取 additive 仅覆盖 5.2.5 明文的 Σ 消费路径；补法须走 R2／母本 5.2.5 扩充（高影响，走 ADR），不在注册表侧自造聚合语义（0.4 禁假精确＋零新增规范命题）。同型处置：CRD-007 的 envelope 不因缺口而留空（C-ENV 对 5.2.1/5.2.2 要求非空），而以已给语义的界形登记＋缺口注记。"
+    basis: "母本 1.5 X1（@2009）、5.5 Z1/Z4/Z5（@2575、@2583、@2586）、5.2.2 关键设计规则列（注册上限，默认 ≤4）、5.2.5（卡片 Σ 语义）；predicate_vocabulary.yaml（clause_defined_predicates 十项＋meta.note『新增谓词名 = R2 提议，不得在本文件本地扩词』＋vocabulary_gaps VG-01…VG-04）；project.py M4（outside_brackets 只剔半角方括号）、build_vocab（predicates ∪ formula_words ∪ clause_defined_predicates）；MJ-4（信号级判据）、MJ-12（本地造词 → 方括号占位＋VG 登记）、SO-2／SO-4／G-STY-4（升级属注册表变更，走完整 ADR＋批准）；0.14（不许运行时即兴改级）；0.4（禁假精确）；profiles.yaml C-ENV"
+    affected: "CRD-003/CRD-006 的 formal_anchor（Z5 角色分配）与 envelope（registered_max_depth／注册上限界形）；CRD-004-AP2 与 CRD-007-AP3 的 signal_level（P1，补齐后升 P0）；CRD-003-AP1 的 signal_level（P2）；CRD-007 的 envelope／cost_profile.latency_budget_delta／aggregation_semantics；predicate_vocabulary.yaml（本批不变，四词候选身份登记于此项）"
+    provenance: manual
+
 # ---------------------------------------------------------------------------
 # 五、未闭合的冲突矩阵行（1.2.5 是风格条目的强制元数据；peer 条目未建者不得
 #     写入 compatibility —— M9 要求 peer_entry 存在。此节为待回填台账。）
 # ---------------------------------------------------------------------------
 pending_conflict_rows:
-  # 1.2.5 四行的处置全景：三行已在条目层闭合，一行登记于此。
+  # 1.2.5 四行的处置全景：四行均已在条目层闭合，open_rows 为空集（本批 PCR-1 闭合后达成）。
+  # 节名与键名保持 pending_conflict_rows（台账键为已发布接口，不因内容清空而重命名）；
+  # 后续批次若出现 peer 条目未建的矩阵行，仍登记于 open_rows。
   closed_in_entries:
     - {row: "事件溯源 × 强同步查询语义 → 张力（读模型最终一致）", disposition: "已条目化：STY-004 compatibility（peer STY-001，relation tension），映射判读见 MJ-3"}
     - {row: "严格分层 × 高性能内层直访 → 张力（需松弛分层 + 权衡承认 ADR）", disposition: "已条目化：STY-007（松弛分层变体 + 权衡承认 ADR 措辞落 constraints_imposed/narrative）"}
     - {row: "微服务 × 跨单元 2PC 作为默认一致性手段 → 冲突（应改用 Saga 类，或重审部署风格），硬", disposition: "已条目化：STY-016 compatibility（peer CSL-001，relation hard_conflict）＋ CSL-001 compatibility 对侧镜像（同提交回填，M9）；原 PCR-2 于 CSL 批入库时闭合，peer 判读见 MJ-17"}
-  open_rows:
-    - row_id: PCR-1
-      matrix_row: "Serverless × 长时运行有状态流程 → 冲突（执行时长限制），硬"
-      peer_status: "对侧不是风格条目，而是问题空间事实（工作负载特征）→ 无 peer_entry 可指"
-      disposition: "已在条目层以反形态闭合：STY-018-AP1（signal_level: P0，检出即阻塞），exception 覆盖须走 1.2.5 机制（完整 ADR + 可推翻指标，登记为 has_approved_exception）。本行为 1.2.5 台账镜像，保留以供冲突矩阵投影时对齐，不写入 compatibility。"
-      source: {source_type: clause_id, value: "1.2.5", verified: true}
+    - {row: "Serverless × 长时运行有状态流程 → 冲突（执行时长限制），硬", disposition: "已条目化：STY-018 compatibility（peer CRD-007，relation hard_conflict）＋ CRD-007 compatibility 对侧镜像（同提交回填，M9）；原 PCR-1 于 CRD 批入库时闭合。原 peer_status 判读（『对侧不是风格条目，而是问题空间事实（工作负载特征）→ 无 peer_entry 可指』）成立于 CRD kind 未入库时点、经本批推翻，推翻以新增登记留痕而不改写历史文本，见 MJ-18 (ii)。原反形态闭合仍有效且与本行并存：STY-018-AP1（signal_level: P0，检出即阻塞），exception 覆盖须走 1.2.5 机制（完整 ADR + 可推翻指标，登记为 has_approved_exception）；V3 的 formal_anchor 角色分配——STY-018 保持 triggers（冲突行由风格侧登记，MJ-17 (ii) 同型）、CRD-007 取 consumed_by（V3 谓词面在双向登记后方可求值）。原 source 指针：{source_type: clause_id, value: \"1.2.5\", verified: true}"}
+  open_rows: []
 
 # ---------------------------------------------------------------------------
 # 六、勘察义务（注册表侧）。区分两类义务：
@@ -2701,4 +3442,12 @@ survey_obligations:
     gap_ref: "README §3.3 事实占位符约定；VG-02"
     consumer: "0.18.2 S1/S4；0.18.6 M15；0.20.2 FM-1"
     trigger_rule: "M15（unknown → 候选保留 ∧ 勘察义务登记）"
+    status: open
+
+  - obligation_id: SO-7
+    kind: 入库期
+    obligation: "补勘 5.2.2 表内『流程管理器（process manager）』与『预扣/预留（reservation）』两行的行级书目登记面：母本 5.7 中与方面五相关的四项登记面均不覆盖该两行（书目 44 覆盖 5.2.1/5.2.3、书目 45 覆盖 5.2.1 协调风格二分、书目 47 行级指向 5.2.2 的 Saga 两行、书目 50 为 narrative_only 且登记面为 5.6 示例三），故 CRD-007/CRD-008 的 references 保持空列表。补入须走母本 5.7 参考文献表扩充（0.12『扩充』语义裁决 + 高影响批准，走 R2/ADR）；另须先经人工裁决『书目 47 的 Saga 登记面可否依 5.2.2 定义列的「编排式 Saga 的泛化」文句下探至流程管理器行』（G-CRD-1 route，G-STY-5/G-CSL-1 同型）——裁决为可则 CRD-007 补书目 47 并撤销该项，裁决为否则维持留空。表级面不下探纪律承 G-CSL-1：本项不得以 kind 级或表级登记面充当行级出处。"
+    gap_ref: G-CRD-1
+    consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
+    trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
     status: open
