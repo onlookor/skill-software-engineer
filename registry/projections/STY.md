@@ -2,7 +2,7 @@
 
 > 本文件由 `scripts/project.py` 自动生成（机器层→人类层同源投影，母本 0.9／编译规范 E2），**禁止手改**；修改 registry/ 任一源后重跑 `python3 scripts/project.py --project`。
 
-- 批次：种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）
+- 批次：种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）
 - 版本：registry_version 1.0.0
 - 编号：README §4 裁决的分块序，锚定 STY-004（母本反例 18-A 既有引用一致，MJ-1）；母本零改动。
 - 卡片仅为紧凑投影；字段全量与逐字措辞以 method_registry.yaml 为准。
@@ -287,7 +287,7 @@
 - **envelope** 性能：资源占用：`闲置期资源占用 = 0（「零闲置成本」的参数化形态）；单次执行时长 ≤ [平台执行时长上界]、并发 ≤ [平台并发配额]（方括号为待勘察平台参数，VG-02/M15）；超限流程不可承载 → 1.2.5 硬冲突（STY-018-AP1）`
 - **成本**：ops_cost＝基础设施运维由平台托管（无集群运维面）；成本转移到配额治理、冷启动优化、平台锁定评估与账单侧可观测性｜聚合语义=itemwise
 - **反模式** 1 项（P0×1）：STY-018-AP1 长时运行有状态流程
-- **兼容性**：STY-003(composable)
+- **兼容性**：STY-003(composable)、CRD-007(hard_conflict)
 - **施加约束** 5 项：方面 2←分解单元为函数粒度、以事件触发为入口（本行定义「函数粒度、事件触发」的实…；方面 4←状态外置强制：函数实例不得承载跨调用状态，状态须外置到托管存储/事件日志；方面 5←长时运行有状态流程不可由本风格承载（1.2.5 硬冲突行）→ 须改用其他…；方面 6←本条目 envelope = 质量目标可达性上界（V4 消费）…
 - **formal_anchor**：V2(implements)、V3(implements)、V4(consumed_by)、V5(implements)
 - **参考文献**：bib 3 [已核验]·metadata_extraction
@@ -370,4 +370,4 @@
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；cost_profile: 人工判断
 
 ---
-生成于 2026-09-24T22:12:36｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`26ebae5aa0f9`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
+生成于 2026-09-25T23:31:15｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`acd785cb2637`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
