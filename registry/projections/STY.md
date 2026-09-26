@@ -2,7 +2,7 @@
 
 > 本文件由 `scripts/project.py` 自动生成（机器层→人类层同源投影，母本 0.9／编译规范 E2），**禁止手改**；修改 registry/ 任一源后重跑 `python3 scripts/project.py --project`。
 
-- 批次：种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）
+- 批次：种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）
 - 版本：registry_version 1.0.0
 - 编号：README §4 裁决的分块序，锚定 STY-004（母本反例 18-A 既有引用一致，MJ-1）；母本零改动。
 - 卡片仅为紧凑投影；字段全量与逐字措辞以 method_registry.yaml 为准。
@@ -370,4 +370,4 @@
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；cost_profile: 人工判断
 
 ---
-生成于 2026-09-26T07:14:10｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`cf6787585bc7`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
+生成于 2026-09-26T22:44:18｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`eb75defbb326`；`profiles.yaml`→`0bd8e2e17384`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
