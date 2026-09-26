@@ -22,14 +22,14 @@
 meta:
   law_file: ../软件工程元框架成文法.md
   registry_version: {major: 1, minor: 0, patch: 0}
-  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）"
+  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）"
   schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
   kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
   seed_channel_source: {source_type: clause_id, value: "0.17.6", verified: true}
   metric_vocabulary_source: {source_type: clause_id, value: "6.2.1", verified: true}
   signal_level_source: {source_type: clause_id, value: "0.14", verified: true}
-  entry_count: 41
-  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）；其余 13 kind 待后续批次"
+  entry_count: 49
+  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）＋ DEC 全覆盖（2.2.1 全部 8 行）；其余 12 kind 待后续批次"
 
 entries:
 
@@ -2972,6 +2972,674 @@ entries:
       typical_scenarios: "资源竞争需在存储层排除超卖（4.6 示例二：库存单元预扣 + 订单单元确认/释放）；Y6 冲突信号触发后与 Saga 并列的处置路径（5.4 接收约束方面 4 行）；全局原子性不可得而业务硬规则要求终态正确的场合；可见性损失可接受且有界的资源预留场景。"
       common_misuse: "预扣无超时自动释放（AP1，资源泄漏 → Z3 违例）；超时值留在实现里而不入契约条款（AP2，可见性损失失去有界性依据）；确认/释放路径缺失导致预扣永久占用（Z3 违例）；以预扣替代所有权定案或部署风格重审（跨单元原子性需求应先经 Y6 审查，CSL-005 同型）；把预扣记录当作绕过所有者的直写通道（违 5.4 施→4：所有者 = 资源所有者单元）。"
 
+# ══════════════════════════════════════════════════════════════════════════
+# kind: DEC（分解策略，2.2.1 八种分解策略表全体八行）→ DEC-001…DEC-008
+# 分块序：2.2.1 表序 S1…S8 ↔ DEC-001…008（MJ-13 (iv)）；母本两位书写 DEC-05 =
+#         注册表三位书写 DEC-005（MJ-14）；name 一律取「策略」列逐字（MJ-20 (i)）
+# constraints_imposed 八条一律逐字承载 2.4「施加约束」表全体七行（方面 2 → 1/3/4/5/6/8/10）
+# 位次锁定：DEC-005.applicability.problem_space[1] 与 DEC-002.cost_profile.skill_prerequisites
+#           为正例 20-1（0.20.5）明文消费字段 → 数值索引项顺序不得调换（MJ-16 (i)）
+# ══════════════════════════════════════════════════════════════════════════
+
+  - entry_id: DEC-001
+    kind: DEC
+    name: "S1 按业务领域"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行（策略/定义/主导驱动空间三列）＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S1 按业务领域", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}   # 「策略可组合；组合冲突的处置见 2.6 示例一」
+        - {source_type: clause_id, value: "2.2.2", verified: true}   # 语义边界判据＋信息隐藏判据（横切所有策略）
+        - {source_type: clause_id, value: "2.2.3", verified: true}   # 粒度停止准则（W2 硬 / W3 条件硬 / W6 软）
+        - {source_type: clause_id, value: "2.2.4", verified: true}   # DSM 双通道；cross_density 阈值注册参数
+        - {source_type: clause_id, value: "2.3", verified: true}     # 三空间驱动与双使用者条款
+        - {source_type: clause_id, value: "2.4", verified: true}     # 接收约束表＋施加约束表全体七行
+        - {source_type: clause_id, value: "2.5", verified: true}     # 机器层谓词八项与 W1–W7
+        - {source_type: clause_id, value: "2.6", verified: true}     # 示例一（组合冲突）／示例五（S1 输出空集）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 包络指标族（可修改性行度量方式含 DSM 密度）
+        - {source_type: bib_id, value: 7, verified: true}
+        - {source_type: bib_id, value: 24, verified: true}
+    typical_reversibility: costly      # 人工判断：限界上下文间契约一经显式建模并投产（2.4 施→3 硬），重划须同时迁移数据所有权与上下文映射，非仅改配置
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列＋「主导驱动空间」列＋2.3 问题空间驱动
+        - "领域复杂度与概念丰富度高 → S1/S3 主导（2.3 问题空间驱动第一行）；单元 = 领域子域/限界上下文，如订单、库存、支付（2.2.1 定义列）"
+        - "[Conway 事实：组织结构与领域边界的错位程度（2.6 示例一消费字段 problem_space『Conway 事实』；书目 17 Conway 为 narrative_only，不得充决策性出处，事实须另过 0.4 门槛）]"
+      current_space:                   # 骨架源：2.3 现状空间驱动＋0.11
+        - "既有领域模型/限界上下文在案 → 对齐或显式声明迁移路径（2.3 现状空间驱动第一行）；迁移声明本身是重审提议级材料"
+        - "0.11 现状锁定：棕地『理想分解』必须以『现状分解 + 演化序列』表达"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动（S6 为所有策略的过滤器）
+        - "团队拓扑与认知负荷是所有策略的过滤器：任何策略产出的单元规模不得超过承载团队认知负荷上界（W3，按 2.2.3 条件硬化）（2.3 交付空间驱动第一行）"
+        - "[单人/小团队场景 S6 退化为不约束，不强制使用（2.3 交付空间驱动第二行；0.10 权力条款第二条）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "触达单元数（典型领域变更） ≤ 1 → 限界上下文内聚使单侧领域变更不跨单元传播；> 1 即语义边界划错的反向信号（2.2.2 语义边界判据）"
+        source: {source_type: row_id, value: "2.2.1-S1 按业务领域", verified: true}
+      - metric: "可修改性：DSM 密度（2.2.4 通道二的消费端之一）"
+        bound_expr: "cross_density（DSM） ≤ 注册阈值 → 阈值是 2.2.4 的注册参数（2.6 示例一消费字段『DSM.cross_density 阈值』）；越阈则按 2.6 示例一走组合冲突处置，单调越阈即界外"
+        source: {source_type: clause_id, value: "2.2.4", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "变更前置时间 随跨边界契约变更数单调不减 → 上下文映射（2.4 施→3 硬）是前置时间的支配项，下界为单上下文内变更"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["语义边界不清即以 S1 切分（部署单元与语义单元错位是分布式单体/纳米服务的根源，2.4 接收约束方面 1 行）", "按流程步骤而非『什么会变』切分（2.2.2 信息隐藏判据违例）", "限界上下文间契约未显式建模（2.4 施→3 硬 → X1 违例）", "S1 输出空集（2.6 示例五：FM-3 → 0.13 缺口声明＋CH-D；注册表现有 DEC 条目全部预设单一法人账套边界）"]
+      consistency_impact: "分解边界 = 数据所有权边界（2.4 施→4 硬，即 W4）：每个数据集合有且仅有一个所有者单元；跨上下文一致性需求经方面 4 的 Y 系列判定（CSL/CRD 批承载，本条目不重复登记）"
+      observability_requires: ["单元与限界上下文的映射可查（boundary_type 谓词实参取 bounded_context，2.5）", "跨边界依赖可观测（depends_on 的 kind/weight 在案，为 2.2.4 DSM 通道二的输入）", "上下文映射（契约边界）在契约注册表可查（X1）"]
+      ops_cost: "[随限界上下文数上升：每上下文的独立验证与部署面带来运维单元数增长；单元数与认知负荷上限的联合可行性须先校验（2.6 示例三）]"
+      skill_prerequisites: ["领域建模与子域划分（2.2.1 定义列；书目 7 登记面『S1 领域驱动分解』）", "事件风暴识别限界上下文（书目 24 登记面『S1 的操作化技术』，提取以 2019-08-23 本地存档版为准）", "上下文映射与契约显式建模（2.4 施→3 硬）", "粒度停止准则应用（2.2.3）"]
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型：不本地造法）→ 代价按单元逐项评估，显式声明缺口（MJ-20 (vi)）
+    compatibility:
+      - peer_entry: DEC-006
+        relation: tension
+        evidence: {source_type: clause_id, value: "2.6", verified: true}   # 示例一：Conway 事实与领域边界的组合冲突（2.2.1 表前注「组合冲突的处置见 2.6 示例一」）；镜像登记于 DEC-006
+      - peer_entry: DEC-002
+        relation: tension
+        evidence: {source_type: clause_id, value: "2.2.2", verified: true}   # 语义边界判据：分解跟随领域语义而非纯技术分层；镜像登记于 DEC-002
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-001-AP1
+        description: "语义边界不清即以 S1 切分（切出的『上下文』不能独立陈述领域语义）"
+        detection_predicate: "∃ M1, M2: unit(M1) ∧ unit(M2) ∧ boundary_type(M1, bounded_context) ∧ depends_on(M1, M2, call, ·) ∧ ¬[M1 与 M2 的领域语义可独立陈述]"
+        signal_level: P1               # 违反 2.2.2 语义边界判据（定义性判据），但无 W 系列硬性质可绑定 → P1（MJ-4 判据）；后果面见 2.4 接收约束方面 1 行理由列（分布式单体/纳米服务根源）
+      - pattern_id: DEC-001-AP2
+        description: "按流程步骤而非『什么会变』切分（信息隐藏判据违例）"
+        detection_predicate: "∃ M, D: unit(M) ∧ responsibility(M, ·) ∧ ¬∃ D: hides(M, D) ∧ [M 的职责陈述为流程步骤序列]"
+        signal_level: P1               # 2.2.2 信息隐藏行明文「按『什么会变』封装，而非按『流程步骤』切分」为禁止性规定，但无硬性质直接绑定 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)——量化域覆盖任一策略产出的单元（2.5；0.15 冻结项经方面 6 接收约束）
+      - {property_id: W2, role: consumed_by}     # ∀M: independently_verifiable(M)——2.4 施→8「每个分解单元必须是一个可独立验证的单元」
+      - {property_id: W3, role: consumed_by}     # 2.3 交付空间驱动：S6 是所有策略的过滤器（条件硬，级别由 0.4 证据门槛判定）
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择与组合冲突解决属高影响 → 记完整 ADR 并走批准路径
+      - {property_id: W5, role: consumed_by}     # 2.2.2 语义边界判据 ＋ 2.6 示例一消费字段（DSM 最优但语义不内聚 → flag_for_review）
+      - {property_id: X1, role: consumed_by}     # 2.4 施→3 行明文点名本策略：「按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）」
+    references:
+      - {bib_id: 7, support_claim: "S1 领域驱动分解；2.2.2 语义边界判据（母本 5.7 书目 7 行级登记提取面逐字对应，本条为该行级面的直接承载者）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 24, support_claim: "事件风暴识别限界上下文（S1 的操作化技术；提取以 2019-08-23 本地存档版为准）（母本 5.7 书目 24 行级登记提取面逐字对应）", compile_usage: metadata_extraction, trust_grade: "[已核验（联网核验时间 2026-09-13）；出版形态澄清：Leanpub 迭代出版无单一出版年——官方页面最新更新 2021-08-26（416 页），著录出版年以引用时所据版本为准；本地资源＝resources/se《Introducing EventStorming - Alberto Brandolini - 20190823.pdf》345 页，2026-09-15 内容核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：领域复杂度高的系统获得与业务语言对齐的语义边界（2.2.1 定义列），典型领域变更的触达单元数上界为 1，跨边界契约变更数随之收敛；限界上下文即契约边界（2.4 施→3 硬），契约面天然显式；与 S3 并列为问题空间驱动的主导策略（2.3）。代价：领域建模与事件风暴的技能前提重（书目 7/24）；上下文数上升使运维单元数与认知负荷压力同步上升，须过 S6 过滤器（2.3 交付空间驱动）；语义边界不清时强行切分即产出分布式单体/纳米服务（2.4 接收约束方面 1 行理由列）；S1 可能输出空集（2.6 示例五：单一法人账套边界预设失效），此时走 FM-3 → 0.13 缺口声明＋CH-D，不得静默降级为其他策略。"
+      typical_scenarios: "领域复杂度与概念丰富度高的业务系统（2.3 问题空间驱动第一行）；既有领域模型/限界上下文在案的棕地对齐（2.3 现状空间驱动第一行）；需与业务方语言对齐且契约须显式治理的场合；与 S6 组合时须先解 Conway 事实冲突（2.6 示例一）。"
+      common_misuse: "语义边界不清即以 S1 切分（AP1）；按流程步骤而非『什么会变』切分（AP2，违 2.2.2 信息隐藏判据）；限界上下文间契约不显式建模（X1 违例，2.4 施→3）；以 S1 输出为最终分解而跳过 S6 认知负荷过滤（2.3 交付空间驱动为硬过滤器）；S1 输出空集时静默改选其他策略而不立案（违 M15 unknown ≠ false 与 2.6 示例五悬置禁令）。"
+
+  - entry_id: DEC-002
+    kind: DEC
+    name: "S2 按技术层次"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S2 按技术层次", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}
+        - {source_type: clause_id, value: "2.2.2", verified: true}   # 语义边界判据（S2 的主要反向判据）
+        - {source_type: clause_id, value: "2.2.3", verified: true}
+        - {source_type: clause_id, value: "2.3", verified: true}
+        - {source_type: clause_id, value: "2.4", verified: true}     # 接收约束方面 3 行（契约已定处不得切割）＋施加约束表全体七行
+        - {source_type: clause_id, value: "2.5", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+    typical_reversibility: bounded     # 人工判断：层次为逻辑边界，风格为单体时 S7 退化（2.4 接收约束方面 1 行），重划不必然触及数据所有权与部署拓扑；但层间契约一经登记即形成消费方依赖，逆转成本随契约数上升
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列＋「主导驱动空间」列
+        - "关注点分离（2.2.1 主导驱动空间列）；单元 = 表现/应用/领域/基础设施层（2.2.1 定义列）"
+        - "[技术关注点主导而领域复杂度不高（2.2.2 语义边界判据的适用前提反面：领域复杂度高时 S2 不得为唯一主策略，见 AP1）]"
+      current_space:                   # 骨架源：2.4 接收约束方面 3 行＋0.11
+        - "契约已定处，分解不得切割既有契约（2.4 接收约束方面 3 行，硬）：既有层间边界即契约边界时本策略的引入成本最低"
+        - "0.11 现状锁定：既有分层架构在案 → 对齐；棕地『理想分解』必须以『现状分解 + 演化序列』表达"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动（S6 过滤器横切适用）
+        - "团队拓扑与认知负荷过滤器横切适用：层次单元规模同样不得超过承载团队认知负荷上界（W3，2.3 交付空间驱动第一行）"
+        - "[层次归属与团队技能栈的匹配（表现层/基础设施层的能力差异构成交付空间事实，须过 0.4 出处门槛）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "触达单元数（典型业务变更） ≥ 2 → 纯技术分层使单个业务变更纵切多层，触达单元数下界高于语义边界形态（2.2.2 语义边界判据的对比结论），单调高于 S1/S3"
+        source: {source_type: clause_id, value: "2.2.2", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "变更前置时间 随跨边界契约变更数单调不减 → 层间契约变更须各层同步，上界由跨层协调节奏决定（6.2.1 可修改性行度量方式）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["以技术分层为唯一主策略而领域复杂度高（AP1，纵切变更放大）", "层间边界未即契约边界（AP2 → X1 违例，2.4 接收约束方面 3 行硬）", "层次切分使多层读写同一数据集合（W4 违例：所有者单元须唯一）", "风格为微服务时层次单元与部署单元错位（2.4 接收约束方面 1 行：微服务 → S7 强制）"]
+      consistency_impact: "层次不是数据所有权边界（2.4 施→4 硬）：同一数据集合的所有者单元须唯一（W4），纯分层切分若使多层读写同一数据集合即须以 S4 复核归属，一致性级别声明仍由方面 4 承载"
+      observability_requires: ["层次归属可查（boundary_type 谓词实参取 layer，2.5）", "层间依赖方向可查（depends_on 的 kind=call；dependency_rule / layer_of 谓词为方面 1 消费项）", "层间契约在契约注册表可查（X1）"]
+      ops_cost: "[风格为单体时 S7 退化、分解可纯逻辑（2.4 接收约束方面 1 行）→ 层次单元通常合并于同一部署单元，运维单元数增量低于按部署边界切分的策略]"
+      skill_prerequisites: ["层间依赖规则与依赖方向控制（2.5 谓词 dependency_rule / layer_of，方面 1 子维度消费）", "层间契约显式建模（2.4 施→3 硬：分解边界 = 契约边界）", "关注点分离判据应用（2.2.2）", "粒度停止准则应用（2.2.3）"]   # 本字段为正例 20-1（0.20.5）明文消费字段「DEC-02.cost_profile.skill_prerequisites」（母本两位书写 = 注册表三位书写，MJ-14）；该正例中 DEC-05 被有出处地排除后选定 DEC-02，本字段须在案可消费（MJ-16 (i)）
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型）→ 按单元逐项评估（MJ-20 (vi)）
+    compatibility:
+      - peer_entry: DEC-001
+        relation: tension
+        evidence: {source_type: clause_id, value: "2.2.2", verified: true}   # 语义边界判据：分解跟随领域语义而非纯技术分层；镜像登记于 DEC-001
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-002-AP1
+        description: "领域复杂度高时以技术分层为唯一主策略（纵切变更放大）"
+        detection_predicate: "∃ M: unit(M) ∧ boundary_type(M, layer) ∧ [领域复杂度与概念丰富度高] ∧ ¬[存在跨层内聚的领域语义单元]"
+        signal_level: P1               # 违反 2.2.2 语义边界判据与 2.3 问题空间驱动第一行（复杂度高 → S1/S3 主导），但无硬性质可绑定 → P1（MJ-4 判据）
+      - pattern_id: DEC-002-AP2
+        description: "层间边界未即契约边界（切割既有契约）"
+        detection_predicate: "∃ M1, M2: unit(M1) ∧ unit(M2) ∧ boundary_type(M1, layer) ∧ depends_on(M1, M2, call, ·) ∧ ¬registered([M1 与 M2 间的契约])"
+        signal_level: P0               # 2.4 接收约束方面 3 行为硬 ＋ X1 为硬性质（1.5）→ 违例的直接来源，检出即阻塞（MJ-4 P0 判据）
+    formal_anchor:
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)——量化域覆盖任一策略产出的单元（2.5）
+      - {property_id: W2, role: consumed_by}     # 2.4 施→8：每个分解单元必须是一个可独立验证的单元
+      - {property_id: W3, role: consumed_by}     # 2.3 交付空间驱动：S6 过滤器横切适用（条件硬）
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择走批准路径
+      - {property_id: X1, role: consumed_by}     # 2.4 接收约束方面 3 行「限界上下文/层间边界即契约边界」明文点名层次边界
+    references: []                     # 母本 5.7 书目无 2.2.1 S2 行的行级登记提取面；书目 6（Martin《Clean Architecture》）的登记面为「1.2.1 依赖方向控制；第 12–14 章组件化对 Parnas 判据的现代重述」，属节级/表级面 → 按 G-CRD-1 同型纪律「表级面不下探」不扩张至本行；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-DEC-1，待人工裁决补勘后回填（SO-8）
+    narrative:
+      benefit_cost_analysis: "收益：关注点分离直接落地为单元边界（2.2.1 主导驱动空间列），层间依赖规则可由 dependency_rule / layer_of 谓词机器判定（2.5），守护成本低；风格为单体时 S7 退化、分解可纯逻辑（2.4 接收约束方面 1 行），无需额外部署单元即可获益，引入成本为八策略中最低之一。代价：单个业务变更纵切多层，触达单元数下界 ≥ 2，典型变更的实现成本与前置时间均单调高于语义边界形态（2.2.2 对比结论）；层间契约数随层数平方级增长，X1 登记负担重；层次不是数据所有权边界，纯分层与 W4 的冲突须以 S4 复核（2.4 施→4 硬）；领域复杂度高时不得为唯一主策略（AP1）。"
+      typical_scenarios: "技术关注点主导而领域复杂度不高的系统（AP1 的反面）；既有分层架构在案的棕地对齐（0.11 现状锁定）；既有层间契约已登记且不得切割的场合（2.4 接收约束方面 3 行）；风格为单体、不追求按部署边界切分的逻辑分解（2.4 接收约束方面 1 行）；正例 20-1 中 DEC-05 被有出处地排除后的选定策略。"
+      common_misuse: "领域复杂度高时以技术分层为唯一主策略（AP1）；层间边界未即契约边界或切割既有契约（AP2，X1 违例）；以层次单元替代数据所有权定案（W4 违例，2.4 施→4）；风格为微服务时仍只做逻辑分层而不映射部署单元（2.4 接收约束方面 1 行：微服务 → S7 强制）；把层次当作可独立验证单元的替代论证（W2 仍逐单元适用，2.4 施→8）。"
+
+  - entry_id: DEC-003
+    kind: DEC
+    name: "S3 按业务能力"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S3 按业务能力", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}   # 定义列「粒度可粗可细」→ 2.2.3 停止准则为唯一收敛机制
+        - {source_type: clause_id, value: "2.2.2", verified: true}
+        - {source_type: clause_id, value: "2.2.3", verified: true}   # 准则三（W6）为本策略粒度的判据
+        - {source_type: clause_id, value: "2.2.4", verified: true}
+        - {source_type: clause_id, value: "2.3", verified: true}
+        - {source_type: clause_id, value: "2.4", verified: true}
+        - {source_type: clause_id, value: "2.5", verified: true}
+        - {source_type: clause_id, value: "2.6", verified: true}     # 示例四（S3/S4 组合冲突走查）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+    typical_reversibility: costly      # 人工判断：能力项一经对业务方承诺即形成业务语言层的契约与组织归属，重划须同步业务能力地图、契约注册与数据归属，逆转成本高
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列＋2.3 问题空间驱动
+        - "领域复杂度与概念丰富度高 → S1/S3 主导（2.3 问题空间驱动第一行）；单元 = 业务能力地图中的能力项，比 S1 更贴业务语言，粒度可粗可细（2.2.1 定义列）"
+        - "[业务能力地图在案且能力项粒度一致（定义列『粒度可粗可细』→ 2.2.3 粒度停止准则是唯一收敛机制，W6 软性质为判据）]"
+      current_space:                   # 骨架源：2.3 现状空间驱动＋2.6 示例四
+        - "既有领域模型/限界上下文在案 → 对齐或显式声明迁移路径（2.3）；能力项与限界上下文的映射须显式，否则与 S1 产出的边界冲突（2.6 示例四走查面）"
+        - "0.11 现状锁定：棕地『理想分解』必须以『现状分解 + 演化序列』表达"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动＋6.2.1 合法出处
+        - "团队拓扑与认知负荷过滤器横切适用（W3，2.3 交付空间驱动第一行）"
+        - "[能力项语言可与业务方对齐（6.2.1 量化纪律：业务方书面目标是目标值的四类合法出处之一）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "触达单元数（典型能力变更） ≤ 1 → 能力项内聚；> 1 时以 2.2.3 准则三判定粒度（interface_cost(M) > cohesion_gain(M) → tech_debt_flag(M)，W6 软），单调越阈即粒度失当"
+        source: {source_type: clause_id, value: "2.2.3", verified: true}
+      - metric: "可修改性：DSM 密度（2.2.4 通道二的消费端之一）"
+        bound_expr: "cross_density（DSM） ≤ 注册阈值 → 越阈即能力项划分与真实依赖结构错位（2.2.4 通道二消费端），按 2.6 示例一同型处置组合冲突"
+        source: {source_type: clause_id, value: "2.2.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["能力项包含关系替代能力编排（跨单元协调未显式建模 → Z1 违例，2.4 施→5 硬）", "业务能力地图粒度不一致即切分（W1 违例：单元无可测试接口，0.15 冻结项）", "能力项横跨数据写路径而未定所有权（W4/Y1 违例，2.6 示例四走查面）", "以能力语言替代领域语义判据（2.2.2 语义边界判据仍横切适用）"]
+      consistency_impact: "能力项不是数据所有权边界：分解边界 = 数据所有权边界（2.4 施→4 硬，即 W4）；能力项横跨数据写路径时须以 S4 复核归属（2.6 示例四），跨所有者一致性需求由方面 4 的 Y 系列判定"
+      observability_requires: ["能力项归属可查（boundary_type 谓词的实参取值面 2.5 未枚举能力项 → 方括号占位，MJ-20 (iii)）", "跨能力项交互显式建模可查（2.4 施→5 硬；Z1）", "能力项与契约注册表的映射可查（X1，2.6 示例四消费字段『CTR 契约注册表(X1).compatibility』）"]
+      ops_cost: "[定义列『粒度可粗可细』是运维单元数不确定的主要来源 → 须先以 2.2.3 停止准则（W2 硬 / W3 条件硬 / W6 软）收敛，再估运维面]"
+      skill_prerequisites: ["业务能力地图建模与能力项粒度判据（2.2.1 定义列）", "能力编排与跨单元协调显式建模（2.4 施→5 硬；具体形态由方面 5 的 CRD 批承载）", "粒度停止准则应用（2.2.3 准则三 / W6）", "数据归属复核（与 S4 组合时，2.6 示例四）"]
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型）→ 按能力项逐项评估（MJ-20 (vi)）
+    compatibility:
+      - peer_entry: DEC-004
+        relation: tension
+        evidence: {source_type: clause_id, value: "2.6", verified: true}   # 示例四消费字段「DEC-S3/S4.compatibility（方面 4 施加）」明文点名本对；镜像登记于 DEC-004
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-003-AP1
+        description: "以能力项包含关系替代能力编排（跨单元协调隐式化）"
+        detection_predicate: "∃ M1, M2: unit(M1) ∧ unit(M2) ∧ boundary_type(M1, [能力项]) ∧ [M1 的能力项横跨 M2 的数据写路径] ∧ ¬declared([跨单元协调显式建模])"
+        signal_level: P0               # 2.4 施→5 为硬（禁止隐式跨单元时序假设）＋ Z1 为硬性质（5.5）→ 违例直接来源，检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: DEC-003-AP2
+        description: "业务能力地图粒度不一致即切分（单元无可测试接口）"
+        detection_predicate: "∃ M: unit(M) ∧ boundary_type(M, [能力项]) ∧ ¬seam(M)"
+        signal_level: P0               # W1 为硬性质（∀M: seam(M)，0.15 冻结项经 2.4 接收约束方面 6 行）→ 违例直接来源（MJ-4 P0 判据）
+    formal_anchor:
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)（2.5；粒度可粗可细不豁免可测试接口）
+      - {property_id: W2, role: consumed_by}     # 2.4 施→8：每个分解单元必须是一个可独立验证的单元
+      - {property_id: W3, role: consumed_by}     # 2.3 交付空间驱动：S6 过滤器横切适用（条件硬）
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择走批准路径
+      - {property_id: W4, role: consumed_by}     # 2.6 示例四走查面：能力项横跨数据写路径时以 owner/W4 复核（消费字段「DEC-S3/S4.compatibility（方面 4 施加）」）
+      - {property_id: W6, role: consumed_by}     # 2.2.3 准则三 ＋ 2.2.1 定义列「粒度可粗可细」→ 粒度判据（软性质，不入 E3 Waiver scope）
+      - {property_id: X1, role: consumed_by}     # 2.6 示例四消费字段「CTR 契约注册表(X1).compatibility」
+      - {property_id: Z1, role: consumed_by}     # 2.4 施→5 硬：跨单元协调必须显式建模（禁止隐式跨单元时序假设）
+    references: []                     # 母本 5.7 书目无 2.2.1 S3 行的行级登记提取面（书目 7 的行级面为「S1 领域驱动分解；2.2.2 语义边界判据」，不含 S3）→ 按 G-CRD-1 同型纪律「表级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-DEC-1，待人工裁决补勘后回填（SO-8）
+    narrative:
+      benefit_cost_analysis: "收益：单元边界直接使用业务语言（2.2.1 定义列「比 S1 更贴业务语言」），与业务方书面目标（6.2.1 四类合法出处之一）天然对齐，目标值出处门槛易过；粒度可粗可细使其能适配不同成熟度的能力地图。代价：定义列的「粒度可粗可细」同时是最大风险源——无内建收敛机制，只能靠 2.2.3 停止准则（W2 硬 / W3 条件硬 / W6 软）兜住，粒度失当时 W6 只给 tech_debt_flag（软）而不阻塞；能力项不是数据所有权边界，与 W4 的冲突须以 S4 复核（2.6 示例四）；能力项间的包含关系不能替代显式编排，否则违 2.4 施→5 与 Z1（硬）；能力项归属在 2.5 的 boundary_type 实参取值面未枚举，机器层表达须方括号占位（MJ-20 (iii)）。"
+      typical_scenarios: "领域复杂度高且需与业务方语言对齐的分解（2.3 问题空间驱动第一行：S1/S3 主导）；业务能力地图已在案的场合；与 S1 组合时须显式声明能力项与限界上下文的映射（2.6 示例四）；与 S4 组合处理数据归属冲突（2.6 示例四）；粒度争议须以 2.2.3 准则三裁决的场合。"
+      common_misuse: "以能力项包含关系替代能力编排（AP1，Z1 违例）；粒度不一致即切分而不跑 2.2.3 停止准则（AP2，W1 违例）；把能力项当作数据所有者（W4 违例，2.4 施→4）；以能力语言绕过 2.2.2 语义边界判据（判据横切所有策略）；能力项与限界上下文的映射不显式（与 S1 组合时产出双重边界，2.6 示例四）。"
+
+  - entry_id: DEC-004
+    kind: DEC
+    name: "S4 按数据归属"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S4 按数据归属", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}   # 主导驱动空间列＝问题空间 + 现状空间（遗留数据归属）
+        - {source_type: clause_id, value: "2.2.2", verified: true}
+        - {source_type: clause_id, value: "2.2.3", verified: true}
+        - {source_type: clause_id, value: "2.2.4", verified: true}
+        - {source_type: clause_id, value: "2.3", verified: true}     # 现状空间驱动第二行：遗留数据归属是 S4 的硬输入
+        - {source_type: clause_id, value: "2.4", verified: true}     # 接收约束方面 4 行（软）＋施加约束表全体七行
+        - {source_type: clause_id, value: "2.5", verified: true}     # W4 与 owned_by / dataset 谓词
+        - {source_type: clause_id, value: "2.6", verified: true}     # 示例四消费字段「owner 谓词（4.2.1 Y1）」
+        - {source_type: clause_id, value: "4.2.1", verified: true}   # 数据所有权模式（Y1 执行域）
+        - {source_type: clause_id, value: "4.5", verified: true}     # Y1 硬性质与其例外分支
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+    typical_reversibility: costly      # 人工判断：数据所有权一经定案并投产，重划须做数据迁移与跨单元契约变更（2.4 接收约束方面 4 行要求按迁移可行性排序），逆转成本高
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列
+        - "单元 = 数据所有者；凡读写某数据集合的逻辑归入其所有者单元（2.2.1 定义列）"
+        - "[数据集合的读写面可枚举（2.5 方面 4 谓词面：dataset / access_path / consistency_level 在案）]"
+      current_space:                   # 骨架源：2.2.1 主导驱动空间列＋2.3 现状空间驱动第二行＋2.4 接收约束方面 4 行
+        - "遗留数据归属是 S4 的硬输入（2.3 现状空间驱动第二行；2.2.1 主导驱动空间列＝问题空间 + 现状空间）"
+        - "现状数据不可干净归属时 S4 策略受约束，拆分序列须按数据迁移可行性排序（2.4 接收约束方面 4 行，软）"
+        - "0.11 现状锁定：棕地『理想分解』必须以『现状分解 + 演化序列』表达"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动＋2.4 接收约束方面 4 行的执行前提
+        - "团队拓扑与认知负荷过滤器横切适用（W3，2.3 交付空间驱动第一行）"
+        - "[数据迁移窗口的运维能力在案（拆分序列按迁移可行性排序的执行前提，2.4 接收约束方面 4 行）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "|{M : owned_by(M, d)}| = 1（W4，∀ data d）→ 数据变更的触达单元数上界为 1（所有者单元）；≥ 2 即 W4 违例，触达单元数无上界"
+        source: {source_type: clause_id, value: "2.5", verified: true}
+      - metric: "可修改性：DSM 密度（2.2.4 通道二的消费端之一）"
+        bound_expr: "cross_density（DSM） 随跨所有者数据访问数单调不减 → 归属定案后跨边界数据依赖应单调不增；不降即归属划错（2.4 施→4）"
+        source: {source_type: clause_id, value: "2.2.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["同一数据集合出现两个所有者单元（W4 硬性质违例）", "现状数据不可干净归属时仍按 S4 强切（2.4 接收约束方面 4 行软约束违例，拆分序列失序）", "共享写例外未走批准与退出计划（4.5 Y1 例外分支：has_approved_exception / shared_write_exception 面）", "以数据归属替代语义边界判据（2.2.2 横切适用：归属清晰但语义不内聚）"]
+      consistency_impact: "本策略是方面 4 的分解侧输入：分解边界 = 数据所有权边界（2.4 施→4 硬），所有者单元内可选本地强一致；跨所有者的一致性需求经 Y6 冲突信号判定，出路为 Saga/预扣（CSL/CRD 批承载，本条目不重复登记）"
+      observability_requires: ["数据集合的所有者单元可查（owned_by(M, C) 谓词在案，2.5）", "共享写例外的批准记录与退出计划在案（4.5 Y1 例外分支）", "跨所有者数据访问路径可查（access_path 谓词，2.5 方面 4 谓词面）"]
+      ops_cost: "[数据迁移是主要运维成本项：拆分序列须按数据迁移可行性排序（2.4 接收约束方面 4 行），迁移窗口内须承担双写与对账；归属定案后运维面按所有者单元逐项计]"
+      skill_prerequisites: ["数据所有权定案与例外治理（4.2.1；Y1 例外须批准 + 退出计划）", "数据迁移可行性评估与序列排序（2.4 接收约束方面 4 行）", "遗留数据归属勘察（2.3 现状空间驱动第二行：S4 的硬输入）", "跨所有者一致性需求识别（Y6 冲突信号，方面 4）"]
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型）→ 代价按数据集合逐项评估（MJ-20 (vi)）
+    compatibility:
+      - peer_entry: DEC-003
+        relation: tension
+        evidence: {source_type: clause_id, value: "2.6", verified: true}   # 示例四消费字段「DEC-S3/S4.compatibility（方面 4 施加）」明文点名本对；镜像登记于 DEC-003
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-004-AP1
+        description: "同一数据集合出现两个所有者单元"
+        detection_predicate: "∃ d: dataset(d) ∧ |{M : owned_by(M, d)}| ≥ 2"
+        signal_level: P0               # W4 为硬性质（∀ data d: |{M : owned_by(M, d)}| = 1，2.5）＋ 4.5 Y1 硬（注「W4 执行域」）→ 违例直接来源，检出即阻塞（MJ-4 P0 判据）
+      - pattern_id: DEC-004-AP2
+        description: "现状数据不可干净归属时仍按 S4 强切（拆分序列不按迁移可行性排序）"
+        detection_predicate: "∃ d, M: dataset(d) ∧ owned_by(M, d) ∧ [d 的现状归属不可干净划分] ∧ ¬[拆分序列按数据迁移可行性排序]"
+        signal_level: P1               # 2.4 接收约束方面 4 行的级别列原文为「软」→ 违反软约束且无硬性质可绑定 → P1（MJ-4 判据；不得因本策略的 W4 关联而升级，W4 判的是归属结果而非排序纪律）
+    formal_anchor:
+      - {property_id: W4, role: implements}      # 2.4 施→4 明文「即 W4」；2.2.1 S4 定义列＝数据所有者 → 本策略是 W4 的分解侧操作化
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)（2.5）
+      - {property_id: W2, role: consumed_by}     # 2.4 施→8：每个分解单元必须是一个可独立验证的单元
+      - {property_id: W3, role: consumed_by}     # 2.3 交付空间驱动：S6 过滤器横切适用（条件硬）
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择走批准路径
+      - {property_id: Y1, role: consumed_by}     # 2.6 示例四消费字段「owner 谓词（4.2.1 Y1）」；4.5 Y1 硬性质注「W4 执行域；例外须批准 + 退出计划」
+    references: []                     # 母本 5.7 书目无 2.2.1 S4 行的行级登记提取面；书目 8（Vernon）的行级面为「限界上下文识别与上下文映射的操作化（2.4 施加给方面 3 的约束）」，属条款级面 → 按 G-CRD-1 同型纪律不下探至本行；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-DEC-1，待人工裁决补勘后回填（SO-8）
+    narrative:
+      benefit_cost_analysis: "收益：唯一直接操作化 W4 的策略（2.4 施→4 明文「即 W4」），数据变更的触达单元数上界为 1，跨边界数据依赖单调不增；把最难的现状事实（遗留数据归属，2.3 硬输入）转为主驱动，棕地场景的可行性排序有明文依据（2.4 接收约束方面 4 行）。代价：数据迁移是重运维项，迁移窗口内须双写与对账；现状数据不可干净归属时本策略受约束（软），拆分序列须按迁移可行性排序，否则失序即产出不可回退的中间态；共享写例外须批准 + 退出计划（4.5 Y1），治理成本高；归属清晰不等于语义内聚，仍须与 S1/S3 组合并过 2.2.2 判据；逆转成本高（数据迁移 + 契约变更双面）。"
+      typical_scenarios: "遗留数据归属复杂、须以现状事实为主驱动的棕地分解（2.2.1 主导驱动空间列含现状空间；2.3 现状空间驱动第二行）；与 S3 组合处理能力项横跨数据写路径的冲突（2.6 示例四）；数据变更频繁且须收敛触达面的场合；跨所有者强一致需求须先定归属再走 Y6 判定的场合（方面 4）。"
+      common_misuse: "同一数据集合出现两个所有者单元（AP1，W4/Y1 违例）；现状数据不可干净归属时仍强切且序列不按迁移可行性排序（AP2）；共享写例外不走批准与退出计划（4.5 Y1 例外分支违例）；以数据归属替代语义边界判据（2.2.2 横切适用）；把归属定案当作跨所有者强一致需求的解答（应走 Y6 冲突信号 → Saga/预扣，CSL/CRD 批）。"
+
+  - entry_id: DEC-005
+    kind: DEC
+    name: "S5 按变更频率"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S5 按变更频率", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}   # 主导驱动空间列原文含「该输入缺失时 S5 不可用，走 CH-B（见 2.6 示例二）」
+        - {source_type: clause_id, value: "2.2.2", verified: true}   # 信息隐藏判据行明文「S5 正是此判据的操作化」
+        - {source_type: clause_id, value: "2.2.3", verified: true}   # 准则二 CH-B1 保守界处置同型（保守假设 ADR + 可推翻指标，不阻塞）
+        - {source_type: clause_id, value: "2.2.4", verified: true}   # 告警治理：P2 信号阈值 + 趋势窗口双判据（AP2 判据同型）
+        - {source_type: clause_id, value: "2.3", verified: true}     # 问题空间驱动第二行：需求易变性评估 → S5 可用；缺失 → S5 关闭，走 CH-B
+        - {source_type: clause_id, value: "2.4", verified: true}     # 接收约束方面 9 行（守护规则粒度上界）＋施加约束表全体七行
+        - {source_type: clause_id, value: "2.5", verified: true}     # hides / volatility 谓词面
+        - {source_type: clause_id, value: "2.6", verified: true}     # 示例二全文（保守界分支与推迟分支）＋其消费字段块
+        - {source_type: clause_id, value: "0.4", verified: true}     # 易变性观测数据的出处门槛
+        - {source_type: clause_id, value: "0.6", verified: true}     # 信息不足与冲突时的处置协议（CH-B 的元规定）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可修改性族指标＋现状基线测量出处
+        - {source_type: bib_id, value: 15, verified: true}           # 书目 15 行级登记面明文「S5 的理论依据」
+        - {source_type: bib_id, value: 14, verified: true}           # 书目 14 行级登记面：2.2.2 信息隐藏判据；hides/volatility 的理论源头
+    typical_reversibility: bounded     # 人工判断：2.6 示例二推迟分支给出「最后负责时刻 = 第一个大版本发布前」＋高频区域参数化隔离（预留提取点）→ 该时刻前重划为 bounded；一过即转 costly（提取点未兑现则须做跨单元契约变更）
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列＋2.2.2 信息隐藏判据行
+        - "高频变更逻辑与稳定逻辑分离成不同单元（2.2.1 定义列）；判据面＝每个模块隐藏一个（组）易变的设计决策，按『什么会变』封装而非按『流程步骤』切分（2.2.2 信息隐藏行明文「S5 正是此判据的操作化」）"
+        - "[需求易变性评估在案（2.2.1 主导驱动空间列＝问题空间（需求易变性评估）；2.3 问题空间驱动第二行）；volatility 数据源＝方面 9 演化观测（G9）（2.6 示例二消费字段逐字）；该输入缺失时 S5 不可用 → 走 CH-B（2.6 示例二两分支：保守界 或 推迟＋最后负责时刻＋参数化预留提取点）；缺失不得被读作 false（M15：candidate.applicability.problem_space『易变性』＝unknown → 候选保留＋勘察义务附注）]"   # ★位次锁定：本项即正例 20-1（0.20.5）明文消费字段「DEC-05.applicability.problem_space[1]」（0 基索引 1 ＝ 第二项；母本两位书写 = 注册表三位书写，MJ-14）→ 列表项顺序不得调换（MJ-16 (i)）
+      current_space:                   # 骨架源：2.6 示例二勘察面＋0.4 证据门槛＋0.11
+        - "[版本库演化观测数据可得（正例 20-1 S3 勘察 O-9 的面：版本库日志佐证，近一年提交频次统计）；数据须过 0.4 门槛（可观测、可验证、有出处且无争议）与 6.2.1 现状基线测量出处]"
+        - "0.11 现状锁定：既有系统结构本身是最强分解约束——易变性分离若与现状单元错位，须以『现状分解 + 演化序列』表达，不得推倒重来"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动（横切过滤器）
+        - "团队拓扑与认知负荷过滤器横切适用：任何策略产出的单元规模不得超过承载团队认知负荷上界（W3，按 2.2.3 条件硬化）（2.3 交付空间驱动第一行）"
+        - "[高频单元独立发布后，团队交付能力可承担更高发布频次（母本未给明文阈值 → 方括号占位，MJ-20 (iii)）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "触达单元数（高频变更） ≤ 1 → 高频逻辑已隔离；≥ 2 即分离失效，且触达单元数随易变点扩散单调不增方为合格"
+        source: {source_type: row_id, value: "2.2.1-S5 按变更频率", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "稳定单元的变更前置时间 单调不增于分离前 → 分离不得把易变性成本转嫁给稳定单元（2.2.2 信息隐藏判据的反面）；下界为单一易变点内变更"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["易变性评估缺失仍按 S5 切分（2.2.1 主导驱动空间列明文「该输入缺失时 S5 不可用」→ FM-1 事实缺失面）", "把 unknown 静默读作 false 而排除本候选（M15 违例；正例 20-1 级联记录明示：若静默排除本应触发 FM-3 并丢失 DEC-05 的合法评估）", "按流程步骤而非『什么会变』封装（2.2.2 信息隐藏判据违例）", "推迟分支未在最后负责时刻前兑现参数化隔离（2.6 示例二：LRM 一过逆转成本转 costly）", "可推翻指标未接入方面 9 演化观测（2.6 示例二消费字段「volatility 数据源=方面 9 演化观测（G9）」）"]
+      consistency_impact: "本策略不改变数据所有权与一致性边界：分解边界 = 数据所有权边界（2.4 施→4 硬，即 W4）仍由 S4 承载；易变性分离若横跨数据写路径，须以 S4 复核归属后再定一致性形态（方面 4 的 Y 系列判定，CSL/CRD 批承载），本条目不重复登记"
+      observability_requires: ["变更频率观测在案且接入方面 9 演化观测（G9，2.6 示例二消费字段）", "可推翻指标的假设值与 N 参数注册可查（2.6 示例二：某区域实际变更频率 > 假设值 N 倍，N 默认 3）", "重审提议的立案记录可查（G8 自动重审触发面；正例 20-1 消费字段『CA-11.可推翻指标 → G8 自动重审』）"]
+      ops_cost: "[易变性分离的运维成本主要是可推翻指标的持续治理：注册假设值、按窗口观测漂移、越阈即立案重审（2.6 示例二）；母本未给成本量化式 → 方括号占位并按单元逐项计（MJ-19 (iii) 同型）]"
+      skill_prerequisites: ["需求易变性评估（2.3 问题空间驱动第二行；S5 可用性的唯一门控输入）", "信息隐藏判据应用（2.2.2：按『什么会变』封装）", "保守界处置与可推翻指标登记（CH-B1，2.2.3 准则二同型：保守假设 ADR + 可推翻指标，不阻塞）", "演化观测数据接入（G9，方面 9）"]
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型：不本地造法）→ 代价按易变区域逐项评估（MJ-20 (vi)）
+    compatibility: []                  # 母本无本策略与他策略的明文组合冲突对；2.6 示例二推迟分支的「先按稳定判据（S1/S2）切，高频区域参数化隔离」是同一次分解内的处置次序而非策略兼容性对，不得读作与 DEC-001/DEC-002 的 composable 登记（MJ-9：只登记母本有明文依据的对；判读见 MJ-20 (vii)）→ 互斥不枚举，见 MJ-5/MJ-9
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-005-AP1
+        description: "易变性评估缺失或无出处仍按 S5 切分（把 unknown 当作 false）"
+        detection_predicate: "∃ M, D: unit(M) ∧ hides(M, D) ∧ volatility(D, [rate 无出处]) ∧ ¬sourced([需求易变性评估])"
+        signal_level: P1               # 违反 2.2.1 主导驱动空间列的定义性门控（「该输入缺失时 S5 不可用」）但无 W/X/Y/Z 硬性质可绑定（W1/W2/W4 判的都不是易变性输入）→ P1（MJ-4 判据）。另触 FM-1 与 M15 静默排除面：正例 20-1 级联记录明示静默排除本应触发 FM-3 并丢失 DEC-05 的合法评估——该两面由 0.20/0.18.6 承载，不在此重复计级
+      - pattern_id: DEC-005-AP2
+        description: "保守界假设被实测推翻但未立案重审（可推翻指标失效）"
+        detection_predicate: "∃ M, D: unit(M) ∧ hides(M, D) ∧ volatility(D, rate) ∧ [实测变更频率 > 假设值 × N（N 为注册参数，母本默认 3；接入方面 9 演化观测 G9）] ∧ ¬[重审提议已立案]"
+        signal_level: P2               # 阈值 + 趋势窗口双判据（2.2.4 告警治理同型：绝对值越阈且连续 N 个窗口同向漂移才告警，单点越阈只记录不告警）；母本逐字数值「N 默认 3」按 MJ-19 (ii) 参数化引用，不得写死为唯一界（MJ-20 (iv)）
+    formal_anchor:
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)（2.5）
+      - {property_id: W2, role: consumed_by}     # 2.4 施→8：每个分解单元必须是一个可独立验证的单元
+      - {property_id: W3, role: consumed_by}     # 2.3 交付空间驱动：S6 过滤器横切适用（条件硬）
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择走批准路径；保守界假设另须记保守假设 ADR（2.2.3 准则二同型）
+      # 不锚 W6：2.5 的 W6 公式面为 interface_cost(M) > cohesion_gain(M) → tech_debt_flag(M)（接口/实现比劣化），
+      # 与本策略的 volatility 面不同源；7.x 走查文本中的「W6.volatility 硬绑定」属方面 7 的绑定形态而非 2.5 的公式面
+      # → 不得据走查文本反向扩张 formal_anchor（判读见 MJ-20 (ii)）
+    references:
+      - {bib_id: 15, support_claim: "为变化而设计；S5 的理论依据（母本 5.7 书目 15 行级登记提取面逐字对应，本条为该行级面的直接承载者）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 14, support_claim: "2.2.2 信息隐藏判据；2.5 谓词 hides/volatility 的理论源头（母本 5.7 书目 14 行级登记提取面逐字对应）——本条引用依据为 2.2.2 信息隐藏行明文「S5 正是此判据的操作化」：判据的行级面经母本明文点名本策略，不属表级面下探（判读见 MJ-20 (v)）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：八策略中唯一以『什么会变』为主驱动的策略（2.2.2 信息隐藏行明文「S5 正是此判据的操作化」），高频变更的触达单元数上界为 1，稳定单元免于易变性波及；主输入缺失时有明文出路（2.6 示例二两分支：保守界 或 推迟＋参数化预留提取点），不因证据不足而阻塞。代价：主输入（需求易变性评估）须过 0.4 门槛，缺失即本策略不可用（2.2.1 主导驱动空间列明文），是八策略中输入门控最严的一条；保守界分支须持续治理可推翻指标（注册假设值、按窗口观测漂移、越阈即立案重审），治理成本随观测期累积；易变性边界不是数据所有权边界，横跨数据写路径时仍须以 S4 复核（2.4 施→4 硬，即 W4）；过最后负责时刻（第一个大版本发布前）后逆转成本由 bounded 转 costly。"
+      typical_scenarios: "需求易变性评估在案、且版本库演化观测可提供变更频率事实的场合（2.3 问题空间驱动第二行；2.6 示例二）；易变点集中且与稳定核分界明显的系统；棕地系统中已观测到某区域高频改动的场合（volatility 数据源＝方面 9 演化观测 G9）；须为『尚不知道哪里会变』预留提取点的推迟分支场合（2.6 示例二：先按稳定判据切，高频区域参数化隔离，最后负责时刻 = 第一个大版本发布前）。"
+      common_misuse: "易变性评估缺失或无出处仍按 S5 切分（AP1；2.2.1 明文该输入缺失时 S5 不可用）；把 unknown 静默读作 false 而排除本候选（M15 违例，正例 20-1 级联记录明示其后果）；按流程步骤而非『什么会变』封装（2.2.2 信息隐藏判据违例）；把母本示例的「N 默认 3」写死为唯一界而不注册为参数（MJ-19 (ii)：母本逐字数值可引但须参数化）；保守界假设被实测推翻却不立案重审（AP2）；以易变性分离替代数据归属定案（W4 仍横切适用，2.4 施→4）。"
+
+  - entry_id: DEC-006
+    kind: DEC
+    name: "S6 按团队认知负荷"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S6 按团队认知负荷", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}   # 主导驱动空间列＝交付空间
+        - {source_type: clause_id, value: "2.2.2", verified: true}
+        - {source_type: clause_id, value: "2.2.3", verified: true}   # 准则二＝W3 硬化条件、降软分支与 CH-B1 保守界处置（含「防假精确绕过」双向防护）
+        - {source_type: clause_id, value: "2.2.4", verified: true}   # DSM 依赖种类含 team（跨团队协调的可观测面）
+        - {source_type: clause_id, value: "2.3", verified: true}     # 交付空间驱动两行（过滤器＋单人/小团队退化）
+        - {source_type: clause_id, value: "2.4", verified: true}     # 接收约束方面 9 行（守护规则粒度上界）＋施加约束表全体七行
+        - {source_type: clause_id, value: "2.5", verified: true}     # W3 与 team / cognitive_load / capacity 谓词
+        - {source_type: clause_id, value: "2.6", verified: true}     # 示例一（Conway 组合冲突）＋示例三（团队容量 × 单元数 × 运维负荷模型）
+        - {source_type: clause_id, value: "1.3", verified: true}     # 交付空间硬过滤器（书目 9 行级登记面点名）
+        - {source_type: clause_id, value: "0.4", verified: true}     # 团队容量数据的硬约束证据门槛
+        - {source_type: clause_id, value: "0.6", verified: true}     # CH-B1 保守界处置通道
+        - {source_type: clause_id, value: "0.10", verified: true}    # 权力条款第二条：单人/小团队 S6 退化为不约束（人类使用者既有结论，保留）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 9, verified: true}            # 书目 9 行级登记面明文「S6 团队认知负荷；1.3 交付空间硬过滤器」
+        - {source_type: bib_id, value: 17, verified: true}           # Conway（母本登记 compile_usage=narrative_only）
+    typical_reversibility: costly      # 人工判断：单元边界对齐团队边界后，重划须同步组织归属与容量再平衡，且 2.6 示例三明示框架不自动回溯修改任一方决策（0.10）→ 逆转须经人类责任方裁决，非仅改代码结构
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列＋2.6 示例一消费字段
+        - "单元边界对齐团队边界，每单元规模不超过承载团队的认知负荷（2.2.1 定义列）"
+        - "[Conway 事实：组织结构与系统结构的对应关系在案（2.6 示例一消费字段 problem_space『Conway 事实』逐字；书目 17 Conway 母本登记为 narrative_only → 只作叙事佐证，不得充 applicability/envelope 的决策性出处（0.17.7 门槛 6），事实须另过 0.4 门槛）]"
+      current_space:                   # 骨架源：2.2.3 准则二＋2.3 现状空间驱动第一行
+        - "[现状团队拓扑与承载关系在案；团队容量数据须过 0.4 硬约束证据门槛（可观测、可验证、有出处且无争议）——2.2.3 准则二双向防护明文『防假精确绕过』：Agent 编造的精确容量数字不构成硬化依据]"
+        - "既有领域模型/限界上下文在案 → 对齐或显式声明迁移路径（2.3 现状空间驱动第一行）；团队边界与领域边界错位时按 2.6 示例一处置组合冲突"
+        - "0.11 现状锁定：棕地『理想分解』必须以『现状分解 + 演化序列』表达"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动两行＋2.2.3 准则二
+        - "团队拓扑与认知负荷 → S6，且是所有策略的过滤器：任何策略产出的单元规模不得超过承载团队认知负荷上界（W3，按 2.2.3 条件硬化）（2.3 交付空间驱动第一行）"
+        - "单人/小团队场景：S6 退化为不约束（无团队边界可对齐），不强制使用——此为人类使用者既有结论，保留（2.3 交付空间驱动第二行；0.10 权力条款第二条）"
+        - "W3 硬化条件：团队容量数据满足 0.4 门槛时为硬；数据缺失、有争议或不可量化时自动降为软，走 CH-B1 保守界处置（保守默认值 + 保守假设 ADR + 可推翻指标，不阻塞）（2.2.3 准则二）"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "cognitive_load(M) ≤ capacity(team(M))（W3，容量证据充分时为硬）→ 单元规模上界由承载团队容量给出；证据不足时上界为注册表登记的保守上限（2.2.3 准则二 CH-B1：单元对外接口数与职责陈述数不超过注册的保守上限）"
+        source: {source_type: clause_id, value: "2.5", verified: true}
+      - metric: "可修改性：变更前置时间"
+        bound_expr: "变更前置时间 随跨团队协调数单调不减 → 单元边界对齐团队边界时跨团队协调数取下界；未对齐即前置时间的支配项转为组织协同（G-ENV-1 映射理由：认知负荷在 6.2.1 无独立指标族，其可观测落点为前置时间的支配项＝跨团队协调数，DSM 依赖种类含 team，2.2.4）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["团队容量数据缺失仍按硬约束使用 W3（2.2.3 准则二：应自动降软走 CH-B1 保守界，不阻塞）", "以编造的精确容量数字充当硬化依据（2.2.3 双向防护『防假精确绕过』明文禁止）", "单元数与团队容量联合不可行仍推进（2.6 示例三：应在方面 8 可行性校验发 CH-A5 同型阻塞声明 → 人类裁决）", "把 S6 当作可选策略之一而非过滤器（2.3 交付空间驱动第一行：S6 是所有策略的过滤器）", "单人/小团队场景仍强制使用 S6（2.3 交付空间驱动第二行；0.10 权力条款第二条：退化为不约束，不强制使用）"]
+      consistency_impact: "本策略不直接改变一致性形态：分解边界 = 数据所有权边界（2.4 施→4 硬，即 W4）与跨单元协调显式建模（2.4 施→5 硬）仍横切适用；团队边界与数据所有权错位时以 S4 复核归属，跨所有者一致性需求由方面 4 的 Y 系列判定（CSL/CRD 批承载），本条目不重复登记"
+      observability_requires: ["团队与单元的承载关系可查（team(M) 谓词，2.5）", "团队容量数据的出处与核验状态可查（0.4 门槛；W3 硬化/降软判定的唯一依据）", "保守上限与可推翻指标注册可查（2.2.3 准则二 CH-B1 处置产物）", "跨团队协调数可观测（DSM 依赖种类含 team，2.2.4 通道二输入）"]
+      ops_cost: "[单元数与团队数强绑定 → 组织变动即架构变动（Conway 面）；2.6 示例三明示联合不可行时的三个出路（增团队/合并上下文/豁免物理隔离）均为高成本选项，须人类责任方裁决]"
+      skill_prerequisites: ["团队拓扑建模与认知负荷评估（书目 9 行级登记面『S6 团队认知负荷』）", "0.4 证据门槛判定与 CH-B1 保守界处置（2.2.3 准则二）", "联合可行性校验与阻塞声明（2.6 示例三；CH-A5 同型 → CH-D）", "Conway 事实勘察（2.6 示例一；书目 17 为 narrative_only，事实须另有出处）"]
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型）→ 认知负荷按单元/团队逐项评估（MJ-20 (vi)）
+    compatibility:
+      - peer_entry: DEC-001
+        relation: tension
+        evidence: {source_type: clause_id, value: "2.6", verified: true}   # 示例一：Conway 事实与领域边界的组合冲突（2.2.1 表前注「组合冲突的处置见 2.6 示例一」）；镜像登记于 DEC-001
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-006-AP1
+        description: "容量证据充分时单元规模超出承载团队认知负荷（W3 硬化分支违例）"
+        detection_predicate: "∃ M: unit(M) ∧ [capacity_evidence_sufficient(team(M))] ∧ cognitive_load(M) > capacity(team(M))"
+        signal_level: P1               # W3 为条件硬——级别由 0.4 证据门槛判定而非注册表预设：证据充分时本项即 W3 硬性质违例（应升 P0；改级属守护规则改级，须走完整 ADR + 批准，MJ-19 (i) 同型）；证据缺失/有争议/不可量化时 W3 自动降软且不阻塞（2.2.3 准则二 CH-B1）→ 本批登记 P1（MJ-4 判据）
+      - pattern_id: DEC-006-AP2
+        description: "单元数与团队容量联合不可行仍推进（未在方面 8 可行性校验发阻塞声明）"
+        detection_predicate: "∃ M: unit(M) ∧ cognitive_load(M) ≤ capacity(team(M)) ∧ [单元数 × 运维负荷模型超出团队容量] ∧ ¬declared([方面 8 可行性校验的阻塞声明])"
+        signal_level: P1               # 2.6 示例三的阻塞效果由 CH-D 通道（0.6）承载而非信号级；框架不自动回溯修改任一方决策（0.10）→ 违例面是『未发声明』，无硬性质可绑定 → P1（MJ-4）。本项同时履行 kind 级消费字段「DEC.detection_predicate（单元数/认知负荷上限）」（2.6 示例三）
+    formal_anchor:
+      - {property_id: W3, role: implements}      # 2.2.1 S6 定义列「每单元规模不超过承载团队的认知负荷」＝2.5 W3 公式 cognitive_load(M) ≤ capacity(team(M)) 的直接操作化；2.3 交付空间驱动第一行使其成为所有策略的过滤器 → role 取 implements（MJ-20 (ii)）
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)（2.5）
+      - {property_id: W2, role: consumed_by}     # 2.4 施→8：每个分解单元必须是一个可独立验证的单元
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择走批准路径；保守假设 ADR 另记（2.2.3 准则二）
+    references:
+      - {bib_id: 9, support_claim: "S6 团队认知负荷；1.3 交付空间硬过滤器（母本 5.7 书目 9 行级登记提取面逐字对应，本条为该行级面的直接承载者）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}   # 本地资源 resources/se 第 2 版 PDF+EPUB（2026-09-15 内容核验）；第 1 版（2019，ISBN 978-1-942788-81-2）依 AGENTS.MD 更新版本规则由第 2 版取代
+      - {bib_id: 17, support_claim: "Conway 定律；1.3 交付空间过滤器与 2.6 示例一（母本 5.7 书目 17 登记面逐字对应）——narrative_only：只作叙事佐证，不得充当 applicability/envelope/detection_predicate 的决策性出处（0.17.7 门槛 6）", compile_usage: narrative_only, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：唯一以交付空间为主导驱动的策略（2.2.1 主导驱动空间列），且是所有策略的过滤器（2.3 交付空间驱动第一行）——任何策略产出的单元规模都须过本条；直接操作化 W3（2.5），且有完整的硬化/降软判定与不阻塞出路（2.2.3 准则二 CH-B1）；书目 9 提供行级登记提取面（S6 团队认知负荷；1.3 交付空间硬过滤器），出处链最短。代价：主输入（团队容量数据）须过 0.4 门槛，且母本明文双向防护『防假精确绕过』——编造的精确容量数字不构成硬化依据，使 W3 在多数场景停在软级别；单元边界绑定团队边界后组织变动即架构变动（Conway 面，书目 17 为 narrative_only，事实须另有出处）；与 S1 存在明文组合冲突（2.6 示例一）；单元数与团队容量联合不可行时的三个出路（增团队/合并上下文/豁免物理隔离）均为高成本选项，须人类责任方裁决（2.6 示例三），框架不自动回溯修改任一方决策（0.10）；单人/小团队场景本策略退化为不约束（2.3 交付空间驱动第二行）。"
+      typical_scenarios: "多团队并行交付、团队边界稳定且容量数据可核验的场合（2.3 交付空间驱动第一行；W3 硬化分支）；作为其他策略（S1/S3/S4/S5/S7/S8）产出单元规模的过滤器（横切适用）；团队容量数据缺失、有争议或不可量化时的保守界处置（2.2.3 准则二 CH-B1：保守默认值 + 保守假设 ADR + 可推翻指标，不阻塞）；分解与风格联合可行性校验（2.6 示例三：团队容量 × 单元数 × 运维负荷模型）。"
+      common_misuse: "容量证据不足仍按硬约束使用 W3（AP1；应自动降软走 CH-B1）；以编造的精确容量数字充当硬化依据（2.2.3 双向防护明文禁止）；把 S6 当作可选策略之一而非所有策略的过滤器（2.3 交付空间驱动第一行）；单人/小团队场景仍强制使用（2.3 第二行；0.10 权力条款第二条）；单元数与团队容量联合不可行仍推进而不发阻塞声明（AP2；2.6 示例三 → CH-A5 同型 → CH-D）；以 Conway 事实替代领域语义判据而不经组合冲突处置（2.6 示例一；书目 17 narrative_only 不得充决策性出处）。"
+
+  - entry_id: DEC-007
+    kind: DEC
+    name: "S7 按部署边界"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S7 按部署边界", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}   # 主导驱动空间列＝现状空间 + 方面 1 硬约束
+        - {source_type: clause_id, value: "2.2.2", verified: true}
+        - {source_type: clause_id, value: "2.2.3", verified: true}
+        - {source_type: clause_id, value: "2.2.4", verified: true}   # DSM 依赖种类含 deploy（跨部署单元反馈环的可观测面）
+        - {source_type: clause_id, value: "2.3", verified: true}     # 现状空间驱动第三行（0.11 现状锁定）＋交付空间驱动第一行
+        - {source_type: clause_id, value: "2.4", verified: true}     # 接收约束方面 1 行（硬）：微服务 → S7 强制；单体 → S7 退化＋施加约束表全体七行
+        - {source_type: clause_id, value: "2.5", verified: true}     # boundary_type / depends_on 谓词面
+        - {source_type: clause_id, value: "1.2.2", verified: true}   # 子维度二：部署/运行单元风格（定义列「与方面 1 子维度二一一映射」的指涉对象）
+        - {source_type: clause_id, value: "9.2.5", verified: true}   # 部署策略子维度（1.2.2 切分线判定的接收端）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+    typical_reversibility: costly      # 人工判断：分解单元与部署单元一一映射一旦投产，重划即等于重新部署（发布通道、回滚面、监控面同步迁移），且受方面 1 风格选型硬约束（2.4 接收约束方面 1 行）→ 逆转成本高
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列＋「主导驱动空间」列
+        - "单元 = 部署单元（与方面 1 子维度二一一映射）（2.2.1 定义列）；主导驱动空间为现状空间 + 方面 1 硬约束，问题空间输入非门控项"
+        - "[方面 1 子维度二的切分线判定在案（1.2.2；接收端 9.2.5）——风格选型未定时，本策略的强制/退化分支不可判定]"
+      current_space:                   # 骨架源：2.4 接收约束方面 1 行＋2.3 现状空间驱动第三行
+        - "现状部署/运行单元边界在案（2.2.1 主导驱动空间列含现状空间）：微服务 → S7 强制（分解单元一一映射部署单元）；单体 → S7 退化，分解可纯逻辑（2.4 接收约束方面 1 行，硬）"
+        - "[现状风格为分布式时，既有部署单元与语义单元的错位面须先勘察（2.4 接收约束方面 1 行理由列：部署单元与语义单元错位是分布式单体/纳米服务的根源）]"
+        - "0.11 现状锁定：既有系统结构本身是最强分解约束——棕地『理想分解』必须以『现状分解 + 演化序列』表达"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动第一行＋2.6 示例三
+        - "团队拓扑与认知负荷过滤器横切适用（W3，2.3 交付空间驱动第一行）；部署单元数与分解单元数同增 → 单元数与团队容量的联合可行性须先校验（2.6 示例三：团队容量 × 单元数 × 运维负荷模型）"
+        - "[独立部署与独立发布能力在案（每部署单元的发布通道、回滚面与运维负荷）——母本未给明文阈值 → 方括号占位（MJ-20 (iii)）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "部署单元数 = 分解单元数（一一映射，2.4 接收约束方面 1 行）→ 触达单元数（典型变更） ≤ 1 时不产生跨部署单元的契约变更；≥ 2 即映射错位，跨边界契约变更数随错位面单调不减"
+        source: {source_type: row_id, value: "2.2.1-S7 按部署边界", verified: true}
+      - metric: "可修改性：DSM 密度（2.2.4 通道二的消费端之一）"
+        bound_expr: "cross_density（DSM，deploy 类依赖） ≤ 注册阈值 → 部署单元间的双向依赖（反馈环）暴露跨单元耦合（2.2.4：非对角区块暴露反馈环；依赖种类含 deploy），一一映射下应单调不增"
+        source: {source_type: clause_id, value: "2.2.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["微服务风格下分解单元与部署单元错位（2.4 接收约束方面 1 行，硬 → 分布式单体/纳米服务）", "单体风格下仍强制物理拆分（S7 退化分支被误用为强制：分解可纯逻辑）", "以部署边界替代语义边界判据（2.2.2 横切适用）", "部署单元数增长未过 S6 过滤器与 2.2.3 停止准则（单元规模超认知负荷上界，W3 面）", "跨部署单元依赖出现双向反馈环而未治理（2.2.4：非对角区块暴露反馈环）"]
+      consistency_impact: "一一映射使跨单元调用成为跨进程调用：跨部署单元的一致性需求由方面 4 的 Y 系列判定（CSL/CRD 批承载），延迟项属 STY 包络（0.8），本条目均不重复计入；分解边界 = 数据所有权边界（2.4 施→4 硬，即 W4）仍横切适用，跨部署单元的数据所有权须唯一"
+      observability_requires: ["分解单元与部署单元的映射可查（boundary_type 谓词的实参取值面 2.5 未枚举部署单元 → 方括号占位，MJ-20 (iii)）", "deploy 类依赖在 DSM 可查（2.2.4 依赖种类 call/data/event/deploy/team）", "现状风格与切分线判定在案（1.2.2；接收端 9.2.5）"]
+      ops_cost: "[运维单元数 = 部署单元数（一一映射）→ 每单元的独立发布、回滚与监控面为固定成本项；单元数增长须与团队容量联合校验（2.6 示例三：团队容量 × 单元数 × 运维负荷模型）]"
+      skill_prerequisites: ["部署/运行单元风格的切分线判定（1.2.2；接收端 9.2.5）", "部署单元与语义单元的对齐核验（2.4 接收约束方面 1 行）", "DSM deploy 类依赖建模与反馈环治理（2.2.4 通道二）", "粒度停止准则应用（2.2.3：W2 硬 / W3 条件硬 / W6 软）"]
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型）→ 代价按部署单元逐项评估（MJ-20 (vi)）
+    compatibility:
+      - peer_entry: STY-016
+        relation: composable
+        evidence: {source_type: row_id, value: "2.4-方面 1（风格）", verified: true}   # 接收约束方面 1 行明文「微服务 → S7 强制（分解单元一一映射部署单元）；单体 → S7 退化，分解可纯逻辑」（级别＝硬）。母本方向为风格 → 策略，而 ENUM_RELATION 无 required_by：在 DEC-007 侧登记 requires 会读作『S7 要求微服务』，与同一行的「单体 → S7 退化」矛盾 → 本侧只登记 composable；STY-016 侧的镜像不擅改已批准条目，方向问题留待人工裁决（MJ-20 (vii)）
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-007-AP1
+        description: "微服务风格下分解单元与部署单元错位（分布式单体/纳米服务）"
+        detection_predicate: "∃ M: unit(M) ∧ boundary_type(M, [部署单元]) ∧ [现状风格为微服务] ∧ ¬[分解单元与部署单元一一映射]"
+        signal_level: P0               # 2.4 接收约束方面 1 行级别列＝硬，且明文「微服务 → S7 强制（分解单元一一映射部署单元）」；错位即 W1 seam 面与部署面同时失守（理由列：错位是分布式单体/纳米服务的根源）→ 硬性规定违例的直接来源（MJ-4 P0 判据）
+      - pattern_id: DEC-007-AP2
+        description: "单体风格下仍强制物理拆分（S7 退化分支被误用为强制）"
+        detection_predicate: "∃ M: unit(M) ∧ boundary_type(M, [部署单元]) ∧ [现状风格为单体] ∧ ¬[分解表达为纯逻辑边界]"
+        signal_level: P1               # 2.4 接收约束方面 1 行「单体 → S7 退化，分解可纯逻辑」为许可性规定（MJ-4：许可性 → soft）→ 误用为强制不构成硬性质违例，无 W/X/Y/Z 硬性质可绑定 → P1
+    formal_anchor:
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)（2.5）
+      - {property_id: W2, role: consumed_by}     # 2.4 施→8：每个分解单元必须是一个可独立验证的单元
+      - {property_id: W3, role: consumed_by}     # 2.3 交付空间驱动：S6 过滤器横切适用（条件硬）；部署单元数与分解单元数同增使其成为本策略的实际约束
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择走批准路径
+    references: []                     # 母本 5.7 书目无 2.2.1 S7 行的行级登记提取面（书目 6/5/3 的行级面为 1.2.x 风格表行，书目 10 的行级面为「组件化判据，2.2.3 seam 概念的理论基础」属节级面）→ 按 G-CRD-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-DEC-1，待人工裁决补勘后回填（SO-8）
+    narrative:
+      benefit_cost_analysis: "收益：单元与部署单元一一映射，消除部署单元与语义单元错位（2.4 接收约束方面 1 行理由列：错位是分布式单体/纳米服务的根源），独立部署与独立发布的边界天然清晰；主导驱动为现状空间 + 方面 1 硬约束（2.2.1），在风格已定的场合可直接落地，无需额外的问题空间输入；deploy 类依赖在 DSM 中可显式建模（2.2.4 依赖种类含 deploy），反馈环可观测。代价：本策略的可用性由方面 1 的风格决定——微服务 → S7 强制，单体 → S7 退化，分解可纯逻辑（2.4 接收约束方面 1 行，硬），不能独立于风格选型使用；一一映射把部署单元数与分解单元数锁定为同增，运维单元数与团队容量压力同步上升，须过 S6 过滤器（2.3 交付空间驱动第一行）与 2.2.3 停止准则；跨部署单元的契约变更成本进入包络（2.4 施→6 软）；母本 5.7 书目无本行的行级登记提取面 → references 留空并登记 G-DEC-1（SO-8）。"
+      typical_scenarios: "方面 1 已选定微服务/分布式部署风格的场合（2.4 接收约束方面 1 行：微服务 → S7 强制）；现状已有物理部署边界、须以现状为主驱动的棕地分解（2.2.1 主导驱动空间列含现状空间；0.11 现状锁定）；须以 deploy 类依赖做反馈环治理的场合（2.2.4 通道二）；单体风格下需把分解表达为纯逻辑边界的场合（S7 退化分支）。"
+      common_misuse: "微服务风格下分解单元与部署单元错位（AP1；分布式单体/纳米服务的根源）；单体风格下仍强制物理拆分而不表达为纯逻辑边界（AP2；退化分支被误用为强制）；以部署边界替代语义边界判据（2.2.2 横切适用）；把「微服务 → S7 强制」反读为『S7 要求微服务』（母本方向为风格 → 策略；ENUM_RELATION 无 required_by，本侧只登记 composable，方向问题留待人工裁决，MJ-20 (vii)）；跳过 S6 过滤器与 2.2.3 停止准则即按部署单元数定分解粒度。"
+
+  - entry_id: DEC-008
+    kind: DEC
+    name: "S8 按风险"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
+    provenance:
+      origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "2.2.1-S8 按风险", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}   # 主导驱动空间列＝问题空间（风险画像）
+        - {source_type: clause_id, value: "2.2.2", verified: true}
+        - {source_type: clause_id, value: "2.2.3", verified: true}
+        - {source_type: clause_id, value: "2.2.4", verified: true}
+        - {source_type: clause_id, value: "2.3", verified: true}     # 问题空间驱动第三行：高风险子系统识别 → S8 强制隔离 + 强化验证（与方面 8 联动）
+        - {source_type: clause_id, value: "2.4", verified: true}     # 接收约束「外部强加决策」行（硬，带出处）＋施加约束表全体七行
+        - {source_type: clause_id, value: "2.5", verified: true}     # boundary_type(M, risk) —— risk 为 2.5 已枚举实参
+        - {source_type: clause_id, value: "2.6", verified: true}     # 示例三消费字段「compliance_constraint[S8]」＋示例五（账套物理隔离形态属注册表缺口）
+        - {source_type: clause_id, value: "4.5", verified: true}     # Y5（6.2.1 安全族/合规族度量方式明文「Y5 联动」）
+        - {source_type: clause_id, value: "8.2.1", verified: true}   # 验证计划生成（「施加更强验证」的方面 8 联动落点）
+        - {source_type: clause_id, value: "0.4", verified: true}
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 安全族与合规族指标＋量化纪律（监管条文为四类合法出处之一）
+    typical_reversibility: costly      # 人工判断：隔离单元一经投产即形成独立验证面、独立发布通道与合规证据链，合并或重划须重跑更强验证并重置监管映射，逆转成本高
+    applicability:
+      problem_space:                   # 骨架源：2.2.1「定义」列＋2.3 问题空间驱动第三行
+        - "高风险/高保障需求子系统（安全关键、合规关键）隔离成独立单元，施加更强验证（2.2.1 定义列）；高风险子系统识别 → S8 强制隔离 + 强化验证（与方面 8 联动）（2.3 问题空间驱动第三行）"
+        - "[风险画像在案（2.2.1 主导驱动空间列＝问题空间（风险画像））；合规约束可表达为 [compliance_constraint[S8]]（2.6 示例三消费字段逐字）；条款级事实须过 0.4 门槛——监管条文是 6.2.1 量化纪律四类合法出处之一]"
+      current_space:                   # 骨架源：2.6 示例五＋0.11
+        - "[现状是否已有物理隔离边界（账套/网络/部署隔离）在案——2.6 示例五明示『注册表现有 DEC 条目全部预设单一法人账套边界』：跨法人账套物理隔离的分解形态属注册表缺口（FM-3 面），须走 0.13 缺口声明＋CH-D，不得在本条目内扩张]"
+        - "0.11 现状锁定：既有系统结构本身是最强分解约束——隔离单元的演化须以『现状分解 + 演化序列』表达"
+      delivery_space:                  # 骨架源：2.3 交付空间驱动第一行＋2.6 示例三
+        - "团队拓扑与认知负荷过滤器横切适用（W3，2.3 交付空间驱动第一行）；隔离单元数与团队容量的联合可行性须先校验（2.6 示例三：团队容量 × 单元数 × 运维负荷模型）"
+        - "[隔离单元的独立验证与独立发布能力在案（8.2.1；方面 8 联动）——母本未给明文阈值 → 方括号占位（MJ-20 (iii)）]"
+    envelope:
+      - metric: "合规：监管条款 → 可判定谓词的映射覆盖率"
+        bound_expr: "隔离单元的未映射监管条款数 = 0（全量映射为可判定谓词，6.2.1 合规族指标）；> 0 即更强验证面不完整，且映射覆盖率单调不减（不得以豁免降低）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+      - metric: "安全：攻击面清单闭合率、漏洞修复时限、敏感数据访问路径合规率"
+        bound_expr: "敏感数据访问路径合规率 上界为 1（全量合规，Y5 联动）；攻击面清单闭合率单调不减 → 隔离后攻击面不得跨单元扩散（6.2.1 安全族度量方式：静态扫描、渗透测试、Y5 联动）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+    cost_profile:
+      latency_budget_delta: "无直接项——分解策略的延迟影响经由部署/通信风格间接产生，跨单元调用延迟项属 STY 包络（0.8），本条目不重复计入（kind_profile_DEC.optional 理由）"
+      failure_modes: ["高风险/合规关键子系统未隔离成独立单元（2.3 问题空间驱动第三行「S8 强制隔离」违例 → W2 可独立验证性失守）", "隔离但未施加更强验证（2.2.1 定义列后半段丢失，与方面 8 联动断裂）", "合规条款未映射为可判定谓词即以『已合规』结案（6.2.1 合规族指标面）", "豁免物理隔离不经人类责任方裁决（2.6 示例三裁决选项之一；0.10 框架不自动回溯修改任一方决策）", "以风险隔离替代数据所有权定案（W4 仍横切适用，2.4 施→4）"]
+      consistency_impact: "风险隔离常伴随数据物理隔离：分解边界 = 数据所有权边界（2.4 施→4 硬，即 W4）仍横切适用，隔离单元内可选本地强一致；跨隔离边界的一致性需求经方面 4 的 Y 系列判定（CSL/CRD 批承载）。2.6 示例五明示跨法人账套物理隔离＋合并视图实时一致的形态为注册表缺口（FM-3），不在本条目扩张"
+      observability_requires: ["高风险/合规关键子系统清单在案（2.2.1 定义列；boundary_type 实参 risk 为 2.5 已枚举取值）", "监管条款 → 可判定谓词的映射表可查（6.2.1 合规族指标）", "更强验证的执行记录可查（8.2.1 验证计划生成；方面 8 联动）", "敏感数据访问路径合规率可观测（Y5 联动，6.2.1 安全族度量方式）"]
+      ops_cost: "[独立隔离单元带来独立验证、独立发布与独立运维面 → 运维单元数增长；2.6 示例三明示单元数与团队容量的联合可行性须先校验，不可行时发 CH-A5 同型阻塞声明 → CH-D 由人类责任方在增团队/合并上下文/豁免物理隔离中裁决]"
+      skill_prerequisites: ["风险画像与高保障需求识别（2.2.1 主导驱动空间列＝问题空间（风险画像））", "监管条款 → 可判定谓词映射（6.2.1 合规族指标）", "更强验证的设计与执行（8.2.1；方面 8 联动）", "物理隔离豁免的裁决路径（2.6 示例三；CH-A5 同型阻塞声明 → 人类责任方）"]
+      aggregation_semantics: itemwise  # 母本未给 DEC 的跨单元聚合式（MJ-19 (iii) 同型）→ 风险面按隔离子系统逐项评估（MJ-20 (vi)）
+    compatibility: []                  # 2.6 示例三（S1 得 7 个限界上下文 × 团队规模 2 × 合规要求物理隔离 S8）的明文结论是「三方面单独可满足、联合不可行」——不可行来自事实集合（contexts=7、teams=2、物理隔离要求）而非策略两两互斥，故不登记为 tension 对（MJ-9：只登记母本有明文依据的对；判读见 MJ-20 (vii)）；其处置面已由 DEC-006-AP2 与本条 observability_requires 承载 → 互斥不枚举，见 MJ-5/MJ-9
+    constraints_imposed:               # 交叉表源：2.4「施加约束」表（方面 2 全体七行，DEC 八条逐字相同）
+      - {target_aspect: 1, constraint: "分解边界候选 → 部署单元风格可行集（对偶回馈：语义边界不清晰时分布式风格降权）", level: soft}
+      - {target_aspect: 3, constraint: "分解边界 = 契约边界；按业务领域分解时，限界上下文间契约必须显式建模（上下文映射）", level: hard}
+      - {target_aspect: 4, constraint: "分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）", level: hard}
+      - {target_aspect: 5, constraint: "单元内编排自由；跨单元协调必须显式建模（禁止隐式跨单元时序假设）", level: hard}
+      - {target_aspect: 6, constraint: "分解粒度 → 一致性/性能/可修改性包络（跨单元事务代价项随跨边界交互数增长）", level: soft}
+      - {target_aspect: 8, constraint: "每个分解单元必须是一个可独立验证的单元；否则粒度停止准则违反 → 发回溯约束声明（CH-E）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：2.5 边界谓词集；人类层：覆盖谓词子集 {2.5 边界谓词集} 的投影视图（记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: DEC-008-AP1
+        description: "高风险/合规关键子系统未隔离成独立单元，致更强验证无独立执行面"
+        detection_predicate: "∃ M: unit(M) ∧ [M 承载安全关键或合规关键子系统] ∧ ¬boundary_type(M, risk) ∧ ¬independently_verifiable(M)"
+        signal_level: P0               # 2.3 问题空间驱动第三行明文「S8 强制隔离 + 强化验证」（强制性规定）；未隔离即更强验证无独立执行面 → W2（∀M: independently_verifiable(M)，硬性质，0.15 冻结项经 2.4 接收约束方面 6 行）违例的直接来源 → P0（MJ-4 判据）
+      - pattern_id: DEC-008-AP2
+        description: "合规条款未映射为可判定谓词即以『已合规』结案"
+        detection_predicate: "∃ M: unit(M) ∧ boundary_type(M, risk) ∧ [compliance_constraint 未映射为可判定谓词] ∧ ¬[映射覆盖率在案]"
+        signal_level: P1               # 6.2.1 合规族指标（监管条款 → 可判定谓词的映射覆盖率）为定义性度量要求，违反但无 W/X/Y/Z 硬性质可绑定 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: W1, role: consumed_by}     # ∀M: seam(M)（2.5）
+      - {property_id: W2, role: consumed_by}     # 2.4 施→8：每个分解单元必须是一个可独立验证的单元（「施加更强验证」以可独立验证为前提）
+      - {property_id: W3, role: consumed_by}     # 2.3 交付空间驱动：S6 过滤器横切适用（条件硬）
+      - {property_id: W7, role: consumed_by}     # 2.3 双使用者条款：主策略选择走批准路径；物理隔离豁免属高影响决策另走批准（2.6 示例三）
+    references: []                     # 母本 5.7 书目无 2.2.1 S8 行的行级登记提取面 → 按 G-CRD-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-DEC-1，待人工裁决补勘后回填（SO-8）
+    narrative:
+      benefit_cost_analysis: "收益：唯一以风险画像为主导驱动的策略（2.2.1 主导驱动空间列），高风险/高保障子系统获得独立验证面与更强验证（2.3 问题空间驱动第三行明文「S8 强制隔离 + 强化验证（与方面 8 联动）」）；包络指标有明确出处族（6.2.1 安全族与合规族），且合规目标值可落在四类合法出处中的『监管条文』（6.2.1 量化纪律），出处门槛易过；隔离边界与 Y5 联动使敏感数据访问路径可判定；boundary_type 的实参 risk 为 2.5 已枚举取值，机器层表达无需占位。代价：隔离单元带来独立验证、独立发布与独立运维面，单元数增长与团队容量的联合可行性须先校验（2.6 示例三：团队容量 × 单元数 × 运维负荷模型），不可行时走 CH-A5 同型阻塞声明 → CH-D 由人类责任方在增团队/合并上下文/豁免物理隔离中裁决，框架不自动回溯修改任一方决策（0.10）；监管条款 → 可判定谓词的映射是持续治理项，覆盖率不得以豁免降低；母本 5.7 书目无本行的行级登记提取面 → references 留空并登记 G-DEC-1（SO-8）；2.6 示例五明示注册表现有 DEC 条目全部预设单一法人账套边界——跨法人账套物理隔离形态属注册表缺口（FM-3 面），不得在本条目内扩张。"
+      typical_scenarios: "安全关键或合规关键子系统在案的场合（2.2.1 定义列：安全关键、合规关键）；监管条文可直接映射为可判定谓词的场合（6.2.1 合规族指标；量化纪律四类合法出处之『监管条文』）；须对高风险子系统施加更强验证并与方面 8 联动的场合（2.3 问题空间驱动第三行；8.2.1 验证计划生成）；与 S1/S6 联合可行性须裁决的场合（2.6 示例三：合规目标要求物理隔离）。"
+      common_misuse: "高风险/合规关键子系统未隔离成独立单元，致更强验证无独立执行面（AP1，W2 违例）；隔离但未施加更强验证（2.2.1 定义列后半段丢失，与方面 8 联动断裂）；合规条款未映射为可判定谓词即以『已合规』结案（AP2；6.2.1 合规族指标面）；豁免物理隔离不经人类责任方裁决（2.6 示例三裁决选项之一；0.10 框架不自动回溯）；以风险隔离替代数据所有权定案（W4 仍横切适用，2.4 施→4）；把跨法人账套物理隔离形态当作本条目已覆盖（2.6 示例五：注册表缺口 → FM-3 → 0.13 缺口声明＋CH-D）。"
+
 # ============================================================================
 # 注册表级台账（README §2：注册表级信息一律置于顶层节，不进入条目）
 #
@@ -3056,6 +3724,14 @@ gaps:
     route: "人工裁决（书目 47 的登记面可否依 5.2.2 定义列的『泛化』文句下探至流程管理器行，G-STY-5/G-CSL-1 同型 route）：裁决为可 → CRD-007 补 47 并撤销该项；裁决为否或澄清前 → 保持留空，另勘察补行级书目（流程管理器与预扣/预留的原始文献面）并按 0.12 定 compile_usage → 母本 5.7 参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。登记为 SO-7（入库期义务，consumer M6）。"
     status: open
 
+  - gap_id: G-DEC-1
+    type: 参考资料源缺失（2.2.1 行级书目登记面仅覆盖 S1/S5/S6 三行；节级面不下探）
+    statement: "母本 5.7 中与方面二相关的登记提取面共十一项，其中行级指向 2.2.1 表行者只有三行：书目 7（Evans, Domain-Driven Design）＝『S1 领域驱动分解；2.2.2 语义边界判据』与书目 24（Brandolini, Introducing EventStorming）＝『事件风暴识别限界上下文（S1 的操作化技术；提取以 2019-08-23 本地存档版为准）』——**行级覆盖 S1**；书目 15（Parnas 1979）＝『为变化而设计；S5 的理论依据』——**行级覆盖 S5**；书目 14（Parnas 1972）＝『2.2.2 信息隐藏判据；2.5 谓词 hides/volatility 的理论源头』本为**节级面**（2.2.2），本批引为 S5 的支撑系依母本自身明文挂钩——2.3 问题空间驱动第二行『需求易变性评估（若该输入存在）→ S5 可用（**信息隐藏判据的操作化**）』，该挂钩是母本建立的行级关联，非注册表侧扩张解释；书目 9（Skelton & Pais, Team Topologies 2nd ed.）＝『S6 团队认知负荷；1.3 交付空间硬过滤器』——**行级覆盖 S6**；书目 17（Conway）＝『Conway 定律；1.3 交付空间过滤器与 2.6 示例一』但 compile_usage=narrative_only → 按 0.12 分级不得充决策性出处（M6），DEC-006 只以 narrative_only 登记，不用于 envelope/applicability。其余六项均为**节级面或他方面面，不下探**：书目 10（Szyperski）＝『组件化判据（提供/需求接口），2.2.3 seam 概念的理论基础』、书目 11（Eppinger & Browning）＝『2.2.4 DSM 聚类与排序方法论』、书目 18（Steward）＝『DSM 原始论文』、书目 26（Lattix，narrative_only）＝『软件 DSM 商业工具（2.2.4 通道实现的工程参照）』——四项面为 2.2.3/2.2.4 节级；书目 8（Vernon）＝『限界上下文识别与上下文映射的操作化（2.4 施加给方面 3 的约束）』——面指向 2.4 施加项而非 2.2.1 行；书目 6（Martin, Clean Architecture）＝『1.2.1 依赖方向控制；第 12–14 章组件化对 Parnas 判据的现代重述』——面为 1.2.1 与判据重述。故 2.2.1 的 S2（按技术层次）、S3（按业务能力）、S4（按数据归属）、S7（按部署边界）、S8（按风险）五行无任何行级书目登记面（与 G-OWN-1、G-CSL-1、G-CRD-1 同型：一表之内只有部分行有行级出处）。"
+    impact: "DEC-002/DEC-003/DEC-004/DEC-007/DEC-008 的 references: []（0.17.8 M6 严格式 ∀ reference ∈ E 对空集平凡为真；0.17.7 门槛 6 要求文献载明所支撑主张，禁止以不承载该主张的文献充当出处）。**表级/节级面不下探纪律**（承 G-CSL-1、G-CRD-1）：书目 10 的 2.2.3 seam 面不得充当任一策略行的行级出处——尽管 W1 的 seam 谓词面横切八条，该横切关系已由 formal_anchor（W1 consumed_by ×8）承载，不构成书目登记面的扩张依据；书目 11/18/26 的 DSM 面只及 2.2.4，不因 DEC-007 的 envelope 引 DSM 密度（cross_density）而下探；书目 8 的上下文映射面由 2.4 施加项承载，不因 DEC-001 的 S1 行而下探（S1 的行级面已由书目 7/24 承担）。五行的其余字段以 2.2.1 表行为骨架源（2.2.2/2.2.3/2.3/2.4/2.5/2.6 为交叉表源），不受影响；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）。S1/S5/S6 三行不受影响（DEC-001 引 7＋24、DEC-005 引 15＋14、DEC-006 引 9＋17，compile_usage 与信任级逐字承母本 5.7，注册表侧不得改写）。"
+    affected: "DEC-002、DEC-003、DEC-004、DEC-007、DEC-008（references 空列表）；DEC-001、DEC-005、DEC-006 不受影响（书目 7/24 覆盖 S1、书目 15/14 覆盖 S5、书目 9/17 覆盖 S6）"
+    route: "人工裁决（书目 10 的 2.2.3 seam 面、书目 11/18 的 2.2.4 DSM 面可否依 2.5 W1 与 DEC-007 envelope 的消费关系下探至 2.2.1 行级，G-STY-5/G-CSL-1/G-CRD-1 同型 route）：裁决为可 → 相应行补引并撤销该项；裁决为否或澄清前 → 保持留空，另勘察补 S2/S3/S4/S7/S8 五行的行级书目（技术分层与关注点分离、业务能力地图、数据所有权、部署边界、风险隔离的原始文献面）并按 0.12 定 compile_usage → 母本 5.7 参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。登记为 SO-8（入库期义务，consumer M6）。"
+    status: open
+
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
 # ---------------------------------------------------------------------------
@@ -3068,7 +3744,8 @@ status_transitions:
             STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
-            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01 承载，本简记对其无事实主张
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16 (ii)）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01 承载，本简记对其无事实主张
     date: "2026-09-18"
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3088,7 +3765,8 @@ status_transitions:
             STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
-            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # check_ledgers 双向相等要求全集（MJ-16）；OWN 批实际迁移对象为本四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01 承载
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；OWN 批实际迁移对象为 OWN-001…OWN-004 四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01 承载
     date: "2026-09-22"   # OWN 批入库日（本简记的登记日）；STY 批的 2026-09-18 见 ST-STY-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3108,7 +3786,8 @@ status_transitions:
             STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
-            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # check_ledgers 双向相等要求全集（MJ-16）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01 承载
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01、DEC 八条由 ST-DEC-01 承载
     date: "2026-09-23"   # CSL 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-016 ↔ CSL-001 的 hard_conflict 对（1.2.5 冲突行，PCR-2 闭合）同提交回填。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3129,7 +3808,8 @@ status_transitions:
             STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
-            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为末 8 条
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为 CRD-001…CRD-008 八条；DEC 八条的迁移事实由 ST-DEC-01 承载
     date: "2026-09-24"   # CRD 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-018 ↔ CRD-007 的 hard_conflict 对（1.2.5 冲突行，PCR-1 闭合）同提交回填；CRD-005/CRD-006/CRD-008 → CSL-005 的 requires 由 CRD 侧单方承载（MJ-17 (iii)），CRD-007 → CRD-005 的 requires 依 5.2.2 定义列『编排式 Saga 的泛化』（MJ-5 例外：母本明文依据，非同表取值互斥对）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3142,6 +3822,28 @@ status_transitions:
         - {source_type: clause_id, value: "5.2.1", verified: true}
         - {source_type: clause_id, value: "5.2.2", verified: true}
     note: "本批迁移对象为 CRD-001…CRD-008（分块序：先 5.2.1 表序四行＝编排（orchestration）／协同（choreography）／同步调用链／混合（宏观编排 + 微观协同），后 5.2.2 表序四行＝Saga（编排式）／Saga（协同式）／流程管理器（process manager）／预扣-预留（reservation），编号裁决见 MJ-13 (ii)；母本已发布叙述中的「CRD-02 事件协同」＝本批 CRD-002，见 MJ-14）；scope 含 STY 24 条、OWN 4 条、CSL 5 条系 check_ledgers 全集要求的形式面（MJ-16 (ii)），三批的迁移事实已分别由 ST-STY-01、ST-OWN-01、ST-CSL-01 登记。E3 面另单独申请 WV-CRD-E3-01（WV-STY-E3-01 防扩宽条款 (ii)：不沿用前三项、不自动生效；八条 formal_anchor 共引用 Z1/Z2/Z3/Z4/Z5/Z7/Z8/X1/Y6/V3 十项性质，而该 Waiver 的 scope 只及于其中**硬性质面**——7 项 20 实例＋条件硬 Z4 的 3 实例，Z5（软）与 Z7（升级型）不产生 E3 义务故不在 scope 内，见该项 scope 明文）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。八条的 envelope 一律非空（C-ENV：kind_profile_CRD 的 entry_level_exemptions 为空集，5.2.1/5.2.2 不在豁免条款内），24 项 bound_expr 全为关系式而非具体数值（M3）；18 条 detection_predicate 中未在 predicate_vocabulary 登记的词（registered_max_depth／sla_bound／covers／explicitly_modeled）一律以半角方括号占位（M4 + MJ-12），对应升级路径见 G-STY-4 同型纪律与 VG 登记面。CRD-007/CRD-008 的 references 为空列表系 5.2.2 行级书目登记面缺失（G-CRD-1，登记为 SO-7）：kind_profile_CRD 的 required 含 references，而 has_path 口径下空列表＝字段在案（project.py @170-177），故两条以空列表 + 行内注显式登记即满足 M2，不以本地造引充数（0.4 禁假精确）；书目 45 的信任级与 compile_usage 逐字承母本 5.7（已核验／metadata_extraction），注册表侧不得降级。本批同时闭合两项跨批留痕：(i) OWN-004 的反例 18-B S2「OWN-04 × CRD-02 无冲突对」检验完毕，结论为『无关系』→ 两侧均不登记 compatibility（MJ-5/MJ-9 禁造规范），原「待 CRD 批回填」义务履行完毕；(ii) PCR-1（Serverless × 长时运行有状态流程 → 冲突，硬）由 STY-018 ↔ CRD-007 双向 compatibility 闭合，原 peer_status『对侧不是风格条目而是问题空间事实 → 无 peer_entry 可指』的判断被 CRD-007 入库推翻 → 移入 closed_in_entries（MJ-18），至此 1.2.5 冲突矩阵四行全部在条目层闭合、open_rows 为空集。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
+
+  - transition_id: ST-DEC-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004,
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；DEC 批实际迁移对象为末 8 条
+    date: "2026-09-26"   # DEC 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨 kind 单向登记：DEC-007 → STY-016 的 composable（evidence 为 2.4 接收约束表方面 1 行，row_id『2.4-方面 1（风格）』）——母本方向为『风格收窄策略可行集』（微服务 → S7 强制；单体 → S7 退化），ENUM_RELATION 封闭枚举无 required_by，本侧若写 requires 将读作『S7 要求微服务』而与『单体 → S7 退化』矛盾，故只登记 composable；STY-016 侧镜像不擅改已批准条目（0.22 承诺一），方向问题留待人工裁决（MJ-20 (vii)）。同批内三对 tension 已双向镜像闭合：DEC-001 ↔ DEC-006（2.6 示例一）、DEC-001 ↔ DEC-002（2.2.2 语义边界判据）、DEC-003 ↔ DEC-004（2.6 示例三/示例四面）。DEC-005/DEC-008 的 compatibility 为空列表系母本无明文对：2.6 示例二推迟分支的 S1/S2 是**处置次序**而非策略互斥对，2.6 示例三的三方不可行源于**事实集合**（contexts=7、teams=2、物理隔离要求）而非策略两两互斥（MJ-9 只登记母本有明文依据的对，判读见 MJ-20 (vii)）。"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+        - {source_type: clause_id, value: "2.2.1", verified: true}
+    note: "本批迁移对象为 DEC-001…DEC-008（2.2.1 八策略表行序 S1 按业务领域／S2 按技术层次／S3 按业务能力／S4 按数据归属／S5 按变更频率／S6 按团队认知负荷／S7 按部署边界／S8 按风险，编号裁决见 MJ-13 (iv)；name 一律取策略列逐字，MJ-20 (i)）。**位次锁定履行**：DEC-005 的 applicability.problem_space 为两项且第二项即正例 20-1（0.20.5）明文消费字段『DEC-05.applicability.problem_space[1]』（0 基索引 1 ＝ 第二项；母本两位书写 = 注册表三位书写，MJ-14）→ 列表项顺序不得调换（MJ-16 (i)），行内注已留痕；该正例同时明示 unknown 不排除候选（M15），DEC-005 的 problem_space 第二项以方括号事实占位承载『需求易变性评估在案』，缺失时按 2.6 示例二走 CH-B 而非剔除候选。**scope 含前四批 41 条系 check_ledgers 全集要求的形式面**（MJ-16 (ii)），四批的迁移事实已分别由 ST-STY-01、ST-OWN-01、ST-CSL-01、ST-CRD-01 登记。E3 面另单独申请 WV-DEC-E3-01（WV-STY-E3-01 防扩宽条款 (ii)：不沿用前四项、不自动生效；八条 formal_anchor 共引用 W1/W2/W3/W4/W5/W6/W7/X1/Y1/Z1 十项性质，而该 Waiver 的 scope 只及于其中**硬性质面**——7 项 31 实例＋条件硬 W3 的 8 实例，W5（软，DEC-001 consumed_by）与 W6（软，DEC-003 consumed_by）共 2 实例明列排除，见该项 scope 明文）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。八条的 envelope 一律非空（C-ENV：kind_profile_DEC 的 entry_level_exemptions 为空集，2.2.1 不在豁免条款内），17 项 bound_expr 全为关系式而非具体数值（M3）——母本逐字给出的数值（『N 默认 3』『≤ 30』）以参数化形态引用，合规/安全族目标值以『= 0』『上界为 1』形态表达而不用百分数，避开 M3 的 CONCRETE_NUM_RE（MJ-20 (iv)）。17 条 detection_predicate 中未在 predicate_vocabulary 登记的词（capacity_evidence_sufficient／dsm_optimal／semantically_coherent／flag_for_review／interface_cost／cohesion_gain／tech_debt_flag／cross_density／compliance_constraint 等）一律以半角方括号占位（M4 + MJ-12），且**不新增 VG 编号**——该批候选与 MJ-19 (i) 四词同属母本 x.5 公式内谓词，扩词将触发 signal_level 改级须走完整 ADR＋批准（MJ-20 (iii)）。DEC-002/003/004/007/008 的 references 为空列表系 2.2.1 行级书目登记面缺失（G-DEC-1，登记为 SO-8）：kind_profile_DEC 的 required 含 references，而 has_path 口径下空列表＝字段在案（project.py @170-177），故五条以空列表 + 行内注显式登记即满足 M2，不以本地造引充数（0.4 禁假精确）；DEC-001（书目 7/24）、DEC-005（书目 15/14）、DEC-006（书目 9 metadata_extraction＋17 narrative_only）的 compile_usage 与信任级逐字承母本 5.7，注册表侧不得改写。八条的 aggregation_semantics 一律 itemwise，理由＝母本未给 DEC 的跨单元聚合式，不本地造法（MJ-19 (iii) 同型，判读见 MJ-20 (vi)）。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
 
 # ---------------------------------------------------------------------------
 # 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）
@@ -3234,6 +3936,24 @@ waivers:
       ruling: "批准。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道），9.2.2 五要素齐备、scope 与前三项（STY 24 条面、OWN 4 条面、CSL 5 条面）互不重叠，故按已裁定的同一边界结论准予豁免：0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免，本项 external_cause=false 不构成障碍。批准仅及于本项 scope 明列的硬性质引用面——7 项 20 个硬实例（Z1/Z2/Z3/Z8/X1/Y6/V3 在 CRD-001…CRD-008 的 formal_anchor 实例）＋条件硬 Z4 的 3 个实例（CRD-003/007/008 consumed_by），不扩张为一般先例（防扩宽条款 (i)）；DEC 及其余 12 个 kind 的 seed 期 E3 豁免仍须各自单独申请（条款 (ii)），本项批准不作为其援引依据。**Z4 的级别不被本裁决预设**：仍由 0.4 证据门槛判定，门槛未过则按 remediation_plan (a) 降软＋取注册表保守默认，该 3 个实例出栈以简记留痕而非静默缩减。**Z5（软）与 Z7（升级型）维持明列排除**：批准不将其纳入豁免面（E3 只约束 property(hard)），亦不改变二者级别与信号判据。deadline 为事件型（LRM＝编译器首次成功运行），不虚构日历期限（0.4 禁假精确）；超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver（条款 (iii)）。另记三项不被本裁决预设的未决事项：(1) E3 的守护规则条目仍未建立、级别未定；(2) remediation_plan (b) 的四个未登记谓词（Z1 explicitly_modeled、X1 covers、Z4 sla_bound、Z5 registered_max_depth）之 R2 登记（MJ-19 (i) 裁决为不扩词）属注册表变更，须走完整 ADR＋批准，本裁决不代替该批准、不授权任何批次本地扩词；(3) Z3 面已因 MJ-17 (iii) 的 requires 由 CRD 侧单方承载而可全量求值，批准不改变该证据口径。**日期口径据实记载（跨 2 日）**：申请登记日为 2026-09-24（紧接 WV-CSL-E3-01 批准提交 7ca5429），人类裁决日为 2026-09-26（CRD 批入库提交 a44eeef 之后），不回填为同日——已发布登记不改写（0.22 承诺一），禁止假精确（0.4）。"
       anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（DEC 及其余 12 个 kind）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前三项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前三项累计覆盖 41 条 seed 条目，四项**独立生效、独立闭合、互不援引**；同名性质（Z3/Y6/V3）在不同批次的引用面各自计息，不合并豁免。本项亦不预设两个未决事项的结果：E3 的守护规则条目仍未建立、级别未定；Z4 的条件硬级别仍待 0.4 证据门槛判定（remediation_plan (a)）。"
     status: active             # SM-WV：pending → active（2026-09-26 批准生效，豁免期内）；闭合条件见 remediation_plan (3)；CRD 八条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
+
+  - waiver_id: WV-DEC-E3-01
+    rule: "E3（母本 @4008）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"
+    violation_fact: "DEC 批 8 条条目（DEC-001…DEC-008，2.2.1 八策略表行序 S1…S8，按 MJ-13 (iv)）经 ST-DEC-01 迁移为 seed（人工种子通道，0.17.6(1)），其 formal_anchor 引用的硬性质（2.5 的 W1 每单元有 seam、W2 每单元可独立验证、W4 数据单一所有者、W7 主策略选择有完整 ADR 批准；1.5 的 X1 无未登记跨单元交互；4.5 的 Y1 单一所有者或已批准共享写例外；5.5 的 Z1 显式建模＋契约在册）尚无 FVR 条目与检查程序接线：本目录的 scripts/project.py 只做注册表静态自检（M2/M3/M4/M6/M9 + C 系列），不是 FVR 运行器，也不产生 first_full_run 证据 → 『引用 seed 条目的性质』不满足 E3 的 wired ∧ first_full_run has evidence。合法性出处：0.17.6(2)（母本明文规定 seed 期本项按 Waiver 机制登记限期豁免）。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道，五要素齐备＋批准），不沿用前四项、不自动生效。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 DEC-001…DEC-008 八条的 formal_anchor 所引用的硬性质实例，共 7 项 31 个实例——W1 每单元有 seam（DEC-001…008 consumed_by，8 个）、W2 每单元可独立验证（DEC-001…008 consumed_by，8 个）、W4 数据单一所有者（DEC-004 implements、DEC-003 consumed_by，2 个）、W7 主策略选择有完整 ADR 批准（DEC-001…008 consumed_by，8 个）、X1 无未登记跨单元交互（DEC-001/002/003 consumed_by，3 个）、Y1 单一所有者或已批准共享写例外（DEC-004 consumed_by，1 个）、Z1 显式建模＋契约在册（DEC-003 consumed_by，1 个）；级别依据＝母本各性质行明文标注（W1 @1713『可测试性硬约束（0.15 冻结项，来自方面6）—— 硬』、W2 @1714『硬』、W4 @1717『硬』、W7 @1722『硬』、X1 @2009『硬』、Y1 @2279-2280『硬』、Z1 @2575-2576『硬』）。另 **W3 认知负荷上界为条件硬**（2.5 @1715-1716 明文：capacity_evidence_sufficient(team(M)) 证据门槛满足时为硬，否则降软走保守界；2.2.3 准则二同旨并附双向防护『防假精确绕过——Agent 编造的精确容量数字不构成硬化依据』），其 8 个实例（DEC-006 implements，DEC-001/002/003/004/005/007/008 consumed_by）按条件硬一并纳入本项 scope，级别最终由 0.4 证据门槛判定而非本 Waiver 预设。**不在本项 scope 内**：W5（2.5 @1718-1719 明定『软』：DSM 最优但语义破碎 → 语义赢，标记评审；DEC-001 consumed_by，1 个实例）与 W6（2.5 @1720-1721 明定『软』：接口/实现比劣化 → P2 技术债信号，方面 9 消费；DEC-003 consumed_by，1 个实例）——E3 只约束 property(hard)，软性质不产生 E3 义务，故不计入豁免面（明列排除共 2 个实例）。不含 active 条目、不含 STY 批（WV-STY-E3-01 承担）、不含 OWN 批（WV-OWN-E3-01 承担）、不含 CSL 批（WV-CSL-E3-01 承担）、不含 CRD 批（WV-CRD-E3-01 承担）、不含其余 12 个 kind 批次（各批另单独申请）、不含 E3 以外的编译规范性质（E1/E2/E4 不在本 Waiver 范围）。口径注：前四项 scope 均为其各自批准时点（2026-09-18 seed 仅 STY 24 条；2026-09-22 seed 为 STY＋OWN 28 条；2026-09-24 seed 为 STY＋OWN＋CSL 33 条；2026-09-26 seed 为 STY＋OWN＋CSL＋CRD 41 条）的口径，按防扩宽条款 (ii) 不随本批外延至 DEC 八条；DEC 八条的豁免范围由本项独立承担，五项 scope 互不重叠。**W1/W2/W7 专项口径**：W1（seam）与 W2（independently_verifiable）为 0.15 冻结项经 2.4 接收约束方面 6 行施加给方面 2 的横切硬约束，八条一律 consumed_by；前四批无任何条目引用 W1/W2/W7，故本项为该三面的首次登记，无前批引用面可援引。**W4/Y1 专项口径**：W4 的 implements 面由 DEC-004（按数据归属）承担，OWN-001（单一所有者/single writer）已在 WV-OWN-E3-01 覆盖其对 Y1 的引用面，本项只覆盖 DEC-004 的 consumed_by 实例（1 个）与 DEC-004 的 W4 implements／DEC-003 的 W4 consumed_by（2 个），两项不互相援引、不重复计息。**X1/Z1 专项口径**：X1 已由 WV-STY-E3-01（STY 批引用面）与 WV-CRD-E3-01（CRD-001/002/004 consumed_by）分别覆盖，本项只覆盖 DEC-001/002/003 的 consumed_by 实例（3 个）；Z1 已由 WV-CRD-E3-01（CRD-001/002/003/004 implements）覆盖，本项只覆盖 DEC-003 的 consumed_by 实例（1 个）。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径同前四项：(1) project.py 自检全过（本批，见 ST-DEC-01 evidence）→ (2) 编译器对 seed 条目执行『人工条目 vs 编译条目』重验证，差异按 0.17.6(3) 三分类处置 → (3) 建立 FVR 条目并为 W1/W2/W3/W4/W7/X1/Y1/Z1 接线，首次全量运行留证（E3 的 first_full_run has evidence）→ (4) 逐条 seed→active（diff 为空 = 低影响简记；diff 非空按三分类分别定级）。本 Waiver 在 (3) 完成时闭合。本批特有前置：(a) **W3 先定级再接线**——W3 为条件硬，(3) 的接线范围取决于 capacity_evidence_sufficient(team(M)) 是否过 0.4 证据门槛（可观测、可验证、有出处且无争议）；门槛未过则 W3 降软＋走 2.2.3 准则二的 CH-B1 保守默认值＋保守假设 ADR＋可推翻指标（**不阻塞**），本项 scope 内 W3 的 8 个实例随之出栈，不需接线，该出栈以简记留痕而非静默缩减。(b) **母本 2.5 公式内谓词的 R2 登记**——W3 的 capacity_evidence_sufficient、W5 的 dsm_optimal/semantically_coherent/flag_for_review、W6 的 interface_cost/cohesion_gain/tech_debt_flag 共七词均逐字见于母本 2.5 性质公式内（@1715-1721）而未入 predicate_vocabulary.yaml 的 clause_defined_predicates，与 MJ-19 (i) 四词同型（裁决与理由见 MJ-20 (iii)：不扩词，因扩词将触发 signal_level 改级须走完整 ADR＋批准）→ W3 面在词汇补齐前无法机器求值，(3) 的全量运行证据只能覆盖 W1/W2/W4/W7/X1/Y1/Z1 中已登记谓词面（seam／independently_verifiable／owned_by／approved／owner／dataset 均已登记；X1 的 covers 与 Z1 的 explicitly_modeled 沿用 CRD 批口径仍未登记）；补齐属注册表变更（走 R2 提议＋完整 ADR＋批准），不在本批执行，亦不以本 Waiver 的批准为前提。(c) **DEC-007 → STY-016 的关系方向不影响接线**——composable 的单向登记系 ENUM_RELATION 无 required_by 所致（MJ-20 (vii)），方向裁决属注册表变更，与 (3) 的性质接线相互独立。"
+    risk_quantification: "触及面：8 条 × formal_anchor 引用的硬性质，共 7 项 31 个硬性质实例（W1 8、W2 8、W7 8、X1 3、W4 2、Y1 1、Z1 1）＋ W3 条件硬 8 个实例。利息形态：硬性质违例的检出时机从『运行时/编译期自动检出』退化为『评审期人工核验』，检出延迟 = 一个决策周期；漏检后果按性质分级——W1 漏检 = 分解单元无可测试接口（seam），0.15 冻结项被事实上单方面撤销（方面 6 → 方面 2 硬约束，母本明文『双方不得单方面撤销』@294／@2863）；W2 漏检 = 不可独立验证的『单元』只是代码堆放（2.2.3 准则一明文『违反即阻塞』），方面 8 验证计划失去执行前提（2.4 施→8）；W3 漏检 = 单元规模超承载团队认知负荷上界（2.3 交付空间驱动：S6 是**所有策略的过滤器**，横切八条），级别待 0.4 证据门槛判定；W4 漏检 = 数据集合出现多所有者（2.4 施→4『分解边界 = 数据所有权边界』硬），S4 策略失去定义性约束；Y1 漏检 = 数据域单一所有者被绕过且无已批准共享写例外（4.5 @2279-2280 硬；例外须批准＋退出计划）；W7 漏检 = 主策略选择未走批准路径（完整 ADR），0.10 权力条款与 1.1 纪律二的机器面失守（2.3 双使用者条款：人类保留主策略选择权）；X1 漏检 = 跨单元交互未进契约注册表即定案（1.5 硬，契约密度不足）；Z1 漏检 = 跨单元交互未显式建模或契约不在册（5.5 硬，承接方面 2/3）。缓解：(i) 0.17.5 强制 ADR 附注『依据种子条目，待重验证』；(ii) 本批 P0/P1/P2 信号级判读带 2.5/1.5/4.5/5.5 性质指针与 MJ-4 判据留痕，可逐条人工复核（17 条 detection_predicate 全部标级，其中未登记谓词面按 MJ-12 取 P1 并留方括号占位，明记『补齐后升 P0』）；(iii) 2.2.1 八策略的 compatibility 面按 MJ-9 只登记母本有明文依据的对（同批三对 tension 双向镜像闭合、DEC-007 → STY-016 单向 composable），无明文依据者留空并在 MJ-20 (vii) 留痕，不静默造规范；(iv) project.py 的 M9/C-ST/C-ENV/M2/M3/M4/M6 静态自检覆盖 peer 存在性、状态资格、DEC 剖面 envelope 非空义务、pattern_id 与 target_aspect 形态、bound_expr 参数化（17 项）、谓词词汇封闭、references 分级七项可机器判定面（本批 DEC 八条 envelope 全部非空，M3 全过）；(v) 累计口径——本项与前四项合计覆盖 **49** 条 seed 条目，五项 scope 互不重叠，豁免面按批次逐项登记，不合并、不互相援引。"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经 WV-OWN-E3-01、WV-CSL-E3-01、WV-CRD-E3-01 复用的边界结论（0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免），本项不另启同一争点的重复裁决；按防扩宽条款 (i)，本项仅援引该结论适用于母本明文通道场合，不将其扩张为一般先例。"
+      status: pending         # 登记即申请（2026-09-26）；批准是人的裁决，Agent 与工具不自行批准——0.10 第一条 / 1.1 纪律二；approved_by/approved_date/ruling 三字段待人类裁决后填实
+    status: pending             # SM-WV：pending（待人工裁决）→ active；闭合条件见 remediation_plan (3)；DEC 八条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
 
 # ---------------------------------------------------------------------------
 # 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
@@ -3373,6 +4093,13 @@ manual_judgments:
     affected: "CRD-003/CRD-006 的 formal_anchor（Z5 角色分配）与 envelope（registered_max_depth／注册上限界形）；CRD-004-AP2 与 CRD-007-AP3 的 signal_level（P1，补齐后升 P0）；CRD-003-AP1 的 signal_level（P2）；CRD-007 的 envelope／cost_profile.latency_budget_delta／aggregation_semantics；predicate_vocabulary.yaml（本批不变，四词候选身份登记于此项）"
     provenance: manual
 
+  - id: MJ-20
+    subject: DEC 批八项判读——name 取策略列逐字、W/X/Y/Z 角色分配、母本公式内七词不扩词、数值参数化、书目行级覆盖面、聚合式不本地造法、compatibility 方向留裁决、位次锁定履行
+    judgment: "(i) **name 取 2.2.1 策略列逐字**：DEC-001…008 的 name 分别为『按业务领域／按技术层次／按业务能力／按数据归属／按变更频率／按团队认知负荷／按微服务粒度／按风险』，即母本 2.2.1 表首列去掉『S1…S8』编号前缀后的逐字文本（@1604-1611），不采叙述式改写（如『领域驱动分解』『风险隔离』），以免与 S 编号既成引用面失配（MJ-13 (iv) 表序裁决的配套）。定义列与主导驱动空间列的原文分别落 applicability 与 narrative，不在 name 内混合承载。(ii) **formal_anchor 角色分配**：W1（∀M: seam(M)，@1713）、W2（∀M: independently_verifiable(M)，@1714）、W7（∀主策略选择: ∃approved(完整ADR)，@1722）三性质为**全域量化**，八条策略均为其约束对象而非其承载者，故一律 consumed_by；W4（∀data d: |{M: owned_by(M,d)}| = 1，@1717）由 DEC-004『按数据归属』直接承载（2.2.1 定义列『凡读写某数据集合的逻辑归入其所有者单元』＝W4 的策略化表述，另见 @1689 方面 4 硬条目明文『分解边界 = 数据所有权边界（每个数据集合有且仅有一个所有者单元，即 W4）』），取 implements，DEC-003 取 consumed_by（业务能力项不天然满足数据唯一所有者，须消费 W4 校验）；W3（capacity_evidence_sufficient(team(M)) → cognitive_load(M) ≤ capacity(team(M))，@1715-1716）由 DEC-006『按团队认知负荷』直接承载（策略判据输入即团队认知负荷与容量的可行性校验），取 implements，其余七条 consumed_by（任何策略下的单元都须过 W3 门槛，2.6 示例三即联合不可行的裁决场景）；X1 取 consumed_by 于 DEC-001/002/003（三者产生跨单元调用面，须消费 1.5 X1 的覆盖性校验，母本 2.3 问题空间驱动第二行明文挂钩）；Y1 取 consumed_by 于 DEC-004（4.5 Y1 @2279-2280 的数据所有权与访问路径面由数据归属策略直接触发）；Z1 取 consumed_by 于 DEC-003（5.5 Z1 @2575-2576 的建模显式化要求）。W5（@1718-1719）／W6（@1720-1721）为**软性质**，本批分别由 DEC-001／DEC-003 以 consumed_by 承载（W5 的 dsm_optimal ∧ ¬semantically_coherent → flag_for_review 面在按业务领域分解下最易触发；W6 的 interface_cost > cohesion_gain → tech_debt_flag 面在按业务能力粗粒度切分下最易触发），二者**不计入** WV-DEC-E3-01 的硬性质 scope（该 Waiver scope 明列排除 2 实例）。另注：7.x 走查中出现的『W6 与 volatility 硬绑定』属方面 7 的绑定形态（变更频率判据 → 接口成本评估），与 2.5 W6 公式面（interface_cost／cohesion_gain）不同源，故 DEC-005 不锚 W6，避免把方面级绑定冒充为性质级 implements。(iii) **母本公式内七词本批不登记入 predicate_vocabulary.yaml，维持方括号占位**：capacity_evidence_sufficient／cognitive_load（W3 @1715-1716）、dsm_optimal／semantically_coherent／flag_for_review（W5 @1718-1719）、interface_cost／cohesion_gain／tech_debt_flag（W6 @1720-1721）——注：cognitive_load 已在既有词汇表内，其余七词中 capacity_evidence_sufficient／dsm_optimal／semantically_coherent／flag_for_review／interface_cost／cohesion_gain／tech_debt_flag 为 R2 可提议的登记候选，与 MJ-19 (i) 四词同型（均逐字出现于母本性质公式内，属 clause_defined_predicates 同型面，非 MJ-12 意义的本地造词）。不扩词的理由仍是**后果而非资格**：登记将触发相关 anti_patterns 的 signal_level 由 P1 升 P0（守护规则改级），按 0.14＋SO-2／G-STY-4 须走完整 ADR＋批准，不在数据批次内自行执行；应与 MJ-19 (i) 四词、SO-4 补齐动作合并为**一个独立的词汇批次**统一裁决。不新增 VG 编号（VG-01…VG-04 已覆盖该处置形态）。M4 面以半角方括号包裹（outside_brackets 剔除），本批自检 M4 全过。(iv) **母本逐字数值可引但须参数化**：`N 默认 3`（2.2.1 S7 行的微服务粒度提示）、`≤ 30`（2.4 施加项的人数上界）等为母本明文给出的具体数值，引用合法（0.17.7 门槛 2 只禁无出处数值），但 bound_expr 一律以参数化形态表达（『≤ N（默认 3）』『≤ 团队规模上界（母本给 30）』）而非写死为唯一界（MJ-19 (ii) 同型）；合规族/安全族的目标值以『= 0』『上界为 1』形态表达（M3 的 CONCRETE_NUM_RE 命中 `%`／`％` 等量纲数值即 fail，而 `= 0`／`≤ 1` 无量纲，合法）。(v) **书目行级覆盖面结论**：母本 5.7 中与方面二相关的登记面，按行级可引者仅三行——S1（书目 7 Evans『S1 领域驱动分解；2.2.2 语义边界判据』@1870、书目 24 Brandolini『事件风暴识别限界上下文（S1 的操作化技术）』@1893）、S5（书目 15 Parnas 1979『为变化而设计；S5 的理论依据』@1881；书目 14 Parnas 1972 本为 2.2.2 节级面 @1880，依母本 2.3 问题空间驱动第二行『S5 可用（信息隐藏判据的操作化）』的**明文挂钩**引为 S5 支撑，属节级面经明文挂钩下沉，非自行下探）、S6（书目 9 Team Topologies 2nd『S6 团队认知负荷；1.3 交付空间硬过滤器』@1872；书目 17 Conway @1883 为 narrative_only，不得充决策性出处）。S2/S3/S4/S7/S8 五行**无行级登记面** → DEC-002/003/004/007/008 的 references 保持 `[]`（M6 空集平凡通过），缺口登记 G-DEC-1＋SO-8。不下探纪律承 G-CSL-1／G-CRD-1：书目 10（2.2.3 seam 理论基础 @1873）、11（2.2.4 DSM 方法论 @1874）、18（DSM 原始论文 @1884）、26（Lattix，narrative_only @1895）、8（Vernon，2.4 施加项 @1871）、6（Martin，1.2.1 @1869）六项均为**节级或表级面**，不得充当行级出处；其中书目 10／11／18 可否下探列为 G-DEC-1 route 的人工裁决口。(vi) **aggregation_semantics 一律取 itemwise**：母本未给 DEC 跨单元/跨策略的聚合式（2.2.1 表为策略并列，无加和、无加权、无 max 语义；2.6 示例三给的是**联合可行性裁决**而非聚合运算），故八条一律取 itemwise（逐项独立求值），不本地造聚合语义（MJ-19 (iii) 同型；0.4 禁假精确＋零新增规范命题）；ENUM_AGG 的 additive／grouped_max／weighted_avg 三值在本 kind 无母本消费路径。(vii) **compatibility 登记纪律**：只登记母本有明文依据的对（MJ-9）。本批登记三对 tension 且均双向镜像——DEC-001↔DEC-006（2.6 示例一：领域边界与团队边界的张力）、DEC-001↔DEC-002（2.2.2：语义边界与技术层次的张力）、DEC-003↔DEC-004（2.6 示例二相关：业务能力粒度与数据归属的张力）；DEC-007→STY-016 登记为单向 composable（**方向问题留人工裁决**：ENUM_RELATION 无 required_by，若写 requires 会读作『S7 要求微服务』，与母本 2.2.1『单体 → S7 退化』的明文相矛盾；STY-016 侧镜像不擅改已批准条目，故待裁决，见 ST-DEC-01 condition 与 MJ-17 (iii)『requires 由一侧单方承载』）；DEC-005／DEC-008 的 compatibility 为空集——2.6 示例二的 S1/S2 是**处置次序**（先按领域再按层次落地）而非策略间张力，示例三是**事实集合的联合不可行**（团队容量 × 单元数 × 运维负荷），二者均非两两策略对，不得为凑数而登记。(viii) **位次锁定与索引消费**：MJ-16 (i)（数值索引消费字段 → 列表项顺序不得调换）在 DEC 批的具体履行＝母本正例 20-1（@866-886，经 MJ-15 R2 修订后）消费 `DEC-05.applicability.problem_space[1]`，故 DEC-005 的 applicability.problem_space 列表**第 2 项**为被消费的数值索引位，本批已锁定其位次并在条目内行内注留痕，后续批次不得调换该列表项顺序；MJ-18 (iii)（符号下标只要求存在性，不要求唯一或有序）适用于其余七条的 applicability 列表。"
+    basis: "母本 2.2.1 八策略表（@1604-1611）、2.2.2／2.2.3／2.2.4、2.3 问题空间驱动（第二行）、2.4 施加项、2.5 可验证性质块（@1713-1725）、2.6 示例一/二/三、方面 4 硬条目（@1689）、1.5 X1（@2009）、4.5 Y1（@2279-2280）、5.5 Z1（@2575-2576）、5.7 书目（@1869/1870/1871/1872/1873/1874/1880/1881/1883/1884/1893/1895）、正例 20-1（@866-886）；predicate_vocabulary.yaml（meta.note＋VG-01…VG-04）；project.py M3（REL_OPS／REL_WORDS／CONCRETE_NUM_RE）、M4（outside_brackets）、M6（空集平凡通过）、M9；profiles.yaml ENUM_RELATION／ENUM_AGG／ENUM_LEVEL；README §2（注册表级信息入台账）；MJ-4／MJ-9／MJ-12／MJ-13 (iv)／MJ-14／MJ-15／MJ-16 (i)(iii)／MJ-17 (iii)／MJ-18 (iii)／MJ-19 (i)(ii)(iii)；G-CSL-1／G-CRD-1（表级面不下探）；SO-2／SO-4／G-STY-4；0.4（禁假精确）／0.14（不许运行时即兴改级）／0.17.6／0.17.7 门槛 2、6"
+    affected: "DEC-001…008 的 name／applicability（含 DEC-005 problem_space[1] 位次锁定）／envelope 的 bound_expr／cost_profile.aggregation_semantics／compatibility／formal_anchor（W3／W4 的 implements 分配，W5／W6 的软性质排除）／references（五条留空）／anti_patterns 的 signal_level；predicate_vocabulary.yaml（本批不变，七词候选身份登记于此项）；G-DEC-1／SO-8；WV-DEC-E3-01 的 scope 口径"
+    provenance: manual
+
 # ---------------------------------------------------------------------------
 # 五、未闭合的冲突矩阵行（1.2.5 是风格条目的强制元数据；peer 条目未建者不得
 #     写入 compatibility —— M9 要求 peer_entry 存在。此节为待回填台账。）
@@ -3448,6 +4175,14 @@ survey_obligations:
     kind: 入库期
     obligation: "补勘 5.2.2 表内『流程管理器（process manager）』与『预扣/预留（reservation）』两行的行级书目登记面：母本 5.7 中与方面五相关的四项登记面均不覆盖该两行（书目 44 覆盖 5.2.1/5.2.3、书目 45 覆盖 5.2.1 协调风格二分、书目 47 行级指向 5.2.2 的 Saga 两行、书目 50 为 narrative_only 且登记面为 5.6 示例三），故 CRD-007/CRD-008 的 references 保持空列表。补入须走母本 5.7 参考文献表扩充（0.12『扩充』语义裁决 + 高影响批准，走 R2/ADR）；另须先经人工裁决『书目 47 的 Saga 登记面可否依 5.2.2 定义列的「编排式 Saga 的泛化」文句下探至流程管理器行』（G-CRD-1 route，G-STY-5/G-CSL-1 同型）——裁决为可则 CRD-007 补书目 47 并撤销该项，裁决为否则维持留空。表级面不下探纪律承 G-CSL-1：本项不得以 kind 级或表级登记面充当行级出处。"
     gap_ref: G-CRD-1
+    consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
+    trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
+    status: open
+
+  - obligation_id: SO-8
+    kind: 入库期
+    obligation: "补勘 2.2.1 八策略表内 S2（按技术层次）／S3（按业务能力）／S4（按数据归属）／S7（按微服务粒度）／S8（按风险）五行的行级书目登记面：母本 5.7 中与方面二相关的十二项登记面里，行级可引者仅覆盖 S1（书目 7 Evans、书目 24 Brandolini）、S5（书目 15 Parnas 1979；书目 14 Parnas 1972 依 2.3 问题空间驱动第二行明文挂钩下沉）、S6（书目 9 Team Topologies 2nd；书目 17 Conway 为 narrative_only），该五行无行级面，故 DEC-002／DEC-003／DEC-004／DEC-007／DEC-008 的 references 保持空列表（M6 在空集上平凡通过，非豁免）。补入须走母本 5.7 参考文献表扩充（0.12『扩充』语义裁决 + 高影响批准，走 R2/ADR）；另须先经人工裁决『书目 10 的 2.2.3 seam 理论基础面、书目 11／18 的 2.2.4 DSM 方法论面可否下探至相关策略行』（G-DEC-1 route，G-STY-5／G-CSL-1／G-CRD-1 同型）——裁决为可则相应条目补引并撤销该项，裁决为否则维持留空。表级/节级面不下探纪律承 G-CSL-1／G-CRD-1：书目 6（1.2.1）、8（2.4 施加项）、26（Lattix，narrative_only）等节级面不得充当行级出处，本项不得以 kind 级或表级登记面充数。"
+    gap_ref: G-DEC-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
     status: open
