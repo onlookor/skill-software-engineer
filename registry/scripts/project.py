@@ -1275,6 +1275,17 @@ def _flat(v, limit: int = 100) -> str:
     return _first_sentence(s.replace('\n', ' '), limit)
 
 
+def _kind_census(entries: list) -> list:
+    """按入库序（kind 首次出现序）统计 [(kind, count)]。数据全部来自 entries 本身。"""
+    order, cnt = [], {}
+    for e in entries:
+        k = e.get('kind')
+        if k not in cnt:
+            order.append(k)
+        cnt[k] = cnt.get(k, 0) + 1
+    return [(k, cnt[k]) for k in order]
+
+
 def render_survey(ctx: dict) -> str:
     """勘察义务清单.md：Part A 决策期占位符逐条枚举 + Part B 入库期 SO 台账。"""
     reg_doc, ph, tm = ctx['reg_doc'], ctx['placeholders'], ctx['trust_marks']
@@ -1326,9 +1337,15 @@ def render_self_check(ctx: dict) -> str:
     verdicts: dict = {}
     for s in seeds.values():
         verdicts[s['verdict']] = verdicts.get(s['verdict'], 0) + 1
+    wvs = reg_doc.get('waivers') or []
+    e3w = [w for w in wvs if 'E3' in str(w.get('rule'))]
+    e3txt = ('E3 面见台账 waivers：'
+             + '、'.join(f'{w.get("waiver_id")}（{w.get("status")}）' for w in e3w)
+             + '——各项独立生效、互不援引，scope 与闭合条件以台账原文为准'
+             ) if e3w else 'E3 面台账 waivers 节暂无登记项'
     L = ['# 自检报告（注册表静态自检）', '', GEN_NOTE, '',
          '判据出处：README §5 检查矩阵；条款权威见 project.py 头注。'
-         '本报告是**静态自检**，不是 FVR 运行器（E3 面见 Waiver WV-STY-E3-01）。', '',
+         f'本报告是**静态自检**，不是 FVR 运行器（{e3txt}）。', '',
          '## 汇总', '',
          f'- 硬检查：通过 **{n_hard_ok}** 项／失败 **{len(hard_f)}** 项；软警告 {len(soft_f)} 项',
          f'- 条目：{len(entries)} 条；事实占位符合计 {n_ph} 处（逐条枚举见 勘察义务清单.md）',
@@ -1367,11 +1384,16 @@ def render_self_check(ctx: dict) -> str:
               f'本次运行{"满足" if ev_ok else "**不满足**"}其 evidence 约定'
               + ('' if ev_ok else ' → 按 C-ST 回落 status: draft（禁止静默迁移）'),
               f'  - evidence 原文：{_flat(t.get("evidence"), 120)}', '']
-    for w in reg_doc.get('waivers') or []:
+    for w in wvs:
         ap = w.get('approval') or {}
+        dl = w.get('deadline') or {}
         L += [f'- **{w.get("waiver_id")}**（{w.get("status")}；批准状态 {ap.get("status")}，'
               f'类目「{_flat(ap.get("category"), 40)}」）：规则「{_flat(w.get("rule"), 60)}」。'
-              'Waiver 批准是人的裁决（9.2.2），本工具与 Agent 不自行批准。', '']
+              'Waiver 批准是人的裁决（9.2.2），本工具与 Agent 不自行批准。',
+              f'  - scope（起首摘录，超长以 … 标记截断）：{_flat(w.get("scope"), 110)}',
+              f'  - 时限：type={dl.get("type")}｜lrm={_flat(dl.get("lrm"), 60)}｜'
+              f'calendar_date={dl.get("calendar_date") or "（未给日历日期，以事件定 LRM）"}',
+              f'  - remediation_plan（起首摘录，超长以 … 标记截断）：{_flat(w.get("remediation_plan"), 110)}', '']
     mjs = reg_doc.get('manual_judgments') or []
     L += [f'- **人工判断台账（MJ）**：{len(mjs)} 项在案（' + '、'.join(str(m.get('id')) for m in mjs) + '）。',
           f'- **缺口台账（gaps）**：{len(reg_doc.get("gaps") or [])} 项；'
@@ -1385,79 +1407,103 @@ def render_self_check(ctx: dict) -> str:
     return '\n'.join(L)
 
 
-def render_sty(ctx: dict) -> str:
-    """STY.md：四子维度分块（SUBDIM_ORDER），每条一张紧凑卡片。
+def _entry_card(e: dict, ctx: dict) -> list:
+    """单条目紧凑卡片（kind 无关）：只投影 yaml 既有字段，不新增任何事实。"""
+    seeds, layers = ctx['seeds'], ctx['layers']
+    eid = str(e.get('entry_id'))
+    s = seeds[eid]
+    v = e.get('version') or {}
+    L = [f'### {eid}｜{e.get("name")}', '',
+         f'- **状态** {e.get("status")}（seed 资格：{s["verdict"]}）｜'
+         f'**版本** {v.get("major")}.{v.get("minor")}.{v.get("patch")}｜'
+         f'**可逆性** {e.get("typical_reversibility")}｜**origin** {(e.get("provenance") or {}).get("origin")}',
+         '- **源行**：' + ('、'.join(entry_row_names(e)) or '（无 row_id 源行）')]
+    for it in e.get('envelope') or []:
+        L.append(f'- **envelope** {it.get("metric")}：`{it.get("bound_expr")}`')
+    cp = e.get('cost_profile') or {}
+    if cp:
+        ops = ' '.join(str(cp.get('ops_cost') or '').split()).strip('[]')
+        L.append(f'- **成本**：ops_cost＝{_clip(ops, 70)}｜'
+                 f'聚合语义={cp.get("aggregation_semantics")}')
+    aps = e.get('anti_patterns') or []
+    if aps:
+        sig: dict = {}
+        for ap in aps:
+            sig[ap.get('signal_level')] = sig.get(ap.get('signal_level'), 0) + 1
+        L.append(f'- **反模式** {len(aps)} 项（' + '／'.join(f'{k}×{n}' for k, n in sorted(sig.items())) + '）：'
+                 + '；'.join(f'{ap.get("pattern_id")} {_first_sentence(ap.get("description"), 36)}' for ap in aps))
+    comp = e.get('compatibility') or []
+    if comp:
+        L.append('- **兼容性**：' + '、'.join(f'{c.get("peer_entry")}({c.get("relation")})' for c in comp))
+    cons = e.get('constraints_imposed') or []
+    if cons:
+        parts = []
+        for c in cons[:4]:
+            ta = c.get('target_aspect')
+            lab = f'方面 {ta}' if isinstance(ta, int) else str(ta)
+            parts.append(f'{lab}←{_first_sentence(c.get("constraint"), 36)}')
+        L.append(f'- **施加约束** {len(cons)} 项：' + '；'.join(parts)
+                 + ('…' if len(cons) > 4 else ''))
+    fa = e.get('formal_anchor') or []
+    if fa:
+        L.append('- **formal_anchor**：' + '、'.join(f'{a.get("property_id")}({a.get("role")})' for a in fa))
+    refs = e.get('references') or []
+    if refs:
+        L.append('- **参考文献**：' + '、'.join(
+            f'bib {r.get("bib_id")} {r.get("trust_grade")}·{r.get("compile_usage")}' for r in refs))
+    nar = e.get('narrative') or {}
+    if nar.get('benefit_cost_analysis'):
+        L.append(f'- **叙事（收益-成本）**：{_first_sentence(nar.get("benefit_cost_analysis"), 100)}')
+    lay = layers.get(eid) or {}
+    if lay:
+        L.append('- **数据来源层**（yaml 行内注释）：'
+                 + '；'.join(f'{f}: ' + '/'.join(labs) for f, labs in lay.items()))
+    L.append('')
+    return L
+
+
+def render_entry_cards(ctx: dict) -> str:
+    """STY.md：全部条目的人类层卡片视图，按 kind 入库序分块。
+    STY 块内保留四子维度分块（SUBDIM_ORDER，README §4 裁决 MJ-1）；其余 kind 各一块，
+    块标题的源表号取自 provenance.source_pointers 的 row_id 前缀（客观事实，非自撰名称）。
     机器层权威 = method_registry.yaml；本投影只作人类阅读面，不新增任何事实。"""
-    entries, seeds, layers = ctx['entries'], ctx['seeds'], ctx['layers']
-    reg_doc, prof_status = ctx['reg_doc'], ctx['prof_status']
+    entries, reg_doc, prof_status = ctx['entries'], ctx['reg_doc'], ctx['prof_status']
     meta = reg_doc.get('meta') or {}
-    L = ['# STY 架构风格条目（人类层投影）', '', GEN_NOTE, '',
+    rv = meta.get('registry_version') or {}
+    census = _kind_census(entries)
+    L = ['# 方法条目卡片（人类层投影）', '', GEN_NOTE, '',
          f'- 批次：{meta.get("batch")}',
-         f'- 版本：registry_version {meta.get("registry_version", {}).get("major")}.'
-         f'{meta.get("registry_version", {}).get("minor")}.{meta.get("registry_version", {}).get("patch")}',
-         '- 编号：README §4 裁决的分块序，锚定 STY-004（母本反例 18-A 既有引用一致，MJ-1）；母本零改动。',
+         f'- 版本：registry_version {rv.get("major")}.{rv.get("minor")}.{rv.get("patch")}',
+         f'- 条目：合计 {len(entries)} 条＝' + '＋'.join(f'{k} {n} 条' for k, n in census),
+         f'- kind 覆盖：{meta.get("kind_coverage")}',
+         '- 文件名沿用 README §6 既定产物名 `STY.md`（该产物首块 kind 为 STY 时的历史命名）；'
+         '改文件名属规范面变更，须走 ADR＋人工批准，本投影不自行改名。',
+         '- 编号：STY 块内分块序为 README §4 裁决，锚定 STY-004（母本反例 18-A 既有引用一致，MJ-1）；母本零改动。',
          '- 卡片仅为紧凑投影；字段全量与逐字措辞以 method_registry.yaml 为准。', '']
-    by_sub: dict = {}
+    by_kind: dict = {}
     for e in entries:
-        by_sub.setdefault(entry_subdim(e), []).append(e)
-    for sub in SUBDIM_ORDER:
-        group = sorted(by_sub.get(sub, []), key=lambda x: str(x.get('entry_id')))
-        if not group:
-            continue
-        pstat = prof_status.get(group[0].get('kind'))
-        L += [f'## {SUBDIM_NAME.get(sub, sub)}', '',
-              f'（{group[0].get("entry_id")}–{group[-1].get("entry_id")}，共 {len(group)} 条；'
-              f'kind_profile_STY status={pstat}）', '']
+        by_kind.setdefault(e.get('kind'), []).append(e)
+    for k, n in census:
+        group = sorted(by_kind[k], key=lambda x: str(x.get('entry_id')))
+        subs: dict = {}
         for e in group:
-            eid = str(e.get('entry_id'))
-            s = seeds[eid]
-            v = e.get('version') or {}
-            L += [f'### {eid}｜{e.get("name")}', '',
-                  f'- **状态** {e.get("status")}（seed 资格：{s["verdict"]}）｜'
-                  f'**版本** {v.get("major")}.{v.get("minor")}.{v.get("patch")}｜'
-                  f'**可逆性** {e.get("typical_reversibility")}｜**origin** {(e.get("provenance") or {}).get("origin")}',
-                  '- **源行**：' + ('、'.join(entry_row_names(e)) or '（无 row_id 源行）')]
-            for it in e.get('envelope') or []:
-                L.append(f'- **envelope** {it.get("metric")}：`{it.get("bound_expr")}`')
-            cp = e.get('cost_profile') or {}
-            if cp:
-                ops = ' '.join(str(cp.get('ops_cost') or '').split()).strip('[]')
-                L.append(f'- **成本**：ops_cost＝{_clip(ops, 70)}｜'
-                         f'聚合语义={cp.get("aggregation_semantics")}')
-            aps = e.get('anti_patterns') or []
-            if aps:
-                sig: dict = {}
-                for ap in aps:
-                    sig[ap.get('signal_level')] = sig.get(ap.get('signal_level'), 0) + 1
-                L.append(f'- **反模式** {len(aps)} 项（' + '／'.join(f'{k}×{n}' for k, n in sorted(sig.items())) + '）：'
-                         + '；'.join(f'{ap.get("pattern_id")} {_first_sentence(ap.get("description"), 36)}' for ap in aps))
-            comp = e.get('compatibility') or []
-            if comp:
-                L.append('- **兼容性**：' + '、'.join(f'{c.get("peer_entry")}({c.get("relation")})' for c in comp))
-            cons = e.get('constraints_imposed') or []
-            if cons:
-                parts = []
-                for c in cons[:4]:
-                    ta = c.get('target_aspect')
-                    lab = f'方面 {ta}' if isinstance(ta, int) else str(ta)
-                    parts.append(f'{lab}←{_first_sentence(c.get("constraint"), 36)}')
-                L.append(f'- **施加约束** {len(cons)} 项：' + '；'.join(parts)
-                         + ('…' if len(cons) > 4 else ''))
-            fa = e.get('formal_anchor') or []
-            if fa:
-                L.append('- **formal_anchor**：' + '、'.join(f'{a.get("property_id")}({a.get("role")})' for a in fa))
-            refs = e.get('references') or []
-            if refs:
-                L.append('- **参考文献**：' + '、'.join(
-                    f'bib {r.get("bib_id")} {r.get("trust_grade")}·{r.get("compile_usage")}' for r in refs))
-            nar = e.get('narrative') or {}
-            if nar.get('benefit_cost_analysis'):
-                L.append(f'- **叙事（收益-成本）**：{_first_sentence(nar.get("benefit_cost_analysis"), 100)}')
-            lay = layers.get(eid) or {}
-            if lay:
-                L.append('- **数据来源层**（yaml 行内注释）：'
-                         + '；'.join(f'{f}: ' + '/'.join(labs) for f, labs in lay.items()))
-            L.append('')
+            subs.setdefault(entry_subdim(e), []).append(e)
+        pstat = prof_status.get(k)
+        order = [s for s in SUBDIM_ORDER if s in subs] + sorted(s for s in subs if s not in SUBDIM_ORDER)
+        if k == 'STY':
+            for sub in order:
+                g2 = subs[sub]
+                L += [f'## {SUBDIM_NAME.get(sub, sub)}', '',
+                      f'（{g2[0].get("entry_id")}–{g2[-1].get("entry_id")}，共 {len(g2)} 条；'
+                      f'kind_profile_STY status={pstat}）', '']
+                for e in g2:
+                    L += _entry_card(e, ctx)
+        else:
+            L += [f'## kind {k}（源表 {"、".join(order)}）', '',
+                  f'（{group[0].get("entry_id")}–{group[-1].get("entry_id")}，共 {n} 条；'
+                  f'kind_profile_{k} status={pstat}；块内按 entry_id 升序）', '']
+            for e in group:
+                L += _entry_card(e, ctx)
     return '\n'.join(L)
 
 
@@ -1470,7 +1516,9 @@ def render_index(ctx: dict) -> str:
     L = ['# 方法注册表索引（投影）', '', GEN_NOTE, '',
          '## 产物（README §6）', '',
          '| 文件 | 内容 |', '|---|---|',
-         '| [STY.md](STY.md) | STY 24 条人类层投影（四子维度分块卡片） |',
+         f'| [STY.md](STY.md) | 方法条目卡片（人类层投影）：{len(entries)} 条＝'
+         + '＋'.join(f'{k} {n} 条' for k, n in _kind_census(entries))
+         + '；按 kind 入库序分块，STY 块内再分四子维度 |',
          '| [自检报告.md](自检报告.md) | 汇总＋逐条矩阵＋硬失败明细＋台账核对 |',
          '| [勘察义务清单.md](勘察义务清单.md) | 决策期占位符逐条枚举＋入库期 SO 台账 |',
          '| 索引.md（本文件） | meta、剖面状态、条目清单、台账全景 |', '',
@@ -1490,8 +1538,8 @@ def render_index(ctx: dict) -> str:
             r=len(m.get('required') or []), o=len(m.get('optional') or []),
             n=len(m.get('not_applicable') or []), u=len(m.get('undecided') or []),
             e=len(m.get('exemptions') or [])))
-    L += ['', '## 条目清单（本批）', '',
-          '| entry_id | kind | 子维度 | name | status | seed 资格 |',
+    L += ['', f'## 条目清单（全部 {len(entries)} 条）', '',
+          '| entry_id | kind | 子维度/源表 | name | status | seed 资格 |',
           '|---|---|---|---|---|---|']
     for e in entries:
         eid = str(e.get('entry_id'))
@@ -1584,7 +1632,7 @@ def main(argv=None) -> int:
     rep, ctx = run_checks()
     write_text('自检报告.md', render_self_check(ctx))
     if args.project:
-        write_text('STY.md', render_sty(ctx))
+        write_text('STY.md', render_entry_cards(ctx))
         write_text('勘察义务清单.md', render_survey(ctx))
         write_text('索引.md', render_index(ctx))
     hard_f, soft_f = rep.failures('hard'), rep.failures('soft')
