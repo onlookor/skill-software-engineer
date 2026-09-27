@@ -22,14 +22,14 @@
 meta:
   law_file: ../软件工程元框架成文法.md
   registry_version: {major: 1, minor: 0, patch: 0}
-  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）"
+  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）＋种子批次六：CTR（kind 前缀见 0.17.3）"
   schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
   kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
   seed_channel_source: {source_type: clause_id, value: "0.17.6", verified: true}
   metric_vocabulary_source: {source_type: clause_id, value: "6.2.1", verified: true}
   signal_level_source: {source_type: clause_id, value: "0.14", verified: true}
-  entry_count: 49
-  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）＋ DEC 全覆盖（2.2.1 全部 8 行）；其余 12 kind 待后续批次"
+  entry_count: 61
+  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）＋ DEC 全覆盖（2.2.1 全部 8 行）＋ CTR 全覆盖（3.2.1 全部 6 行＋3.2.2 全部 6 行）；其余 11 kind 待后续批次"
 
 entries:
 
@@ -3640,6 +3640,1004 @@ entries:
       typical_scenarios: "安全关键或合规关键子系统在案的场合（2.2.1 定义列：安全关键、合规关键）；监管条文可直接映射为可判定谓词的场合（6.2.1 合规族指标；量化纪律四类合法出处之『监管条文』）；须对高风险子系统施加更强验证并与方面 8 联动的场合（2.3 问题空间驱动第三行；8.2.1 验证计划生成）；与 S1/S6 联合可行性须裁决的场合（2.6 示例三：合规目标要求物理隔离）。"
       common_misuse: "高风险/合规关键子系统未隔离成独立单元，致更强验证无独立执行面（AP1，W2 违例）；隔离但未施加更强验证（2.2.1 定义列后半段丢失，与方面 8 联动断裂）；合规条款未映射为可判定谓词即以『已合规』结案（AP2；6.2.1 合规族指标面）；豁免物理隔离不经人类责任方裁决（2.6 示例三裁决选项之一；0.10 框架不自动回溯）；以风险隔离替代数据所有权定案（W4 仍横切适用，2.4 施→4）；把跨法人账套物理隔离形态当作本条目已覆盖（2.6 示例五：注册表缺口 → FM-3 → 0.13 缺口声明＋CH-D）。"
 
+  # ══════════ 方面三：契约与集成 · 3.2.1 契约形态 → CTR-001…CTR-006 ══════════
+  # ══════════ 方面三：契约与集成 · 3.2.2 契约治理 → CTR-007…CTR-012 ══════════
+  # 分块序：3.2.1 六形态按表行序 = CTR-001…006；3.2.2 六治理维度按表行序 = CTR-007…012（MJ-21 (ii)）。
+  # name 取源表首列逐字、去粗体标记（MJ-20 (i) 同型）。
+  # 3.5 机器层谓词七项（contract/sla_clause/breaking_change/deprecation_window/cdc_suite/covers/
+  # context_map）在 predicate_vocabulary.yaml 全部未登记 → detection_predicate 内一律以半角方括号
+  # 占位，不本地扩词（MJ-12／MJ-19 (i)／MJ-20 (iii) 同型；缺口面由 VG-04 承载。扩词须走 R2 →
+  # 母本修订＋完整 ADR＋批准，且涉 signal_level 改级 → 非本批权限，MJ-21 (v)）。
+  # 3.4 施加约束表方面 8 行级别列原文「软/硬按风格」→ ENUM_LEVEL 无复合取值，取 conditional
+  # （CRD 批 MJ-4 同型判读，逐条按本条目风格定硬化项，MJ-21 (x)）。
+
+  - entry_id: CTR-001
+    kind: CTR
+    name: "进程内接口"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.1 表行（形态/定义/适用条件/机器层天然性四列）＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.1-进程内接口", verified: true}
+        - {source_type: clause_id, value: "3.2.1", verified: true}   # 契约形态表（形态可行集由方面 1 子维度三收窄）
+        - {source_type: clause_id, value: "3.2.2", verified: true}   # 治理六维度（全体契约条目共用）
+        - {source_type: clause_id, value: "3.2.3", verified: true}   # 共享数据四条件（X6 判据源）
+        - {source_type: clause_id, value: "3.3", verified: true}     # 三空间驱动＋双使用者条款
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束六行＋施加约束六行
+        - {source_type: clause_id, value: "3.5", verified: true}     # 机器层谓词七项＋X1–X7
+        - {source_type: clause_id, value: "2.5", verified: true}     # seam 谓词（定义列明文「方面 2 的 seam 是其可验证投影」）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}     # 施→10：禁止双重维护
+        - {source_type: clause_id, value: "0.11", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 包络指标族（性能/可修改性）
+    typical_reversibility: bounded     # 人工判断：语言级接口重划须同步全部内部调用方（同编译/同部署单元内可一次完成），不跨部署边界、无外部消费者迁移面 → 非 costly；但 3.4 施→2 硬「已发布契约的边界冻结」在其承担跨模块契约职责时同样适用 → 不取 free
+    applicability:
+      problem_space:                   # 骨架源：3.2.1「适用条件」列＋3.3 问题空间驱动
+        - "单体/模块化单体的模块边界；任何风格的单元内部（3.2.1 适用条件列逐字）"
+        - "纯内部接口 → 契约稳定性要求可放宽（3.3 问题空间驱动第一行：非第三方开放场合；对外产品化场合不适用本形态）"
+      current_space:                   # 骨架源：3.3 现状空间驱动＋0.11
+        - "既有代码中的语言级接口是最强约束源：逆向勘察以静态分析提取为准，产出『现状契约清单』（3.3 现状空间驱动第一行；3.2.1 机器层天然性列『中（需静态分析提取）』）"
+        - "无文档的隐式接口（消费者实际依赖了未声明的行为）以代码与调用点观测为准，文档仅作线索（3.3 现状空间驱动第二行；公理 A1 在契约域的具体化）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动
+        - "消费者团队数量少且同团队 → 兼容性规则严格度可放宽（3.3 交付空间驱动第一行：单消费者同团队 → backward 可接受）"
+        - "[静态分析工具链能力在案（机器层天然性列为『中』：谓词面须工具提取才可得）——母本未给工具能力阈值 → 方括号占位（MJ-20 (iii) 同型）]"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "接口变更触达的调用方单元数 上界 = 该接口内部调用方集合的基数；跨边界契约变更数 = 0（3.2.1 适用条件列限定于模块边界与单元内部）→ > 0 即本形态被越界使用（3.4 接收约束方面 1 行：微服务 → 跨单元禁止以进程内调用为主手段）"
+        source: {source_type: row_id, value: "3.2.1-进程内接口", verified: true}
+      - metric: "性能：延迟分位数（P50/P99，P99 = 延迟分布第 99 百分位数）"
+        bound_expr: "进程内调用的延迟增量 下界为 0（无网络往返与跨进程序列化项）；同接口 P99 随调用方数量单调不减 → 跨单元延迟预算项归属方面 1 风格包络，本条不重复计入（0.8）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+    cost_profile:
+      latency_budget_delta: "无网络项——进程内调用的延迟增量为函数调用与序列化开销，下界为 0；跨单元延迟预算项属方面 1 风格包络（0.8），本条不重复计入"
+      failure_modes: ["跨单元以进程内调用为主手段（3.4 接收约束方面 1 行明文禁止 → 分布式单体信号，1.2.2 反模式；触发向方面 1 的重审提议）", "接口面未经静态分析提取即声称『无契约面』（机器层天然性列为『中』：缺工具即盲区，unknown 被当作 false，0.18.6 M15）", "以进程内接口承载跨边界数据流动、绕过数据契约（3.4 施→4 硬：数据契约的 schema 与语义条款是数据流动的唯一合法路径定义）", "接口变更未走 3.4 施→2 的边界冻结纪律（切割需求 → 弃用窗口＋绞杀者迁移）"]
+      consistency_impact: "同进程内调用天然共享事务边界 → 一致性级别由方面 4 的 Y 系列判定（CSL 批承载），本条不引入跨单元一致性代价项；一旦以进程内接口承载跨单元事务语义即违反 3.2.3 条件 3（不承载跨单元事务语义）→ X6 违例、分布式单体信号"
+      observability_requires: ["接口清单与调用方集合可查（静态分析提取面，3.2.1 机器层天然性列）", "接口所属单元与模块边界在案（2.5 seam 谓词的可验证投影）", "跨单元调用点的存在性可观测（3.4 接收约束方面 1 行的违例检测面）"]
+      ops_cost: "无独立运维面——进程内接口不产生独立部署/独立监控单元，运维成本随所属单元计入（0.8 包络不重复计项）"
+      skill_prerequisites: ["语言级接口设计与静态分析提取（3.2.1 机器层天然性列『中（需静态分析提取）』）", "seam 识别与可验证投影（2.5；方面 2 联动）", "契约边界与分解边界的对齐核验（3.4 接收约束方面 2 行：分解边界 = 契约边界＋上下文映射）"]
+      aggregation_semantics: itemwise  # 母本未给 CTR 的跨契约聚合式（MJ-19 (iii) 同型：不本地造法）→ 代价按接口逐项评估（MJ-20 (vi) 同型；MJ-21 (ix)）
+    compatibility:
+      - peer_entry: STY-016
+        relation: hard_conflict
+        evidence: {source_type: clause_id, value: "3.4", verified: true}   # 接收约束方面 1 行明文「微服务 → 跨单元禁止以进程内调用为主手段」（级别＝硬）。hard_conflict 为对称关系、本可镜像，但 STY-016 属已批准条目 → 不擅改，镜像回填留待人工裁决（MJ-20 (vii) 同型；MJ-21 (viii)）
+      - peer_entry: STY-014
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.4", verified: true}   # 接收约束方面 1 行明文「单体 → 进程内接口可用」
+      - peer_entry: STY-015
+        relation: composable
+        evidence: {source_type: row_id, value: "3.2.1-进程内接口", verified: true}   # 适用条件列明文「单体/模块化单体的模块边界」
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条为单元内部形态：契约测试取硬（seam 的可验证投影即测试面），CDC 与事件 schema 演化两项不适用（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-001-AP1
+        description: "跨单元以进程内调用为主手段（分布式单体信号）"
+        detection_predicate: "∃ u1, u2: unit(u1) ∧ unit(u2) ∧ connects(u1, u2, ·) ∧ [interaction(u1,u2) 以进程内调用为主手段] ∧ ¬[u1 与 u2 同属一个部署单元]"
+        signal_level: P0               # 3.4 接收约束方面 1 行级别＝硬，违例即 1.2.2 分布式单体反模式并触发向方面 1 的重审提议（3.2.3 同型处置）；落在 X1（硬）量化域内 → P0（MJ-4 判据）
+      - pattern_id: CTR-001-AP2
+        description: "接口面未经静态分析提取即声称无契约面（机器层盲区充作不存在）"
+        detection_predicate: "∃ u: unit(u) ∧ [u 的对外接口集合被声明为空] ∧ ¬[静态分析提取记录在案] ∧ ¬[接口清单在案]"
+        signal_level: P1               # 违反 3.2.1 机器层天然性列的提取要求与 0.18.6 M15（unknown ≠ false），但无 X 系列硬性质可直接绑定 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: W1, role: implements}      # 3.2.1 定义列明文「方面 2 的 seam 是其可验证投影」→ ∀M: seam(M)（2.5）的承载形态
+      - {property_id: X1, role: consumed_by}     # ∀ interaction ∈ connects: ∃C ∈ registry: covers(C,u1,u2)——单元内部交互不在 X1 量化域（跨单元），本形态是 3.4 接收约束方面 1 行的可行集成员
+      - {property_id: X2, role: consumed_by}     # ∀C: lifecycle_state = published → has(version) ∧ has(compat_policy)（3.2.2 版本化/兼容性两维度适用于全体形态）
+      - {property_id: X6, role: consumed_by}     # 3.2.3 条件 4「访问路径经数据契约暴露，禁止直连物理表/存储引擎」→ 以进程内接口直连他单元存储即违例
+    references: []                     # 母本 3.7 书目 28–34 无 3.2.1「进程内接口」行的行级登记提取面（28/29 → 3.2.2 CDC 与契约测试区分；30 → 同步 API 契约机器层格式；31 → 3.2.1 事件信封；32 → API 契约设计方法；33 → 3.2.2 schema registry 与兼容性规则；34 → 3.4 绞杀者迁移）→ 按 G-CRD-1／G-DEC-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-CTR-1，待人工裁决补勘后回填（SO-9）
+    narrative:
+      benefit_cost_analysis: "收益：延迟增量下界为 0（无网络往返与跨进程序列化），机器层可由静态分析直接提取，且与方面 2 的 seam 谓词同源（3.2.1 定义列）→ 0.9 双层表达无需双重维护；单体/模块化单体的模块边界与任何风格的单元内部均可用（3.2.1 适用条件列），是 3.4 接收约束方面 1 行明示的『单体 → 进程内接口可用』通道。代价：跨单元使用即触发 3.4 接收约束方面 1 行的硬禁止（微服务 → 跨单元禁止以进程内调用为主手段），违例即分布式单体信号并须向方面 1 发重审提议；机器层天然性仅为『中』（须静态分析提取），工具链缺位时接口面成为盲区；已发布接口同样受 3.4 施→2 边界冻结约束，重划须走弃用窗口＋绞杀者迁移，不因『内部接口』而豁免。"
+      typical_scenarios: "单体或模块化单体的模块边界（3.2.1 适用条件列）；任何风格的单元内部接口（同列）；棕地逆向勘察须以静态分析从代码提取现状契约清单的场合（3.3 现状空间驱动第一行）；纯内部、非第三方开放且消费者与提供者同团队的场合（3.3 问题空间驱动第一行＋交付空间驱动第一行）。"
+      common_misuse: "跨单元以进程内调用为主手段（AP1，3.4 接收约束方面 1 行硬禁止 → 分布式单体）；以进程内接口承载跨边界数据流动、绕过数据契约（3.4 施→4 硬 → X6/Y1 违例面）；未经静态分析提取即声称无契约面（AP2，机器层盲区充作不存在）；把『内部接口』读作不受边界冻结约束（3.4 施→2 硬不区分内外）；以进程内接口承载跨单元事务语义（3.2.3 条件 3 违反）。"
+
+  - entry_id: CTR-002
+    kind: CTR
+    name: "同步 API 契约"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.1 表行（定义列含 REST/gRPC 两支）＋3.6 示例一（南北向/东西向解包）＋谓词转写（manual）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.1-同步 API 契约", verified: true}
+        - {source_type: clause_id, value: "3.2.1", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}   # 版本化策略默认值「同步 API：URI 版本」＋兼容性规则默认值「内部 API：full；对外 API：full + 弃用窗口」
+        - {source_type: clause_id, value: "3.3", verified: true}     # 问题空间驱动第一行（第三方开放 → full 兼容＋长弃用窗口＋对外 SLA 条款）
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 6 行（延迟/可用性目标 → 契约 SLA 条款 P99、错误预算）
+        - {source_type: clause_id, value: "3.5", verified: true}     # sla_clause 谓词＋X1/X2/X3
+        - {source_type: clause_id, value: "3.6", verified: true}     # 示例一（强加决策的范围解包：南北向 REST+JSON／东西向 gRPC 走完整 ADR）
+        - {source_type: clause_id, value: "0.3", verified: true}     # 强加范围解包
+        - {source_type: clause_id, value: "0.6", verified: true}     # CH-A 第 2 步内部完整分析
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 性能族/可用性族指标（P99、SLO、错误预算）
+        - {source_type: bib_id, value: 30, verified: true}
+        - {source_type: bib_id, value: 32, verified: true}
+    typical_reversibility: costly      # 人工判断：对外发布后变更须弃用窗口＋迁移支持（3.2.2 兼容性规则默认值「对外 API：full + 弃用窗口」；破坏性变更 = 高影响决策），消费者集合可能含第三方 → 非 bounded
+    applicability:
+      problem_space:                   # 骨架源：3.2.1「适用条件」列＋3.3 问题空间驱动
+        - "请求-响应风格；需要即时结果（3.2.1 适用条件列逐字）"
+        - "对外 API 的产品化程度决定契约稳定性要求分级：第三方开放 → full 兼容 + 长弃用窗口 + 对外 SLA（服务等级协议）条款；纯内部 → 可放宽（3.3 问题空间驱动第一行）"
+        - "合规/监管接口要求（如开放银行类强制 API 标准）→ 外部强加决策，走 CH-A，且属 0.5 批准注册表必登类目（3.3 问题空间驱动第二行）"
+      current_space:                   # 骨架源：3.3 现状空间驱动＋0.11＋3.6 示例一
+        - "既有 API 契约是最强约束源：逆向勘察（从代码/流量/文档提取实际契约）产出『现状契约清单』，新契约设计必须与之对齐或声明迁移路径（3.3 现状空间驱动第一行；迁移声明 = 重审提议级材料）"
+        - "强加决策不泛化：公司 API 网关标准文义仅覆盖南北向流量时，东西向不在强加范围内（3.6 示例一；0.3 强加范围解包＋0.6 CH-A 第 2 步内部完整分析）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动
+        - "消费者团队数量与变更节奏 → 兼容性规则严格度（消费者多且异构 → full；单消费者同团队 → backward 可接受）（3.3 交付空间驱动第一行）"
+        - "契约测试基础设施能力（CI 成熟度）→ CDC 的可行集；能力不足时 CDC 降为软约束 + 保守假设 ADR（可推翻指标 = CI 能力建立）（3.3 交付空间驱动第二行）"
+    envelope:
+      - metric: "性能：延迟分位数（P50/P99，P99 = 延迟分布第 99 百分位数）"
+        bound_expr: "契约 SLA 条款登记的 P99 上界 ≤ 方面 6 目标值（3.4 接收约束方面 6 行：延迟/可用性目标 → 契约 SLA 条款 P99、错误预算）；端到端 P99 随调用链深度单调不减（每次交互引入一次网络往返 + 编解码项）→ 不可达即须换形态或重审风格（3.6 示例一：延迟预算量化证据）"
+        source: {source_type: clause_id, value: "3.4", verified: true}
+      - metric: "可用性/可靠性：可用性目标（SLO）、错误预算〔error budget：1 − SLO〕"
+        bound_expr: "错误预算 = 1 − SLO（6.2.1 定义式）；对外 API 场合错误预算 上界由合同 SLA 或监管条文给定（3.3 问题空间驱动第一行：第三方开放 → 对外 SLA 条款）→ 四类合法出处之外不得填值（6.2.1 量化纪律＋0.4 证据门槛）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "破坏性变更触达的消费者数 上界 = consumer_set 基数；弃用窗口时长 ≥ 最慢消费者迁移时长（X3，条件硬）→ 窗口短于该下界即越界，估计无出处时按 0.4 降级为软＋保守假设 ADR"
+        source: {source_type: clause_id, value: "3.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "每次请求-响应交互引入一次网络往返 + 编解码项（3.2.1 适用条件列『需要即时结果』的代价面）；调用链深度上的延迟预算须逐项累加 → 3.6 示例一：东西向高频服务间交互的延迟预算在 REST+JSON 下不可达时，gRPC 契约作为正常决策走完整 ADR（包络校验提供量化证据）"
+      failure_modes: ["把强加决策过度泛化到东西向（3.6 示例一幻觉之一『强加覆盖一切』→ 延迟预算不可达仍强行 REST+JSON）", "以『强加不合理』为由绕开南北向标准（3.6 示例一幻觉之二『过度反抗』→ 接受约束 ADR 缺失）", "对外 API 未登记 full 兼容与弃用窗口（3.2.2 兼容性规则默认值列；X3 违例）", "SLA 条款缺失即以延迟/可用性目标结案（3.4 接收约束方面 6 行；校验失败升硬）", "发布态契约缺 version 或 compat_policy（X2 硬）"]
+      consistency_impact: "请求-响应风格下调用方等待即时结果 → 跨单元事务语义易被隐式引入（3.2.3 条件 3 明文禁止『读写方之间无必须同时成功的要求』被违反）；一致性级别由方面 4 的 Y 系列判定（CSL 批承载），SLA 条款只登记延迟/可用性面（3.4 接收约束方面 6 行），不得以 SLA 条款替代一致性定案"
+      observability_requires: ["契约版本与兼容策略在注册表可查（X2；3.2.2 版本化策略/兼容性规则）", "SLA 条款的 metric 与 bound_expr 可查（3.5 sla_clause 谓词面，未登记 → 方括号占位）", "南北向/东西向流量归属在案（3.6 示例一：强加范围解包的登记面，0.3）", "生产观测与负载测试数据可查（6.2.1 性能族度量方式）"]
+      ops_cost: "[API 网关（南北向）与服务目录（内部检索）的注册与运维面（3.2.2 发现与注册）→ 运维项随对外 API 数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["REST 资源语义 + HTTP 动词 + 状态码约定，或 gRPC 的 IDL/protobuf 定义（3.2.1 定义列）", "OpenAPI 文档作为机器层谓词源的编写与校验（3.2.1 机器层天然性列『高（IDL/OpenAPI 文档本身即谓词）』；书目 30）", "API 契约设计方法（书目 32）", "兼容性规则与弃用窗口的登记与治理（3.2.2；书目 33）", "强加决策的范围解包（0.3＋0.6 CH-A 第 2 步；3.6 示例一）"]
+      aggregation_semantics: itemwise  # 母本未给 CTR 的跨契约聚合式（MJ-19 (iii) 同型）→ SLA 与延迟项按契约逐项登记（MJ-21 (ix)）
+    compatibility:
+      - peer_entry: STY-001
+        relation: requires
+        evidence: {source_type: row_id, value: "3.2.1-同步 API 契约", verified: true}   # 适用条件列明文「请求-响应风格；需要即时结果」＝STY-001 同步请求-响应。母本方向为风格 → 契约形态可行集（3.4 接收约束方面 1 行），本侧登记 requires 读作『同步 API 契约以请求-响应风格在场为前提』，与母本方向一致（接收端）→ 不属 MJ-20 (vii) 的方向倒置情形；ENUM_RELATION 无 required_by 且 STY-001 属已批准条目 → 对侧不回填（MJ-21 (viii)）
+      - peer_entry: CTR-007
+        relation: composable
+        evidence: {source_type: row_id, value: "3.2.2-版本化策略", verified: true}   # 默认值列明文「同步 API：URI 版本」（镜像登记于 CTR-007）
+      - peer_entry: CTR-008
+        relation: composable
+        evidence: {source_type: row_id, value: "3.2.2-兼容性规则", verified: true}   # 默认值列明文「内部 API：full；对外 API：full + 弃用窗口」（镜像登记于 CTR-008）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条为跨单元请求-响应形态：契约测试取硬，微服务风格下 CDC 升硬（X4 明文），事件 schema 演化项不适用（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-002-AP1
+        description: "把强加决策过度泛化（南北向标准被套用到东西向），致延迟预算不可达仍强行沿用"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ imposed_by(C, ·) ∧ [imposed_scope = 南北向] ∧ [sla_clause(C, latency, bound)] ∧ ¬[bound 在 inter_service.latency_budget 内可达] ∧ ¬[东西向另立完整 ADR]"
+        signal_level: P0               # 3.6 示例一：包络校验给出量化证据后仍沿用 → 0.8 包络硬校验失败面；且强加范围解包属 0.3 登记义务、CH-A 第 2 步为 0.6 强制步骤 → P0（MJ-4 判据）
+      - pattern_id: CTR-002-AP2
+        description: "对外 API 未登记 full 兼容与弃用窗口即以 published 发布"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [consumer_set 含第三方] ∧ ¬has(compat_policy) ∧ ¬[deprecation_window(C,v1,until)]"
+        signal_level: P0               # 直接违反 X2（硬：发布态须 has(version) ∧ has(compat_policy)）与 X3（对外 API 默认值列明文 full + 弃用窗口）→ P0（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X1, role: implements}      # 本形态是 covers(C,u1,u2) 的合法承载者之一：跨单元请求-响应交互经本契约登记后 X1 得证
+      - {property_id: X2, role: consumed_by}     # 发布态须 has(version) ∧ has(compat_policy)；版本化默认值＝URI 版本（3.2.2）
+      - {property_id: X3, role: consumed_by}     # breaking_change → deprecation_window ∧ 窗口 ≥ 最慢消费者迁移时长（条件硬；对外 API 默认 full + 弃用窗口）
+      - {property_id: X5, role: consumed_by}     # lifecycle_state ∈ {published, deprecated} → ∃[approved(ADR(C))]（3.3 双使用者条款：契约发布属高影响决策，一律走批准路径）
+    references:
+      - {bib_id: 30, support_claim: "同步 API 契约的机器层格式（母本 3.7 书目 30 行级登记提取面逐字对应；提取以本地副本《Henry Andrews - OpenAPI Specification v3.2.1.epub》为准，dc:title 与正文版本号一致，结尾参考文献完整至 RFC 9535）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 32, support_claim: "API 契约设计方法（母本 3.7 书目 32 行级登记提取面逐字对应；第 1 版 2019、ISBN 978-1-617-29510-2 依 AGENTS.MD 更新版本规则由第 2 版取代）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：机器层天然性为『高』——IDL/OpenAPI 文档本身即谓词（3.2.1 定义列/机器层天然性列），0.9 同源生成在契约域最强适用（3.4 施→10 硬），禁止双重维护；即时结果语义使调用方无需引入异步补偿面；对外产品化场合的稳定性要求有明确默认值（full + 弃用窗口，3.2.2）。代价：每次交互引入一次网络往返 + 编解码项，调用链深度上的延迟预算逐项累加，东西向高频交互可能不可达（3.6 示例一给出量化证据面）；对外发布后逆转成本为 costly（须弃用窗口＋迁移支持）；强加决策须做范围解包，否则落入『强加覆盖一切』或『过度反抗』两种幻觉（3.6 示例一）；SLA 条款目标值只能取四类合法出处（6.2.1 量化纪律），无出处即须留空并登记勘察义务。"
+      typical_scenarios: "请求-响应风格且需要即时结果的跨单元交互（3.2.1 适用条件列）；南北向流量受公司 API 网关标准强加的场合（3.6 示例一：接受约束 ADR，无备选，内部一致性检查通过）；东西向高频服务间交互在 REST+JSON 下延迟预算不可达、须以 gRPC 契约走完整 ADR 的场合（同示例）；对外 API 开放给第三方、须 full 兼容＋长弃用窗口＋对外 SLA 条款的场合（3.3 问题空间驱动第一行）；合规/监管强制 API 标准（如开放银行类）→ 外部强加决策走 CH-A 并登记 0.5 批准注册表类目（3.3 问题空间驱动第二行）。"
+      common_misuse: "把南北向强加标准泛化到东西向（AP1；0.3 强加范围解包缺失）；以『强加不合理』绕开标准而不记接受约束 ADR（3.6 示例一幻觉之二）；对外 API 不登记 full 兼容与弃用窗口即发布（AP2，X2/X3 违例）；以 SLA 条款替代一致性定案（一致性属方面 4 的 Y 系列）；用文档二次维护契约面（3.4 施→10 硬：禁止双重维护）；把 gRPC 当作独立契约形态登记（3.2.1 定义列已将 gRPC 归入本形态，判读见 MJ-21 (i)）。"
+
+  - entry_id: CTR-003
+    kind: CTR
+    name: "异步消息契约"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.1 表行（定义列含消息元数据约定四项）＋3.2.1 表后判别规则＋谓词转写（manual）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.1-异步消息契约", verified: true}
+        - {source_type: clause_id, value: "3.2.1", verified: true}   # 判别规则：命名含祈使语义（CreateOrder）→ 命令，一对一消费者，走异步消息契约
+        - {source_type: clause_id, value: "3.2.2", verified: true}
+        - {source_type: clause_id, value: "3.3", verified: true}
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 1 行「事件驱动 → 异步消息/事件契约必选其一」＋方面 5 行（命令契约登记）
+        - {source_type: clause_id, value: "3.5", verified: true}     # X1/X2/X7
+        - {source_type: clause_id, value: "1.2.3", verified: true}   # 判别规则明文「呼应 1.2.3」
+        - {source_type: clause_id, value: "5.4", verified: true}     # 方面 5 施加项的接收端（协调模式产生的新交互 → 契约登记）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可观测性族（追踪覆盖率）
+    typical_reversibility: costly      # 人工判断：schema 与消息元数据约定一经多方消费者接入，变更须走弃用窗口＋迁移支持（3.2.2 破坏性变更流程）；broker 侧留存消息使旧 schema 在窗口内持续在场 → 非 bounded
+    applicability:
+      problem_space:                   # 骨架源：3.2.1「适用条件」列＋3.2.1 判别规则
+        - "异步消息风格；命令类交互（3.2.1 适用条件列逐字）"
+        - "命名含祈使语义（CreateOrder）→ 命令，一对一消费者，走异步消息契约（3.2.1 判别规则逐字；防『PleaseDoX 事件』反模式，呼应 1.2.3）"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "既有消息 schema 与 broker 上的在途消息是最强约束源：逆向勘察须以流量观测 + 消费者代码分析为准，文档仅作线索（3.3 现状空间驱动第二行；公理 A1 在契约域的具体化）"
+        - "现状契约清单须包含消息元数据约定的实际取值面（消息 ID、时间戳、关联 ID、投递语义声明）——缺项即为隐式契约（3.2.1 定义列）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动
+        - "消费者团队数量与变更节奏 → 兼容性规则严格度（3.3 交付空间驱动第一行）；命令类交互的默认消费者数为一对一（3.2.1 判别规则）→ 严格度可低于事件契约，但登记义务不减"
+        - "CI 成熟度决定 CDC 可行集；能力不足时 CDC 降为软约束 + 保守假设 ADR（可推翻指标 = CI 能力建立）（3.3 交付空间驱动第二行）"
+    envelope:
+      - metric: "可观测性：卡片 observability_requires（5.2.5）满足率、追踪覆盖率"
+        bound_expr: "关联 ID 覆盖率 上界为 1（3.2.1 定义列明文消息元数据约定含关联 ID）；追踪覆盖率 单调不减 → 缺关联 ID 即跨单元因果链断裂，覆盖率 < 1 时为可观测性缺口而非可接受状态（6.2.1 可观测性族）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+      - metric: "性能：延迟分位数（P50/P99，P99 = 延迟分布第 99 百分位数）"
+        bound_expr: "端到端延迟增量 = 网络往返 + broker 驻留 + 编解码 → 随队列深度单调不减；本形态不承诺即时结果（3.2.1 适用条件列的反面）→ 需即时结果的交互不得以本形态承载，P99 上界须由方面 6 目标值给定（3.4 接收约束方面 6 行）"
+        source: {source_type: clause_id, value: "3.4", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "schema 变更触达的消费者数 上界 = consumer_set 基数（命令类交互默认 = 1，3.2.1 判别规则）；> 1 即本形态被当作事件契约使用 → X7 交叉一致性检查可捕获（命名模式 × 消费者数）"
+        source: {source_type: clause_id, value: "3.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "引入 broker 驻留项（异步解耦的代价）：调用方不等待结果 → 单跳延迟预算由『往返』改为『投递 + 驻留 + 消费』三段；需即时结果的场合本项不可接受（3.2.1 适用条件列）"
+      failure_modes: ["命令类交互以事件契约承载（祈使语义命名 + 一对多消费者 → 3.2.1 判别规则违例，X7 可捕获）", "消息元数据约定缺项（无消息 ID/时间戳/关联 ID/投递语义声明 → 3.2.1 定义列构成项缺失，幂等与因果追踪无从判定）", "投递语义未声明即假定恰好一次（3.2.1 定义列明文要求『投递语义声明』；方面 5 的 delivery_semantics/idempotency 谓词失去输入）", "协调模式产生的命令契约未登记（3.4 接收约束方面 5 行硬 → X1 违例，Z1 的契约来源缺失）"]
+      consistency_impact: "异步解耦使读写方不再『必须同时成功』→ 与 3.2.3 条件 3 相容；一致性级别由方面 4 的 Y 系列判定（CSL 批承载），补偿语义由方面 5 的 Saga/补偿谓词承载（CRD 批）；本条只登记消息元数据与投递语义声明面，不重复登记一致性代价项"
+      observability_requires: ["消息 ID 与关联 ID 在消息元数据中可查（3.2.1 定义列）", "投递语义声明在契约注册表可查（同列；方面 5 的 delivery_semantics 输入）", "追踪覆盖率可观测（6.2.1 可观测性族度量方式：基础设施勘察）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[broker 与 schema registry（事件/消息）的运维面（3.2.2 发现与注册）→ 运维项随消息主题数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["消息 schema 设计与元数据约定（3.2.1 定义列）", "命令/事件判别与命名语义（3.2.1 判别规则；呼应 1.2.3）", "投递语义与幂等设计（方面 5 的 delivery_semantics/idempotency 谓词面）", "CDC 套件脚手架生成（3.3 双使用者条款：Agent 自主项）"]
+      aggregation_semantics: itemwise  # 母本未给 CTR 的跨契约聚合式（MJ-19 (iii) 同型）→ 代价按消息契约逐项评估（MJ-21 (ix)）
+    compatibility:
+      - peer_entry: STY-002
+        relation: requires
+        evidence: {source_type: row_id, value: "3.2.1-异步消息契约", verified: true}   # 适用条件列明文「异步消息风格；命令类交互」＝STY-002 异步消息；本侧登记 requires 与母本方向一致（3.4 接收约束方面 1 行的接收端）→ ENUM_RELATION 无 required_by 且 STY-002 属已批准条目，对侧不回填（MJ-21 (viii)）
+      - peer_entry: STY-003
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.4", verified: true}   # 接收约束方面 1 行明文「事件驱动 → 异步消息/事件契约必选其一」（析取要求：系统层面至少取其一，可并存）
+      - peer_entry: CTR-004
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.4", verified: true}   # 同一行「必选其一」→ 两形态可在同一系统内并存；但同一条交互只能归属其一（3.2.1 判别规则：祈使语义 → 命令走本条，事实语义 → 事件走 CTR-004）→ composable 指系统层面并存、非同一交互叠用（镜像登记于 CTR-004）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条为命令类异步形态：契约测试取硬，微服务风格下 CDC 升硬（X4）；事件 schema 演化项属 CTR-004 面（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-003-AP1
+        description: "命令类交互以事件契约承载（『PleaseDoX 事件』反模式）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C 的命名含祈使语义] ∧ [consumer_set 基数 = 1] ∧ ¬[C 登记为异步消息契约]"
+        signal_level: P2               # X7 明文「事件契约命名语义 × 消费者数交叉一致 —— 软（P2 漂移信号）」；3.2.1 判别规则明示『判别错误属登记违例，一致性回归检查可捕获』→ P2（MJ-4 判据）
+      - pattern_id: CTR-003-AP2
+        description: "消息元数据约定缺项（消息 ID/时间戳/关联 ID/投递语义声明任一缺失）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C 登记为异步消息契约] ∧ ¬[消息 ID ∧ 时间戳 ∧ 关联 ID ∧ 投递语义声明四项齐备]"
+        signal_level: P1               # 违反 3.2.1 定义列的构成项要求（定义性），致方面 5 的 delivery_semantics/idempotency 谓词失去输入，但无 X 系列硬性质直接绑定 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X1, role: implements}      # 协调模式产生的命令契约经本形态登记 → ∀ interaction ∈ connects: ∃C: [covers(C,u1,u2)] 得证（3.4 接收约束方面 5 行：X1 的协调域实例）
+      - {property_id: X7, role: consumed_by}     # 事件契约命名语义 × 消费者数交叉一致（3.2.1 判别规则的命令侧：祈使语义 → 一对一消费者）
+      - {property_id: X2, role: consumed_by}     # 发布态须 has(version) ∧ has(compat_policy)
+      - {property_id: Z1, role: consumed_by}     # 3.4 施→5 明文「协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）」
+    references: []                     # 母本 3.7 书目 28–34 无 3.2.1「异步消息契约」行的行级登记提取面（31 CloudEvents 的行级面为『3.2.1 事件信封元数据规范』→ 事件契约侧，不下探至命令侧）→ 按 G-CRD-1／G-DEC-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-CTR-1，待人工裁决补勘后回填（SO-9）
+    narrative:
+      benefit_cost_analysis: "收益：调用方不等待结果 → 削峰与解耦，单跳延迟预算由往返改为投递/驻留/消费三段；机器层天然性为『高』（3.2.1），schema 直接投影为白板谓词（3.4 施→10 硬）；命令类交互一对一消费者使 schema 变更触达面上界为 1（3.2.1 判别规则），演化成本低于事件契约。代价：引入 broker 驻留延迟项与其运维面（3.2.2 发现与注册：schema registry 事件/消息）；不承诺即时结果 → 需即时结果的交互不得以本形态承载；消息元数据四项（消息 ID、时间戳、关联 ID、投递语义声明）任一缺失即使幂等与因果追踪无从判定；命令/事件判别错误属登记违例，须靠 X7 的命名模式 × 消费者数交叉验证捕获（3.2.1 判别规则），意味着守护面必须常驻而非一次性检查。"
+      typical_scenarios: "异步消息风格下的命令类交互（3.2.1 适用条件列）；命名含祈使语义、消费者为一对一的场合（同节判别规则：CreateOrder 型）；事件驱动风格下『异步消息/事件契约必选其一』取命令侧的场合（3.4 接收约束方面 1 行）；协调模式（编排者 → 参与者）产生的命令契约登记场合（3.4 接收约束方面 5 行；CRD 批承载协调形态）。"
+      common_misuse: "命令类交互以事件契约承载（AP1，『PleaseDoX 事件』反模式 → X7 漂移信号）；消息元数据约定缺项（AP2，投递语义未声明即假定恰好一次）；以异步消息承载需即时结果的交互（3.2.1 适用条件列的反面）；协调模式产生的命令契约不登记（X1/Z1 违例）；把一对多消费者的事实陈述登记为命令（判别规则的反向违例，归属 CTR-004）。"
+
+  - entry_id: CTR-004
+    kind: CTR
+    name: "事件契约"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.1 表行（定义列三构成项：schema＋事件信封＋演化策略）＋3.2.1 表后判别规则＋3.2.2 默认值列事件侧两项＋谓词转写（manual）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.1-事件契约", verified: true}
+        - {source_type: clause_id, value: "3.2.1", verified: true}   # 判别规则：命名含事实语义（OrderCreated）→ 事件，一对多消费者，走事件契约
+        - {source_type: row_id, value: "3.2.2-版本化策略", verified: true}   # 内容列「事件契约推荐『仅增量演化』（additive-only：只加可选字段，不改不删既有字段）」＋默认值列「事件：additive-only + schema registry」
+        - {source_type: row_id, value: "3.2.2-兼容性规则", verified: true}   # 默认值列「事件契约：backward」
+        - {source_type: row_id, value: "3.2.2-破坏性变更流程", verified: true}   # 「影响全部消费者 + 难逆转」→ typical_reversibility 判据
+        - {source_type: clause_id, value: "3.3", verified: true}
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 1 行「事件驱动 → 异步消息/事件契约必选其一」＋方面 5 行（事件契约登记）＋施→8「事件驱动 → 事件 schema 演化测试必备」
+        - {source_type: clause_id, value: "3.5", verified: true}     # X1/X2/X7
+        - {source_type: clause_id, value: "1.2.3", verified: true}   # 判别规则明文「呼应 1.2.3」
+        - {source_type: clause_id, value: "5.4", verified: true}     # 方面 5 施加项的接收端（编舞式协调的事件契约）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可观测性族（追踪覆盖率）＋可用性族（错误预算）
+        - {source_type: bib_id, value: 31, verified: true}
+    typical_reversibility: costly      # 人工判断：3.2.2 破坏性变更流程明文「影响全部消费者 + 难逆转」；一对多消费者 + additive-only/backward 双重默认值使已发布事件的语义面不可单方收窄，事件留存令旧版本长期在场 → 非 bounded
+    applicability:
+      problem_space:                   # 骨架源：3.2.1「适用条件」列＋3.2.1 判别规则
+        - "事件驱动风格；多方响应同一业务事实（3.2.1 适用条件列逐字）"
+        - "命名含事实语义（OrderCreated）→ 事件，一对多消费者，走事件契约（3.2.1 判别规则逐字；防『PleaseDoX 事件』反模式，呼应 1.2.3）"
+        - "领域事件 = 已发生业务事实的陈述（过去时态命名）（3.2.1 定义列逐字）→ 尚未发生意图的交互不属本形态问题空间"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "既有事件流与已发布 schema 是最强约束源：逆向勘察以流量观测 + 消费者代码分析为准，文档仅作线索（3.3 现状空间驱动第二行；公理 A1 在契约域的具体化）"
+        - "现状契约清单须包含演化策略的登记态与事件信封的实际取值面——演化策略未登记即为隐式契约（3.2.1 定义列将『演化策略』与『事件信封』并列为构成项）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动＋3.2.2 默认值列
+        - "消费者团队数量与变更节奏 → 兼容性规则严格度：消费者多且异构 → full；单消费者同团队 → backward 可接受（3.3 交付空间驱动第一行）；事件契约默认取 backward（3.2.2 兼容性规则默认值列），收紧到 full 属可覆盖项、需 ADR"
+        - "CI 成熟度决定 CDC 可行集；能力不足时 CDC 降为软约束 + 保守假设 ADR（可推翻指标 = CI 能力建立）（3.3 交付空间驱动第二行）"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "additive-only 下既有字段的改动数 = 0 且新增字段均为可选（3.2.2 版本化策略内容列明文）→ 改动数 > 0 即为破坏性变更，须走 X3 弃用窗口；schema 变更触达的消费者数 = consumer_set 基数，一对多消费者使该基数 单调不减"
+        source: {source_type: row_id, value: "3.2.2-版本化策略", verified: true}
+      - metric: "可观测性：卡片 observability_requires（5.2.5）满足率、追踪覆盖率"
+        bound_expr: "事件信封元数据规范覆盖率 上界为 1；追踪覆盖率 单调不减 → 信封缺项即跨消费方因果链断裂，覆盖率 < 1 时为可观测性缺口而非可接受状态（3.2.1 定义列将事件信封列为构成项；6.2.1 可观测性族）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+      - metric: "可用性/可靠性：可用性目标（SLO）、错误预算〔error budget：1 − SLO〕"
+        bound_expr: "错误预算 = 1 − SLO（6.2.1 定义式）；一对多扇出使单事件的投递失败影响面 ≥ 单个消费方 → 错误预算消耗速率 随 consumer_set 基数单调不减；目标值只能取四类合法出处（6.2.1 量化纪律＋0.4 证据门槛）"
+        source: {source_type: clause_id, value: "3.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "扇出使单跳延迟预算由『一次投递』改为『一次投递 + N 路消费』；发布方不等待任何消费方 → 发布侧预算与消费侧解耦，但端到端业务延迟随最慢消费者上升；本形态不承诺即时结果（3.2.1 适用条件列『多方响应同一业务事实』的反面）"
+      failure_modes: ["事件契约以祈使语义命名或只有一对一消费者（3.2.1 判别规则违例，X7 可捕获）", "已发布事件做非 additive-only 变更而未走破坏性变更流程（3.2.2 版本化策略＋破坏性变更流程；X3 违例）", "事件信封元数据规范缺项（3.2.1 定义列构成项缺失 → 跨消费方因果追踪断裂）", "演化策略未登记即发布（3.2.1 定义列构成项；X2 发布态须 has(version) ∧ has(compat_policy)）", "协调模式产生的事件契约未登记（3.4 接收约束方面 5 行硬 → X1 违例）", "事件驱动风格下异步消息/事件契约两者皆未取（3.4 接收约束方面 1 行『必选其一』为硬）"]
+      consistency_impact: "发布-订阅解耦使发布方与消费方不再『必须同时成功』→ 与 3.2.3 条件 3 相容；多方响应同一业务事实时的跨消费方一致性由方面 4 的 Y 系列判定（CSL 批承载）、补偿语义由方面 5 的 Saga/补偿谓词承载（CRD 批）；backward 兼容默认值只保证旧消费者可读新数据，不构成一致性承诺，不得以兼容性规则替代一致性定案"
+      observability_requires: ["事件信封元数据在事件本体内可查（3.2.1 定义列；CloudEvents 类规范，书目 31）", "演化策略与兼容性规则在 schema registry 可查（3.2.2 版本化策略默认值列『additive-only + schema registry』）", "消费者集合（consumer_set）基数可观测——X7 的命名语义 × 消费者数交叉验证以此为输入（3.2.1 判别规则）", "追踪覆盖率可观测（6.2.1 可观测性族度量方式：基础设施勘察）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[schema registry（事件/消息）与事件总线的运维面（3.2.2 发现与注册）→ 运维项随事件类型数与订阅方数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["领域事件建模与过去时态命名（3.2.1 定义列＋判别规则）", "事件信封元数据规范（CloudEvents 类，书目 31）", "additive-only 演化策略与兼容性规则选型（3.2.2 版本化策略/兼容性规则；书目 33）", "事件 schema 演化测试设计（3.4 施→8：事件驱动 → 事件 schema 演化测试必备）", "CDC 套件脚手架生成（3.3 双使用者条款：Agent 自主项）"]
+      aggregation_semantics: itemwise  # 母本未给 CTR 的跨契约聚合式（MJ-19 (iii) 同型）→ 演化成本与错误预算按事件契约逐项评估（MJ-21 (ix)）
+    compatibility:
+      - peer_entry: STY-003
+        relation: requires
+        evidence: {source_type: row_id, value: "3.2.1-事件契约", verified: true}   # 适用条件列明文「事件驱动风格；多方响应同一业务事实」＝STY-003 事件驱动（发布订阅）。母本方向为风格 → 契约形态可行集（3.4 接收约束方面 1 行），本侧登记 requires 读作『事件契约以事件驱动风格在场为前提』，与母本方向一致（接收端）→ 不属 MJ-20 (vii) 的方向倒置情形；ENUM_RELATION 无 required_by 且 STY-003 属已批准条目，对侧不回填（MJ-21 (viii)）
+      - peer_entry: CTR-003
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.4", verified: true}   # 接收约束方面 1 行「事件驱动 → 异步消息/事件契约必选其一」→ 两形态可在同一系统内并存；同一条交互仍只能归属其一（3.2.1 判别规则：事实语义 → 事件走本条，祈使语义 → 命令走 CTR-003）→ composable 指系统层面并存、非同一交互叠用（本行回填 CTR-003 侧已声明的镜像）
+      - peer_entry: CTR-007
+        relation: composable
+        evidence: {source_type: row_id, value: "3.2.2-版本化策略", verified: true}   # 默认值列明文「事件：additive-only + schema registry」→ 事件契约的默认版本载体与演化策略由版本化策略维度指派（本行回填 CTR-007 侧已登记的镜像，与 CTR-002↔CTR-007 同源同型；同批 seed 条目 → 双向登记，MJ-21 (viii)）
+      - peer_entry: CTR-008
+        relation: composable
+        evidence: {source_type: row_id, value: "3.2.2-兼容性规则", verified: true}   # 默认值列明文「事件契约：backward」→ 事件契约的默认兼容性规则由兼容性规则维度指派（本行回填 CTR-008 侧已登记的镜像；同批 seed 条目 → 双向登记，MJ-21 (viii)）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条为事件形态：3.4 施→8 后半句明文『事件驱动 → 事件 schema 演化测试必备』→ 该项取硬；CDC 按 X4 分级（软，微服务风格下升硬）（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-004-AP1
+        description: "事件契约以祈使语义命名，或消费者数为一对一（『PleaseDoX 事件』反模式的事件侧）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C 登记为事件契约] ∧ ([C 的命名含祈使语义] ∨ [consumer_set 基数 = 1])"
+        signal_level: P2               # X7 明文「事件契约命名语义 × 消费者数交叉一致（3.2.1 判别规则）—— 软（P2 漂移信号）」→ 直接取 P2（MJ-4 判据；与 CTR-003-AP1 的命令侧同级）
+      - pattern_id: CTR-004-AP2
+        description: "事件契约以 published 发布而缺 version 或 compat_policy（演化策略未登记）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C 登记为事件契约] ∧ [lifecycle_state = published] ∧ ¬(has(version) ∧ has(compat_policy))"
+        signal_level: P0               # X2 明文「∀C(lifecycle_state=published): has(version) ∧ has(compat_policy) —— 硬」；3.2.1 定义列将演化策略列为构成项 → P0（MJ-4 判据）
+      - pattern_id: CTR-004-AP3
+        description: "已发布事件契约做非 additive-only 变更而未走破坏性变更流程（无弃用窗口）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C 登记为事件契约] ∧ [breaking_change(C, v1, v2)] ∧ ¬[deprecation_window(C, v1, until)]"
+        signal_level: P1               # X3 为条件硬（硬化与否由 0.4 证据门槛统一判定，3.5 尾注：与方面 2 的 W3 同型）→ 未按 P0 登记；级别待 W3/X3 条件硬裁决口（s5h 既有）落定后复核（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X1, role: implements}      # 编舞式协调的事件契约经本形态登记 → ∀ interaction ∈ connects: ∃C: [covers(C,u1,u2)] 得证（3.4 接收约束方面 5 行：X1 的协调域实例）
+      - {property_id: X7, role: implements}      # 事件契约命名语义 × 消费者数交叉一致（3.2.1 判别规则的事件侧：事实语义 → 一对多消费者）→ 本条是 X7 的判定对象载体
+      - {property_id: X2, role: consumed_by}     # 发布态须 has(version) ∧ has(compat_policy)；版本化默认值＝additive-only + schema registry（3.2.2）
+    references:
+      - {bib_id: 31, support_claim: "3.2.1 事件信封元数据规范（母本 3.7 书目 31 行级登记提取面逐字对应；提取以本地副本《CloudEvents Specification v1.0.2 (CNCF, 2022)》PDF+EPUB 为准，由官方仓库 tag v1.0.2 的 cloudevents/spec.md 转换生成，Apache-2.0，发布日期据包内 misc/RELEASE_NOTES 并与 GitHub tag 交叉确认）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：一方发布、多方响应 → 发布方与消费方在时间与拓扑上双重解耦，新增消费方无需发布方改动（additive-only 下新增可选字段即可扩展）；机器层天然性为『高』（3.2.1），schema 与事件信封直接投影为白板谓词（3.4 施→10 硬）；版本化与兼容性均有注册表默认值（additive-only + schema registry／backward），选型不必逐项重议（3.2.2 表头『默认值（注册表登记，可覆盖需 ADR）』）。代价：一对多消费者使 schema 变更触达面等于 consumer_set 基数且随订阅方增加单调不减；破坏性变更被 3.2.2 明定为高影响决策（完整 ADR + 批准 + 弃用窗口 + 迁移支持）→ 逆转成本 costly；事件信封与演化策略任一缺项即使跨消费方因果追踪与兼容性判定同时失效；命名语义与消费者数的错配只能靠 X7 的交叉验证捕获，且母本将其定为 P2 漂移信号而非硬性质 → 守护面须常驻；事件 schema 演化测试在事件驱动风格下为必备（3.4 施→8），验证成本先于收益发生。"
+      typical_scenarios: "事件驱动风格下多方响应同一业务事实的场合（3.2.1 适用条件列）；命名含事实语义、消费者为一对多的场合（同节判别规则：OrderCreated 型）；事件驱动风格下『异步消息/事件契约必选其一』取事件侧的场合（3.4 接收约束方面 1 行）；编舞式协调（choreographed）中参与者以事件而非命令衔接的场合（3.4 接收约束方面 5 行；CRD 批承载协调形态）；需以 additive-only 长期演化、消费者异构且变更节奏不一的场合（3.2.2 版本化策略＋3.3 交付空间驱动第一行）。"
+      common_misuse: "以祈使语义命名事件或把一对一消费者的命令登记为事件（AP1，X7 漂移信号；命令侧归属 CTR-003）；未登记演化策略与兼容策略即发布（AP2，X2 硬违例）；对已发布事件删改既有字段而不走弃用窗口（AP3，X3 条件硬）；以 backward 兼容默认值冒充一致性承诺（一致性属方面 4 的 Y 系列）；事件信封缺项即上线（3.2.1 定义列构成项）；把事件信封规范当作可自选的私有格式（书目 31 的 CloudEvents 类规范是 3.2.1 定义列的提取源，改用私有格式须 ADR 覆盖默认值）；用文档二次维护事件 schema（3.4 施→10 硬：禁止双重维护）。"
+
+  - entry_id: CTR-005
+    kind: CTR
+    name: "数据契约"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.1 表行（定义列五项语义条款）＋3.2.3 共享数据四条件（X6 的判定面）＋谓词转写（manual）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.1-数据契约", verified: true}
+        - {source_type: clause_id, value: "3.2.3", verified: true}   # 共享数据接入四条件（条件 4：访问路径经数据契约暴露，禁止直连物理表/存储引擎）＋X6 检查＋违反 → 分布式单体信号
+        - {source_type: clause_id, value: "3.3", verified: true}
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 4 行（数据所有权 → 数据访问路径的契约必须经所有者单元暴露）＋施→4（schema 与语义条款是数据流动的唯一合法路径定义）
+        - {source_type: clause_id, value: "3.5", verified: true}     # X1/X6；contract 谓词的实参槽面
+        - {source_type: clause_id, value: "1.2.2", verified: true}   # 3.2.3 尾句「任一条件违反 → 分布式单体信号（1.2.2 反模式）」
+        - {source_type: clause_id, value: "1.2.3", verified: true}   # 3.2.3 标题明文「被 1.2.3 引用的权威定义」
+        - {source_type: clause_id, value: "4.5", verified: true}     # access_path(D, consumer, path_kind, contract_C) 的第四实参即数据契约
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 安全族（敏感数据访问路径合规率）＋合规族（监管条款 → 可判定谓词的映射覆盖率）
+    typical_reversibility: costly      # 人工判断：3.4 施→4 明文『数据契约的 schema 与语义条款是数据流动的唯一合法路径定义』→ 语义条款（单位、值域、空值语义）变更须同时迁移全部访问路径与既有消费方的解读；敏感性标注与所有权声明的变更还牵动方面 4 的所有权定案 → 非 bounded
+    applicability:
+      problem_space:                   # 骨架源：3.2.1「适用条件」列＋3.2.3
+        - "一切跨边界数据流动（方面 4 的入口）（3.2.1 适用条件列逐字）→ 本形态的适用面不按风格收窄，而按『是否跨边界』收窄"
+        - "共享数据作为集成手段仅限同时满足 3.2.3 四条件，且满足情况必须显式记录（X6 检查）：弱耦合场景（批处理交接、配置分发、报表抽取类）；数据对消费方只读或全系统范围内单写者；不承载跨单元事务语义；访问路径经数据契约暴露、禁止直连物理表/存储引擎（3.2.3 逐字）"
+      current_space:                   # 骨架源：3.3 现状空间驱动＋4.5 access_path 谓词面
+        - "既有数据访问路径是最强约束源：逆向勘察以流量观测 + 消费者代码分析为准，文档仅作线索（3.3 现状空间驱动第二行）；实际存在的直连物理表路径即为隐式契约，须登记为现状而非视为不存在"
+        - "访问路径的契约必须经所有者单元暴露（3.4 接收约束方面 4 行）→ 现状勘察须同时提取 owner 与 access_path 两面（4.5），二者不一致即所有权绕过的契约面投影（W4/Y1 违例）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动
+        - "消费者团队数量与变更节奏 → 兼容性规则严格度（消费者多且异构 → full；单消费者同团队 → backward 可接受）（3.3 交付空间驱动第一行）"
+        - "CI 成熟度决定 CDC 可行集；能力不足时 CDC 降为软约束 + 保守假设 ADR（可推翻指标 = CI 能力建立）（3.3 交付空间驱动第二行）"
+    envelope:
+      - metric: "安全：攻击面清单闭合率、漏洞修复时限、敏感数据访问路径合规率"
+        bound_expr: "敏感数据访问路径合规率 上界为 1（3.2.1 定义列将『敏感性标注』列为语义条款构成项；6.2.1 安全族）→ 存在未经数据契约暴露的敏感数据访问路径即 < 1，为越界而非可接受状态"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+      - metric: "合规：监管条款 → 可判定谓词的映射覆盖率"
+        bound_expr: "监管条款 → 可判定谓词的映射覆盖率 单调不减；语义条款中的敏感性标注与所有权声明是映射的输入面 → 缺项即覆盖率上界受限于缺项数（6.2.1 合规族；3.2.1 定义列）"
+        source: {source_type: clause_id, value: "6.2.1", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "语义条款变更触达的访问路径数 上界 = access_path 中以本契约为第四实参的路径数；3.4 施→4『唯一合法路径定义』使该上界同时是全部合法数据流动的触达面 → 上界随消费方增加单调不减"
+        source: {source_type: clause_id, value: "3.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "禁止直连物理表/存储引擎（3.2.3 条件 4）→ 数据访问须多经一层所有者单元暴露的路径，引入一次额外的序列化/网络项；该项是所有权可验证性的代价，母本未给量化上界 → 延迟预算须由方面 6 目标值给定（3.4 接收约束方面 6 行）"
+      failure_modes: ["直连物理表/存储引擎绕过数据契约（3.2.3 条件 4 明文禁止；X6 硬违例）", "共享数据接入四条件的满足情况未显式记录（3.2.3 明文『必须显式记录（X6 检查）』）", "语义条款缺项（单位/值域/空值语义/敏感性标注/所有权声明任一缺失 → 3.2.1 定义列构成项缺失）", "数据访问路径未经所有者单元暴露（3.4 接收约束方面 4 行硬；所有权绕过 = W4/Y1 违例的契约面投影）", "以数据契约承载跨单元事务语义（3.2.3 条件 3 明文禁止『读写方之间无必须同时成功的要求』被违反）", "四条件任一违反而未触发向方面 1 的重审提议（3.2.3 尾句：分布式单体信号，1.2.2 反模式）"]
+      consistency_impact: "本形态是一致性判定的输入面而非判定者：3.2.3 条件 2（只读或全系统单写者）与条件 3（不承载跨单元事务语义）直接对应方面 4 的 W4 单写者与 Y 系列一致性级别（CSL 批承载）；数据契约登记 schema 与语义条款，一致性级别由 access_path 与 consistency_level 谓词承载（4.5）→ 不得以数据契约的兼容性规则替代一致性定案"
+      observability_requires: ["语义条款五项（单位、值域、空值语义、敏感性标注、所有权声明）在契约注册表可查（3.2.1 定义列）", "访问路径的 owner 与 path_kind 可查（4.5 access_path 谓词面；3.4 接收约束方面 4 行）", "共享数据四条件的满足情况显式记录在案（3.2.3 明文＋X6 explicitly_recorded）", "敏感数据访问路径合规率可度量（6.2.1 安全族度量方式）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[服务目录（内部检索）与数据契约注册面的运维项（3.2.2 发现与注册）→ 运维项随数据集数与消费方数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["schema 设计与语义条款编写（单位、值域、空值语义、敏感性标注、所有权声明）（3.2.1 定义列）", "共享数据接入四条件的判定与显式记录（3.2.3；X6）", "数据所有权与访问路径建模（方面 4 的 owner/access_path 谓词面；OWN 批承载）", "契约测试设计（3.4 施→8；CDC 按 X4 分级）"]
+      aggregation_semantics: itemwise  # 母本未给 CTR 的跨契约聚合式（MJ-19 (iii) 同型）→ 触达面与合规率按数据契约逐项评估（MJ-21 (ix)）
+    compatibility:
+      - peer_entry: STY-006
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.2.3", verified: true}   # 3.2.3 条件 4 明文「访问路径经**数据契约**（3.2.1）暴露，禁止直连物理表/存储引擎」→ 共享数据风格以数据契约为接入前提。母本方向为风格 → 契约（3.2.3 标题「被 1.2.3 引用的权威定义」），而本形态适用条件为「一切跨边界数据流动」不以共享数据风格为前提 → 本侧登记 requires 会读作『数据契约以共享数据风格为前提』，与 3.2.1 适用条件列矛盾；ENUM_RELATION 无 required_by 且 STY-006 属已批准条目 → 只登记 composable，方向问题留待人工裁决（MJ-20 (vii) 同型；MJ-21 (viii)）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条不绑定单一风格（适用条件为『一切跨边界数据流动』）：契约测试取硬，CDC 按 X4 分级（高风险契约必备，微服务风格下升硬），事件 schema 演化项不适用（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-005-AP1
+        description: "直连物理表/存储引擎绕过数据契约（共享数据接入的条件 4 违例）"
+        detection_predicate: "∃ D: dataset(D) ∧ ∃ u: access_path(D, u, ·, ·) ∧ [该访问路径未经数据契约暴露] ∧ [路径为直连物理表/存储引擎]"
+        signal_level: P0               # X6 明文「∀ shared_data_access: satisfies(3.2.3 四条件) ∧ explicitly_recorded —— 硬」；3.2.3 条件 4 明文『禁止直连物理表/存储引擎』→ P0（MJ-4 判据）
+      - pattern_id: CTR-005-AP2
+        description: "共享数据接入四条件的满足情况未显式记录，或四条件任一违反而未触发向方面 1 的重审提议"
+        detection_predicate: "∃ a: [shared_data_access(a)] ∧ (¬[a 满足 3.2.3 四条件] ∨ ¬declared(a))"
+        signal_level: P0               # X6 硬性质的后半句 explicitly_recorded（3.2.3 明文『满足情况必须显式记录』）；尾句另定『任一条件违反 → 分布式单体信号（1.2.2 反模式），触发向方面 1 的重审提议（附违反项证据）』→ P0（MJ-4 判据）
+      - pattern_id: CTR-005-AP3
+        description: "语义条款缺项（单位/值域/空值语义/敏感性标注/所有权声明任一缺失）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C 登记为数据契约] ∧ ¬[单位 ∧ 值域 ∧ 空值语义 ∧ 敏感性标注 ∧ 所有权声明五项齐备]"
+        signal_level: P1               # 违反 3.2.1 定义列的构成项要求（定义性）与 3.4 施→4『唯一合法路径定义』的完整性前提，但无 X 系列硬性质直接绑定该五项 → P1（MJ-4 判据）
+      - pattern_id: CTR-005-AP4
+        description: "数据访问路径未经所有者单元暴露（所有权绕过的契约面投影）"
+        detection_predicate: "∃ D: dataset(D) ∧ ∃ u: access_path(D, u, ·, ·) ∧ ∃ o: owner(D, o) ∧ ¬[该访问路径由 o 暴露]"
+        signal_level: P0               # 3.4 接收约束方面 4 行级别列为硬，理由列明文「所有权绕过 = W4/Y1 违例的契约面投影」→ W4 为方面 4 硬性质，本行为其契约面投影 → P0（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X6, role: implements}      # 3.2.3 条件 4 以本形态为判定载体：∀ shared_data_access: satisfies(3.2.3 四条件) ∧ explicitly_recorded → 本条是『访问路径经数据契约暴露』的登记面
+      - {property_id: X1, role: implements}      # 跨边界数据流动经本形态登记 → covers(C,u1,u2) 的数据域实例（3.2.1 适用条件列『一切跨边界数据流动』）
+      - {property_id: Y1, role: consumed_by}     # 3.4 接收约束方面 4 行理由列明文「所有权绕过 = W4/Y1 违例的契约面投影」
+      - {property_id: W4, role: consumed_by}     # 同上：单写者/权威所有权的契约面投影（3.2.3 条件 2「只读，或全系统范围内单写者」）
+    references: []                     # 母本 3.7 书目 28–34 无 3.2.1「数据契约」行的行级登记提取面（28/29 → 3.2.2 CDC 与契约测试区分；30 → 同步 API 契约机器层格式；31 → 3.2.1 事件信封；32 → API 契约设计方法；33 → 3.2.2 schema registry 与兼容性规则；34 → 3.4 绞杀者迁移）→ 按 G-CRD-1／G-DEC-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-CTR-1，待人工裁决补勘后回填（SO-9）
+    narrative:
+      benefit_cost_analysis: "收益：语义条款五项（单位、值域、空值语义、敏感性标注、所有权声明）把数据流动的解释面从代码与口头约定收回到注册表，使 3.4 施→4『唯一合法路径定义』可判定；机器层天然性为『高』（3.2.1），schema 直接投影为白板谓词（3.4 施→10 硬）；本形态还是 X6 与方面 4 的 W4/Y1 的唯一契约面接口 → 所有权绕过与分布式单体信号由此可检测（3.2.3 尾句）。代价：禁止直连物理表使数据访问多经一层暴露路径，引入额外序列化/网络项；语义条款变更的触达面等于全部合法数据流动面（施→4 的『唯一』使触达上界不可局部化）→ 逆转成本 costly；敏感性标注与所有权声明的变更还牵动方面 4 的所有权定案与 6.2.1 安全/合规两族的度量输入，跨方面联动使变更评审面宽于其他五种形态。"
+      typical_scenarios: "一切跨边界数据流动的场合（3.2.1 适用条件列）——方面 4 的入口形态；共享数据接入（批处理交接、配置分发、报表抽取类）须显式记录四条件满足情况的场合（3.2.3；X6）；数据所有权已定案、须以契约固化访问路径的场合（3.4 接收约束方面 4 行；OWN 批承载所有权模式）；含敏感性标注的受监管数据流动场合（6.2.1 安全族『敏感数据访问路径合规率』＋合规族『监管条款 → 可判定谓词的映射覆盖率』）；分布式单体信号排查中须核验访问路径是否经契约暴露的场合（3.2.3 尾句 → 1.2.2 反模式）。"
+      common_misuse: "直连物理表/存储引擎（AP1，3.2.3 条件 4 明文禁止）；四条件满足情况不显式记录（AP2，X6 的 explicitly_recorded 半句）；语义条款只写 schema 不写单位/值域/空值语义/敏感性标注/所有权声明（AP3）；访问路径不经所有者单元暴露（AP4，W4/Y1 违例的契约面投影）；以数据契约承载跨单元事务语义（3.2.3 条件 3）；把数据契约的兼容性规则当作一致性定案（一致性属方面 4 的 Y 系列）；四条件违反后只修数据面而不触发向方面 1 的重审提议（3.2.3 尾句要求附违反项证据）。"
+
+  - entry_id: CTR-006
+    kind: CTR
+    name: "UI/端契约"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.1 表行（定义列含 BFF 组织模式）＋谓词转写（manual）；母本对本行仅给一行表数据，无独立小节 → 不扩张（G-CRD-1 同型纪律）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.1-UI/端契约", verified: true}
+        - {source_type: clause_id, value: "3.2.1", verified: true}
+        - {source_type: clause_id, value: "3.3", verified: true}
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 6 行（延迟目标 → 契约 SLA 条款）＋施→5（每条跨单元交互必须有注册契约）＋施→10（禁止双重维护）
+        - {source_type: clause_id, value: "3.5", verified: true}     # X1/X2
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 性能族（前端可见延迟）＋可修改性族（触达单元数）
+    typical_reversibility: bounded     # 人工判断：端契约的消费方面为自有前端/端形态（第三方端除外，该场合归 3.3 问题空间驱动第一行的对外 API 分级），变更可经端版本发布与灰度控制在有界成本内收回；母本未给本行的弃用窗口默认值（3.2.2 兼容性规则默认值列只列事件契约/内部 API/对外 API）→ 不推定为 costly
+    applicability:
+      problem_space:                   # 骨架源：3.2.1「适用条件」列
+        - "多端形态（Web/移动/第三方）（3.2.1 适用条件列逐字）"
+        - "前端与后端间约定（3.2.1 定义列逐字）；BFF（Backend for Frontend，面向特定前端形态定制的聚合服务层）为其组织模式（同列逐字）"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "既有端契约是最强约束源：逆向勘察以流量观测 + 消费者代码分析为准，文档仅作线索（3.3 现状空间驱动第二行）；已发布端版本的实际请求面即现状契约，未声明者为隐式契约"
+        - "现状契约清单须区分南北向（外部→系统）与端内聚合层两级：强加决策不泛化（3.6 示例一；0.3 强加范围解包）→ 公司 API 网关标准的文义范围须逐案解包后再套用到本形态"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动＋3.3 问题空间驱动第一行
+        - "消费者团队数量与变更节奏 → 兼容性规则严格度（消费者多且异构 → full；单消费者同团队 → backward 可接受）（3.3 交付空间驱动第一行）；端形态数即本形态的契约面数"
+        - "第三方端在场时按对外 API 分级处置：第三方开放 → full 兼容 + 长弃用窗口 + 对外 SLA 条款（3.3 问题空间驱动第一行）"
+    envelope:
+      - metric: "性能：延迟分位数（P50/P99，P99 = 延迟分布第 99 百分位数）"
+        bound_expr: "前端可见延迟 = 端渲染项 + 网络项 + 聚合层项 → 随聚合层引入的后端调用数单调不减；P99 上界须由方面 6 目标值给定（3.4 接收约束方面 6 行：延迟/可用性目标 → 契约 SLA 条款）→ 四类合法出处之外不得填值（6.2.1 量化纪律＋0.4 证据门槛）"
+        source: {source_type: clause_id, value: "3.4", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "跨边界契约变更数 = 端形态数 × 该端契约面数；BFF 作为『面向特定前端形态定制的聚合服务层』（3.2.1 定义列）使每端各持一份契约面 → 端形态数增加时该乘积 单调不减"
+        source: {source_type: clause_id, value: "3.2.1", verified: true}
+    cost_profile:
+      latency_budget_delta: "聚合层（BFF）为一端定制聚合 → 引入额外一跳与其后端扇出项；前端可见延迟预算须扣除端渲染项后方可分配到网络与聚合两层（6.2.1 性能族）；母本未给本形态的延迟默认值 → 由方面 6 目标值经 3.4 接收约束方面 6 行下发"
+      failure_modes: ["前端与后端间的约定未登记为契约（隐式契约 → X1 违例：无未登记跨单元交互）", "多端共用一份未按端形态定制的契约面（3.2.1 定义列以 BFF 为组织模式 → 未定制即聚合职责落到端上或后端通用接口上）", "同一语义条款在聚合层与后端契约两处维护（3.4 施→10 硬：禁止双重维护）", "第三方端在场却按纯内部 API 放宽兼容性与弃用窗口（3.3 问题空间驱动第一行分级）", "把公司 API 网关标准泛化套用到端内聚合层（3.6 示例一幻觉之一『强加覆盖一切』；0.3 强加范围解包）"]
+      consistency_impact: "端契约为读写路径的前端入口，不承载跨单元事务语义的定案；一致性级别由方面 4 的 Y 系列判定（CSL 批承载）；端上乐观更新与后端权威状态的偏差属方面 4/5 的一致性面，不得以端契约的字段约定替代一致性定案"
+      observability_requires: ["端契约面清单（按端形态分列）在注册表可查（3.4 施→5：每条跨单元交互必须有注册契约）", "聚合层的后端扇出与前端可见延迟可度量（6.2.1 性能族度量方式：生产观测与负载测试）", "第三方端在场与否及其兼容性分级在案（3.3 问题空间驱动第一行）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[API 网关（南北向）与按端形态定制的聚合服务层的部署与运维面（3.2.2 发现与注册；3.2.1 定义列 BFF）→ 运维项随端形态数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["端契约面设计（前端与后端间约定）（3.2.1 定义列）", "BFF 聚合层的职责边界划定（同列：面向特定前端形态定制的聚合服务层）", "对外/对内兼容性分级与弃用窗口登记（3.3 问题空间驱动第一行；3.2.2 兼容性规则）", "强加决策的范围解包（0.3＋0.6 CH-A 第 2 步；3.6 示例一）"]
+      aggregation_semantics: itemwise  # 母本未给 CTR 的跨契约聚合式（MJ-19 (iii) 同型）→ 端契约面按端形态逐项评估（MJ-21 (ix)）
+    compatibility: []                  # 3.2.1 适用条件列「多端形态（Web/移动/第三方）」不是方面 1 子维度三的通信/协调风格取值（1.2.3 六行为同步请求-响应/异步消息/事件驱动/事件溯源+CQRS/Broker 中介/共享数据），亦非子维度一/二取值 → 无对侧 STY 条目可登记；3.4 接收约束方面 1 行的三处明文（微服务/事件驱动/单体）均不涉本形态 → 无母本明文依据不登记（MJ-9 判据；MJ-17 (iii) 同型），互斥不枚举（MJ-5）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条不绑定单一风格（适用条件为端形态而非通信风格）：契约测试取硬（3.3 双使用者条款：契约设计评审是验证计划组成部分），CDC 按 X4 分级（微服务风格下升硬），事件 schema 演化项不适用（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-006-AP1
+        description: "前端与后端间的约定未登记为契约（端侧隐式契约）"
+        detection_predicate: "∃ u1: unit(u1) ∧ ∃ u2: unit(u2) ∧ [u1 为端形态单元] ∧ connects(u1, u2, ·) ∧ ¬∃ C: [covers(C, u1, u2)]"
+        signal_level: P0               # X1 明文「∀ interaction(u1,u2) ∈ connects: ∃C ∈ registry: covers(C,u1,u2) —— 无未登记跨单元交互 —— 硬」；3.4 施→5 同旨 → P0（MJ-4 判据）
+      - pattern_id: CTR-006-AP2
+        description: "同一语义条款在聚合层（BFF）与后端契约两处维护（双重维护）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C 登记为 UI/端契约] ∧ [同一语义条款另有一处后端契约登记] ∧ ¬[两处由同一工件同源生成]"
+        signal_level: P1               # 3.4 施→10 级别列为硬（禁止双重维护），但机器层天然性列对本行为『中』（3.2.1）→ 同源生成不总可行；母本未将其列入 X 系列硬性质 → P1，同源生成可行时按施→10 升硬（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X1, role: consumed_by}     # 端形态单元与后端单元间的交互同样须 ∃C: [covers(C,u1,u2)]（3.4 施→5：每条跨单元交互必须有注册契约）
+      - {property_id: X2, role: consumed_by}     # 发布态须 has(version) ∧ has(compat_policy)；母本未给本形态的版本化默认值（3.2.2 版本化策略默认值列只列同步 API 与事件）→ 取值须逐案登记，覆盖默认值需 ADR
+    references: []                     # 母本 3.7 书目 28–34 无 3.2.1「UI/端契约」行的行级登记提取面（28/29 → 3.2.2 CDC 与契约测试区分；30 → 同步 API 契约机器层格式；31 → 3.2.1 事件信封；32 → API 契约设计方法；33 → 3.2.2 schema registry 与兼容性规则；34 → 3.4 绞杀者迁移）→ 按 G-CRD-1／G-DEC-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-CTR-1，待人工裁决补勘后回填（SO-9）
+    narrative:
+      benefit_cost_analysis: "收益：把前端与后端间的约定从端代码与口头惯例收回到注册表，使 X1『无未登记跨单元交互』在端侧同样可判定；BFF 作为面向特定前端形态定制的聚合服务层，使端特有聚合逻辑不污染后端通用接口（3.2.1 定义列）；第三方端在场时有明确分级依据（3.3 问题空间驱动第一行：full 兼容 + 长弃用窗口 + 对外 SLA 条款）。代价：机器层天然性仅为『中』（3.2.1），端契约面不能像 IDL/OpenAPI 那样直接投影为谓词 → 施→10 的禁止双重维护在本形态最难满足（AP2）；每端各持一份契约面使跨边界契约变更数按端形态数放大；聚合层引入额外一跳与其后端扇出项，前端可见延迟预算被三层分食；母本未给本形态的版本化与兼容性默认值（3.2.2 两个默认值列均不涉端契约）→ 取值须逐案登记，选型面宽于其他形态。"
+      typical_scenarios: "多端形态（Web/移动/第三方）并存、各端聚合需求不同的场合（3.2.1 适用条件列）；须为特定前端形态定制聚合服务层（BFF）的场合（3.2.1 定义列）；第三方端接入、须按对外 API 分级登记的场合（3.3 问题空间驱动第一行）；公司 API 网关标准强加南北向流量、而端内聚合层是否在强加范围内须逐案解包的场合（3.6 示例一；0.3）；分布式单体排查中须确认端侧交互是否已登记契约的场合（X1；3.4 施→5）。"
+      common_misuse: "端侧约定不登记为契约（AP1，X1 硬违例）；同一语义条款在 BFF 与后端契约双重维护（AP2，3.4 施→10）；多端共用一份未定制的契约面而把聚合职责推到端上（3.2.1 定义列以 BFF 为组织模式）；第三方端按纯内部 API 放宽兼容性与弃用窗口（3.3 问题空间驱动第一行）；把南北向网关标准泛化到端内聚合层（3.6 示例一幻觉之一）；以端契约的字段约定替代一致性定案（一致性属方面 4 的 Y 系列）；因机器层天然性为『中』即放弃同源生成而不登记偏离理由（0.4 证据门槛）。"
+
+  - entry_id: CTR-007
+    kind: CTR
+    name: "版本化策略"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.2 表行「版本化策略」（内容列三载体＋事件契约推荐项；默认值列两条）＋谓词转写（manual）；母本对本行仅给一行表数据，无独立小节 → 不扩张（G-CRD-1 同型纪律）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.2-版本化策略", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}   # 表头「默认值（注册表登记，可覆盖需 ADR）」
+        - {source_type: clause_id, value: "3.3", verified: true}     # 问题空间驱动第一行（第三方开放 → full 兼容 + 长弃用窗口）＋现状空间驱动第二行（无文档隐式契约）＋交付空间驱动两行
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 1/6 行＋施→2（边界冻结）/8/9/10
+        - {source_type: clause_id, value: "3.5", verified: true}     # X2（has(version)）／X3（breaking_change → deprecation_window）
+        - {source_type: clause_id, value: "3.6", verified: true}     # 示例二（additive-only + schema registry 发布 v1；参数化项 = 兼容性策略字段）
+        - {source_type: clause_id, value: "0.4", verified: true}     # 覆盖默认值的 ADR 须过证据门槛
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可修改性族（跨边界契约变更数）＋可观测性族（覆盖率）
+        - {source_type: bib_id, value: 33, verified: true}
+    typical_reversibility: bounded     # 人工判断：版本载体一经 published 即对既有消费者生效，无声撤回违 X5（发布即批准）→ 非 free；但 3.6 示例二明文「参数化项 = 兼容性策略字段（切换成本有界）」→ 策略字段可在有界成本内切换，非 costly
+    applicability:
+      problem_space:                   # 骨架源：3.2.2「内容」列＋3.3 问题空间驱动
+        - "URI 版本 / 头部版本 / schema registry 版本三载体（3.2.2 内容列逐字）；事件契约推荐『仅增量演化』（additive-only：只加可选字段，不改不删既有字段）（同列逐字）"
+        - "第三方开放 → full 兼容 + 长弃用窗口 + 对外 SLA 条款（3.3 问题空间驱动第一行）；合规/监管接口 → 走 CH-A＋0.5 必登类目（同节第二行）→ 两类场合的版本载体与演化严格度均高于内部 API"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "现状契约清单是版本化策略的起点：既有契约的实际版本载体（URI 段 / 头部字段 / registry subject）须先逆向登记；无文档隐式契约以流量观测 + 消费者代码分析为准，文档仅作线索（3.3 现状空间驱动第二行；公理 A1）"
+        - "已发布契约的边界冻结（3.4 施→2 硬）→ 现状版本化策略不得以重排既有版本号的方式收回；切割需求走弃用窗口 + 绞杀者迁移（同行）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动
+        - "CI 成熟度 → CDC 可行集；能力不足降软 + 保守假设 ADR，可推翻指标 = CI 能力建立（3.3 交付空间驱动第二行）→ schema registry 版本载体以 CI 中可执行兼容性检查为前提，能力不足时该载体的可行性下降"
+        - "消费者多且异构 → full；单消费者同团队 → backward 可接受（3.3 交付空间驱动第一行）→ 版本化策略的演化严格度随消费者集合基数上升"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "additive-only 演化下既有字段的改动数 = 0 → 单次演化的跨边界契约变更数 上界 = 新增可选字段数；非 additive-only 演化的变更数 随 consumer_set 基数 单调不减（每个消费者各需一次适配，3.2.2 内容列的推荐项即为此设）"
+        source: {source_type: clause_id, value: "3.2.2", verified: true}
+      - metric: "可观测性：卡片 observability_requires（5.2.5）满足率、追踪覆盖率"
+        bound_expr: "已登记版本载体的 published 契约数 / published 契约总数 上界为 1（X2：∀C(lifecycle_state=published): has(version) ∧ has(compat_policy) —— 硬）→ 缺口 = 未登记者数，随 published 契约数增加 单调不减"
+        source: {source_type: clause_id, value: "3.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "版本化策略不改变调用路径 → 运行时延迟预算增量为 0；多版本并存使网关路由与序列化面增加分支、schema registry 载体引入解析项，母本均未给量化增量 → 由方面 6 目标值经 3.4 接收约束方面 6 行下发，四类合法出处之外不得填值（6.2.1 量化纪律＋0.4 证据门槛）"
+      failure_modes: ["published 态契约缺 version 或 compat_policy（X2 硬违例）", "事件契约改动或删除既有字段（3.2.2 内容列推荐项 additive-only：只加可选字段，不改不删既有字段）", "契约类型不在默认值列两类（同步 API / 事件）之内却径行套用默认载体而无 ADR（3.2.2 表头『注册表登记，可覆盖需 ADR』）", "以重排既有版本号的方式收回已发布契约（3.4 施→2 硬：已发布契约的边界冻结）", "同一契约在 URI 与头部两处各持一个版本载体（3.4 施→10 硬：禁止双重维护）"]
+      consistency_impact: "版本化策略不承载跨单元事务语义；多版本并存期的一致性级别由方面 4 的 Y 系列判定（CSL 批承载）；schema registry 的 schema 兼容不等于数据一致性定案，additive-only 演化不改变既有字段语义 → 不得以此替代语义条款变更登记（3.2.1 数据契约行）"
+      observability_requires: ["每份 published 契约的 version 与 compat_policy 在注册表可查（X2 硬；3.4 施→5）", "在网版本分布与并存版本数可度量（X3 弃用窗口闭合判定所需）", "schema registry 的兼容性检查结果在提供者 CI 中留痕（3.3 交付空间驱动第二行：CI 成熟度 → CDC 可行集）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[schema registry / API 网关版本路由 / 服务目录三类注册面的部署与运维项（3.2.2 发现与注册行）→ 运维项随契约数与并存版本数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["三种版本载体的取舍（URI 版本 / 头部版本 / schema registry 版本）（3.2.2 内容列）", "additive-only 演化的字段级纪律（同列：只加可选字段，不改不删既有字段）", "覆盖默认值的 ADR 撰写（3.2.2 表头；0.4 证据门槛）", "版本化策略与兼容性规则的联动登记（3.2.2 相邻两行；3.6 示例二的参数化项）"]
+      aggregation_semantics: itemwise  # 母本未给 CTR 的跨契约聚合式（MJ-19 (iii) 同型）→ 版本载体按契约逐项登记（与 3.2.2 兼容性规则行「每契约登记其一」同型）（MJ-21 (ix)）
+    compatibility:
+      - peer_entry: CTR-002
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.2.2", verified: true}   # 默认值列明文「同步 API：URI 版本」→ 同步 API 契约的默认版本载体为 URI 版本；**回填 CTR-002 侧已声明的镜像**（CTR-002 行内注原文「镜像登记于 CTR-007」）；ENUM_RELATION 无 required_by 且方向为契约形态 → 治理维度 → 本侧记 composable（MJ-20 (vii) 同型；MJ-21 (viii)：CTR-002 属本批 seed 条目、非已批准条目 → 双向登记）
+      - peer_entry: CTR-004
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.2.2", verified: true}   # 默认值列明文「事件：additive-only + schema registry」＋内容列「事件契约推荐『仅增量演化』」→ 事件契约的默认版本化策略为 additive-only 演化 + schema registry 载体；3.6 示例二以本组合发布 v1（保留候选集：未来消费者无论出现多少都可低成本接入）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 版本化策略不绑定单一风格：契约测试项取硬，CDC 按 X4 分级（微服务风格下升硬），事件 schema 演化测试项在 additive-only 演化下为必备（3.2.2 内容列推荐项）（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-007-AP1
+        description: "published 态契约未登记版本载体（缺 version 或缺 compat_policy）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [lifecycle_state = published] ∧ ¬(has(version) ∧ has(compat_policy))"
+        signal_level: P0               # X2 明文「∀C(lifecycle_state=published): has(version) ∧ has(compat_policy) —— 版本与兼容策略齐备 —— 硬」；3.2.2 表头同旨（注册表登记）→ P0（MJ-4 判据）
+      - pattern_id: CTR-007-AP2
+        description: "事件契约改动或删除既有字段（违反 additive-only 推荐）而未登记为破坏性变更"
+        detection_predicate: "∃ C, v1, v2: [contract(C, ·, ·, ·, version, ·, ·)] ∧ [C 登记为事件契约] ∧ [v1→v2 含既有字段的改动或删除] ∧ ¬[breaking_change(C, v1, v2)]"
+        signal_level: P1               # 3.2.2 内容列对事件契约的 additive-only 为『推荐』而非硬性质 → 未按 P0 登记；但改/删既有字段使 v1→v2 构成破坏性变更而未登记者落入 X3 违例面（条件硬）→ 级别待 W3/X3 条件硬裁决口（s5h 既有）落定后复核（MJ-4 判据）
+      - pattern_id: CTR-007-AP3
+        description: "同一契约在 URI 与头部两处各持一个版本载体（版本载体双重维护）"
+        detection_predicate: "∃ C: [contract(C, ·, ·, ·, version, ·, ·)] ∧ [version 同时由 URI 段与头部字段承载] ∧ ¬[两处由同一工件同源生成]"
+        signal_level: P1               # 3.4 施→10 级别列为硬（禁止双重维护），但机器层天然性对同步 API 为『高』（3.2.1）→ 同源生成可行时应升硬；母本未将其列入 X 系列 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X2, role: implements}      # 版本化策略是 has(version) 的登记来源：三种版本载体给出 version 字段的合法取值形态（3.2.2 内容列）
+      - {property_id: X3, role: consumed_by}     # 版本载体决定 v1→v2 是否构成 breaking_change(C,v1,v2) → X3 要求 deprecation_window(C,v1,t) ∧ t ≥ slowest_consumer_migration(C)
+    references:
+      - {bib_id: 33, support_claim: "3.2.2 schema registry 与兼容性规则的工程参照（母本 3.7 书目 33 行级登记提取面逐字对应；三种版本载体中 schema registry 选项的提取以本地两份专页级存档为准——《Confluent - Schema Registry for Confluent Platform.epub》概览/概念页＋《Confluent - Schema Evolution and Compatibility for Schema Registry.epub》兼容性规则专页全文，Platform current＝8.3）", compile_usage: metadata_extraction, trust_grade: "[已核验（在线在位：2026-09-18 复核，Platform 8.3 当前文档可获取）]"}
+    narrative:
+      benefit_cost_analysis: "收益：把版本载体的选择从口头惯例收回到注册表，使 X2『发布态版本与兼容策略齐备』可逐契约判定；additive-only 使事件契约的既有字段改动数为 0，消费者无需同步升级即可继续读取（3.2.2 内容列）；3.6 示例二显示版本化策略与兼容性策略可一并参数化推迟（保留候选集 + 最后负责时刻），切换成本有界。代价：默认值列只覆盖同步 API 与事件两类 → 其余契约形态（异步消息、数据、UI/端）的版本载体须逐案登记并各附 ADR，登记面最宽；多版本并存使网关路由与序列化分支上升，并存版本数随弃用窗口拉长而增加；schema registry 载体以 CI 中可执行兼容性检查为前提，CI 成熟度不足时该选项不可行（3.3 交付空间驱动第二行）；版本载体双重维护（AP3）在机器层天然性为『高』的同步 API 上最不该发生，却因 URI 与头部两种载体并存而易发。"
+      typical_scenarios: "新契约发布前须选定版本载体的场合（3.2.2 内容列三选项）；事件契约演化、须按 additive-only 纪律只加可选字段的场合（同列推荐项）；消费者集合结构性未知、须以 additive-only + schema registry 发布 v1 并设定最后负责时刻的场合（3.6 示例二，CH-B 推迟）；既有契约无文档、须以流量观测逆向登记版本载体的场合（3.3 现状空间驱动第二行）；第三方开放或合规/监管接口、版本与弃用窗口须同时加严的场合（3.3 问题空间驱动两行）；方面 2 拆分诉求与已发布契约冻结冲突、须制定契约 v2 的场合（3.6 示例三，CH-E）。"
+      common_misuse: "published 态缺 version 或 compat_policy（AP1，X2 硬违例）；事件契约改/删既有字段却不登记为破坏性变更（AP2，X3 违例面）；URI 与头部两处各持版本载体（AP3，3.4 施→10）；契约类型不在默认值列两类之内而径行套用默认载体、无 ADR（3.2.2 表头）；以重排既有版本号收回已发布契约（3.4 施→2 硬）；把 schema 兼容当作数据一致性定案（一致性属方面 4 的 Y 系列）；CI 能力不足即静默放弃 schema registry 载体而不记保守假设 ADR（3.3 交付空间驱动第二行）；为版本载体填无出处的并存版本数或解析开销数值（0.4 证据门槛）。"
+
+  - entry_id: CTR-008
+    kind: CTR
+    name: "兼容性规则"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.2 表行「兼容性规则」（内容列四取值＋每契约登记其一；默认值列三条）＋谓词转写（manual）；母本对本行仅给一行表数据 → 不扩张（G-CRD-1 同型纪律）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.2-兼容性规则", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}
+        - {source_type: clause_id, value: "3.3", verified: true}     # 问题空间驱动第一行（第三方开放 → full 兼容）＋交付空间驱动第一行（消费者多且异构 → full；单消费者同团队 → backward 可接受）
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 6 行（可用性目标 → 契约 SLA 条款、错误预算）＋施→2/8/9/10
+        - {source_type: clause_id, value: "3.5", verified: true}     # X2（has(compat_policy)）／X3
+        - {source_type: clause_id, value: "3.6", verified: true}     # 示例二（compatibility_rule=backward 截至首个外部消费者；LRM 收紧为 full 与否必须决定；参数化项 = 兼容性策略字段，切换成本有界）
+        - {source_type: clause_id, value: "0.6", verified: true}     # CH-B 推迟（保留候选集＋最后负责时刻＋参数化）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可用性可靠性族（SLO、错误预算〔1 − SLO〕）＋可修改性族
+        - {source_type: bib_id, value: 33, verified: true}
+    typical_reversibility: bounded     # 3.6 示例二明文「记完整 ADR，参数化项 = 兼容性策略字段（切换成本有界）」→ 兼容性规则可参数化切换，非 irreversible；但一经 published 即约束全部既有消费者、收紧须走 ADR 与弃用窗口 → 非 free
+    applicability:
+      problem_space:                   # 骨架源：3.2.2「内容」列＋3.3 问题空间驱动
+        - "backward（新消费者可读旧数据）/ forward（旧消费者可读新数据）/ full / none 四取值，每契约登记其一（3.2.2 内容列逐字）"
+        - "第三方开放 → full 兼容 + 长弃用窗口 + 对外 SLA 条款（3.3 问题空间驱动第一行）；合规/监管接口 → 走 CH-A＋0.5 必登类目（同节第二行）→ 两类场合不得取 none"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "现状契约清单须逐契约登记兼容性规则：无文档隐式契约以流量观测 + 消费者代码分析为准（3.3 现状空间驱动第二行；公理 A1）→ 实际在网流量的兼容面即现状规则，未声明者不得推定为 none"
+        - "已发布契约的边界冻结（3.4 施→2 硬）→ 现状规则只能加严不能放宽；放宽属破坏性变更（3.2.2 破坏性变更流程行）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动
+        - "消费者多且异构 → full；单消费者同团队 → backward 可接受（3.3 交付空间驱动第一行逐字）→ 规则严格度随消费者集合基数与异构度上升"
+        - "CI 成熟度 → CDC 可行集（3.3 交付空间驱动第二行）→ full 与 backward 的可验证性依赖提供者 CI 中的兼容性检查；能力不足降软 + 保守假设 ADR，可推翻指标 = CI 能力建立"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "compat_policy = none 时单次变更的跨边界契约变更数 上界 = consumer_set 基数（每个消费者各需一次适配）；= full 时该上界降为 0（变更须对新旧两侧同时可读 → 只允许 additive 演化）；任一取值下该上界 随 consumer_set 基数 单调不减"
+        source: {source_type: clause_id, value: "3.2.2", verified: true}
+      - metric: "可用性可靠性：SLO、错误预算〔1 − SLO〕、MTTR、RPO/RTO"
+        bound_expr: "兼容性失配导致的消费者解析失败所占错误预算份额 上界为 1（错误预算 = 1 − SLO，3.4 接收约束方面 6 行：可用性目标 → 契约 SLA 条款）→ 该份额随弃用窗口内并存版本数 单调不减；对外 API 取 full + 弃用窗口（3.2.2 默认值列）以压低该份额"
+        source: {source_type: clause_id, value: "3.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "兼容性规则本身不改变调用路径 → 运行时延迟预算增量为 0；full 规则要求变更保持对新旧两侧可读 → 成本落在契约面（additive 演化）与 CI 校验，不落在延迟；母本未给任何量化增量 → 由方面 6 目标值经 3.4 接收约束方面 6 行下发（6.2.1 量化纪律＋0.4 证据门槛）"
+      failure_modes: ["published 态契约缺 compat_policy（X2 硬违例）", "对外 API 按内部 API 放宽兼容性（3.2.2 默认值列分级：内部 API full / 对外 API full + 弃用窗口；3.3 问题空间驱动第一行）", "多契约共用一条全局兼容性声明而非每契约登记其一（3.2.2 内容列明文）", "兼容性规则只加严方向被反向操作——已发布后放宽为 none 而不走破坏性变更流程（3.4 施→2 硬）", "规则取 full 而 CI 无兼容性检查能力，且未记保守假设 ADR（3.3 交付空间驱动第二行）"]
+      consistency_impact: "兼容性规则约束的是 schema 与语义条款的演化面，不承载跨单元事务语义；一致性级别由方面 4 的 Y 系列判定（CSL 批承载）；backward/forward 的可读性承诺不得被读作跨版本的数据一致性承诺，两者分属不同判定面"
+      observability_requires: ["每份 published 契约的 compat_policy 取值在注册表可查（X2 硬；3.2.2 内容列『每契约登记其一』）", "对外/对内分级及其弃用窗口在案（3.2.2 默认值列；3.3 问题空间驱动第一行）", "兼容性检查在提供者 CI 中的执行结果留痕（3.3 交付空间驱动第二行）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）——漂移是规则实际未被遵守的信号"]
+      ops_cost: "[兼容性检查在 CI 中的执行面与 schema registry 的 per-subject 兼容性配置面（3.2.2 发现与注册行；书目 33 专页存档）→ 运维项随契约数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["backward / forward / full / none 四取值的语义辨析（3.2.2 内容列：新消费者可读旧数据 / 旧消费者可读新数据）", "对外与对内 API 的分级判定与弃用窗口登记（同表默认值列；3.3 问题空间驱动第一行）", "兼容性规则的参数化推迟与最后负责时刻设定（3.6 示例二；0.6 CH-B）", "兼容性规则与版本化策略的联动登记（3.2.2 相邻两行）"]
+      aggregation_semantics: itemwise  # 3.2.2 内容列明文「每契约登记其一」→ 逐契约取值、无跨契约聚合式（MJ-19 (iii) 同型；MJ-21 (ix)）
+    compatibility:
+      - peer_entry: CTR-002
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.2.2", verified: true}   # 默认值列明文「内部 API：full；对外 API：full + 弃用窗口」→ 同步 API 契约的兼容性规则按对内/对外分两级；**回填 CTR-002 侧已声明的镜像**（CTR-002 行内注原文「镜像登记于 CTR-008」）；ENUM_RELATION 无 required_by → 本侧记 composable（MJ-20 (vii) 同型；MJ-21 (viii)）
+      - peer_entry: CTR-004
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.2.2", verified: true}   # 默认值列明文「事件契约：backward」→ 事件契约的默认兼容性规则为 backward；3.6 示例二同旨（compatibility_rule=backward 截至首个外部消费者，LRM 到达时收紧为 full 与否必须决定）
+      - peer_entry: CTR-011
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.2.2", verified: true}   # 默认值列对外 API 一项为「full + 弃用窗口」→ 兼容性规则与破坏性变更流程共用弃用窗口这一参数；放宽既有规则属破坏性变更，须走 CTR-011 的完整 ADR + 批准 + 迁移支持
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 兼容性规则的可验证性依赖 CI 中的兼容性检查：契约测试项取硬，CDC 按 X4 分级（微服务风格下升硬），事件 schema 演化测试项在事件契约取 backward/full 时为必备（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-008-AP1
+        description: "published 态契约未登记兼容性规则（缺 compat_policy）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [lifecycle_state = published] ∧ ¬has(compat_policy)"
+        signal_level: P0               # X2 明文「∀C(lifecycle_state=published): has(version) ∧ has(compat_policy) —— 硬」；3.2.2 内容列「每契约登记其一」→ P0（MJ-4 判据）
+      - pattern_id: CTR-008-AP2
+        description: "对外 API 按内部 API 放宽兼容性（未取 full + 弃用窗口）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, ·, ·, compat_policy, ·)] ∧ [consumer_set 含第三方开放消费者] ∧ ¬(compat_policy = full ∧ [弃用窗口已登记])"
+        signal_level: P1               # 3.2.2 默认值列对三类分别给值＋3.3 问题空间驱动第一行「第三方开放 → full 兼容 + 长弃用窗口 + 对外 SLA 条款」；母本未将『分级错配』单列 X 系列性质 → P1；该放宽若已发布即构成破坏性变更 → 按 X3（条件硬）复核（MJ-4 判据）
+      - pattern_id: CTR-008-AP3
+        description: "多契约共用一条全局兼容性声明（未每契约登记其一）"
+        detection_predicate: "∃ C1, C2: [contract(C1, ·, ·, ·, ·, compat_policy, ·)] ∧ [contract(C2, ·, ·, ·, ·, compat_policy, ·)] ∧ ¬[compat_policy 按 C1、C2 各自登记] ∧ [两者援引同一条全局声明]"
+        signal_level: P1               # 3.2.2 内容列明文「每契约登记其一」；X2 为逐契约量词（∀C）→ 全局声明使 has(compat_policy) 无法逐契约判定，但母本未将『全局声明』单列硬性质 → P1，与 published 态并存时按 X2 升 P0（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X2, role: implements}      # 兼容性规则是 has(compat_policy) 的登记来源：四取值给出 compat_policy 字段的合法取值域（3.2.2 内容列）
+      - {property_id: X3, role: consumed_by}     # 放宽既有兼容性规则构成 breaking_change(C,v1,v2) → X3 要求 deprecation_window(C,v1,t) ∧ t ≥ slowest_consumer_migration(C)；对外 API 默认值「full + 弃用窗口」即本项与 X3 的接合点
+    references:
+      - {bib_id: 33, support_claim: "3.2.2 schema registry 与兼容性规则的工程参照（母本 3.7 书目 33 行级登记提取面逐字对应；兼容性规则字段的提取源以本地专页级存档《Confluent - Schema Evolution and Compatibility for Schema Registry.epub》为准——含 BACKWARD／BACKWARD_TRANSITIVE／FORWARD／FORWARD_TRANSITIVE／FULL／FULL_TRANSITIVE／NONE 七类定义、Avro/Protobuf/JSON Schema 三格式兼容性汇总表、transitive 语义、客户端升级次序、per-subject 兼容性配置与 API 示例，Platform current＝8.3；母本同行明记『3.2.2 兼容性规则字段的提取源已完备，编译规范 4.1 暂停解除（附录一第 19/20 行）』）", compile_usage: metadata_extraction, trust_grade: "[已核验（在线在位：2026-09-18 复核，Platform 8.3 当前文档可获取）]"}
+    narrative:
+      benefit_cost_analysis: "收益：兼容性规则把『谁能读谁』从口头承诺变成逐契约登记的可判定字段，使 X2 的 has(compat_policy) 有确定取值域（backward / forward / full / none）；默认值列按事件契约、内部 API、对外 API 三类给出起点，降低逐案裁量面；3.6 示例二显示规则本身可作为参数化项推迟决定（backward 起步、以最后负责时刻触发收紧裁决），且切换成本有界。代价：full 规则实质要求变更只走 additive 演化 → 契约面设计自由度下降，与版本化策略强耦合；对外 API 的 full + 弃用窗口把最慢消费者的迁移时长变成己方约束，估计须有出处否则按 0.4 降级处置；规则的可验证性依赖 CI 中的兼容性检查，CI 成熟度不足时只能降软并记保守假设 ADR（3.3 交付空间驱动第二行）；四取值中 none 在第三方开放与合规/监管场合不可用，选型面窄于表面。"
+      typical_scenarios: "新契约发布前须选定兼容性规则的场合（3.2.2 内容列四取值，每契约登记其一）；对外 API 与内部 API 须分级登记的场合（同表默认值列；3.3 问题空间驱动第一行）；消费者集合未知、须以 backward 起步并设定最后负责时刻的场合（3.6 示例二，CH-B 推迟）；消费者由单一同团队变为多且异构、须从 backward 收紧为 full 的场合（3.3 交付空间驱动第一行）；既有规则须放宽、因而走破坏性变更流程的场合（3.2.2 破坏性变更流程行；CTR-011）；契约漂移排查中须确认实际流量是否仍满足登记规则的场合（3.4 施→9）。"
+      common_misuse: "published 态缺 compat_policy（AP1，X2 硬违例）；对外 API 按内部 API 放宽（AP2）；一条全局声明覆盖多契约（AP3，3.2.2 内容列『每契约登记其一』）；已发布后放宽规则而不走破坏性变更流程（3.4 施→2 硬）；取 full 却无 CI 兼容性检查能力且不记保守假设 ADR（3.3 交付空间驱动第二行）；把 backward/forward 的可读性承诺读作跨版本数据一致性承诺（一致性属方面 4 的 Y 系列）；以默认值列三类之外的契约类型径行套用默认规则而无 ADR（3.2.2 表头）；为『最慢消费者迁移时长』填无出处数字（0.4 证据门槛；X3 尾注：防 Agent 编造假精确数字绕过弃用窗口）。"
+
+  - entry_id: CTR-009
+    kind: CTR
+    name: "消费者驱动契约测试（CDC）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.2 表行「消费者驱动契约测试（CDC）」（内容列机制与幻觉；默认值列『高风险契约必备（见 X4）』）＋谓词转写（manual）；name 逐字承表行首列（含括号缩写）
+      source_pointers:
+        - {source_type: row_id, value: "3.2.2-消费者驱动契约测试（CDC）", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}
+        - {source_type: clause_id, value: "3.3", verified: true}     # 交付空间驱动第二行（CI 成熟度 → CDC 可行集；能力不足降软 + 保守假设 ADR）＋双使用者条款（CDC 套件脚手架生成属 Agent 自主项）
+        - {source_type: clause_id, value: "3.4", verified: true}     # 施→8（微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备）
+        - {source_type: clause_id, value: "3.5", verified: true}     # X4（∀C ∈ high_risk: cdc_suite(C) —— 软，微服务风格下升硬）
+        - {source_type: clause_id, value: "0.18.4", verified: true}  # kind_profile_CTR：CDC 要求按 X4 分级写入 cost_profile
+        - {source_type: clause_id, value: "0.4", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可修改性族（变更前置时间）＋可观测性族（覆盖率）
+        - {source_type: bib_id, value: 28, verified: true}
+        - {source_type: bib_id, value: 29, verified: true}
+    typical_reversibility: free        # 人工判断：CDC 套件是验证工件而非契约面——增删套件不改变契约的 version/compat_policy/lifecycle_state，亦不影响既有消费者 → 可自由撤回；母本未给本行的逆转成本（3.2.2 默认值列仅『高风险契约必备（见 X4）』）→ 不推定为 bounded
+    applicability:
+      problem_space:                   # 骨架源：3.2.2「内容」列＋「默认值」列
+        - "消费者定义期望 → 提供者 CI 中验证；防止『提供者自认为兼容』的幻觉（3.2.2 内容列逐字）"
+        - "高风险契约必备（见 X4）（3.2.2 默认值列逐字）→ 适用面由风险分级界定，非全契约强制"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "现状契约清单中无文档的隐式契约是 CDC 的首要对象：期望须以流量观测 + 消费者代码分析为准（3.3 现状空间驱动第二行；公理 A1）→ 消费者实际读取的字段集即期望来源"
+        - "既有 CDC 覆盖状态须逆向登记：未在提供者 CI 中执行的人工验证不计入 cdc_suite（3.2.2 内容列『CI 中验证』）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动第二行＋双使用者条款
+        - "CI 成熟度 → CDC 可行集；能力不足降软 + 保守假设 ADR，可推翻指标 = CI 能力建立（3.3 交付空间驱动第二行逐字）→ 本治理维度的可行性直接由交付空间决定"
+        - "CDC 套件脚手架生成属 Agent 自主项，无需批准（3.3 双使用者条款）；但契约发布（published 迁移）与破坏性变更批准一律走批准路径（同条款）→ 脚手架可自动生成，发布不可"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "高风险契约的 CDC 覆盖率 = 已建 cdc_suite 的高风险契约数 / 高风险契约总数 上界为 1（X4：∀C ∈ high_risk: cdc_suite(C)）→ 缺口 = 未覆盖者数；变更前置时间随 CDC 在提供者 CI 中的执行时长 单调不减，母本未给该时长数值（0.4 证据门槛 → 不填）"
+        source: {source_type: clause_id, value: "3.5", verified: true}
+      - metric: "可观测性：卡片 observability_requires（5.2.5）满足率、追踪覆盖率"
+        bound_expr: "『提供者自认为兼容』幻觉的检出率 = CDC 在提供者 CI 中拦截的兼容性回归数 / 兼容性回归总数 上界为 1；未纳入 CI 的契约其检出率 下界为 0（3.2.2 内容列：消费者定义期望 → 提供者 CI 中验证）"
+        source: {source_type: clause_id, value: "3.2.2", verified: true}
+    cost_profile:
+      latency_budget_delta: "CDC 在提供者 CI 中执行 → 不进入运行时调用路径，运行时延迟预算增量为 0；成本落在变更前置时间（6.2.1 可修改性族）与 CI 资源；母本未给执行时长与资源占用数值 → 不填（0.4 证据门槛）"
+      failure_modes: ["高风险契约无 CDC 套件（X4：软，微服务风格下升硬；3.4 施→8：微服务风格 → CDC 必备）", "期望由提供者单方编写而非消费者定义（3.2.2 内容列 → 期望来源倒置即重演『提供者自认为兼容』的幻觉）", "CDC 未纳入提供者 CI 而只在本地或人工执行（同列『CI 中验证』）", "以 CDC 替代事件 schema 演化测试（3.4 施→8 将两者按风格分列为不同必备项）", "CI 成熟度不足时径行降软而不记保守假设 ADR 与可推翻指标（3.3 交付空间驱动第二行）", "把脚手架自动生成读作可自动发布契约（3.3 双使用者条款：published 迁移属高影响决策，一律走批准路径）"]
+      consistency_impact: "CDC 验证的是消费者期望与提供者实现的一致，不承载跨单元事务语义；一致性级别由方面 4 的 Y 系列判定（CSL 批承载）；CDC 全绿不构成数据一致性定案，亦不替代方面 8 验证计划的其他验证项（3.4 施→8：契约测试是验证计划的**组成部分**）"
+      observability_requires: ["高风险契约清单与其 CDC 覆盖状态在注册表可查（X4 判定所需；3.4 施→5）", "CDC 在提供者 CI 中的执行结果与失败项留痕（3.2.2 内容列）", "消费者期望工件的来源与版本可追溯（同列『消费者定义期望』→ 期望须可归属到 consumer_set 成员）", "CI 成熟度评估结论与降软的保守假设 ADR 在案（3.3 交付空间驱动第二行）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[CDC 套件在提供者 CI 中的执行与维护面＋消费者期望工件的存放与同步面（3.2.2 内容列）→ 运维项随高风险契约数与 consumer_set 基数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["消费者期望的定义与工件化（3.2.2 内容列）", "在提供者 CI 中挂载 CDC 验证（同列；3.3 交付空间驱动第二行 CI 成熟度）", "高风险契约的分级判定（3.2.2 默认值列『高风险契约必备（见 X4）』→ 分级依据须登记）", "CDC 与单元测试、事件 schema 演化测试的区分（书目 28/29 的行级登记提取面；3.4 施→8）"]
+      aggregation_semantics: itemwise  # X4 为逐契约量词（∀C ∈ high_risk）→ 覆盖率按契约逐项评估、无跨契约聚合式（MJ-19 (iii) 同型；MJ-21 (ix)）
+    compatibility:
+      - peer_entry: STY-016
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.4", verified: true}   # 施→8 明文「微服务风格 → CDC 必备」＋X4「软（微服务风格下升硬）」→ 微服务风格是 CDC 升硬的条件；母本方向为风格 → 治理维度，ENUM_RELATION 无 required_by 且 STY-016 属已批准条目 → 只登记 composable（MJ-20 (vii) 同型；MJ-21 (viii)：镜像不回填已批准条目）
+      - peer_entry: STY-003
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.4", verified: true}   # 施→8 明文「事件驱动 → 事件 schema 演化测试必备」→ 事件驱动风格下本治理维度以事件 schema 演化测试为对应必备项；同为风格 → 治理维度方向 → 只登记 composable（MJ-20 (vii) 同型）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条即该行的主承载条目：X4 为软、微服务风格下升硬，事件驱动下事件 schema 演化测试为必备（3.4 施→8＋3.5 X4 双源同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-009-AP1
+        description: "高风险契约无 CDC 套件"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [C ∈ high_risk] ∧ ¬[cdc_suite(C)]"
+        signal_level: P1               # X4 明文「∀C ∈ high_risk: cdc_suite(C) —— 软（微服务风格下升硬）」→ 默认 P1；微服务风格（STY-016）在场时升 P0（3.4 施→8 同旨：微服务风格 → CDC 必备）（MJ-4 判据）
+      - pattern_id: CTR-009-AP2
+        description: "消费者期望由提供者单方定义（期望来源倒置）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, ·, ·, ·, ·)] ∧ [cdc_suite(C)] ∧ ¬[期望工件的来源 ∈ consumer_set] ∧ [期望由 provider 单方编写]"
+        signal_level: P1               # 3.2.2 内容列明文「消费者定义期望 → 提供者 CI 中验证；防止『提供者自认为兼容』的幻觉」→ 来源倒置即重演该幻觉，使本治理维度失效；母本未将其单列 X 系列性质 → P1（MJ-4 判据）
+      - pattern_id: CTR-009-AP3
+        description: "CDC 未纳入提供者 CI（仅本地或人工执行）"
+        detection_predicate: "∃ C: [contract(C, provider, ·, ·, ·, ·, ·)] ∧ [cdc_suite(C)] ∧ ¬[cdc_suite 在 provider 的 CI 中自动执行]"
+        signal_level: P1               # 3.2.2 内容列『提供者 CI 中验证』；3.3 交付空间驱动第二行以 CI 成熟度界定可行集 → CI 能力不足应走降软 + 保守假设 ADR（可推翻指标 = CI 能力建立）而非静默移出 CI；母本未列 X 系列 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X4, role: implements}      # cdc_suite(C) 的登记载体：X4「∀C ∈ high_risk: cdc_suite(C) —— 软（微服务风格下升硬）」以本治理维度为判定对象（3.2.2 默认值列明文『高风险契约必备（见 X4）』）
+    references:
+      - {bib_id: 28, support_claim: "3.2.2 CDC 机制源头（母本 3.7 书目 28 行级登记提取面逐字对应；提取以本地存档《Ian Robinson - Consumer-Driven Contracts_ A Service Evolution__Pattern.epub》原文全文为准，含 martinfowler.com 原始章节 'Evolving a Service'，2026-09-15 归档并内容核验；书目 4《Building Microservices》第 2 版契约测试章节为本地展开参照）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+      - {bib_id: 29, support_claim: "契约测试与单元测试的区分（母本 3.7 书目 29 行级登记提取面逐字对应；提取以本地存档《Martin Fowler - bliki_ Contract Test.epub》原文全文为准，2026-09-15 归档并内容核验；该区分另由书目 4 同章节本地承载）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
+    narrative:
+      benefit_cost_analysis: "收益：CDC 把兼容性承诺的验证权交给消费者——期望由消费者定义、在提供者 CI 中验证，直接消除 3.2.2 内容列点名的『提供者自认为兼容』幻觉；X4 将其限定在高风险契约，避免全契约铺开；3.3 双使用者条款把 CDC 套件脚手架生成列为 Agent 自主项 → 生成成本可自动化。代价：可行性完全由交付空间决定——CI 成熟度不足时只能降软并记保守假设 ADR（3.3 交付空间驱动第二行），本治理维度在低成熟度场合实质不可用；期望工件须可归属到 consumer_set 成员，消费者集合未知时（3.6 示例二）期望来源缺失；CDC 覆盖变更前置时间与 CI 资源，母本未给量化数值 → 成本面只能定性登记；事件驱动风格下必备项是事件 schema 演化测试而非 CDC（3.4 施→8），两者不可互换。"
+      typical_scenarios: "高风险契约发布前须建立 CDC 套件的场合（3.2.2 默认值列；X4）；微服务风格下 CDC 由软升硬、须纳入验证计划的场合（3.4 施→8；X4 括注）；既有隐式契约无文档、须以消费者实际读取字段集为期望来源的场合（3.3 现状空间驱动第二行）；提供者声称兼容而消费者频繁失配、须以 CDC 拦截兼容性回归的场合（3.2.2 内容列）；CI 成熟度不足、须降软并登记保守假设 ADR 与可推翻指标的场合（3.3 交付空间驱动第二行）；由 Agent 生成 CDC 脚手架但发布仍须走批准路径的场合（3.3 双使用者条款）。"
+      common_misuse: "高风险契约无 CDC 套件（AP1，X4；微服务风格下升硬）；期望由提供者单方编写（AP2，3.2.2 内容列的来源倒置）；CDC 只在本地或人工执行而不进 CI（AP3）；以 CDC 替代事件 schema 演化测试（3.4 施→8 分列两项）；CI 能力不足即静默降软而不记保守假设 ADR 与可推翻指标（3.3 交付空间驱动第二行）；把 CDC 全绿读作数据一致性定案（一致性属方面 4 的 Y 系列）；把脚手架自动生成读作可自动发布契约（3.3 双使用者条款：published 迁移走批准路径）；为 CDC 执行时长或覆盖率目标填无出处数值（0.4 证据门槛＋6.2.1 量化纪律）。"
+
+  - entry_id: CTR-010
+    kind: CTR
+    name: "契约生命周期"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.2 表行「契约生命周期」（内容列五态链＋白板决策记录要求；默认值列为「—」）＋谓词转写（manual）；name 逐字承表行首列
+      source_pointers:
+        - {source_type: row_id, value: "3.2.2-契约生命周期", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}   # 默认值列本行为「—」→ 母本未给默认值，不推定（0.4 禁假精确）
+        - {source_type: clause_id, value: "3.3", verified: true}     # 双使用者条款（契约发布 published 迁移属高影响决策，一律走批准路径）＋现状空间驱动第二行
+        - {source_type: clause_id, value: "3.4", verified: true}     # 施→2（边界冻结）/5/9/10
+        - {source_type: clause_id, value: "3.5", verified: true}     # X5（lifecycle_state ∈ {published, deprecated} → ∃ approved(ADR(C))）／X2
+        - {source_type: clause_id, value: "3.6", verified: true}     # 示例三（contract C: published→deprecated；C1/C2 →published；消费字段 CTR.lifecycle_state）
+        - {source_type: clause_id, value: "0.7", verified: true}     # 状态机的契约投影（3.2.2 内容列明文援引）
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可观测性族（覆盖率）＋可修改性族
+    typical_reversibility: bounded     # 人工判断：published→deprecated 可经 ADR 修订与契约 v2 回退（3.6 示例三：制定契约 v2＋弃用窗口＋绞杀者迁移序列）→ 非 costly 亦非 free（X5 发布即批准，无声撤回违例）；retired 态母本未给回退路径 → 该态的逆转性属人工判断项，本条按整行取 bounded 并如实登记该缺口
+    applicability:
+      problem_space:                   # 骨架源：3.2.2「内容」列
+        - "draft → review → published → deprecated → retired 五态链（3.2.2 内容列逐字，原文以行内代码体给出）"
+        - "状态字段写入共享白板决策记录（0.7 状态机的契约投影）（同列逐字）→ 生命周期状态不是文档属性而是白板谓词 lifecycle_state 的取值"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "现状契约清单须逐契约登记当前态：无文档隐式契约以流量观测 + 消费者代码分析为准（3.3 现状空间驱动第二行；公理 A1）→ 在网有流量的契约不得登记为 draft"
+        - "已发布契约的边界冻结（3.4 施→2 硬）→ 现状态只能沿五态链前进或走契约 v2 新建，不得以状态回退的方式收回已发布契约"
+      delivery_space:                  # 骨架源：3.3 双使用者条款＋交付空间驱动
+        - "契约发布（published 迁移）与破坏性变更批准属高影响决策，一律走批准路径；Agent 自主项限于契约提取、schema 起草、兼容性规则检查、CDC 套件脚手架生成、X 系列性质校验（3.3 双使用者条款逐字）→ draft→review 的准备工作可自主，review→published 不可"
+        - "CI 成熟度 → CDC 可行集（3.3 交付空间驱动第二行）→ review 态的准入证据（契约测试是否可执行）由交付空间决定；能力不足降软 + 保守假设 ADR"
+    envelope:
+      - metric: "可观测性：卡片 observability_requires（5.2.5）满足率、追踪覆盖率"
+        bound_expr: "lifecycle_state 已写入共享白板决策记录的契约数 / 契约总数 上界为 1（3.2.2 内容列：状态字段写入共享白板决策记录）→ 缺口 = 未写入者数，随契约总数增加 单调不减"
+        source: {source_type: clause_id, value: "3.2.2", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "published 与 deprecated 并存版本数 上界 = 弃用窗口内允许并存数；迁移完成度 = 已迁移消费者数 / consumer_set 基数 上界为 1 → 随窗口推进 单调不减（3.2.2 破坏性变更流程默认值列：弃用窗口 ≥ 最慢消费者的迁移时长估计）"
+        source: {source_type: clause_id, value: "3.2.2", verified: true}
+    cost_profile:
+      latency_budget_delta: "生命周期状态机本身不进入运行时调用路径 → 延迟预算增量为 0；deprecated 与 published 并存期的路由分支与序列化面增量由版本化策略承载（CTR-007），母本未给量化数值 → 由方面 6 目标值经 3.4 接收约束方面 6 行下发（6.2.1 量化纪律＋0.4 证据门槛）"
+      failure_modes: ["契约跳过 review 直接 published 而无已批准 ADR（X5 硬违例）", "状态字段未写入共享白板决策记录，仅存于文档或代码注释（3.2.2 内容列；3.4 施→10 禁止双重维护）", "迁入 deprecated 而未登记弃用窗口终点 until（X3 违例面；3.2.2 破坏性变更流程默认值列）", "在网有流量的契约登记为 draft（3.3 现状空间驱动第二行：以流量观测为准）", "以状态回退（published→draft）的方式收回已发布契约（3.4 施→2 硬：边界冻结）", "Agent 自主执行 published 迁移（3.3 双使用者条款：一律走批准路径）"]
+      consistency_impact: "生命周期状态不承载跨单元事务语义；一致性级别由方面 4 的 Y 系列判定（CSL 批承载）；deprecated 态不等于数据不再可读——并存期的一致性定案仍属方面 4/5，不得以状态字段替代一致性级别登记"
+      observability_requires: ["每份契约的 lifecycle_state 在共享白板决策记录可查（3.2.2 内容列；X5 判定所需）", "published 与 deprecated 迁移各自的批准 ADR 可追溯（X5 硬）", "deprecated 契约的弃用窗口终点 until 与其消费者迁移进度可度量（X3；3.6 示例三消费字段 deprecation_window）", "retired 迁移的判定依据（consumer_set 已清空）在案", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[五态链的状态流转管理面＋白板决策记录的写入与查询面（3.2.2 内容列）→ 运维项随契约数与并存版本数上升；母本未给单位运维成本（默认值列为「—」）→ 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["五态链的语义与准入证据（draft → review → published → deprecated → retired）（3.2.2 内容列）", "状态字段向共享白板决策记录的投影写法（同列；0.7 状态机）", "发布与破坏性变更的批准路径识别（3.3 双使用者条款；X5）", "弃用窗口终点与迁移进度的联动登记（3.2.2 破坏性变更流程行；X3）"]
+      aggregation_semantics: itemwise  # lifecycle_state 为逐契约字段（X2/X5 均为逐契约量词 ∀C）→ 无跨契约聚合式（MJ-19 (iii) 同型；MJ-21 (ix)）
+    compatibility:
+      - peer_entry: CTR-011
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.6", verified: true}   # 示例三明文「contract C: published→deprecated（弃用窗口＋绞杀者迁移序列, 完整 ADR 批准）; contract C1/C2: →published（拆分后两条）」→ 生命周期状态迁移是破坏性变更流程的执行载体，两者共用弃用窗口与批准 ADR；3.2.2 相邻两行同旨（deprecated 态 + 弃用窗口 ≥ 最慢消费者迁移时长估计）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 生命周期不绑定单一风格：review 态的准入证据含契约测试（取硬），CDC 按 X4 分级（微服务风格下升硬），事件 schema 演化测试项按风格适用（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-010-AP1
+        description: "契约未经批准即迁入 published（或已迁入 deprecated 而无批准 ADR）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ [lifecycle_state ∈ {published, deprecated}] ∧ ¬∃ a: approved(a) ∧ [a 为 C 的状态迁移 ADR]"
+        signal_level: P0               # X5 明文「lifecycle_state(C) ∈ {published, deprecated} → ∃ approved(ADR(C)) —— 发布即批准 —— 硬」；3.3 双使用者条款同旨（published 迁移一律走批准路径）→ P0（MJ-4 判据）
+      - pattern_id: CTR-010-AP2
+        description: "状态字段未写入共享白板决策记录（生命周期状态只存于文档或代码）"
+        detection_predicate: "∃ C: [contract(C, ·, ·, ·, ·, ·, lifecycle_state)] ∧ ¬[lifecycle_state 已写入共享白板决策记录]"
+        signal_level: P1               # 3.2.2 内容列明文「状态字段写入共享白板决策记录（0.7 状态机的契约投影）」＋3.4 施→10 硬（禁止双重维护）；但母本未将『状态未上白板』单列 X 系列性质（X5 只约束批准存在性）→ P1，与 X5 判定不可达并存时按其升 P0（MJ-4 判据）
+      - pattern_id: CTR-010-AP3
+        description: "契约迁入 deprecated 而未登记弃用窗口终点（until 缺失）"
+        detection_predicate: "∃ C, v1: [contract(C, ·, ·, ·, version, ·, lifecycle_state)] ∧ [lifecycle_state = deprecated] ∧ ¬∃ t: [deprecation_window(C, v1, t)]"
+        signal_level: P1               # X3「∀C, breaking_change(C,v1,v2) → deprecation_window(C,v1,t) ∧ t ≥ slowest_consumer_migration(C) —— 条件硬」（迁移时长估计满足 0.4 证据门槛时为硬；否则降软 + 保守假设 ADR，保守默认窗口取注册表登记上限）；deprecated 态不必然伴随 breaking_change → 未按 P0 登记；级别待 W3/X3 条件硬裁决口（s5h 既有）落定后复核（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X5, role: implements}      # lifecycle_state 是 X5 的判定字段：「lifecycle_state(C) ∈ {published, deprecated} → ∃ approved(ADR(C))」以本治理维度登记的五态链为取值域（3.2.2 内容列；3.6 示例三消费字段 CTR.lifecycle_state）
+      - {property_id: X2, role: consumed_by}     # X2 的量词范围由 lifecycle_state 界定（∀C(lifecycle_state=published)）→ 状态未登记使 X2 不可判定
+    references: []                     # 母本 3.7 书目 28–34 无 3.2.2「契约生命周期」行的行级登记提取面（28/29 → CDC 与契约测试区分；30 → 同步 API 契约机器层格式；31 → 3.2.1 事件信封；32 → API 契约设计方法；33 → schema registry 与兼容性规则；34 → 3.4 绞杀者迁移）；尾注「条目 4《Building Microservices》第 2 版的契约测试章节同样支撑 3.2.2，不重复著录」的支撑面限于契约测试（CDC 行），不扩及本行 → 按 G-CRD-1／G-DEC-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-CTR-1，待人工裁决补勘后回填（SO-9）
+    narrative:
+      benefit_cost_analysis: "收益：五态链把契约的存在状态从口头共识变成白板谓词 lifecycle_state，使 X5『发布即批准』与 X2『发布态版本与兼容策略齐备』都有确定的量词范围；状态字段上白板（0.7 状态机的契约投影）令 3.4 施→10 的禁止双重维护在生命周期面可执行；3.6 示例三显示状态迁移是冲突消解的落点——CH-E 回溯通道最终产出 published→deprecated 与两条新契约 →published 的显式状态变化，两个方面决策都未被静默修改。代价：默认值列为「—」→ 母本未给任何默认态或默认窗口，逐案登记面最宽且无起点可依；retired 态无母本回退路径，本条按整行取 bounded 属人工判断（已如实登记该缺口）；review 态的准入证据依赖 CI 成熟度（3.3 交付空间驱动第二行），低成熟度场合状态机实质退化为 draft→published 两态而违背 X5；状态上白板与文档并存时最易发生双重维护（AP2）。"
+      typical_scenarios: "新契约从起草到发布须逐态登记并各附准入证据的场合（3.2.2 内容列五态链）；契约须弃用、迁移到 deprecated 并登记窗口终点的场合（同列；X3）；方面 2 拆分诉求与已发布契约冻结冲突、经 CH-E 产出契约 v2 与状态迁移的场合（3.6 示例三）；既有契约无文档、须以流量观测确定当前态的场合（3.3 现状空间驱动第二行）；Agent 完成契约提取与 schema 起草但发布须交批准路径的场合（3.3 双使用者条款）；消费者已全部迁移、须判定 retired 的场合（3.2.2 内容列末态）。"
+      common_misuse: "未经批准迁入 published 或 deprecated（AP1，X5 硬违例）；状态只存文档或代码而不上白板（AP2，3.2.2 内容列＋3.4 施→10）；deprecated 无弃用窗口终点（AP3，X3 违例面）；在网有流量的契约登记为 draft（3.3 现状空间驱动第二行）；以状态回退收回已发布契约（3.4 施→2 硬）；Agent 自主执行 published 迁移（3.3 双使用者条款）；把 deprecated 读作数据不再可读而以状态字段替代一致性级别登记（一致性属方面 4 的 Y 系列）；因默认值列为「—」即推定一个默认态或默认窗口（0.4 禁假精确）。"
+
+  - entry_id: CTR-011
+    kind: CTR
+    name: "破坏性变更流程"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.2 表行「破坏性变更流程」（内容列高影响决策四要件；默认值列弃用窗口下界）＋谓词转写（manual）；name 逐字承表行首列
+      source_pointers:
+        - {source_type: row_id, value: "3.2.2-破坏性变更流程", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}
+        - {source_type: clause_id, value: "3.3", verified: true}     # 问题空间驱动第一行（第三方开放 → 长弃用窗口）＋双使用者条款（破坏性变更批准一律走批准路径）
+        - {source_type: clause_id, value: "3.4", verified: true}     # 施→2（切割需求 → 走弃用窗口 + 绞杀者迁移）＋接收约束方面 6 行
+        - {source_type: clause_id, value: "3.5", verified: true}     # X3（迁移窗口闭合，条件硬）／X5（发布即批准）
+        - {source_type: clause_id, value: "3.6", verified: true}     # 示例三（CH-E：契约 v2＋弃用窗口＋绞杀者迁移序列，完整 ADR 走批准路径）＋示例四（FM-1 证据缺口：无出处承诺剔除→重诊→保守界）
+        - {source_type: clause_id, value: "0.4", verified: true}     # 迁移时长估计须有出处，否则按证据门槛降级处置（3.2.2 默认值列明文援引）
+        - {source_type: clause_id, value: "0.6", verified: true}     # CH-E 回溯约束声明（示例三触发条款）
+        - {source_type: clause_id, value: "0.20.2", verified: true}  # FM-1（示例四：无出处事实剔除→重诊→保守假设 ADR＋可推翻指标）
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 可修改性族（触达单元数、跨边界契约变更数）＋可用性可靠性族（错误预算）
+        - {source_type: bib_id, value: 34, verified: true}
+    typical_reversibility: costly      # 3.2.2 内容列明文「破坏性变更 = 高影响决策（影响全部消费者 + 难逆转）」→ 非 bounded；但迁移支持 + 绞杀者迁移序列（3.4 施→2；书目 34）提供出路 → 非 irreversible
+    applicability:
+      problem_space:                   # 骨架源：3.2.2「内容」列＋3.3 问题空间驱动
+        - "破坏性变更 = 高影响决策（影响全部消费者 + 难逆转）：完整 ADR + 批准 + 弃用窗口 + 迁移支持（3.2.2 内容列逐字，四要件）"
+        - "第三方开放 → full 兼容 + 长弃用窗口 + 对外 SLA 条款（3.3 问题空间驱动第一行）；合规/监管接口 → 走 CH-A＋0.5 必登类目（同节第二行）→ 两类场合的窗口与批准面均加严"
+      current_space:                   # 骨架源：3.3 现状空间驱动＋3.6 示例四
+        - "最慢消费者的迁移时长是现状事实，须有出处：无出处的消费者承诺（如口头转述的迁移时间）按 0.4 门槛不获任何权重 → 剔除后重诊，缺口记录入案｛缺失事实、援引条款＝X3、勘察任务｝（3.6 示例四；FM-1）"
+        - "现状契约清单须标出横跨拟拆分线的已发布契约（3.6 示例三：方面 2 按 S5 变更频率拆分 × 已发布契约横跨拆分线 → 触发 X 系列施加给方面 2 的硬约束『不得切割既有契约』）"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动＋双使用者条款
+        - "消费者多且异构 → full；单消费者同团队 → backward 可接受（3.3 交付空间驱动第一行）→ 迁移支持的工程量随 consumer_set 基数与异构度上升"
+        - "破坏性变更批准属高影响决策，一律走批准路径；Agent 不得自主批准（3.3 双使用者条款逐字）→ 交付空间的自动化能力只覆盖 ADR 起草与 X 系列性质校验，不覆盖批准"
+    envelope:
+      - metric: "可修改性：典型变更的实现成本（触达单元数、跨边界契约变更数）"
+        bound_expr: "迁移支持成本 上界 = consumer_set 基数 × 单消费者迁移项数（3.2.2 内容列：影响全部消费者）→ 随 consumer_set 基数 单调不减；触达单元数含拆分后新建契约数（3.6 示例三：契约 v2 = 拆分后的两条新契约）"
+        source: {source_type: clause_id, value: "3.2.2", verified: true}
+      - metric: "可用性可靠性：SLO、错误预算〔1 − SLO〕、MTTR、RPO/RTO"
+        bound_expr: "弃用窗口 t ≥ slowest_consumer_migration(C)（X3）→ 窗口内旧版本须持续可用，并存版本所占错误预算份额（错误预算 = 1 − SLO）上界为 1；窗口缩短使未按期迁移的消费者失配概率 单调不减，母本未给该概率数值（0.4 证据门槛 → 不填）"
+        source: {source_type: clause_id, value: "3.5", verified: true}
+    cost_profile:
+      latency_budget_delta: "破坏性变更流程本身不改变调用路径 → 运行时延迟预算增量为 0；弃用窗口内新旧版本并存引入的路由分支与序列化项由版本化策略承载（CTR-007）；母本未给量化增量 → 由方面 6 目标值经 3.4 接收约束方面 6 行下发（6.2.1 量化纪律＋0.4 证据门槛）"
+      failure_modes: ["破坏性变更无完整 ADR 或未经批准即执行（3.2.2 内容列四要件缺项；X5 硬）", "无弃用窗口或窗口短于最慢消费者迁移时长（X3；3.2.2 默认值列）", "迁移时长估计无出处而径行作为窗口依据（3.2.2 默认值列明文『估计须有出处，否则按 0.4 证据门槛降级处置』；3.6 示例四 FM-1）", "已剔除的无出处事实仍被下游 ADR 引用（3.6 示例四：FM-8 断链面）", "缺迁移支持而只发弃用公告（3.2.2 内容列四要件之末项；3.4 施→2 绞杀者迁移）", "切割已发布契约而不走本流程（3.4 施→2 硬）", "Agent 自主批准破坏性变更（3.3 双使用者条款：一律走批准路径）"]
+      consistency_impact: "弃用窗口内新旧版本并存 → 跨版本读写的一致性级别由方面 4 的 Y 系列判定（CSL 批承载），本流程只定义迁移序列不定义一致性；绞杀者迁移期间新旧路径并存的双写/单写定案属方面 4 的 shared_write_exception 面，不得以迁移序列替代一致性定案"
+      observability_requires: ["破坏性变更的完整 ADR 与批准记录可追溯（3.2.2 内容列；X5 硬）", "弃用窗口终点 until 与其出处（最慢消费者迁移时长估计）在案（X3；3.2.2 默认值列）", "消费者迁移进度可度量（已迁移数 / consumer_set 基数）——窗口闭合判定所需", "剔除的无出处事实与缺口记录｛缺失事实、援引条款、勘察任务 ID 或保守假设 ADR#｝在案（3.6 示例四；FM-1 工件）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）"]
+      ops_cost: "[弃用窗口内新旧版本并存的运维面＋迁移支持的工程面＋绞杀者迁移序列的切换运维面（3.2.2 内容列；3.4 施→2；书目 34）→ 运维项随 consumer_set 基数与窗口长度上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["破坏性变更的识别（何为改/删既有字段与放宽兼容性规则）（3.2.2 兼容性规则行；CTR-008）", "完整 ADR 与批准路径的运作（3.2.2 内容列；3.3 双使用者条款；X5）", "弃用窗口的定界与出处核验（3.2.2 默认值列；X3；0.4 证据门槛）", "绞杀者迁移序列的设计（3.4 施→2；书目 34 的行级登记提取面）", "无出处事实的剔除→重诊→保守界处置（3.6 示例四；FM-1）"]
+      aggregation_semantics: itemwise  # X3 为逐契约量词（∀C, breaking_change(C,v1,v2) → …）→ 弃用窗口按契约逐项定界、无跨契约聚合式（MJ-19 (iii) 同型；MJ-21 (ix)）
+    compatibility:
+      - peer_entry: CTR-010
+        relation: composable
+        evidence: {source_type: clause_id, value: "3.6", verified: true}   # 示例三明文「contract C: published→deprecated（弃用窗口＋绞杀者迁移序列, 完整 ADR 批准）」→ 本流程的执行结果落在生命周期的状态迁移上；**回填 CTR-010 侧已声明的镜像**（同批 seed 条目 → 双向登记，MJ-21 (viii)）
+      - peer_entry: CTR-008
+        relation: composable
+        evidence: {source_type: row_id, value: "3.2.2-兼容性规则", verified: true}   # 默认值列对外 API 一项为「full + 弃用窗口」→ 兼容性规则与本流程共用弃用窗口这一参数，放宽既有规则属破坏性变更须走本流程（本行回填 CTR-008 侧已登记的镜像；同批 seed 条目 → 双向登记，MJ-21 (viii)）
+      - peer_entry: DEC-005
+        relation: tension
+        evidence: {source_type: clause_id, value: "3.6", verified: true}   # 示例三明文「方面 2 判定某单元应按 S5（变更频率）拆分，但一条已发布契约横跨拟拆分线（X 系列施加给方面 2 的硬约束『不得切割既有契约』被触发）」→ 本条施加给方面 2 的边界冻结（3.4 施→2 硬）与 S5 按变更频率拆分构成张力，经 CH-E 回溯约束声明消解（不可行性证据 = 拆分收益量化 × 契约冻结冲突、涉及约束边 = 方面3→方面2、建议重审范围 = 该契约的弃用计划）；DEC-005 属已批准条目 → 只登记本侧，不回填镜像（MJ-21 (viii)）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 破坏性变更流程不绑定单一风格：契约测试项取硬（迁移支持须以契约测试验证新旧两侧），CDC 按 X4 分级（微服务风格下升硬），事件 schema 演化测试项在事件契约破坏性变更时为必备（MJ-4 同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-011-AP1
+        description: "破坏性变更无弃用窗口，或窗口短于最慢消费者迁移时长"
+        detection_predicate: "∃ C, v1, v2: [contract(C, ·, ·, ·, version, ·, ·)] ∧ [breaking_change(C, v1, v2)] ∧ ¬(∃ t: [deprecation_window(C, v1, t)] ∧ t ≥ [slowest_consumer_migration(C)])"
+        signal_level: P1               # X3 明文为条件硬：「迁移时长估计满足 0.4 证据门槛时为硬；否则降软 + 保守假设 ADR，保守默认窗口取注册表登记上限」＋3.5 尾注「X3 的条件硬结构与方面 2 的 W3 同型：硬化与否由 0.4 证据门槛统一判定，防止 Agent 编造『消费者迁移时长』假精确数字绕过弃用窗口」→ 未按 P0 登记；级别待 W3/X3 条件硬裁决口（s5h 既有）落定后复核（MJ-4 判据）
+      - pattern_id: CTR-011-AP2
+        description: "破坏性变更缺完整 ADR 或未经批准即执行"
+        detection_predicate: "∃ C, v1, v2: [contract(C, ·, ·, ·, ·, ·, lifecycle_state)] ∧ [breaking_change(C, v1, v2)] ∧ ¬(∃ a: approved(a) ∧ [a 为完整 ADR 且覆盖本次变更])"
+        signal_level: P0               # 3.2.2 内容列明文四要件（完整 ADR + 批准 + 弃用窗口 + 迁移支持）＋X5「lifecycle_state(C) ∈ {published, deprecated} → ∃ approved(ADR(C)) —— 发布即批准 —— 硬」＋3.3 双使用者条款（破坏性变更批准一律走批准路径）→ P0（MJ-4 判据）
+      - pattern_id: CTR-011-AP3
+        description: "以无出处的消费者迁移承诺作为弃用窗口依据（未剔除即使用）"
+        detection_predicate: "∃ f ∈ evidence_set: ¬sourced(f) ∧ [f 被用作 deprecation_window 的定界依据]"
+        signal_level: P0               # 3.2.2 默认值列明文「弃用窗口 ≥ 最慢消费者的迁移时长估计（估计须有出处，否则按 0.4 证据门槛降级处置）」＋3.6 示例四「S0 判定谓词 facts_sourced(F) 失败 → FM-1 当场触发：f2 从 evidence_set 剔除（不是标记存疑后继续使用——无出处事实不获得任何权重）」＋0.4「不存在『口头可信』豁免」→ P0（MJ-4 判据）
+      - pattern_id: CTR-011-AP4
+        description: "切割已发布契约而不走本流程（分解直接跨越契约边界）"
+        detection_predicate: "∃ C, u1, u2: [contract(C, ·, ·, ·, ·, ·, lifecycle_state)] ∧ [lifecycle_state = published] ∧ unit(u1) ∧ unit(u2) ∧ [covers(C, u1, u2)] ∧ [u1 与 u2 被拆分到不同新单元] ∧ ¬[breaking_change(C, ·, ·) 已登记]"
+        signal_level: P0               # 3.4 施→2 级别列为硬「已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）」＋X1 的 covers 谓词面 → P0；3.6 示例三给出唯一合法出路（CH-E → 契约 v2＋弃用窗口＋绞杀者迁移序列）（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X3, role: implements}      # deprecation_window(C,v1,t) ∧ t ≥ slowest_consumer_migration(C) 的登记载体：本治理维度给出四要件与窗口下界（3.2.2 内容列＋默认值列）
+      - {property_id: X5, role: consumed_by}     # 破坏性变更以状态迁移（published→deprecated）为落点 → X5 要求 ∃ approved(ADR(C))；3.6 示例三消费字段 X5.approval_route
+    references:
+      - {bib_id: 34, support_claim: "3.4 绞杀者迁移模式（施加给方面 2 的契约冻结的演化出路）（母本 3.7 书目 34 行级登记提取面逐字对应；提取以本地存档《Monolith to Microservices》PDF+EPUB 为准，版权页另印 978-1-492-07554-7 印刷变体，2026-09-15 年份更正见附录一第 16 行）", compile_usage: metadata_extraction, trust_grade: "[已核验（2026-09-15 年份更正，见附录一第 16 行）]"}
+    narrative:
+      benefit_cost_analysis: "收益：把破坏性变更从『改了就发』收回到四要件流程（完整 ADR + 批准 + 弃用窗口 + 迁移支持），使 X3『迁移窗口闭合』与 X5『发布即批准』在契约域可判定；默认值列给出窗口的下界定义（≥ 最慢消费者的迁移时长估计）并绑定 0.4 出处门槛，直接封堵以假精确数字绕过弃用窗口的路径；3.6 示例三显示本流程是方面 2 拆分诉求的唯一合法出路——不静默放弃拆分、不强行切割，而经 CH-E 产出契约 v2＋窗口＋绞杀者迁移序列；3.6 示例四显示窗口定界本身受证据卫生约束（无出处承诺剔除→重诊→保守界 6 周＋可推翻指标）。代价：影响全部消费者且难逆转（3.2.2 内容列）→ 迁移支持成本随 consumer_set 基数放大；窗口内新旧版本并存推高运维面与错误预算占用；批准一律走人工路径（3.3 双使用者条款）→ 自动化只能覆盖 ADR 起草；窗口下界依赖『最慢消费者迁移时长』这一现状事实，取证成本高且常缺出处（示例四即为此设）。"
+      typical_scenarios: "已发布契约须改/删既有字段或放宽兼容性规则的场合（3.2.2 内容列；CTR-007/CTR-008）；方面 2 按 S5 变更频率拆分而契约横跨拟拆分线的场合（3.6 示例三，CH-E）；第三方开放接口须给长弃用窗口的场合（3.3 问题空间驱动第一行）；最慢消费者迁移时长有官方生命周期公告可援引的场合（3.6 示例四 f1）；消费者迁移承诺仅口头转述、须剔除并按保守界登记的场合（3.6 示例四 f2，FM-1）；须以绞杀者迁移序列逐步替换旧路径的场合（3.4 施→2；书目 34）；Agent 起草完整 ADR 但批准须交人工的场合（3.3 双使用者条款）。"
+      common_misuse: "无弃用窗口或窗口短于最慢消费者迁移时长（AP1，X3 条件硬）；缺完整 ADR 或未经批准即执行（AP2，X5 硬）；以无出处的迁移承诺定窗口而不剔除（AP3，0.4＋FM-1）；已剔除事实仍被下游 ADR 引用（3.6 示例四 FM-8 断链面）；切割已发布契约而不走本流程（AP4，3.4 施→2 硬）；只发弃用公告而无迁移支持（3.2.2 内容列四要件之末项）；Agent 自主批准破坏性变更（3.3 双使用者条款）；把缩短窗口当作可豁免项（3.6 示例四：FM-1 人工介入列明示『作为硬目标豁免依据时须裁决』，0.4 门槛不存在口头可信豁免）；为迁移时长填无出处数字（X3 尾注：防假精确绕过弃用窗口）。"
+
+  - entry_id: CTR-012
+    kind: CTR
+    name: "发现与注册"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
+    provenance:
+      origin: hybrid                   # 骨架=3.2.2 表行「发现与注册」（内容列三类注册面；默认值列『按方面 1 风格选择』）＋谓词转写（manual）；name 逐字承表行首列
+      source_pointers:
+        - {source_type: row_id, value: "3.2.2-发现与注册", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}
+        - {source_type: clause_id, value: "3.3", verified: true}     # 现状空间驱动第一行（现状契约清单）＋第二行（无文档隐式契约以流量观测为准）＋问题空间驱动第一行（第三方开放 → 对外 SLA 条款）
+        - {source_type: clause_id, value: "3.4", verified: true}     # 接收约束方面 1 行（风格决定契约形态）＋方面 6 行＋施→5/9/10
+        - {source_type: clause_id, value: "3.5", verified: true}     # X1（∃C ∈ registry: covers(C,u1,u2)）
+        - {source_type: clause_id, value: "3.6", verified: true}     # 示例一（网关标准文义仅覆盖南北向流量 → 强加范围解包）
+        - {source_type: clause_id, value: "0.3", verified: true}     # 强加范围解包（示例一援引）
+        - {source_type: clause_id, value: "0.13", verified: true}    # 漂移检测规则参数注册（3.4 施→9）
+        - {source_type: clause_id, value: "6.2.1", verified: true}   # 性能族（延迟分位数）＋可观测性族（追踪覆盖率）
+    typical_reversibility: bounded     # 人工判断：注册面切换（API 网关 ↔ schema registry ↔ 服务目录）不改变契约语义与 version/compat_policy，但已登记工件与消费者查询路径须同步迁移 → 非 free；母本未给本行的逆转成本（默认值列仅『按方面 1 风格选择』）→ 不推定为 costly
+    applicability:
+      problem_space:                   # 骨架源：3.2.2「内容」列
+        - "API 网关（南北向）、schema registry（事件/消息）、服务目录（内部检索）三类注册面（3.2.2 内容列逐字，按流向分列）"
+        - "按方面 1 风格选择（3.2.2 默认值列逐字）→ 注册面选型由通信/协调风格决定，不由契约形态单方决定"
+      current_space:                   # 骨架源：3.3 现状空间驱动
+        - "现状契约清单是注册面的输入：既有契约须先逆向登记到对应注册面（3.3 现状空间驱动第一行）；无文档隐式契约以流量观测 + 消费者代码分析为准，文档仅作线索（同节第二行；公理 A1）"
+        - "既有网关标准的文义范围须逐案解包：公司 API 网关标准强制所有服务接口 REST+JSON 的强加范围仅覆盖南北向流量（外部→系统），东西向不在其内（3.6 示例一；0.3）→ 注册面选型不得被泛化的强加决策替代"
+      delivery_space:                  # 骨架源：3.3 交付空间驱动＋问题空间驱动第一行
+        - "CI 成熟度 → CDC 可行集（3.3 交付空间驱动第二行）→ schema registry 作为注册面时其兼容性检查须能在 CI 中执行；能力不足降软 + 保守假设 ADR，可推翻指标 = CI 能力建立"
+        - "第三方开放 → full 兼容 + 长弃用窗口 + 对外 SLA 条款（3.3 问题空间驱动第一行）→ 南北向注册面须承载对外 SLA 条款的可查性"
+    envelope:
+      - metric: "可观测性：卡片 observability_requires（5.2.5）满足率、追踪覆盖率"
+        bound_expr: "注册面覆盖率 = 已登记于 API 网关 ∨ schema registry ∨ 服务目录 三者之一的契约数 / 契约总数 上界为 1（3.2.2 内容列；X1：∀ interaction(u1,u2) ∈ connects: ∃C ∈ registry: covers(C,u1,u2)）→ 缺口 = 未登记者数，随契约总数增加 单调不减"
+        source: {source_type: clause_id, value: "3.5", verified: true}
+      - metric: "性能：延迟分位数（P50/P99，P99 = 延迟分布第 99 百分位数）"
+        bound_expr: "API 网关（南北向）作为注册与发现面引入额外一跳 → 外部可见延迟 随网关串联跳数 单调不减；P99 上界须由方面 6 目标值给定（3.4 接收约束方面 6 行：延迟/可用性目标 → 契约 SLA 条款）→ 四类合法出处之外不得填值（6.2.1 量化纪律＋0.4 证据门槛）"
+        source: {source_type: clause_id, value: "3.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "南北向经 API 网关引入额外一跳、schema registry 在事件/消息路径引入解析项；服务目录用于内部检索、不在运行时调用路径上 → 该项增量为 0；母本未给任一注册面的量化延迟增量 → 由方面 6 目标值经 3.4 接收约束方面 6 行下发（6.2.1 量化纪律＋0.4 证据门槛）"
+      failure_modes: ["契约未在任何注册面登记（X1 硬违例：无未登记跨单元交互）", "注册面选择与方面 1 风格不符——事件/消息契约仅登记于南北向 API 网关而无 schema registry（3.2.2 默认值列『按方面 1 风格选择』＋内容列按流向分列）", "同一契约在两个注册面各持一份不同步的登记（3.4 施→10 硬：禁止双重维护）", "把南北向网关标准泛化套用到东西向服务间交互（3.6 示例一幻觉之一『强加覆盖一切』；0.3 强加范围解包）", "以注册面存在替代契约内容登记——已上网关但 version/compat_policy 缺失（X2 硬）", "隐式契约未逆向登记（3.3 现状空间驱动第二行：以流量观测 + 消费者代码分析为准）"]
+      consistency_impact: "注册面承载的是契约的可发现性与登记态，不承载跨单元事务语义；一致性级别由方面 4 的 Y 系列判定（CSL 批承载）；schema registry 的 subject 划分不得被读作数据所有权定案（所有权属方面 4 的 OWN 批）"
+      observability_requires: ["三类注册面各自的契约清单可查且可交叉核对（3.2.2 内容列；X1 的 registry 可判定性所系）", "南北向与东西向流量的注册面归属可区分（3.6 示例一：强加范围解包所需）", "契约漂移检测规则参数已按 0.13 注册（3.4 施→9 硬）——注册面与实际流量的偏离即漂移", "对外 SLA 条款在南北向注册面可查（3.3 问题空间驱动第一行；3.4 接收约束方面 6 行）", "schema registry 的兼容性检查结果在提供者 CI 中留痕（3.3 交付空间驱动第二行）"]
+      ops_cost: "[API 网关（南北向）＋schema registry（事件/消息）＋服务目录（内部检索）三类注册面的部署与运维项（3.2.2 内容列）→ 运维项随契约数与注册面数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]"
+      skill_prerequisites: ["三类注册面的流向辨析（南北向 / 事件·消息 / 内部检索）（3.2.2 内容列）", "按方面 1 风格选择注册面（同表默认值列；3.4 接收约束方面 1 行）", "强加决策的范围解包（0.3＋0.6 CH-A 第 2 步；3.6 示例一）", "隐式契约的逆向登记（流量观测 + 消费者代码分析）（3.3 现状空间驱动第二行）"]
+      aggregation_semantics: itemwise  # 覆盖率按契约逐项评估、注册面按契约逐个选定（3.2.2 默认值列『按方面 1 风格选择』为逐契约判据）→ 无跨契约聚合式（MJ-19 (iii) 同型；MJ-21 (ix)）
+    compatibility: []                  # 3.2.2 默认值列「按方面 1 风格选择」指向方面 1 全体而非单一风格条目：内容列三类注册面分别对应南北向流量、事件/消息、内部检索三种流向，无任一 STY 条目可单独作为 peer_entry（STY-001…006 为通信/协调风格、STY-014…016 为部署形态，均不等同于流向划分）；3.4 接收约束方面 1 行的三处明文（微服务/事件驱动/单体）约束的是契约形态而非注册面 → 无母本明文依据不登记（MJ-9 判据；MJ-17 (iii) 同型），互斥不枚举（MJ-5）
+    constraints_imposed:               # 交叉表源：3.4「施加约束」表（方面 3 全体六行，CTR 十二条逐字相同）
+      - {target_aspect: 2, constraint: "已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）", level: hard}
+      - {target_aspect: 4, constraint: "数据契约的 schema 与语义条款是数据流动的唯一合法路径定义", level: hard}
+      - {target_aspect: 5, constraint: "协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）", level: hard}
+      - {target_aspect: 8, constraint: "契约测试是验证计划的组成部分；微服务风格 → CDC 必备；事件驱动 → 事件 schema 演化测试必备", level: conditional}   # 级别列原文「软/硬按风格」→ 本条即『按风格』判据的注册面载体：微服务风格下 CDC 升硬（X4）且注册面含服务目录，事件驱动下事件 schema 演化测试为必备且注册面含 schema registry（3.4 施→8＋3.2.2 默认值列同型判读；MJ-21 (x)）
+      - {target_aspect: 9, constraint: "契约漂移（运行时实际流量与注册契约的偏离）是守护对象；漂移检测规则参数按 0.13 注册", level: hard}
+      - {target_aspect: 10, constraint: "契约是机器层的天然工件：IDL/schema/OpenAPI 文档直接投影为白板谓词，禁止双重维护（0.9 同源生成原则在契约域最强适用）", level: hard}
+    anti_patterns:
+      - pattern_id: CTR-012-AP1
+        description: "契约未在任何注册面登记（网关、schema registry、服务目录三者皆无）"
+        detection_predicate: "∃ C: [contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)] ∧ ¬[C 登记于 API 网关 ∨ schema registry ∨ 服务目录 三者之一]"
+        signal_level: P0               # X1 明文「∀ interaction(u1,u2) ∈ connects: ∃C ∈ registry: covers(C,u1,u2) —— 无未登记跨单元交互 —— 硬」→ 注册面缺失使 ∃C ∈ registry 不可判定；3.4 施→5 同旨（每条跨单元交互必须有注册契约）→ P0（MJ-4 判据）
+      - pattern_id: CTR-012-AP2
+        description: "注册面选择与方面 1 风格不符（事件/消息契约仅登记于南北向 API 网关）"
+        detection_predicate: "∃ C: [contract(C, ·, ·, kind, ·, ·, ·)] ∧ [kind 为事件或消息类] ∧ [C 登记于 API 网关（南北向）] ∧ ¬[C 登记于 schema registry]"
+        signal_level: P1               # 3.2.2 默认值列明文「按方面 1 风格选择」＋内容列将三类注册面按流向分列（南北向 / 事件·消息 / 内部检索）；母本未将『注册面错配』列入 X 系列性质 → P1（MJ-4 判据）
+      - pattern_id: CTR-012-AP3
+        description: "同一契约在两个注册面各持一份不同步的登记（注册面双重维护）"
+        detection_predicate: "∃ C: [contract(C, ·, ·, ·, ·, ·, ·)] ∧ [C 同时登记于两个及以上注册面] ∧ ¬[各注册面的登记由同一工件同源生成]"
+        signal_level: P1               # 3.4 施→10 级别列为硬（禁止双重维护，0.9 同源生成原则在契约域最强适用）；机器层天然性对同步 API/异步消息/事件/数据契约均为『高』（3.2.1）→ 同源生成可行时应升硬；母本未将其列入 X 系列 → P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: X1, role: consumed_by}     # 三类注册面是 X1 中 registry 的具体承载：∃C ∈ registry: covers(C,u1,u2) 的可判定性取决于契约已登记于 API 网关 / schema registry / 服务目录之一（3.2.2 内容列；3.4 施→5）
+    references: []                     # 母本 3.7 书目 28–34 无 3.2.2「发现与注册」行的行级登记提取面（28/29 → CDC 与契约测试区分；30 → 同步 API 契约机器层格式；31 → 3.2.1 事件信封；32 → API 契约设计方法；33 → schema registry 与兼容性规则〔其提取面为兼容性字段与 registry 角色概念，非本行的注册面选型〕；34 → 3.4 绞杀者迁移）；尾注「条目 4《Building Microservices》第 2 版的契约测试章节同样支撑 3.2.2，不重复著录」的支撑面限于契约测试（CDC 行），不扩及本行 → 按 G-CRD-1／G-DEC-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-CTR-1，待人工裁决补勘后回填（SO-9）
+    narrative:
+      benefit_cost_analysis: "收益：三类注册面把 X1 中的抽象 registry 落成可运维工件——南北向经 API 网关、事件/消息经 schema registry、内部检索经服务目录，使『无未登记跨单元交互』有确定的查证入口；默认值列『按方面 1 风格选择』把注册面选型与风格选择绑定，避免逐案自由裁量；3.6 示例一显示注册面同时是强加范围解包的判据面——网关标准的文义只覆盖南北向，东西向不在其内。代价：三类注册面并存使同一契约可能被多处登记，施→10 的禁止双重维护在本行最易违例（AP3）；南北向网关引入额外一跳，外部可见延迟随串联跳数上升，而母本未给量化增量；schema registry 作为注册面时其兼容性检查依赖 CI 成熟度（3.3 交付空间驱动第二行）；隐式契约的逆向登记成本高（须流量观测 + 消费者代码分析）；注册面存在不等于契约内容齐备——上网关而缺 version/compat_policy 仍违 X2。"
+      typical_scenarios: "新契约须选定注册面的场合（3.2.2 内容列三类；默认值列按方面 1 风格选择）；事件/消息契约须登记到 schema registry 的场合（同列流向分列）；既有隐式契约须以流量观测逆向登记到注册面的场合（3.3 现状空间驱动第二行）；公司网关标准强加南北向、而东西向注册面须单独选型的场合（3.6 示例一；0.3）；第三方开放须使对外 SLA 条款在南北向注册面可查的场合（3.3 问题空间驱动第一行）；契约漂移排查须以注册面清单对照实际流量的场合（3.4 施→9；0.13）；分布式单体排查须确认跨单元交互是否已登记的场合（X1；3.4 施→5）。"
+      common_misuse: "契约未在任何注册面登记（AP1，X1 硬违例）；事件/消息契约只上南北向网关而无 schema registry（AP2，3.2.2 默认值列）；同一契约在多个注册面各持一份不同步登记（AP3，3.4 施→10）；把南北向网关标准泛化到东西向（3.6 示例一幻觉之一；0.3）；以注册面存在替代契约内容登记（X2 硬）；隐式契约不做逆向登记（3.3 现状空间驱动第二行）；把 schema registry 的 subject 划分读作数据所有权定案（所有权属方面 4 的 OWN 批）；为网关注入的延迟增量填无出处数值（0.4 证据门槛＋6.2.1 量化纪律）。"
+
 # ============================================================================
 # 注册表级台账（README §2：注册表级信息一律置于顶层节，不进入条目）
 #
@@ -3732,6 +4730,14 @@ gaps:
     route: "人工裁决（书目 10 的 2.2.3 seam 面、书目 11/18 的 2.2.4 DSM 面可否依 2.5 W1 与 DEC-007 envelope 的消费关系下探至 2.2.1 行级，G-STY-5/G-CSL-1/G-CRD-1 同型 route）：裁决为可 → 相应行补引并撤销该项；裁决为否或澄清前 → 保持留空，另勘察补 S2/S3/S4/S7/S8 五行的行级书目（技术分层与关注点分离、业务能力地图、数据所有权、部署边界、风险隔离的原始文献面）并按 0.12 定 compile_usage → 母本 5.7 参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。登记为 SO-8（入库期义务，consumer M6）。"
     status: open
 
+  - gap_id: G-CTR-1
+    type: 参考资料源缺失（3.2.1/3.2.2 行级书目登记面仅覆盖 6 行；节级/表级面不下探）
+    statement: "母本 3.7（本方面参考文献，按 0.12 分级，@2136-2146）中与方面三相关的登记提取面共七项（书目 28–34）＋一条尾注，其中行级指向 3.2.1/3.2.2 表行者覆盖六行：书目 30（OpenAPI Initiative, OpenAPI Specification）＝『同步 API 契约的机器层格式』——**行级**指向 3.2.1「同步 API 契约」行；书目 32（Lauret, The Design of Web APIs 2nd ed.）＝『API 契约设计方法』——**行级**同指 3.2.1「同步 API 契约」行（该行取 30＋32 双引，分别承载机器层格式面与设计方法面）；书目 31（CNCF, CloudEvents Specification v1.0.2）＝『3.2.1 事件信封元数据规范』——**行级**指向 3.2.1「事件契约」行；书目 33（Confluent, Schema Registry Documentation）＝『3.2.2 schema registry 与兼容性规则的工程参照』——**行级**指向 3.2.2「版本化策略」与「兼容性规则」两行（母本同行明记『3.2.2 兼容性规则字段的提取源已完备，编译规范 4.1 暂停解除（附录一第 19/20 行）』）；书目 28（Robinson, Consumer-Driven Contracts）＝『3.2.2 CDC 机制源头』与书目 29（Fowler, ContractTest）＝『契约测试与单元测试的区分』——两项**行级**同指 3.2.2「消费者驱动契约测试（CDC）」行；书目 34（Newman, Monolith to Microservices）＝『3.4 绞杀者迁移模式（施加给方面 2 的契约冻结的演化出路）』——登记面为 **3.4 节级**，本批引为 3.2.2「破坏性变更流程」行的支撑系依母本自身明文挂钩（该行内容列的四要件含『弃用窗口 + 迁移支持』，3.6 示例三明文以绞杀者迁移序列闭合方面 2 的拆分诉求），该挂钩是母本建立的关联，非注册表侧扩张解释（与 G-DEC-1 引书目 14 依 2.3 明文挂钩下沉同型）。尾注『条目 4《Building Microservices》第 2 版的契约测试章节同样支撑 3.2.2，不重复著录』的支撑面限于**契约测试**（CDC 行），且『不重复著录』即不产生独立 bib_id，不得充作 3.2.2 其余五行的出处，本批只在 CTR-009 的 support_claim 内以本地展开参照留痕。故 3.2.1 的「进程内接口」「异步消息契约」「数据契约」「UI/端契约」四行与 3.2.2 的「契约生命周期」「发现与注册」两行无任何行级书目登记面（与 G-OWN-1／G-CSL-1／G-CRD-1／G-DEC-1 同型：一表之内只有部分行有行级出处）。"
+    impact: "CTR-001／CTR-003／CTR-005／CTR-006／CTR-010／CTR-012 的 references: []（0.17.8 M6 严格式 ∀ reference ∈ E 对空集平凡为真；0.17.7 门槛 6 要求文献载明所支撑主张，禁止以不承载该主张的文献充当出处）。**节级/表级面不下探纪律**（承 G-CSL-1／G-CRD-1／G-DEC-1），本批五处具体裁定：(1) 书目 31 的事件信封面不得充当「异步消息契约」行（CTR-003）的行级出处——两行虽同属异步通信族，母本登记面明文限于『事件信封元数据规范』，命令侧的消息元数据四项（消息 ID／时间戳／关联 ID／投递语义声明）不在其登记面内；(2) 书目 33 的 registry 角色概念面不得充当「发现与注册」行（CTR-012）的行级出处——其登记面为『兼容性规则的工程参照』，三类注册面（API 网关／schema registry／服务目录）的分列依据是 3.2.2 内容列而非书目 33；(3) 书目 32 的 Web API 设计方法面不得充当「UI/端契约」行（CTR-006）的行级出处——3.2.1 明定本形态机器层天然性仅为『中』，不能像 IDL/OpenAPI 那样直接投影为谓词，故设计方法面不覆盖端契约；(4) 书目 28／29 与尾注的书目 4 面不得充当「契约生命周期」行（CTR-010）的行级出处——尾注『同样支撑 3.2.2』的所指限于契约测试章节；(5) 书目 30 的 OpenAPI 面不得充当「进程内接口」（CTR-001）或「数据契约」（CTR-005）行的行级出处——进程内接口无机器层格式登记面，数据契约的语义条款五项（单位／值域／空值语义／敏感性标注／所有权声明）不在 OAS 对象节登记面内。六条的其余字段以 3.2.1／3.2.2 表行为骨架源（3.2.3／3.3／3.4／3.5／3.6 为交叉表源），不受影响；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）。已引书目的六条不受影响：CTR-002（30＋32）、CTR-004（31）、CTR-007／CTR-008（33）、CTR-009（28＋29）、CTR-011（34），其 compile_usage（一律 metadata_extraction）与信任级（一律 [已核验]，书目 33 另含 2026-09-18 在线在位复核、书目 34 另含 2026-09-15 年份更正注）逐字承母本 3.7，注册表侧不得改写或降级。"
+    affected: "CTR-001、CTR-003、CTR-005、CTR-006、CTR-010、CTR-012（references 空列表）；CTR-002、CTR-004、CTR-007、CTR-008、CTR-009、CTR-011 不受影响（书目 30/32 覆盖同步 API 契约行、31 覆盖事件契约行、33 覆盖版本化策略与兼容性规则两行、28/29 覆盖 CDC 行、34 依 3.4 明文挂钩覆盖破坏性变更流程行）"
+    route: "人工裁决（书目 31 的事件信封面可否依 3.2.1 异步通信族关系下探至「异步消息契约」行、书目 33 的 registry 角色概念面可否下探至「发现与注册」行、尾注书目 4 的契约测试章节面可否扩及 3.2.2 其余五行，G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1 同型 route）：裁决为可 → 相应条目补引并撤销该项；裁决为否或澄清前 → 保持留空，另勘察补六行的行级书目（进程内接口的 IDL/类型系统面、异步消息元数据规范面、数据契约语义条款面、端契约与 BFF 面、契约生命周期状态机面、服务目录与注册面选型面）并按 0.12 定 compile_usage → 母本 3.7 参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。登记为 SO-9（入库期义务，consumer M6）。"
+    status: open
+
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
 # ---------------------------------------------------------------------------
@@ -3745,7 +4751,9 @@ status_transitions:
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
             CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
-            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16 (ii)）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01 承载，本简记对其无事实主张
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16 (ii)）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01 承载，本简记对其无事实主张
     date: "2026-09-18"
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3766,7 +4774,9 @@ status_transitions:
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
             CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
-            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；OWN 批实际迁移对象为 OWN-001…OWN-004 四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01 承载
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；OWN 批实际迁移对象为 OWN-001…OWN-004 四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01 承载
     date: "2026-09-22"   # OWN 批入库日（本简记的登记日）；STY 批的 2026-09-18 见 ST-STY-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3787,7 +4797,9 @@ status_transitions:
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
             CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
-            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01、DEC 八条由 ST-DEC-01 承载
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01 承载
     date: "2026-09-23"   # CSL 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-016 ↔ CSL-001 的 hard_conflict 对（1.2.5 冲突行，PCR-2 闭合）同提交回填。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3809,7 +4821,9 @@ status_transitions:
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
             CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
-            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为 CRD-001…CRD-008 八条；DEC 八条的迁移事实由 ST-DEC-01 承载
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为 CRD-001…CRD-008 八条；DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01 承载
     date: "2026-09-24"   # CRD 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-018 ↔ CRD-007 的 hard_conflict 对（1.2.5 冲突行，PCR-1 闭合）同提交回填；CRD-005/CRD-006/CRD-008 → CSL-005 的 requires 由 CRD 侧单方承载（MJ-17 (iii)），CRD-007 → CRD-005 的 requires 依 5.2.2 定义列『编排式 Saga 的泛化』（MJ-5 例外：母本明文依据，非同表取值互斥对）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3832,7 +4846,9 @@ status_transitions:
             OWN-001, OWN-002, OWN-003, OWN-004,
             CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
             CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
-            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；DEC 批实际迁移对象为末 8 条
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；DEC 批实际迁移对象为其中 8 条（DEC-001…DEC-008）；CTR 十二条的迁移事实由 ST-CTR-01 承载
     date: "2026-09-26"   # DEC 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨 kind 单向登记：DEC-007 → STY-016 的 composable（evidence 为 2.4 接收约束表方面 1 行，row_id『2.4-方面 1（风格）』）——母本方向为『风格收窄策略可行集』（微服务 → S7 强制；单体 → S7 退化），ENUM_RELATION 封闭枚举无 required_by，本侧若写 requires 将读作『S7 要求微服务』而与『单体 → S7 退化』矛盾，故只登记 composable；STY-016 侧镜像不擅改已批准条目（0.22 承诺一），方向问题留待人工裁决（MJ-20 (vii)）。同批内三对 tension 已双向镜像闭合：DEC-001 ↔ DEC-006（2.6 示例一）、DEC-001 ↔ DEC-002（2.2.2 语义边界判据）、DEC-003 ↔ DEC-004（2.6 示例三/示例四面）。DEC-005/DEC-008 的 compatibility 为空列表系母本无明文对：2.6 示例二推迟分支的 S1/S2 是**处置次序**而非策略互斥对，2.6 示例三的三方不可行源于**事实集合**（contexts=7、teams=2、物理隔离要求）而非策略两两互斥（MJ-9 只登记母本有明文依据的对，判读见 MJ-20 (vii)）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -3844,6 +4860,31 @@ status_transitions:
         - {source_type: clause_id, value: "0.17.6", verified: true}
         - {source_type: clause_id, value: "2.2.1", verified: true}
     note: "本批迁移对象为 DEC-001…DEC-008（2.2.1 八策略表行序 S1 按业务领域／S2 按技术层次／S3 按业务能力／S4 按数据归属／S5 按变更频率／S6 按团队认知负荷／S7 按部署边界／S8 按风险，编号裁决见 MJ-13 (iv)；name 一律取策略列逐字，MJ-20 (i)）。**位次锁定履行**：DEC-005 的 applicability.problem_space 为两项且第二项即正例 20-1（0.20.5）明文消费字段『DEC-05.applicability.problem_space[1]』（0 基索引 1 ＝ 第二项；母本两位书写 = 注册表三位书写，MJ-14）→ 列表项顺序不得调换（MJ-16 (i)），行内注已留痕；该正例同时明示 unknown 不排除候选（M15），DEC-005 的 problem_space 第二项以方括号事实占位承载『需求易变性评估在案』，缺失时按 2.6 示例二走 CH-B 而非剔除候选。**scope 含前四批 41 条系 check_ledgers 全集要求的形式面**（MJ-16 (ii)），四批的迁移事实已分别由 ST-STY-01、ST-OWN-01、ST-CSL-01、ST-CRD-01 登记。E3 面另单独申请 WV-DEC-E3-01（WV-STY-E3-01 防扩宽条款 (ii)：不沿用前四项、不自动生效；八条 formal_anchor 共引用 W1/W2/W3/W4/W5/W6/W7/X1/Y1/Z1 十项性质，而该 Waiver 的 scope 只及于其中**硬性质面**——7 项 31 实例＋条件硬 W3 的 8 实例，W5（软，DEC-001 consumed_by）与 W6（软，DEC-003 consumed_by）共 2 实例明列排除，见该项 scope 明文）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。八条的 envelope 一律非空（C-ENV：kind_profile_DEC 的 entry_level_exemptions 为空集，2.2.1 不在豁免条款内），17 项 bound_expr 全为关系式而非具体数值（M3）——母本逐字给出的数值（『N 默认 3』『≤ 30』）以参数化形态引用，合规/安全族目标值以『= 0』『上界为 1』形态表达而不用百分数，避开 M3 的 CONCRETE_NUM_RE（MJ-20 (iv)）。17 条 detection_predicate 中未在 predicate_vocabulary 登记的词（capacity_evidence_sufficient／dsm_optimal／semantically_coherent／flag_for_review／interface_cost／cohesion_gain／tech_debt_flag／cross_density／compliance_constraint 等）一律以半角方括号占位（M4 + MJ-12），且**不新增 VG 编号**——该批候选与 MJ-19 (i) 四词同属母本 x.5 公式内谓词，扩词将触发 signal_level 改级须走完整 ADR＋批准（MJ-20 (iii)）。DEC-002/003/004/007/008 的 references 为空列表系 2.2.1 行级书目登记面缺失（G-DEC-1，登记为 SO-8）：kind_profile_DEC 的 required 含 references，而 has_path 口径下空列表＝字段在案（project.py @170-177），故五条以空列表 + 行内注显式登记即满足 M2，不以本地造引充数（0.4 禁假精确）；DEC-001（书目 7/24）、DEC-005（书目 15/14）、DEC-006（书目 9 metadata_extraction＋17 narrative_only）的 compile_usage 与信任级逐字承母本 5.7，注册表侧不得改写。八条的 aggregation_semantics 一律 itemwise，理由＝母本未给 DEC 的跨单元聚合式，不本地造法（MJ-19 (iii) 同型，判读见 MJ-20 (vi)）。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
+
+  - transition_id: ST-CTR-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004,
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CTR 批实际迁移对象为末 12 条
+    date: "2026-09-27"   # CTR 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨 kind 单向登记两类：(i) 三条 requires——CTR-002 → STY-001（适用条件列『请求-响应风格；需要即时结果』＝同步请求-响应）、CTR-003 → STY-002（『异步消息风格；命令类交互』＝异步消息）、CTR-004 → STY-003（『事件驱动风格；多方响应同一业务事实』＝事件驱动（发布订阅）），依据＝kind_profile_CTR.narrative.note 明定的 1.4/3.4 接收约束『方面 1 → 方面 3 硬』，本侧为接收端 → 方向与母本一致，不属 MJ-20 (vii) 的方向倒置情形；ENUM_RELATION 无 required_by 且对侧属已批准条目 → 不回填镜像（MJ-21 (viii)）。(ii) CTR-001 → STY-016 的 hard_conflict（3.4 接收约束方面 1 行明文『微服务 → 跨单元禁止以进程内调用为主手段』，级别硬）——hard_conflict 为对称关系、本可镜像，但 STY-016 属已批准条目 → 不擅改，镜像回填留待人工裁决（MJ-20 (vii) 同型）；CTR-011 → DEC-005 的 tension（3.6 示例三明文点名）同型单侧登记。同批内七对已双向镜像闭合：CTR-002 ↔ CTR-007、CTR-002 ↔ CTR-008、CTR-003 ↔ CTR-004、CTR-004 ↔ CTR-007、CTR-004 ↔ CTR-008、CTR-008 ↔ CTR-011、CTR-010 ↔ CTR-011（均系同批 seed 条目、非已批准条目 → 双向登记，MJ-21 (viii)；其中 CTR-004 侧两条与 CTR-011 侧一条为本批入库时的镜像回填，依据与对侧同源＝3.2.2 默认值列/3.6 示例三，无新增事实主张）。CTR-006 与 CTR-012 的 compatibility 为空列表系母本无明文对：3.2.1 UI/端契约行与 3.2.2 发现与注册行均未给出与其余条目的互斥/依赖明文（MJ-9 只登记母本有明文依据的对，判读见 MJ-21 (viii)）。"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+        - {source_type: clause_id, value: "3.2.1", verified: true}
+        - {source_type: clause_id, value: "3.2.2", verified: true}
+    note: "本批迁移对象为 CTR-001…CTR-012（分块序：先 3.2.1 契约形态表行序六行＝进程内接口／同步 API 契约／异步消息契约／事件契约／数据契约／UI-端契约 → CTR-001…CTR-006，后 3.2.2 契约治理表行序六行＝版本化策略／兼容性规则／消费者驱动契约测试（CDC）／契约生命周期／破坏性变更流程／发现与注册 → CTR-007…CTR-012；name 一律取表首列逐字，MJ-21 (iii)）。**scope 含前五批 49 条系 check_ledgers 全集要求的形式面**（MJ-16 (ii)），五批的迁移事实已分别由 ST-STY-01、ST-OWN-01、ST-CSL-01、ST-CRD-01、ST-DEC-01 登记。E3 面另单独申请 WV-CTR-E3-01（WV-STY-E3-01 防扩宽条款 (ii)：不沿用前五项、不自动生效；十二条 formal_anchor 共 31 个实例，引用 X1/X2/X3/X4/X5/X6/X7/W1/W4/Y1/Z1 十一项性质，而该 Waiver 的 scope 只及于其中**硬性质面**——8 项 24 实例（X1 7、X2 8、X5 3、X6 2、W1 1、W4 1、Y1 1、Z1 1）＋条件硬 X3 的 4 实例，X4（软，微服务风格下升硬）1 实例与 X7（软，P2 漂移信号）2 实例明列排除，见该项 scope 明文）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。十二条的 envelope 一律非空（C-ENV：kind_profile_CTR 的 entry_level_exemptions 为空集，3.2.1/3.2.2 不在豁免条款内），28 项 bound_expr 全为关系式而非具体数值（M3）——母本逐字给出的数值以参数化形态引用（如弃用窗口 ≥ 最慢消费者迁移时长、契约覆盖率上界为 1、漂移检测阈值 = 0），避开 CONCRETE_NUM_RE（MJ-20 (iv) 同型）。34 条 detection_predicate 中未在 predicate_vocabulary 登记的词（contract／sla_clause／breaking_change／deprecation_window／cdc_suite／covers／interaction／shared_data_access／slowest_consumer_migration 共 9 词）一律以半角方括号占位（M4 + MJ-12），且**不新增 VG 编号**——该 9 词逐字见于母本 3.5 机器层谓词块与性质公式（@1997-2017），属 VG-04『契约形态声明族谓词』已登记的处置形态，扩词将触发 signal_level 改级须走完整 ADR＋批准（MJ-20 (iii) 同型，判读见 MJ-21 (v)）；其中 covers 已系 CRD 批 MJ-19 (i) 四词之一，故本批新增候选为其余 8 词，累计未登记词汇候选 19 词（4＋7＋8）宜合并为独立 R2 词汇批次。CTR-001／003／005／006／010／012 的 references 为空列表系 3.2.1/3.2.2 行级书目登记面缺失（G-CTR-1，登记为 SO-9）：kind_profile_CTR 的 required 含 references，而 has_path 口径下空列表＝字段在案（project.py @170-177），故六条以空列表 + 行内注显式登记即满足 M2，不以本地造引充数（0.4 禁假精确）；已引六条（CTR-002 书目 30＋32、CTR-004 书目 31、CTR-007／CTR-008 书目 33、CTR-009 书目 28＋29、CTR-011 书目 34）的 compile_usage 一律 metadata_extraction、信任级一律 [已核验]，逐字承母本 3.7，注册表侧不得改写或降级。十二条的 aggregation_semantics 一律 itemwise，理由＝母本未给 CTR 的跨契约聚合式（3.2.2 内容列『每契约登记其一』同旨），不本地造法（MJ-19 (iii) 同型，判读见 MJ-21 (ix)）。constraints_imposed 十二条逐字相同六行（3.4『施加约束』表方面 3 全体），其中施→8 取 conditional（级别列原文『软/硬按风格』→ 按 MJ-4 同型判读，见 MJ-21 (x)）。**差异留痕（不改写已发布登记）**：WV-DEC-E3-01 的 scope 内『X1 已由 WV-STY-E3-01（STY 批引用面）…覆盖』一句与本批实测不符——STY 批 24 条的 formal_anchor 无任何 X1 引用（X1 的既有引用面为 CRD 3 实例＋DEC 3 实例），按 0.22 承诺一不改写已批准 Waiver 的登记文本，该表述差异登记为待人工裁决口（s5h）。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
 
 # ---------------------------------------------------------------------------
 # 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）
@@ -3958,6 +4999,25 @@ waivers:
       ruling: "批准。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道），9.2.2 五要素齐备、scope 与前四项（STY 24 条面、OWN 4 条面、CSL 5 条面、CRD 8 条面）互不重叠，故按已裁定的同一边界结论准予豁免：0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免，本项 external_cause=false 不构成障碍。批准仅及于本项 scope 明列的硬性质引用面——7 项 31 个硬实例（W1 8、W2 8、W7 8、X1 3、W4 2、Y1 1、Z1 1 在 DEC-001…DEC-008 的 formal_anchor 实例）＋条件硬 W3 的 8 个实例（DEC-006 implements，余七条 consumed_by），不扩张为一般先例（防扩宽条款 (i)）；其余 12 个 kind 的 seed 期 E3 豁免仍须各自单独申请（条款 (ii)），本项批准不作为其援引依据。**W3 的级别不被本裁决预设**：仍由 0.4 证据门槛判定（capacity_evidence_sufficient(team(M)) 是否可观测、可验证、有出处且无争议），门槛未过则按 remediation_plan (a) 降软＋走 2.2.3 准则二的 CH-B1 保守默认值＋保守假设 ADR＋可推翻指标，该 8 个实例出栈以简记留痕而非静默缩减；母本 2.2.3 准则二的双向防护（『Agent 编造的精确容量数字不构成硬化依据』）一并适用，本裁决不授权以任何自撰数值充当硬化证据。**W5（软）与 W6（软）维持明列排除**：批准不将其各 1 个实例纳入豁免面（E3 只约束 property(hard)），亦不改变二者级别与信号判据；MJ-20 (ii) 关于『DEC-005 不锚 W6』（7.x 走查的 volatility 硬绑定与 2.5 W6 公式面 interface_cost／cohesion_gain 不同源）的判读不因本裁决而复议。**W1/W2/W7 三面为本项首次登记**：前四批无任何条目引用该三面，故无前批引用面可援引，本项独立承担；W4/Y1 与 X1/Z1 的专项口径按 scope 明列——W4 的 implements 面由 DEC-004 承担、OWN-001 对 Y1 的引用面由 WV-OWN-E3-01 承担，X1 的 STY 批与 CRD 批引用面分别由 WV-STY-E3-01／WV-CRD-E3-01 承担，Z1 的 CRD 批 implements 面由 WV-CRD-E3-01 承担，各项不互相援引、不重复计息。deadline 为事件型（LRM＝编译器首次成功运行），不虚构日历期限（0.4 禁假精确）；超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver（条款 (iii)）。另记四项不被本裁决预设的未决事项：(1) E3 的守护规则条目仍未建立、级别未定；(2) remediation_plan (b) 的七个母本 2.5 公式内谓词（W3 的 capacity_evidence_sufficient、W5 的 dsm_optimal／semantically_coherent／flag_for_review、W6 的 interface_cost／cohesion_gain／tech_debt_flag）之 R2 登记（MJ-19 (i) 与 MJ-20 (iii) 裁决为不扩词，理由系后果：登记将触发相关 detection_predicate 的 signal_level 由 P1 改级 P0）属注册表变更，须走完整 ADR＋批准，与 CRD 批四词（Z1 explicitly_modeled、X1 covers、Z4 sla_bound、Z5 registered_max_depth）合计十一词，宜合并为独立词汇批次；本裁决不代替该批准、不授权任何批次本地扩词；(3) DEC-007 ↔ STY-016 的关系方向（ENUM_RELATION 无 `required_by`，现为单向 composable，MJ-20 (vii)）属注册表变更，本裁决不预设方向、不改变单向登记的留痕口径，亦不因批准而视为已闭合；(4) G-DEC-1.route 与 SO-8（书目 10／11／18 的节级面可否下探至策略行）仍待人工裁决，本裁决不代替该裁决、不使 DEC 八条 references 的五处空集自动合法化——其现时合法性出处为 2.3 与 0.17.7 门槛 6（禁以不承载主张的文献充当出处），非本 Waiver。**日期口径据实记载（同日）**：申请登记日为 2026-09-26（DEC 批入库提交 692be11），人类裁决日亦为 2026-09-26，同日不跨日，与 CRD 项（申请 2026-09-24／裁决 2026-09-26 跨 2 日）口径不同，各自据实、不类比回填（0.22 承诺一：已发布登记不改写；0.4：禁假精确）。"
       anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（其余 12 个 kind：CTR/STP/DFL/RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前四项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前四项累计覆盖 **49** 条 seed 条目（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8），五项**独立生效、独立闭合、互不援引**；同名性质（X1 于 STY/CRD/DEC 三批、Y1 于 OWN/DEC 两批、Z1 于 CRD/DEC 两批）在不同批次的引用面各自计息，不合并豁免。本项亦不预设三个未决事项的结果：E3 的守护规则条目仍未建立、级别未定；W3 的条件硬级别仍待 0.4 证据门槛判定（remediation_plan (a)）；十一词未登记谓词的 R2 登记仍须走完整 ADR＋批准（remediation_plan (b)）。"
     status: active            # SM-WV：pending → active（2026-09-26 批准生效，豁免期内）；闭合条件见 remediation_plan (3)；DEC 八条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
+
+  - waiver_id: WV-CTR-E3-01
+    rule: "E3（母本 @4008）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"
+    violation_fact: "CTR 批 12 条条目（CTR-001…CTR-012；3.2.1 契约形态表六行＋3.2.2 契约治理表六行，分块序见 MJ-21 (ii)）经 ST-CTR-01 迁移为 seed（人工种子通道，0.17.6(1)），其 formal_anchor 引用的硬性质（3.5 的 X1 无未登记跨单元交互、X2 版本与兼容策略齐备、X5 发布即批准、X6 共享数据条件化；2.5 的 W1 每单元有 seam、W4 数据单一所有者；4.5 的 Y1 单一所有者或已批准共享写例外；5.5 的 Z1 显式建模＋契约在册）尚无 FVR 条目与检查程序接线：本目录的 scripts/project.py 只做注册表静态自检（M2/M3/M4/M6/M9 + C 系列），不是 FVR 运行器，也不产生 first_full_run 证据 → 『引用 seed 条目的性质』不满足 E3 的 wired ∧ first_full_run has evidence。合法性出处：0.17.6(2)（母本明文规定 seed 期本项按 Waiver 机制登记限期豁免）。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道，五要素齐备＋批准），不沿用前五项、不自动生效。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 CTR-001…CTR-012 十二条的 formal_anchor 所引用的硬性质实例，共 8 项 24 个实例——X1 无未登记跨单元交互（CTR-002/003/004/005 implements，CTR-001/006/012 consumed_by，7 个）、X2 版本与兼容策略齐备（CTR-007/008 implements，CTR-001/002/003/004/006/010 consumed_by，8 个）、X5 发布即批准（CTR-010 implements，CTR-002/011 consumed_by，3 个）、X6 共享数据条件化（CTR-005 implements，CTR-001 consumed_by，2 个）、W1 每单元有 seam（CTR-001 implements，1 个）、W4 数据单一所有者（CTR-005 consumed_by，1 个）、Y1 单一所有者或已批准共享写例外（CTR-005 consumed_by，1 个）、Z1 显式建模＋契约在册（CTR-003 consumed_by，1 个）；级别依据＝母本各性质行明文标注（X1 @2009『无未登记跨单元交互 —— 硬』、X2 @2010『版本与兼容策略齐备 —— 硬』、X5 @2015『发布即批准 —— 硬』、X6 @2016『共享数据条件化 —— 硬』、W1 @1713『可测试性硬约束（0.15 冻结项，来自方面6）—— 硬』、W4 @1717『数据单一所有者 —— 硬』、Y1 @2279-2280『硬』、Z1 @2575-2576『硬』）。另 **X3 迁移窗口闭合为条件硬**（3.5 @2011-2013 明文：breaking_change(C,v1,v2) → deprecation_window(C,v1,t) ∧ t ≥ slowest_consumer_migration(C)，『迁移时长估计满足 0.4 证据门槛时为硬；否则降软 + 保守假设 ADR，保守默认窗口取注册表登记上限』；@2020 附同型说明『X3 的条件硬结构与方面 2 的 W3 同型：硬化与否由 0.4 证据门槛统一判定，防止 Agent 编造「消费者迁移时长」假精确数字绕过弃用窗口』），其 4 个实例（CTR-011 implements，CTR-002/007/008 consumed_by）按条件硬一并纳入本项 scope，级别最终由 0.4 证据门槛判定而非本 Waiver 预设。**不在本项 scope 内**：X4 高风险契约 CDC（3.5 @2014 明定『软（微服务风格下升硬）』；CTR-009 implements，1 个实例）与 X7 事件/命令不混用（@2017 明定『软（P2 漂移信号）』；CTR-004 implements、CTR-003 consumed_by，2 个实例）——E3 只约束 property(hard)，软性质不产生 E3 义务，故不计入豁免面（明列排除共 3 个实例）；X4 的『微服务风格下升硬』条件**不被本项预先涵盖**：若日后风格条件成立致 X4 升硬，属新的事实面，须另申请（防扩宽条款 (i)/(ii)），不静默扩宽。不含 active 条目、不含 STY 批（WV-STY-E3-01 承担）、不含 OWN 批（WV-OWN-E3-01 承担）、不含 CSL 批（WV-CSL-E3-01 承担）、不含 CRD 批（WV-CRD-E3-01 承担）、不含 DEC 批（WV-DEC-E3-01 承担）、不含其余 11 个 kind 批次（各批另单独申请）、不含 E3 以外的编译规范性质（E1/E2/E4 不在本 Waiver 范围）。口径注：前五项 scope 均为其各自批准时点（2026-09-18 seed 仅 STY 24 条；2026-09-22 seed 为 STY＋OWN 28 条；2026-09-24 seed 为 STY＋OWN＋CSL 33 条；2026-09-26 seed 为 STY＋OWN＋CSL＋CRD 41 条；同日 DEC 批准后为 49 条）的口径，按防扩宽条款 (ii) 不随本批外延至 CTR 十二条；CTR 十二条的豁免范围由本项独立承担，六项 scope 互不重叠。**X2/X3/X4/X5/X6/X7 专项口径**：该六面系方面 3 本方面性质（3.5），前五批无任何条目引用，本项为其**首次登记**，无前批引用面可援引。**X1/W1/W4/Y1/Z1 专项口径**：本项只覆盖 CTR 侧实例，既有引用面由各自批次的 Waiver 承担，不互相援引、不重复计息——X1 的既有面为 CRD 3 实例＋DEC 3 实例（本项覆盖 CTR 侧 7 实例）；W1 的既有面为 DEC 8 实例（本项覆盖 CTR-001 的 implements 1 实例）；W4 的既有面为 OWN 3＋CSL 1＋DEC 2 实例（本项覆盖 CTR-005 的 consumed_by 1 实例）；Y1 的既有面为 OWN 3＋DEC 1 实例（本项覆盖 CTR-005 的 consumed_by 1 实例）；Z1 的既有面为 CRD 4＋DEC 1 实例（本项覆盖 CTR-003 的 consumed_by 1 实例）。**差异留痕（不改写已批准登记）**：WV-DEC-E3-01 的 scope 内『X1 已由 WV-STY-E3-01（STY 批引用面）…覆盖』一句与本批实测不符——STY 批 24 条的 formal_anchor 无任何 X1 引用（X1 的既有面实测为 CRD 3＋DEC 3）；按 0.22 承诺一不改写已批准 Waiver 的登记文本，该表述差异登记为待人工裁决口（s5h），本项不复述该表述、只按实测计数承担 CTR 侧实例。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径同前五项：(1) project.py 自检全过（本批，见 ST-CTR-01 evidence）→ (2) 编译器对 seed 条目执行『人工条目 vs 编译条目』重验证，差异按 0.17.6(3) 三分类处置 → (3) 建立 FVR 条目并为 X1/X2/X3/X5/X6/W1/W4/Y1/Z1 接线，首次全量运行留证（E3 的 first_full_run has evidence）→ (4) 逐条 seed→active（diff 为空 = 低影响简记；diff 非空按三分类分别定级）。本 Waiver 在 (3) 完成时闭合。本批特有前置：(a) **X3 先定级再接线**——X3 为条件硬，(3) 的接线范围取决于 slowest_consumer_migration(C) 的迁移时长估计是否过 0.4 证据门槛（可观测、可验证、有出处且无争议）；门槛未过则 X3 降软＋保守假设 ADR＋保守默认窗口取注册表登记上限（母本 @2012 明文，**不阻塞**），本项 scope 内 X3 的 4 个实例随之出栈，不需接线，该出栈以简记留痕而非静默缩减；母本 @2020 的双向防护（『防止 Agent 编造「消费者迁移时长」假精确数字绕过弃用窗口』）一并适用，本批不以自撰数值充当硬化证据（CTR-007-AP2／CTR-010-AP3／CTR-011-AP1 三处行内注已挂该复核口）。(b) **母本 3.5 面谓词的 R2 登记**——本批 34 条 detection_predicate 内以半角方括号占位的未登记词共 9 个（contract／sla_clause／breaking_change／deprecation_window／cdc_suite／covers／interaction／shared_data_access／slowest_consumer_migration），九词均逐字见于母本 3.5：前六词在机器层谓词块（@1997-2002；同块 context_map @2003 本批未用），interaction 于 X1 公式（@2009）、shared_data_access 于 X6 公式（@2016）、slowest_consumer_migration 于 X3 公式（@2011）；而 predicate_vocabulary.yaml 的 predicates 节只投影 1.5／2.5／4.5／5.5／6.5／0.17.8／0.18.6 七处，**3.5 面整节未投影**，clause_defined_predicates 十项亦无上述任一词 → X1/X2/X3/X5/X6 面在词汇补齐前无法机器求值，(3) 的全量运行证据只能覆盖已登记谓词面（seam／owned_by／owner／dataset／has／approved／declared 已登记；covers／interaction／shared_data_access／contract 等未登记）。另记：X6 公式内的 satisfies 与 explicitly_recorded（@2016）本批以中文事实占位表达（CTR-005-AP1『¬[a 满足 3.2.3 四条件]』）而未以谓词调用形态出现，故不计入本批 9 词，但同属 3.5 面未投影的词汇缺口，一并列入候选面。裁决与理由见 MJ-21 (v)：本批不扩词，因扩词将触发相关 detection_predicate 的 signal_level 由 P1 改级 P0（守护规则改级），按 0.14＋SO-2／G-STY-4 须走完整 ADR＋批准；本批 9 词中 covers 已系 MJ-19 (i) 四词之一，故新增候选 8 词，与 MJ-19 (i) 四词、MJ-20 (iii) 七词合计 **19 词**，宜与 SO-4 补齐动作合并为独立 R2 词汇批次统一裁决，不在本批执行，亦不以本 Waiver 的批准为前提。(c) **compatibility 的方向与镜像问题不影响接线**——CTR-002/003/004 → STY-001/002/003 的三条 requires 由一侧单方承载（MJ-17 (iii)：ENUM_RELATION 无 required_by），CTR-001 → STY-016 的 hard_conflict 镜像不擅改已批准的 STY-016（回填与否留人工裁决，见 ST-CTR-01 condition）；CTR-011 → DEC-005 的 tension 为单侧登记（对侧 DEC-005 属已批准条目，MJ-21 (viii) 纪律）。三者均属 compatibility 面，与 (3) 的性质接线相互独立，方向裁决属注册表变更。"
+    risk_quantification: "触及面：12 条 × formal_anchor 引用的硬性质，共 8 项 24 个硬性质实例（X2 8、X1 7、X5 3、X6 2、W1 1、W4 1、Y1 1、Z1 1）＋ X3 条件硬 4 个实例。利息形态：硬性质违例的检出时机从『运行时/编译期自动检出』退化为『评审期人工核验』，检出延迟 = 一个决策周期；漏检后果按性质分级——X1 漏检 = 跨单元交互未进契约注册表即定案（1.5/3.5 硬，契约密度不足；本批 7 个实例覆盖四种契约形态的 implements 面与进程内/端/注册三面的 consumed_by 面，漏检即『无契约的交互』在方面 3 失去唯一硬闸门）；X2 漏检 = 已发布契约缺 version 或 compat_policy（3.5 @2010 硬），破坏性变更判定（X3）失去输入前提，版本化策略与兼容性规则两维度的治理面整体失效；X5 漏检 = 契约进入 published/deprecated 而无已批准 ADR（@2015 硬），3.3 双使用者条款与 0.10 权力条款的机器面失守（契约发布属高影响决策，人类保留批准权）；X6 漏检 = 共享数据访问未满足 3.2.3 四条件或未显式登记（@2016 硬），数据契约形态退化为隐式共享写，Y1/W4 的数据单一所有者面被绕过；W1 漏检 = 进程内接口无可测试 seam（0.15 冻结项，方面 6 → 方面 2/3 硬约束，母本明文『双方不得单方面撤销』@294／@2863）；W4/Y1 漏检 = 数据契约对应的数据集合出现多所有者或无已批准共享写例外（2.4 施→4、4.5 @2279-2280 硬）；Z1 漏检 = 异步消息契约对应的跨单元交互未显式建模或契约不在册（5.5 @2575-2576 硬，承接方面 3）；X3 漏检 = 破坏性变更未闭合弃用窗口（t ≥ 最慢消费者迁移时长），消费者被静默断裂，级别待 0.4 证据门槛判定。缓解：(i) 0.17.5 强制 ADR 附注『依据种子条目，待重验证』；(ii) 本批 P0/P1/P2 信号级判读带 3.5/2.5/4.5/5.5 性质指针与 MJ-4 判据留痕，可逐条人工复核（34 条 detection_predicate 全部标级，其中未登记谓词面按 MJ-12 取 P1 并留方括号占位，明记『补齐后升 P0』）；(iii) compatibility 面按 MJ-9 只登记母本有明文依据的对（25 对：composable 20／requires 3／hard_conflict 1／tension 1；同批内 7 对全双向闭合，其中 CTR-004 侧两条与 CTR-011 侧一条系本批入库时的镜像回填、依据与对侧同源），无明文依据者留空（CTR-006／CTR-012）并在 ST-CTR-01 condition 留痕，不静默造规范；(iv) project.py 的 M9/C-ST/C-ENV/M2/M3/M4/M6 静态自检覆盖 peer 存在性、状态资格、CTR 剖面 envelope 非空义务、pattern_id 与 target_aspect 形态、bound_expr 参数化（28 项）、谓词词汇封闭、references 分级七项可机器判定面（本批 CTR 十二条 envelope 全部非空，M3 全过；六条 references 空列表以 G-CTR-1＋SO-9 显式登记，不以本地造引充数）；(v) 累计口径——本项与前五项合计覆盖 **61** 条 seed 条目（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8＋CTR 12），六项 scope 互不重叠，豁免面按批次逐项登记，不合并、不互相援引。"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经 WV-OWN-E3-01、WV-CSL-E3-01、WV-CRD-E3-01、WV-DEC-E3-01 复用的边界结论（0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免），本项不另启同一争点的重复裁决；按防扩宽条款 (i)，本项仅援引该结论适用于母本明文通道场合，不将其扩张为一般先例。"
+      status: pending         # 登记即申请（2026-09-27）；批准是人的裁决，Agent 与工具不自行批准——0.10 第一条 / 1.1 纪律二；approved_by／approved_date／ruling 三项待人工裁决后填写，本项不预填
+      anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（其余 11 个 kind：STP/DFL/RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前五项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前五项累计覆盖 **61** 条 seed 条目（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8＋CTR 12），六项**独立生效、独立闭合、互不援引**；同名性质（X1 于 CRD/DEC/CTR 三批、W1 于 DEC/CTR 两批、W4 于 OWN/CSL/DEC/CTR 四批、Y1 于 OWN/DEC/CTR 三批、Z1 于 CRD/DEC/CTR 三批）在不同批次的引用面各自计息，不合并豁免。本项亦不预设四个未决事项的结果：E3 的守护规则条目仍未建立、级别未定；X3 的条件硬级别仍待 0.4 证据门槛判定（remediation_plan (a)）；十九词未登记谓词的 R2 登记仍须走完整 ADR＋批准（remediation_plan (b)）；CTR-001 ↔ STY-016 的 hard_conflict 镜像回填与三条 requires 的方向仍待人工裁决（remediation_plan (c)）。"
+    status: pending           # SM-WV：登记为 pending（2026-09-27 申请），待人工裁决；CTR 十二条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
 
 # ---------------------------------------------------------------------------
 # 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
@@ -4104,6 +5164,13 @@ manual_judgments:
     affected: "DEC-001…008 的 name／applicability（含 DEC-005 problem_space[1] 位次锁定）／envelope 的 bound_expr／cost_profile.aggregation_semantics／compatibility／formal_anchor（W3／W4 的 implements 分配，W5／W6 的软性质排除）／references（五条留空）／anti_patterns 的 signal_level；predicate_vocabulary.yaml（本批不变，七词候选身份登记于此项）；G-DEC-1／SO-8；WV-DEC-E3-01 的 scope 口径"
     provenance: manual
 
+  - id: MJ-21
+    subject: CTR 批十项判读——3.6 三处称呼映射、两表分块序、name 取表首列逐字、X 系列角色分配（31 实例）、母本公式内九词不扩词、可逆性三级分配、量化面口径与升级触发条件分源、compatibility 与镜像纪律、聚合式不本地造法、施→8 取条件级
+    judgment: "(i) **3.6 三处叙述式称呼系消费字段称呼、非 entry_id**：3.6 示例一以 `CTR-gRPC`（@2035，示例正文 @2031 同现）称呼同步 API 契约行的具体实例、示例二以 `CTR.compatibility.policy`（@2049-2050）称呼兼容性字段、示例三以 `CTR.lifecycle_state`（@2064-2065）称呼生命周期状态字段，示例四（@2068）不产生新称呼。三者映射：`CTR-gRPC` → CTR-002（3.2.1「同步 API 契约」行的示例化称呼；母本叙述式书写 ≠ 注册表三位 id，等同判断见 MJ-14）；`CTR.compatibility.policy` 的 additive-only 策略值 → CTR-008（3.2.2「兼容性规则」行），而该策略**取值的枚举与登记面**属 CTR-007（「版本化策略」行），二者不得合并为一条；`CTR.lifecycle_state` → CTR-010（「契约生命周期」行）。映射登记于 profiles.yaml 的 kind_profile_CTR.entry_id_range 与 README §4.3；注册表侧**不新建 CTR-gRPC 条目**（叙述式称呼非条目身份，新建将违反 C-ID 与 MJ-14 的 id 纪律）。(ii) **两表分块序裁决**：CTR 十二条按『两表分块 + 块内行序』编号——3.2.1 契约形态表六行（@1918-1923：进程内接口／同步 API 契约／异步消息契约／事件契约／数据契约／UI-端契约）＝ CTR-001…CTR-006，3.2.2 契约治理表六行（@1931-1936：版本化策略／兼容性规则／消费者驱动契约测试（CDC）／契约生命周期／破坏性变更流程／发现与注册）＝ CTR-007…CTR-012，块序按母本小节序（3.2.1 先于 3.2.2）。采分块序而非单一混合行序的理由：两表在母本为并列的两张表（3.2.1 形态面、3.2.2 治理面），3.2.2 内容列明记『每契约登记其一』即治理维度对全部形态正交适用，混编会使『形态 → 治理』的施加关系在 id 面上不可读；块内行序即 id 序，与 STY 批 MJ-13 (iv) 的表序裁决同型。编号不重排、不复用（0.22 承诺一）。(iii) **name 一律取表首列逐字**：十二条的 name 分别为 3.2.1 首列（@1918-1923）与 3.2.2 首列（@1931-1936）的逐字文本，含母本自带括注（如「消费者驱动契约测试（CDC）」按原形登记），不采叙述式改写（如『同步接口契约』『契约注册中心』），以免与 3.6 既有称呼面失配（MJ-20 (i) 同型）。首列以外的列（定义／适用条件／内容／机器层天然性／默认值）分别落 applicability、narrative、constraints_imposed、envelope 与 compatibility，不在 name 内混合承载。(iv) **formal_anchor 角色分配（共 31 实例：硬 24／条件硬 4／软 3）**：X1（@2009 覆盖性 ∀交互对 ∃C ∈ registry: covers(C,u1,u2)）取 implements 于 CTR-002/003/004/005（四形态各自承载一类交互对的覆盖手段），consumed_by 于 CTR-001/006/012（进程内接口与端契约不构成 X1 意义的跨单元覆盖承载；发现与注册为覆盖性的查询前提）＝ 7 实例；X2（@2010）implements 于 CTR-007/008（版本化与兼容性为 X2 的直接承载），consumed_by 于 CTR-001/002/003/004/006/010 ＝ 8 实例；X3（@2011-2013 条件硬，同型说明 @2020）implements 于 CTR-011（破坏性变更流程即 X3 的执行面），consumed_by 于 CTR-002/007/008 ＝ 4 实例；X4（@2014 软，微服务风格下升硬）仅 implements 于 CTR-009（CDC 是 X4 的唯一直接操作化）＝ 1 实例；X5（@2015）implements 于 CTR-010（生命周期状态机为 X5 的承载），consumed_by 于 CTR-002/011 ＝ 3 实例；X6（@2016）implements 于 CTR-005（数据契约的语义条款即 X6 的显式化面），consumed_by 于 CTR-001 ＝ 2 实例；X7（@2017 软）implements 于 CTR-004（事件契约的漂移检测面），consumed_by 于 CTR-003 ＝ 2 实例。跨方面四项各 1 实例：W1（@1713 seam）implements 于 CTR-001（进程内接口是 seam 的契约化面）；W4（@1717 数据唯一所有者）consumed_by 于 CTR-005；Y1（@2279-2280 所有权与访问路径）consumed_by 于 CTR-005；Z1（@2575-2576 建模显式化）consumed_by 于 CTR-003。**Waiver scope 口径**：WV-CTR-E3-01 只及硬性质面 8 项 24 实例（X1 7、X2 8、X5 3、X6 2、W1 1、W4 1、Y1 1、Z1 1）＋条件硬 X3 的 4 实例，X4（软）1 实例与 X7（软）2 实例明列排除（MJ-20 (ii) 同型：软性质不计入 E3 硬检面）。3.5 谓词块（@1997-2003）的 `context_map` 本批未以调用形态出现，故不产生 formal_anchor 实例。(v) **母本 3.5 公式内九词本批不登记入 predicate_vocabulary.yaml，维持方括号占位**：contract／sla_clause／breaking_change／deprecation_window／cdc_suite／covers／interaction／shared_data_access／slowest_consumer_migration 九词逐字出现于母本 3.5 机器层谓词块（@1997-2003）与性质公式（@2006-2017），与 clause_defined_predicates 既有十项**同型**（该节已含 active 注『V3 公式内使用』、parameterized 注『M3 公式内使用』），属 R2 可提议的登记候选，非 MJ-12 意义的本地造词。另注：X6 公式内的 satisfies／explicitly_recorded 本批以中文事实占位表达、未以谓词调用形态出现 → 不计入九词，但同属该缺口面。不扩词的理由仍是**后果而非资格**（MJ-19 (i)／MJ-20 (iii) 同型）：登记将直接触发相关 anti_patterns 的 signal_level 由 P1 升 P0（信号级升级＝守护规则改级），按 0.14『不许运行时即兴改级』＋SO-2／G-STY-4 须走完整 ADR＋批准，不在数据批次内自行执行；应与 MJ-19 (i) 四词、MJ-20 (iii) 七词、SO-4 补齐动作合并为**一个独立 R2 词汇批次**统一裁决（covers 已系 MJ-19 (i) 四词之一，故本批新增候选为其余 8 词，累计 4＋7＋8 ＝ **19 词**）。**不新增 VG 编号**：九词属 VG-04『契约形态声明族谓词』已登记的处置形态，复用『方括号占位＋补齐后按 MJ-4 复核 signal_level』；VG-04 的 affected 现为 STY-010-AP1／STY-011-AP1／STY-013-AP2，是否扩及 CTR 侧列 s5g 裁决，本批不擅改。M4 面以半角方括号包裹**调用式**占位（project.py 的 PRED_CALL_RE 先经 outside_brackets 剔半角方括号，自检不误报），本批 M4 全过。(vi) **typical_reversibility 三级分配（bounded 6／costly 5／free 1）**：free 仅 CTR-009（CDC 为验证手段，撤销不改变已发布契约面）；costly 五条＝CTR-002/003/004/005/011（同步 API／异步消息／事件／数据契约一经消费者依赖即产生迁移成本，破坏性变更流程本身即 costly 面的处置出口）；bounded 六条＝CTR-001/006/007/008/010/012（进程内接口的回退界于单元内、端契约界于版本发布窗口、版本化策略与兼容性规则界于其自身声明的窗口、生命周期界于状态机可达性、发现与注册界于目录条目）。分级依据为 3.2.1 机器层天然性列与 3.2.2 默认值列的明文，不引入母本未给的度量（0.4 禁假精确）；各级的『界』以 bound_expr 参数化表达（如弃用窗口 ≥ 最慢消费者迁移时长），不写死数值。(vii) **量化面口径（envelope 28 项 bound_expr／anti_patterns 34 条：P0 15、P1 17、P2 2）与升级触发条件分源**：envelope 十二条一律非空（C-ENV：kind_profile_CTR 的 entry_level_exemptions 为空集，3.2.1／3.2.2 不在豁免条款内），28 项 bound_expr 全为关系式（M3 的 REL_OPS／REL_WORDS 面）而非带量纲具体数值——母本逐字给出的数值一律参数化引用（MJ-20 (iv) 同型），合规式目标以『= 0』『上界为 1』形态表达，避开 CONCRETE_NUM_RE。34 条 detection_predicate 的 signal_level 按 MJ-4 判据分配：P0 15 条（硬性质违反或检出即阻塞面）、P1 17 条（须人工确认或趋势判据）、P2 2 条（软性质越阈＋趋势上升双判据）。**三处 X3 相关 P1 行内注的升级触发条件须与词汇登记升级分源**：CTR-007-AP2（@4222-4225）、CTR-010-AP3（@4467-4470）、CTR-011-AP1（@4543-4546）三处均写『级别待 W3/X3 条件硬裁决口（s5h 既有）落定后复核（MJ-4 判据）』——该升级的触发条件是 **0.4 证据门槛的判定**（条件硬性质在具体风格下是否已具足够证据升为硬），与 (v) 的词汇登记升级（守护规则改级须完整 ADR＋批准）、(x) 的施→8 升级（依风格侧具体裁定）**三者不同源、不得混记**：分别归口 s5h 证据门槛、s5g 词汇批次、母本 3.4 风格澄清，任一侧先行落定都不自动带动其余两侧。(viii) **compatibility 登记纪律与镜像处置（共 25 行：composable 20、requires 3、hard_conflict 1、tension 1）**：只登记母本有明文依据的对（MJ-9），不为凑数而登记。**三条 requires**（CTR-002→STY-001、CTR-003→STY-002、CTR-004→STY-003）依据＝kind_profile_CTR.narrative.note 明定的 1.4／3.4 接收约束『方面 1 → 方面 3 硬』（3.4 接收表方面 1 行 @1973），本侧为接收端 → 方向与母本一致，不属 MJ-20 (vii) 的方向倒置情形；ENUM_RELATION 无 required_by 且对侧属**已批准**条目 → 单侧登记、不回填镜像。**一处 hard_conflict**（CTR-001→STY-016，3.4 接收表方面 1 行明文『微服务 → 跨单元禁止以进程内调用为主手段』，级别硬）：hard_conflict 为对称关系、本可镜像，但 STY-016 属已批准条目 → 不擅改，镜像回填留待人工裁决（MJ-20 (vii) 同型，登记为 s5h 裁决口）。**一处 tension**（CTR-011→DEC-005，3.6 示例三明文点名）同型单侧登记。**同批内七对已双向闭合**：CTR-002↔CTR-007、CTR-002↔CTR-008、CTR-003↔CTR-004、CTR-004↔CTR-007、CTR-004↔CTR-008、CTR-008↔CTR-011、CTR-010↔CTR-011（均系同批 seed 条目、非已批准条目 → 双向登记；其中 CTR-004 侧两条与 CTR-011 侧一条为本批入库时的镜像回填，依据与对侧同源＝3.2.2 默认值列／3.6 示例三，无新增事实主张）。合计单侧 11 处。**自检不承载镜像纪律**：project.py 的 check_m9 只查 peer 存在性、不查双向镜像，故 11 处单侧登记不触发硬失败，镜像纪律以本项与 ST-CTR-01 condition 为承载载体。CTR-006 与 CTR-012 的 compatibility 为空列表系母本无明文对（3.2.1 UI/端契约行与 3.2.2 发现与注册行均未给出与其余条目的互斥/依赖明文）。(ix) **aggregation_semantics 一律取 itemwise**：母本未给 CTR 的跨契约聚合式——3.2.1／3.2.2 均为并列行表、3.2.2 内容列明记『每契约登记其一』即逐契约独立求值、3.6 四例给的均是单契约裁决而非聚合运算，故十二条一律 itemwise，不本地造聚合语义（MJ-19 (iii)／MJ-20 (vi) 同型；0.4 禁假精确＋零新增规范命题）；ENUM_AGG 的 additive／grouped_max／weighted_avg 三值在本 kind 无母本消费路径。(x) **constraints_imposed 十二条逐字相同六行（共 72 项），其中施→8 取 conditional**：3.4『施加约束』表（@1982-1989）中方面 3 施于其余方面的六行（方面 2／4／5／8／9／10）对全部契约形态一体适用，故十二条的 constraints_imposed 为逐字相同的六行＝72 项（方面 2／4／5／9／10 各 12 项 hard ＝ 60；方面 8 各 1 项 conditional ＝ 12）。方面 8 行（施→8，@1987）的级别列原文为『软/硬按风格』——非固定级别，故按 MJ-4 同型判读取 **conditional**（ENUM_LEVEL 三值中唯一能承载『按条件定级』者；取 hard 会虚构母本未给的无条件性、取 soft 会丢失其可升硬面），其升级条件为**风格侧的具体裁定**（哪一风格下升硬），归口母本 3.4 澄清／s5h，不在注册表侧自行定级（0.4 禁假精确＋零新增规范命题）。"
+    basis: "母本 3.2.1 契约形态表（@1912-1925，六行 @1918-1923、判别规则 @1925）、3.2.2 契约治理表（@1927-1936，六行 @1931-1936）、3.3（@1955-1965）、3.4 接收表（@1971-1978，方面 1 行 @1973）与施加表（@1982-1989，施→8 行 @1987）、3.5 机器层谓词块（@1997-2003）与性质块（@2006-2018：X1 @2009／X2 @2010／X3 @2011-2013／X4 @2014／X5 @2015／X6 @2016／X7 @2017；X3 同型说明 @2020）、3.6 示例一至四（@2022-2068：CTR-gRPC @2031 与 @2035、CTR.compatibility.policy @2049-2050、CTR.lifecycle_state @2064-2065、示例四 @2068）、3.7 书目（@2136-2146，尾注 @2146）、0.18.4 CTR 行（@589）、2.5 W1（@1713）／W4（@1717）、4.5 Y1（@2279-2280）、5.5 Z1（@2575-2576）；predicate_vocabulary.yaml（predicates 七节无 3.5 面＋formula_words 七词＋clause_defined_predicates 十项＋vocabulary_gaps VG-01…VG-04＋meta.note『新增谓词名 = R2 提议，不得在本文件本地扩词』）；project.py M3（REL_OPS／REL_WORDS／CONCRETE_NUM_RE）、M4（PRED_CALL_RE＋outside_brackets）、M6（空集平凡为真）、check_m9（只查 peer 存在性）、has_path（@170-177）；profiles.yaml kind_profile_CTR（@139-164）与 ENUM_RELATION／ENUM_LEVEL／ENUM_SIGNAL／ENUM_AGG、C-ENV；README §5（seed 资格）；MJ-4／MJ-9／MJ-12／MJ-13 (iv)／MJ-14／MJ-16 (i)(ii)／MJ-17 (iii)／MJ-19 (i)(iii)／MJ-20 (i)(ii)(iii)(iv)(vi)(vii)；G-CSL-1／G-CRD-1／G-DEC-1（表级/节级面不下探）；SO-2／SO-4／G-STY-4（升级属注册表变更，走完整 ADR＋批准）；0.4（禁假精确）／0.14（不许运行时即兴改级）／0.17.6／0.17.7 门槛 2、6／0.22 承诺一"
+    affected: "CTR-001…CTR-012 的 name／formal_anchor（31 实例的角色分配；X4／X7 软性质排除）／envelope 的 28 项 bound_expr／anti_patterns 的 34 条 signal_level（P0 15／P1 17／P2 2）／cost_profile.typical_reversibility（bounded 6／costly 5／free 1）与 aggregation_semantics（itemwise ×12）／compatibility（25 行：单侧 11 处＋同批双向 7 对；CTR-006 与 CTR-012 空集）／constraints_imposed（72 项，施→8 conditional ×12）／references（六条留空）；predicate_vocabulary.yaml（本批不变，九词候选身份登记于此项，累计 19 词）；profiles.yaml kind_profile_CTR.entry_id_range（裁决指针 §4.2 → §4.3）；README §1 口径与新增 §4.3；G-CTR-1／SO-9；WV-CTR-E3-01 的 scope 口径；CTR-007-AP2／CTR-010-AP3／CTR-011-AP1 三处行内注的升级触发条件归口"
+    provenance: manual
+
 # ---------------------------------------------------------------------------
 # 五、未闭合的冲突矩阵行（1.2.5 是风格条目的强制元数据；peer 条目未建者不得
 #     写入 compatibility —— M9 要求 peer_entry 存在。此节为待回填台账。）
@@ -4187,6 +5254,14 @@ survey_obligations:
     kind: 入库期
     obligation: "补勘 2.2.1 八策略表内 S2（按技术层次）／S3（按业务能力）／S4（按数据归属）／S7（按微服务粒度）／S8（按风险）五行的行级书目登记面：母本 5.7 中与方面二相关的十二项登记面里，行级可引者仅覆盖 S1（书目 7 Evans、书目 24 Brandolini）、S5（书目 15 Parnas 1979；书目 14 Parnas 1972 依 2.3 问题空间驱动第二行明文挂钩下沉）、S6（书目 9 Team Topologies 2nd；书目 17 Conway 为 narrative_only），该五行无行级面，故 DEC-002／DEC-003／DEC-004／DEC-007／DEC-008 的 references 保持空列表（M6 在空集上平凡通过，非豁免）。补入须走母本 5.7 参考文献表扩充（0.12『扩充』语义裁决 + 高影响批准，走 R2/ADR）；另须先经人工裁决『书目 10 的 2.2.3 seam 理论基础面、书目 11／18 的 2.2.4 DSM 方法论面可否下探至相关策略行』（G-DEC-1 route，G-STY-5／G-CSL-1／G-CRD-1 同型）——裁决为可则相应条目补引并撤销该项，裁决为否则维持留空。表级/节级面不下探纪律承 G-CSL-1／G-CRD-1：书目 6（1.2.1）、8（2.4 施加项）、26（Lattix，narrative_only）等节级面不得充当行级出处，本项不得以 kind 级或表级登记面充数。"
     gap_ref: G-DEC-1
+    consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
+    trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
+    status: open
+
+  - obligation_id: SO-9
+    kind: 入库期
+    obligation: "补勘 3.2.1 契约形态表与 3.2.2 契约治理表内六行的行级书目登记面：母本 3.7（@2136-2146）中与方面三相关的登记提取面共七项（书目 28–34）＋一条尾注，其中行级可引者仅覆盖六行——书目 30（OpenAPI Initiative, OpenAPI Specification，机器层格式面）＋书目 32（Lauret, The Design of Web APIs 2nd ed.，设计方法面）同指 3.2.1「同步 API 契约」行、书目 31（CNCF, CloudEvents Specification v1.0.2）指 3.2.1「事件契约」行、书目 33（Confluent, Schema Registry Documentation）指 3.2.2「版本化策略」与「兼容性规则」两行、书目 28（Robinson, Consumer-Driven Contracts）＋书目 29（Fowler, ContractTest）同指 3.2.2「消费者驱动契约测试（CDC）」行、书目 34（Newman, Monolith to Microservices）依母本 3.4 明文挂钩指 3.2.2「破坏性变更流程」行。3.2.1 的「进程内接口」「异步消息契约」「数据契约」「UI/端契约」四行与 3.2.2 的「契约生命周期」「发现与注册」两行无行级面，故 CTR-001／CTR-003／CTR-005／CTR-006／CTR-010／CTR-012 的 references 保持空列表（M6 在空集上平凡通过，非豁免）。补入须走母本 3.7 参考文献表扩充（0.12『扩充』语义裁决 + 高影响批准，走 R2/ADR）；另须先经人工裁决三个下探口（G-CTR-1 route，G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1 同型）：『书目 31 的事件信封面可否依 3.2.1 异步通信族关系下探至「异步消息契约」行』『书目 33 的 registry 角色概念面可否下探至「发现与注册」行』『尾注书目 4（Building Microservices 2nd 的契约测试章节，『不重复著录』即不产生独立 bib_id）的面可否扩及 3.2.2 其余五行』——裁决为可则相应条目补引并撤销该项，裁决为否或澄清前则维持留空，另勘察补六行的行级书目（进程内接口的 IDL/类型系统面、异步消息元数据规范面、数据契约语义条款面、端契约与 BFF 面、契约生命周期状态机面、服务目录与注册面选型面）并按 0.12 定 compile_usage。表级/节级面不下探纪律承 G-CSL-1／G-CRD-1／G-DEC-1：G-CTR-1 impact 的五处具体裁定（书目 31 不充 CTR-003、书目 33 不充 CTR-012、书目 32 不充 CTR-006、书目 28／29 与尾注书目 4 不充 CTR-010、书目 30 不充 CTR-001／CTR-005）在本项裁决前一律有效，本项不得以 kind 级或表级登记面充数；留空亦不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）。"
+    gap_ref: G-CTR-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
     status: open
