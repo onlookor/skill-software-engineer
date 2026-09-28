@@ -10,7 +10,7 @@
 |---|---|---|
 | `profiles.yaml` | 17 个 kind 的字段剖面（元注册条目，0.17.2「字段完备性按 kind 剖面」、0.17.8 `kind_profile(kind, required_fields, optional_fields)`）＋剖面级缺口台账（KP-G1…G4，R2 澄清候选） | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的**数据侧投影**（供 M4 词汇封闭校验） | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；本文件每条带 clause 指针，`project.py` 反向核验指针在母本中可查 |
-| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条，共 65 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
+| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条＋DFL 5 条，共 70 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
 | `scripts/project.py` | 自检（M2/M3/M4/M5/M6/M9 ＋本目录登记的 C 系列）＋同源投影（0.9/E2：人类层由机器层生成，不手写） | 工具；不含规范命题 |
 | `projections/*.md` | 生成物：人类可读投影视图＋自检报告 | **生成物，禁手改**；改源后重跑 `project.py` |
 
@@ -100,6 +100,24 @@
 `profiles.yaml` 的 `kind_profile_STP.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实。三列源表（拓扑｜定义｜与风格的关系）到条目字段的归类判读、`latency_budget_delta` 一律填实的依据、`compatibility` 七行的方向与级别、`constraints_imposed` 28 项的级别分布（与 CTR 批施→8 取 conditional 的差异据实记载）、`references` 的行级/性质级定性、谓词面精确事实（4.2.2 侧七词不入 M4 扫描面 ＋ 母本 4.5 公式七词缺口）与 **Read 工具行号偏一的据实记载**，全文见 `method_registry.yaml` MJ-22 (i)–(vii)。
 
 行级书目登记面：母本 4.7（@2427-2437）九项中**行级**可引者仅书目 37（→ STP-003）与 38（→ STP-004），故 STP-001／STP-002 的 `references` 为**空列表**（M6 平凡通过，非豁免）；缺口登记 `G-STP-1` ＋ 勘察义务 `SO-10`。E3 豁免 `WV-STP-E3-01`（5 项 11 实例）已于 **2026-09-28** 经人类裁决批准、`status: active`（申请登记 2026-09-27，跨 1 日；裁决全文见台账 `approval.ruling`）；七项 Waiver 全部 active，累计覆盖 **65** 条 seed、scope 互不重叠。§4.2／§4.3 末段的批次清单（含 STP）同样**不回改**；其余 10 kind（DFL/RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
+
+### 4.5 DFL 批（单表表序入库，母本零改动）
+
+母本既有已发布引用勘察结论（2026-09-28）：母本全文 `DFL` 仅**一处**——@395（0.17.3 kind 封闭枚举行「DFL｜数据流动机制｜方面 4 · 4.2.4」）。**无 `DFL-数字` 形态的已发布引用**（同 CTR／STP 两批，与 STY/CSL/CRD/DEC 四批不同），故本批无需 R2 修订母本，母本 4427 行／围栏 216 不变。
+
+编号方案＝**单表表序**（承 §4.2 的 MJ-13 (iv) 同型：4.2.4 为一张表，行序即 id 序）：
+
+| entry_id | 母本源行（4.2.4，@2198-2202） | name（取表首列逐字） |
+|---|---|---|
+| DFL-001 | 第 1 行 | 事务性发件箱（outbox） |
+| DFL-002 | 第 2 行 | 变更数据捕获（CDC） |
+| DFL-003 | 第 3 行 | 流处理 |
+| DFL-004 | 第 4 行 | ETL/ELT 批（母本首列原形即含斜杠 → 按 MJ-21 (iii) 原形登记，不改写为术语表 @4283 的「ETL / ELT」形态） |
+| DFL-005 | 第 5 行 | 物化视图 |
+
+`profiles.yaml` 的 `kind_profile_DFL.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实。四列源表（机制｜定义｜适用条件｜质量影响要点）到条目字段的归类判读、CDC 一词在母本的双义隔离（数据域 @4277 归 DFL-002／契约域 @4278 归 CTR-009）、`latency_budget_delta` 五条一律填实但理由不平移 STP 批措辞、22 条 `signal_level` 的定级依据（P0 11／P1 5／P2 6）、谓词面精确事实（本批 11 个调用词全部已登记 → 零新增候选，累计仍 19 词）、`formal_anchor` 12 实例的角色分配、`compatibility` 十行（composable 8／tension 2）与 RLP 批重叠处置、6.6 示例四 800ms 不入 `bound_expr` 的边界、书目 44 的 ISBN 观察项、同批镜像与 `pending_conflict_rows` 口径，全文见 `method_registry.yaml` MJ-23 (i)–(xi)。
+
+行级书目登记面：母本 4.7（@2427-2437）九项中**行级**可引者仅书目 42（→ DFL-001 发件箱）与 43（→ DFL-002 CDC），覆盖 5 行中 2 行，故 DFL-003／DFL-004／DFL-005 的 `references` 为**空列表**（M6 平凡通过，非豁免）；缺口登记 `G-DFL-1`（含五个下探裁决口①-⑤，其一为书目 44 本地 EPUB 的 isbn13 与母本 @2750 著录形态不一致的处置）＋勘察义务 `SO-11`。E3 豁免 `WV-DFL-E3-01`（硬性质面 **3 项 6 实例**：Z2 3／Y2 2／Y1 1；软性质 Y4 5 实例＋Y7 1 实例**明列排除**）已于 **2026-09-28** 登记申请、`status: pending` **待人工裁决**——批准是人的裁决（0.10 第一条／1.1 纪律二），Agent 与工具不自行批准；DFL 五条的 seed 资格**不以该 Waiver 为前提**（C-ST 只查硬检查，批准延迟不阻断本批入库）。前七项 Waiver 全部 active，与本项合计覆盖 **70** 条 seed、scope 互不重叠。§4.2／§4.3／§4.4 末段的批次清单（含 DFL）同样**不回改**；其余 9 kind（RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
 
 ## 5. 状态纪律与自检清单
 
