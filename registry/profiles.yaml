@@ -208,8 +208,8 @@ profiles:
         - {source_type: clause_id, value: "4.2.2", verified: true}
     seed_source:
       clause_id: "4.2.2"
-      table_rows: "[待勘察：STP 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "4.2.2（4 行）"
+      entry_id_range: "STP-001…STP-004（表序，MJ-13 (iv) 同型）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
