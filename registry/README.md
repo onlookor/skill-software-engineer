@@ -99,7 +99,7 @@
 
 `profiles.yaml` 的 `kind_profile_STP.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实。三列源表（拓扑｜定义｜与风格的关系）到条目字段的归类判读、`latency_budget_delta` 一律填实的依据、`compatibility` 七行的方向与级别、`constraints_imposed` 28 项的级别分布（与 CTR 批施→8 取 conditional 的差异据实记载）、`references` 的行级/性质级定性、谓词面精确事实（4.2.2 侧七词不入 M4 扫描面 ＋ 母本 4.5 公式七词缺口）与 **Read 工具行号偏一的据实记载**，全文见 `method_registry.yaml` MJ-22 (i)–(vii)。
 
-行级书目登记面：母本 4.7（@2427-2437）九项中**行级**可引者仅书目 37（→ STP-003）与 38（→ STP-004），故 STP-001／STP-002 的 `references` 为**空列表**（M6 平凡通过，非豁免）；缺口登记 `G-STP-1` ＋ 勘察义务 `SO-10`。E3 豁免申请 `WV-STP-E3-01`（5 项 11 实例，`status: pending`，待人工裁决）。§4.2／§4.3 末段的批次清单（含 STP）同样**不回改**；其余 10 kind（DFL/RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
+行级书目登记面：母本 4.7（@2427-2437）九项中**行级**可引者仅书目 37（→ STP-003）与 38（→ STP-004），故 STP-001／STP-002 的 `references` 为**空列表**（M6 平凡通过，非豁免）；缺口登记 `G-STP-1` ＋ 勘察义务 `SO-10`。E3 豁免 `WV-STP-E3-01`（5 项 11 实例）已于 **2026-09-28** 经人类裁决批准、`status: active`（申请登记 2026-09-27，跨 1 日；裁决全文见台账 `approval.ruling`）；七项 Waiver 全部 active，累计覆盖 **65** 条 seed、scope 互不重叠。§4.2／§4.3 末段的批次清单（含 STP）同样**不回改**；其余 10 kind（DFL/RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
 
 ## 5. 状态纪律与自检清单
 
