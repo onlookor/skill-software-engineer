@@ -997,4 +997,4 @@
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；applicability: 骨架源/交叉表源；envelope: 骨架源；constraints_imposed: 交叉表源；formal_anchor: 交叉表源；narrative: 人工判断；status: 人工判断
 
 ---
-生成于 2026-09-28T22:47:11｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`2d2b5534137e`；`profiles.yaml`→`38f69b45e48a`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
+生成于 2026-09-28T23:00:45｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`836f6afb03bc`；`profiles.yaml`→`38f69b45e48a`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
