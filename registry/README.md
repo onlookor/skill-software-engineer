@@ -117,7 +117,7 @@
 
 `profiles.yaml` 的 `kind_profile_DFL.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实。四列源表（机制｜定义｜适用条件｜质量影响要点）到条目字段的归类判读、CDC 一词在母本的双义隔离（数据域 @4277 归 DFL-002／契约域 @4278 归 CTR-009）、`latency_budget_delta` 五条一律填实但理由不平移 STP 批措辞、22 条 `signal_level` 的定级依据（P0 11／P1 5／P2 6）、谓词面精确事实（本批 11 个调用词全部已登记 → 零新增候选，累计仍 19 词）、`formal_anchor` 12 实例的角色分配、`compatibility` 十行（composable 8／tension 2）与 RLP 批重叠处置、6.6 示例四 800ms 不入 `bound_expr` 的边界、书目 44 的 ISBN 观察项、同批镜像与 `pending_conflict_rows` 口径，全文见 `method_registry.yaml` MJ-23 (i)–(xi)。
 
-行级书目登记面：母本 4.7（@2427-2437）九项中**行级**可引者仅书目 42（→ DFL-001 发件箱）与 43（→ DFL-002 CDC），覆盖 5 行中 2 行，故 DFL-003／DFL-004／DFL-005 的 `references` 为**空列表**（M6 平凡通过，非豁免）；缺口登记 `G-DFL-1`（含五个下探裁决口①-⑤，其一为书目 44 本地 EPUB 的 isbn13 与母本 @2750 著录形态不一致的处置）＋勘察义务 `SO-11`。E3 豁免 `WV-DFL-E3-01`（硬性质面 **3 项 6 实例**：Z2 3／Y2 2／Y1 1；软性质 Y4 5 实例＋Y7 1 实例**明列排除**）已于 **2026-09-28** 登记申请、`status: pending` **待人工裁决**——批准是人的裁决（0.10 第一条／1.1 纪律二），Agent 与工具不自行批准；DFL 五条的 seed 资格**不以该 Waiver 为前提**（C-ST 只查硬检查，批准延迟不阻断本批入库）。前七项 Waiver 全部 active，与本项合计覆盖 **70** 条 seed、scope 互不重叠。§4.2／§4.3／§4.4 末段的批次清单（含 DFL）同样**不回改**；其余 9 kind（RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
+行级书目登记面：母本 4.7（@2427-2437）九项中**行级**可引者仅书目 42（→ DFL-001 发件箱）与 43（→ DFL-002 CDC），覆盖 5 行中 2 行，故 DFL-003／DFL-004／DFL-005 的 `references` 为**空列表**（M6 平凡通过，非豁免）；缺口登记 `G-DFL-1`（含五个下探裁决口①-⑤，其一为书目 44 本地 EPUB 的 isbn13 与母本 @2750 著录形态不一致的处置）＋勘察义务 `SO-11`。E3 豁免 `WV-DFL-E3-01`（硬性质面 **3 项 6 实例**：Z2 3／Y2 2／Y1 1；软性质 Y4 5 实例＋Y7 1 实例**明列排除**）已于 **2026-10-04** 经人类裁决批准、`status: active`（申请登记 2026-09-28，跨 6 日；裁决全文见台账 `approval.ruling`）；八项 Waiver 全部 active，累计覆盖 **70** 条 seed、scope 互不重叠。§4.2／§4.3／§4.4 末段的批次清单（含 DFL）同样**不回改**；其余 9 kind（RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
 
 ## 5. 状态纪律与自检清单
 
