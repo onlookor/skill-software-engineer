@@ -315,8 +315,8 @@ profiles:
         - {source_type: clause_id, value: "5.2.3", verified: true}
     seed_source:
       clause_id: "5.2.3"
-      table_rows: "[待勘察：RLP 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "不适用——5.2.3 系行内加粗清单（非表格、无行标识），故无逐表行数可给；覆盖宣称『5.2.3 清单全部 7 项』为人工清点结论、不可机器判定，META 侧据此落 info（G-RLP-1 impact (a)／route ①）"
+      entry_id_range: "RLP-001…RLP-007（分块序＝5.2.3 @2477 清单序：幂等=001、收件箱（inbox）=002、发件箱（outbox）=003、重试 + 指数退避 + 抖动=004、超时预算=005、断路器=006、舱壁=007；非表源无行序可依，取清单序，CRD-001…008 分块序判读同型，裁决见 README §4.6）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S4 卡片聚合最重（Z7 联动）"
