@@ -22,14 +22,14 @@
 meta:
   law_file: ../软件工程元框架成文法.md
   registry_version: {major: 1, minor: 0, patch: 0}
-  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）＋种子批次六：CTR（kind 前缀见 0.17.3）＋种子批次七：STP（kind 前缀见 0.17.3）＋种子批次八：DFL（kind 前缀见 0.17.3）"
+  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）＋种子批次六：CTR（kind 前缀见 0.17.3）＋种子批次七：STP（kind 前缀见 0.17.3）＋种子批次八：DFL（kind 前缀见 0.17.3）＋种子批次九：RLP（kind 前缀见 0.17.3）"
   schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
   kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
   seed_channel_source: {source_type: clause_id, value: "0.17.6", verified: true}
   metric_vocabulary_source: {source_type: clause_id, value: "6.2.1", verified: true}
   signal_level_source: {source_type: clause_id, value: "0.14", verified: true}
-  entry_count: 70
-  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）＋ DEC 全覆盖（2.2.1 全部 8 行）＋ CTR 全覆盖（3.2.1 全部 6 行＋3.2.2 全部 6 行）＋ STP 全覆盖（4.2.2 全部 4 行）＋ DFL 全覆盖（4.2.4 全部 5 行）；其余 9 kind 待后续批次"
+  entry_count: 77
+  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）＋ DEC 全覆盖（2.2.1 全部 8 行）＋ CTR 全覆盖（3.2.1 全部 6 行＋3.2.2 全部 6 行）＋ STP 全覆盖（4.2.2 全部 4 行）＋ DFL 全覆盖（4.2.4 全部 5 行）＋ RLP 全覆盖（5.2.3 清单全部 7 项，非表格源，逐表行数不适用）；其余 8 kind 待后续批次"
 
 entries:
 
@@ -5538,6 +5538,792 @@ entries:
       typical_scenarios: "CQRS 读侧（4.2.4 第三列原文；1.2.3 该行第四列『读模型自由优化』）；跨单元查询聚合（同行第三列；STP-001 明文引本行为共享库的替代路径）；事件日志为权威状态时的派生读模型（4.2.2「事件日志为权威状态」行第二列『状态以事件日志为准，物化视图为派生』）；读经所有者授权的副本形态（4.2.2「所有者 + 授权读副本」行第二列，第四列要求『副本新鲜度条款写入数据契约』）；6.6 示例四质量目标不可达时的建议重审范围之一（『追加 CDC 或物化视图投资并补刷新延迟出处』）。"
       common_misuse: "向视图直写或把视图当权威状态源（AP1，Y1 硬违例；与 STP-003-AP1 同型）；重建能力与血缘未登记（AP2，Y7 软 P2）；视图访问路径未经所有者授权与契约登记即开放（AP3，Y2 硬违例）；刷新延迟界无出处即写入 SLO 或以编造精确值充当现状基线（AP4，0.4＋6.6 示例四）；刷新滞后无告警阈值（AP5，陈旧读窗口不可观测）；把 CQRS 当作默认选择用在不需要的场景（1.2.3 该行第五列反模式原文）；以视图承担跨所有者强一致读（Y6 冲突信号不消解）；把本行读作对 STY-004 的 requires（1.2.3 与术语表均明记 CQRS **不必然**绑定事件溯源）。"
 
+  # ══════════ 方面五：行为与协调 · 5.2.3 可靠性模式 → RLP-001…RLP-007 ══════════
+  # 分块序：5.2.3 @2477 为**行内加粗清单**（非表格），编号取列举序 = RLP-001 幂等／RLP-002
+  # 收件箱（inbox）／RLP-003 发件箱（outbox）／RLP-004 重试 + 指数退避 + 抖动／RLP-005 超时预算／
+  # RLP-006 断路器／RLP-007 舱壁（MJ-13 (iv)「表行序」不直接适用——源非表格，判读入 MJ-24）；
+  # profiles.yaml kind_profile_RLP.seed_source 的两处占位符（table_rows／entry_id_range）于本批填实。
+  # name 取 @2477 加粗项逐字、去粗体标记（MJ-20 (i) 同型）；RLP-004 母本原文即含两个加号
+  # 「重试 + 指数退避 + 抖动」→ 原形登记，不改写为「重试（指数退避与抖动）」（MJ-21 (iii) 同型）。
+  # 源指针形态：一律 clause_id: "5.2.3"（＋ bib_id），**不使用 row_id**——5.2.3 无表格行，标 row_id
+  # 即伪造源形态（project.py:_source_ref_ok 的 row 反查虽可命中 @2477 的「幂等」等词，但那是行内
+  # 清单文字而非表行，本批不据此取巧）。后果据实登记：C-ENV 判 ok「envelope N 项非空（源行 无
+  # row_id）」（check_cenv 的 row_clauses 为空 → 落 elif env 分支），META 记 1 条 info「table_rows
+  # 未给逐表行数 → 覆盖宣称不可机器判定」（seed_source.table_rows 因此填非表格陈述，不填
+  # 「5.2.3（7 行）」形态，否则 META 会按 row_id 指针计数并要求去重行名数＝条目数，与本决策冲突；
+  # 判读入 MJ-24）。compatibility.evidence 亦一律 clause_id，与 DFL/CRD 批的 row_id 形态不同。
+  # 母本零改动前提：全文 RLP 仅 @397 的 0.17.3 kind 枚举行一处（「RLP｜可靠性模式｜5.2.3」）；
+  # `RLP-数字` 形态在母本与全库既有条目中零已发布引用（实测 Grep）→ 本批为首建，无编号复用/重排。
+  # 源文本内部差异（据实登记不改写，0.22 承诺一）：@2477 列七项，但 5.6 示例七的形式化注释 @2719
+  # 列六项（缺「重试 + 指数退避 + 抖动」）、@2730 产出工件行列五项聚合形态（幂等+inbox/outbox(Z2)、
+  # Z4 逐级分配、断路器、舱壁）→ 本批以 @2477 七项为准入库，差异入 MJ-24，不据此增删条目（下探纪律）。
+  # metric 一律取 6.2.1 封闭词汇的既有书写形态，本批限于 G-ENV-1 已登记的四族短形态（延迟分位数
+  # P99／可用性目标（SLO）／可修改性：典型变更的实现成本（触达单元数）／性能：资源占用），不引
+  # 「可观测性」族（CRD-001 @2341 曾用作方面 5 先例，本批不沿用）——族数差异口仍待人工裁决（s5h），
+  # 本批不触其争议面（G-ENV-1）。5.6 示例七的实例数值（赔付确认 P99 ≤ 800ms、可用性 99.93%/99.95%、
+  # RTO ≤ 30s）一律**不入界**（DFL 批先例：走查实例的数值属该实例现状基线，非本 kind 的通用界形；0.4）。
+  # 未登记谓词（[retry]／[backoff]／[jitter]／[circuit_breaker]／[half_open]／[bulkhead]／[inbox]／
+  # [dedup_table]／[dedup_window]／[idempotency_key]／[fallback]）在 predicate_vocabulary.yaml 全部
+  # 未登记 → detection_predicate 内一律以半角方括号占位，不本地扩词（MJ-19 (i)／MJ-20 (iii)／
+  # MJ-21 (v)／MJ-22 (vi)／MJ-23 同型；缺口面由 VG-04 承载，扩词须走 R2 → 母本修订＋完整 ADR＋批准）；
+  # 在册可直接使用者为 idempotency／idempotent／delivery_semantics／timeout_budget／quality_impact_card／
+  # interaction_flow／orchestrator／saga／step_class／compensation／flag（5.5 @2559-2568 实测）。
+  # 与方面四的重叠处置：@2477 明文「发件箱（outbox）（生产侧，4.2.4 已定义，行为面消费其投递语义）」
+  # → **定义面归 DFL-001（已发布，按 MJ-5 镜像纪律不回填），行为面归 RLP-003**（质量影响卡片、幂等/
+  # 重试/去重纪律）；DFL-001 @5050-5053 预置的「由 RLP 批下游侧承载」在本批兑现为 RLP-003 的
+  # compatibility: requires DFL-001（MJ-17 (iii) 同型：单向登记＋行内注说明方向）。
+  # references 分配（5.7 书目登记面为据，行级面不下探）：书目 44（登记面「5.2.1/5.2.3 消息与协调
+  # 模式词汇表」）→ RLP-001/002/003 的幂等·inbox·outbox 词汇面；书目 46（登记面「5.2.3 断路器、
+  # 舱壁、超时预算等稳定性模式」，本地 resources/se PDF 在库）→ RLP-005/006/007 的机制面（明列），
+  # RLP-004 重试落在其「等稳定性模式」的概括面（据实登记，判读入 MJ-24）；书目 51（登记面「5.2.3
+  # 可靠性模式的工程参照」＝节级面，覆盖全七条）→ 七条均登记为工程参照。书目 42（登记面「4.2.4
+  # 发件箱模式」＝行级面，归 DFL-001）本批**不引**（RLP-003 只承载行为面）。三书 compile_usage 依
+  # 5.7 逐字均为 metadata_extraction → 不得在注册表侧降级为 narrative_only（CRD-001 @2386 对书目 45
+  # 的同型纪律）。三书在线复核日 2026-10-04（本批启动前强制核查，不复用母本旧日期）：51 目录页在位、
+  # 页面标注 Last updated on 06/04/2026，目录含 Retry／Circuit Breaker／Bulkhead／Scheduler Agent
+  # Supervisor 并**另含 Idempotent Consumer**，「Combine patterns」段明文「Pair Retry with Circuit
+  # Breaker」；46 官方 PDF 抽取页确认 ISBN-13 978-1-68050-239-8／Book version P1.0—January 2018／
+  # 作者 Michael T. Nygard，与母本著录「ISBN 978-1-680-50239-8」的**连字符分组位置不同（数字串
+  # 9781680502398 相同）**，且书商页数两说（350 vs 376）；44 作者官网记「with Bobby Woolf／ISBN
+  # 0321200683／2003, Addison-Wesley」（ISBN-10 形态），数字串与母本著录 978-0-321-20068-6 一致，
+  # 本地 EPUB 自述 isbn13 9780133065091 的差异仍归 G-DFL-1.route 裁决口④／SO-11（开放，本批不裁决）。
+  # 以上著录差异据实登记入 MJ-24，不改写母本著录。书目 51 的「Pair Retry with Circuit Breaker」段
+  # **不充当** compatibility 的母本明文依据（M9 的 evidence 依母本；51 只作 references 工程参照）。
+
+  - entry_id: RLP-001
+    kind: RLP
+    name: "幂等"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（幂等键 + 去重表/去重窗口）＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 首项「**幂等**（幂等键 + 去重表/去重窗口）」＋@2479 投递语义登记纪律
+        - {source_type: clause_id, value: "5.2.2", verified: true}   # 三分类纪律：compensable『补偿已设计且幂等』、retriable『幂等 + 暂时性失败假设成立』
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
+        - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：值班/on-call 能力 → failure_modes 每种模式的运维前提
+        - {source_type: clause_id, value: "5.4", verified: true}     # 接收约束方面 3 行「投递语义是契约条款」＋施加约束表全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z2 硬（idempotency_declared(consumer)）＋ idempotency/idempotent/delivery_semantics 谓词来源
+        - {source_type: clause_id, value: "5.6", verified: true}     # 示例七：幂等键＋inbox/outbox 达成赔付捕获的有效恰好一次语义（Z2 必答）
+        - {source_type: clause_id, value: "4.2.4", verified: true}   # 发件箱行第四列「投递语义 at-least-once → 消费者幂等（Z2 联动）」＝本模式的上游需求面
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 44, verified: true}
+        - {source_type: bib_id, value: 51, verified: true}
+    typical_reversibility: bounded     # 人工判断：去重表/去重窗口可停用且无数据搬迁，但已按幂等语义建成的上游重试策略与键口径属既有事实（回退后重复投递的效果等价性消失）→ 取 bounded（与 DFL-001 同值同型；高于 CSL 类声明性条目的 free，低于 STP-001 存储绑定的 costly）。18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：5.2.3 @2477 首项括号内机制＋@2479 投递语义登记纪律
+        - "异步交互或重试路径下重复投递/重复调用的业务效果重复问题（@2477 机制逐字『幂等键 + 去重表/去重窗口』）"
+        - "投递语义 ≠ at-most-once 时的消费侧必答题（5.5 Z2 硬：semantics ≠ at_most_once → idempotency(consumer, ·) ∧ declared(·)）；@2479 明文 exactly-once 仅指**有效恰好一次**——幂等消费达成的效果等价，非中间件魔法"
+      current_space:                   # 交叉表源：5.3 现状空间驱动＋5.4 施→4（去重状态是数据集合）
+        - "[幂等键可由业务事实稳定导出：同一业务事实的重复投递产生同一键（键口径须在生产侧与消费侧同时成立，5.4 接收约束方面 3 行同型）]"
+        - "[去重状态可由现有存储承载并登记所有权：去重表/去重窗口是数据集合，受 Y1–Y8 全约束，其所有者 = 消费者单元（5.4 施→4 同型）]"
+        - "[已按 5.5 谓词词汇登记 delivery_semantics(interaction, ·) ∧ idempotency(I, mechanism)（未声明 = Z2 违例，@2479）]"
+      delivery_space:                  # 交叉表源：5.3 交付空间驱动（值班/on-call 能力 → failure_modes 运维前提）
+        - "[去重表深度与窗口状态的清理、容量治理能力在案（failure_modes『去重表无清理策略』一项的运维前提）]"
+    envelope:                          # 骨架源：@2477 括号内机制的界形＋5.5 Z2；metric 取 6.2.1 既有书写形态（限 G-ENV-1 四族）；界形参数化＝人工判断（MJ-2 同型，一律不带具体数值）
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(处理) ≥ P99(无幂等面) + Δdedup：业务效果生效前须完成幂等键计算与去重状态查询（一次额外存储读写）→ 附加项恒 ≥ 0，且随去重状态规模单调不减；母本未给量化增量 → 只登记界形、符号与单调性（0.4）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性(有效恰好一次效果) = min(消费者可用性, 去重状态存储可用性) → 去重状态不可用时幂等判定不可得，at-least-once 的重复投递不再被吸收（5.5 Z2 的后果面；@2479『非中间件魔法』）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "资源占用 = 每消费者 1 份去重状态（去重表或去重窗口）+ 每请求 1 次键计算与查询 → 存储随被去重的业务事实数同阶增长；去重窗口长度给出状态上界（未登记窗口或清理策略即无上界）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "触达单元数(Δ 幂等键口径) ≥ 生产者单元 + 全体消费者单元：键口径是跨单元契约条款（5.4 接收约束方面 3 行『投递语义是契约条款』同型）→ 随消费者数单调不减"
+        source: {source_type: clause_id, value: "5.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "Δlatency = 幂等键计算 + 去重状态查询（去重表读写或窗口查询），置于业务效果生效之前 → 恒 ≥ 0，随去重状态规模单调不减（@2477 括号内机制『幂等键 + 去重表/去重窗口』的界形）。具体数值母本未给 → 只登记界形、符号与单调性，不填无出处数字（0.4）"
+      failure_modes: ["幂等键口径不稳定（同一业务事实产生不同键）→ 去重失效，业务效果重复", "去重判定与业务写不在同一本地事务 → 崩溃窗口内出现『业务已写、去重未记』或反向（RLP-002 收件箱为此而设）", "去重窗口短于上游最坏重投递间隔 → 超窗重投递不再被吸收（与 RLP-004 的重试策略联动）", "去重表无清理策略 → 存储无界增长（性能：资源占用族）", "以中间件 exactly-once 配置替代消费侧幂等声明（@2479 明文『非中间件魔法』→ Z2 违例）"]
+      consistency_impact: "去重状态（幂等键 + 去重表/窗口）是数据集合，其所有者 = 消费者单元（5.4 施→4 同型）；本模式**不提升**跨单元一致性级别——它使 at-least-once 投递在效果上等价于恰好一次（5.5 delivery_semantics 的 effectively_once 取值），级别声明仍归方面 4 的 CSL 条目，跨所有者强一致需求仍为 Y6 冲突信号；键口径变更属契约条款变更（5.4 接收约束方面 3 行 → X1）"
+      observability_requires: ["同键命中次数（重复投递检出率）可观测——幂等面是否在实际吸收重复的判据", "去重表深度与最旧记录时龄可观测（窗口口径与清理策略的核验面）", "delivery_semantics 与 idempotency(I, mechanism) 在注册表登记可查（Z2 的机器判定面）"]
+      ops_cost: "[随消费者数与被去重的业务事实数上升：每处消费者一份去重状态的部署、清理与告警；高于无幂等面（多一类状态存储与清理治理），低于 RLP-002 收件箱形态（不要求去重与业务写同事务的事务设计）]"   # 18-B S5 保守界消费字段
+      skill_prerequisites: ["幂等键口径设计（从业务事实稳定导出且跨单元一致）", "去重窗口长度与上游最坏重投递间隔的匹配核定（联动 RLP-004）", "去重状态的清理、容量与所有权治理（5.4 施→4／Y1）"]
+      aggregation_semantics: itemwise  # 幂等是逐交互成立的性质（5.5 Z2 的 ∀ async interaction 逐条判定），不沿路径加和；与 DFL-001 同值
+    compatibility:
+      - peer_entry: RLP-002            # @2477 首两项同列一处清单：收件箱＝『消费侧去重与业务写同事务』，是幂等的一种落地形态 → 可组合（同批内双向登记，另一侧见 RLP-002）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: RLP-004            # 方向：重试 → 幂等（5.2.2 三分类纪律 retriable 逐字『幂等 + 暂时性失败假设成立，重试至成功』→ 重试以幂等为前提）。ENUM_RELATION 无 required_by → 在被施侧以 composable 登记，要求侧 RLP-004 登记 requires（MJ-22 (iii)／DFL-001 @5107 同型）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.2", verified: true}
+      - peer_entry: RLP-003            # 5.6 示例七逐字『幂等键＋inbox/outbox（赔付捕获的有效恰好一次语义，Z2 必答）』→ 生产侧发件箱与消费侧幂等成套落地
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.6", verified: true}
+      - peer_entry: CRD-005            # 5.2.2 三分类纪律 compensable 逐字『存在语义逆操作，补偿已设计且幂等』→ 补偿操作的幂等由本模式承载（CRD-005 已发布 → 按 MJ-5 镜像纪律不回填，0.22 承诺一）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.2", verified: true}
+      - peer_entry: STY-003            # 5.4 接收约束方面 1 行『事件驱动 → 协同默认』＋@2479 纪律针对每条异步交互 → 事件驱动风格下本模式为消费侧标配（STY-003 已发布 → 不回填）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.4", verified: true}
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，与 CRD/DFL 批逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: RLP-001-AP1
+        description: "投递语义 ≠ at-most-once 而消费者未声明幂等机制（含以中间件 exactly-once 配置替代声明）"
+        detection_predicate: "∃ I, c: delivery_semantics(I, at_least_once) ∧ [c 为 I 的消费者] ∧ ¬idempotency(c, ·)"
+        signal_level: P0               # 5.5 Z2 硬（semantics ≠ at_most_once → idempotency_declared(consumer)）＋@2479『未声明 = Z2 违例』→ P0（MJ-4 判据；与 DFL-001-AP3 同型）
+      - pattern_id: RLP-001-AP2
+        description: "幂等键不由业务事实稳定导出（以消息 ID／投递序号充当键，重投递携新 ID 即失效）"
+        detection_predicate: "∃ I: idempotency(I, ·) ∧ ¬[键由业务事实导出 ∧ 生产侧与消费侧口径一致]"
+        signal_level: P0               # 键口径失效即 Z2 的 idempotency_declared 形同虚设（声明在案而效果不成立）→ 绑定 Z2 硬性质，P0（MJ-4 判据）
+      - pattern_id: RLP-001-AP3
+        description: "去重窗口短于上游最坏重投递间隔，或去重判定与业务写跨事务"
+        detection_predicate: "∃ I: idempotency(I, [dedup_window]) ∧ ([窗口长度] < [上游最坏重投递间隔] ∨ ¬[去重与业务写在同一本地事务内提交])"
+        signal_level: P1               # 偏离 @2477 机制面的选择纪律，但无 Z 系列硬性质可直接绑定（Z2 只要求 declared）→ P1 限期整改（MJ-4 判据）
+      - pattern_id: RLP-001-AP4
+        description: "去重表无清理策略与堆积告警（深度与最旧记录时龄不可观测）"
+        detection_predicate: "∃ I: idempotency(I, [dedup_table]) ∧ ¬[清理策略已登记] ∧ ¬[深度/最旧记录时龄可观测]"
+        signal_level: P2               # 不构成 4.5/5.5 性质违例，而是「性能：资源占用」族的漂移信号（须以阈值 + 趋势双判据核定）→ P2（MJ-4 判据；与 DFL-001-AP4 同型）
+    formal_anchor:                     # 交叉表源：5.5 可验证性质（Z2 硬／Z7 升级型）
+      - {property_id: Z2, role: implements}     # 5.5 Z2 逐字『投递语义与幂等必答』（硬）→ 本模式是 Z2 的消费侧实现面
+      - {property_id: Z7, role: consumed_by}    # @2477 逐字『注册表条目（每条带质量影响卡片）』＋5.2.5 卡片消费路径 → 卡片交方面 6 做行为级包络校验
+      - {property_id: X1, role: consumed_by}    # 5.4 接收约束方面 3 行『投递语义是契约条款』→ 键口径与投递语义进入契约注册
+    references:
+      - {bib_id: 44, support_claim: "5.2.3 消息与协调模式词汇表（幂等消费与去重的原始分类面；5.7 书目 44 登记面逐字明列 5.2.3）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核：作者官网记 with Bobby Woolf／ISBN 0321200683〔ISBN-10 形态〕／2003, Addison-Wesley，数字串与母本著录 978-0-321-20068-6 一致；本地 EPUB 自述 isbn13 9780133065091 的差异仍归 G-DFL-1.route 裁决口④／SO-11，开放，本批不裁决）"}
+      - {bib_id: 51, support_claim: "5.2.3 可靠性模式的工程参照（2026-10-04 复核目录另含 Idempotent Consumer 条目：Handle duplicate message deliveries so that processing a message multiple times has the same effect as processing it once）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核在位，页面标注 Last updated on 06/04/2026；母本 5.7 逐字『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』→ 本条（幂等）的机制内容以 @2477 母本明文与书目 44 词汇面为提取锚点，51 只作工程参照；compile_usage 依 5.7 逐字为 metadata_extraction，不得在注册表侧降级）"}
+    narrative:
+      benefit_cost_analysis: "收益：把 at-least-once 投递的重复副作用消解为可判定的去重问题——@2479 明文的『有效恰好一次』（幂等消费达成的效果等价）只能由本模式达成，中间件配置不提供（『非中间件魔法』）；Z2 因此从『必答』变为『可机器验证』（idempotency_declared(consumer)）；上游得以自由采用重试（RLP-004）而不担心效果重复，5.2.2 三分类的 compensable 与 retriable 两类步骤均以幂等为前提。代价：每次处理前增一次键计算与去重状态查询（延迟附加项恒 ≥ 0，随状态规模单调不减）；每消费者一份去重状态成为新的数据集合，须登记所有权（Y1）、清理策略与容量（性能：资源占用族）；键口径是跨单元契约条款，变更须生产侧与全体消费侧同步（可修改性族的触达单元数随消费者数单调不减）；去重窗口短于最坏重投递间隔即失效，窗口口径须与上游重试策略联动核定；去重状态不可用时幂等判定不可得，可用性收紧为 min（消费者, 去重存储）。母本未给任何量化增量 → 一律只登记界形与单调性（0.4）。"
+      typical_scenarios: "at-least-once 投递的消费侧（4.2.4 发件箱行第四列『投递语义 at-least-once → 消费者幂等（Z2 联动）』；5.6 示例七『幂等键＋inbox/outbox（赔付捕获的有效恰好一次语义，Z2 必答）』）；含 retriable 或 compensable 步骤的 Saga（5.2.2 三分类纪律逐字以幂等为条件）；关键步（pivot）之后的重试路径（5.2.2：关键步之后全部可重试 → 重试以幂等为前提）；去重与业务写可置于同一本地事务时升级为 RLP-002 收件箱形态。"
+      common_misuse: "以中间件 exactly-once 配置替代消费侧幂等声明（AP1，@2479『非中间件魔法』；Z2 违例）；以消息 ID 或投递序号充当幂等键（AP2，重投递可携新 ID → 去重失效）；去重窗口按便利设定而不核对上游最坏重投递间隔（AP3）；去重表无清理与堆积告警（AP4，资源占用漂移）；把幂等当作跨单元强一致手段（Y6 冲突信号不因本模式消解，级别声明归 CSL 条目）；去重状态未登记所有权即被多方直写（Y1/Y2）；为 Δdedup 填无出处数值（0.4＋6.2.1 量化纪律）。"
+
+  - entry_id: RLP-002
+    kind: RLP
+    name: "收件箱（inbox）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（消费侧去重与业务写同事务）＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第二项「**收件箱（inbox）**（消费侧去重与业务写同事务）」
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
+        - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：值班/on-call 能力 → failure_modes 运维前提
+        - {source_type: clause_id, value: "5.4", verified: true}     # 施加约束方面 4 行（收件箱表是数据集合，所有者 = 消费者单元）＋全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z2 硬＋ idempotency/delivery_semantics 谓词
+        - {source_type: clause_id, value: "5.6", verified: true}     # 示例七：幂等键＋inbox/outbox 成套落地（Z2 必答）
+        - {source_type: clause_id, value: "4.2.4", verified: true}   # 发件箱行的消费侧对应面（同一清单内成对出现）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 44, verified: true}
+        - {source_type: bib_id, value: 51, verified: true}
+    typical_reversibility: bounded     # 人工判断：收件箱表可停用且无数据搬迁，但事务边界设计（业务写与去重同事务）一经投产即成为消费者写路径的既有事实，回退须重设事务边界 → 取 bounded（与 RLP-001 同值同型）。18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：@2477 第二项括号内机制逐字
+        - "消费侧去重须与业务写原子生效的场合（@2477 机制逐字『消费侧去重与业务写同事务』）——消除 RLP-001 中『业务已写、去重未记』的崩溃窗口"
+        - "投递语义 ≠ at-most-once 且业务效果不可重复的消费者（5.5 Z2 硬；@2479『有效恰好一次』的效果等价由本形态在单库事务内达成）"
+      current_space:                   # 交叉表源：5.4 施→4（收件箱表是数据集合）＋4.2.4 定义面同型前提
+        - "[收件箱表与业务表同库同存储实例，去重写入与业务写可由同一本地事务覆盖（不成立即退化为 RLP-001 的跨事务去重）]"
+        - "[收件箱表已登记所有权（= 消费者单元）与清理策略（5.4 施→4：受 Y1–Y8 全约束）]"
+      delivery_space:                  # 交叉表源：5.3 交付空间驱动
+        - "[事务内额外读写带来的锁竞争与吞吐影响可被现有容量吸收（值班能力可承载清理作业与堆积告警）]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(消费处理) ≥ P99(业务写单独) + Δinbox：去重判定与业务写在同一本地事务内 → 事务持锁时长增加，附加项恒 ≥ 0 且随收件箱表深度单调不减；母本未给量化增量 → 只登记界形与单调性（0.4）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性(消费处理) = 业务表可用性 ∧ 收件箱表可用性（同事务 → 任一侧不可用即处理失败）→ 可用性上界不优于业务写单独形态；换取的收益是重复副作用被原子吸收（Z2 的效果面）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "资源占用 = 每消费者 1 张收件箱表 + 每消息 1 次事务内读写 → 存储随已处理消息数同阶增长；清理策略给出表深度上界（未登记清理策略即无上界）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "触达单元数(Δ 去重口径) = 消费者单元内 1（同事务内闭合，不外溢至生产侧）→ 优于 RLP-001 的跨单元键口径变更（后者的触达单元数随消费者数单调不减）"
+        source: {source_type: clause_id, value: "5.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "Δlatency = 事务内去重读写（收件箱表插入/查询）+ 由此增加的事务持锁时长 → 恒 ≥ 0，随表深度与并发单调不减（@2477『消费侧去重与业务写同事务』的界形）。具体数值母本未给 → 只登记界形、符号与单调性，不填无出处数字（0.4）"
+      failure_modes: ["收件箱表与业务表不同库/不同事务 → 机制前提消失，退化为 RLP-001 的跨事务去重（崩溃窗口重现）", "收件箱表无清理策略 → 存储无界增长（性能：资源占用族）", "事务内额外读写放大锁竞争 → 消费吞吐下降、积压上升（消息可见延迟无上界）", "以收件箱替代投递语义声明 → 5.2.3『未声明 = Z2 违例』不因本机制免除", "同事务内混入跨单元调用（远程调用置于事务内）→ 持锁时长受下游延迟支配，Z4 预算与事务边界互相侵蚀"]
+      consistency_impact: "收件箱表是数据集合，其所有者 = 消费者单元（5.4 施→4 同型）；本模式把去重状态与业务状态的一致性收束到**单库本地事务**内，不提升跨单元一致性级别（跨所有者强一致需求仍为 Y6 冲突信号，级别声明归 CSL 条目）；对上游而言投递语义仍为 at-least-once，效果等价由消费侧承担（5.5 delivery_semantics 的 effectively_once）"
+      observability_requires: ["收件箱表深度与最旧记录时龄可观测（清理策略与堆积的核验面）", "同事务内去重命中率可观测（重复投递是否被吸收的判据）", "消费积压与处理时延可观测（锁竞争放大时的早期信号）"]
+      ops_cost: "[随消费者数与消息量上升：每处消费者一张收件箱表的部署、清理作业与堆积告警；高于 RLP-001（多一类事务内写路径与清理作业），低于生产侧发件箱 + 中继（不引入常驻中继作业）]"   # 18-B S5 消费字段
+      skill_prerequisites: ["以本地事务边界判定机制前提是否成立（收件箱表与业务表是否同库同实例）", "事务内读写与锁竞争的容量核定（含不得在事务内引入远程调用）", "收件箱表的清理与保留期治理（保留期须覆盖最坏重投递间隔）"]
+      aggregation_semantics: itemwise  # 逐消费者成立（同 RLP-001：Z2 的 ∀ async interaction 逐条判定），不沿路径加和
+    compatibility:
+      - peer_entry: RLP-001            # @2477 首两项同列一处清单：本模式是幂等在同事务约束下的落地形态 → 可组合（同批内双向登记，另一侧见 RLP-001）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: RLP-003            # 5.6 示例七逐字『幂等键＋inbox/outbox（赔付捕获的有效恰好一次语义，Z2 必答）』→ 消费侧收件箱与生产侧发件箱成套落地
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.6", verified: true}
+      - peer_entry: DFL-001            # 4.2.4 发件箱行第四列『投递语义 at-least-once → 消费者幂等（Z2 联动）』→ 生产侧发件箱的重复投递由消费侧收件箱吸收（DFL-001 已发布 → 按 MJ-5 镜像纪律不回填）
+        relation: composable
+        evidence: {source_type: clause_id, value: "4.2.4", verified: true}
+      - peer_entry: STY-003            # 5.4 接收约束方面 1 行『事件驱动 → 协同默认』＋1.4 施→4 事件驱动行『事件日志为一等数据模型』→ 事件驱动风格下的消费侧标配（STY-003 已发布 → 不回填）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.4", verified: true}
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，与 CRD/DFL 批逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: RLP-002-AP1
+        description: "收件箱表与业务写不在同一本地事务（跨库或跨服务），却声称达成有效恰好一次"
+        detection_predicate: "∃ c: idempotency(c, [inbox]) ∧ ¬[收件箱写与业务写在同一本地事务内提交]"
+        signal_level: P0               # @2477 把『与业务写同事务』写进机制定义 → 定义性判据缺失即机制不成立，其后果正是 Z2 要求吸收的重复副作用 → P0（MJ-4 判据；与 DFL-001-AP1 同型）
+      - pattern_id: RLP-002-AP2
+        description: "以收件箱机制替代投递语义声明（未在注册表登记 delivery_semantics）"
+        detection_predicate: "∃ I: [I 为经收件箱消费的异步交互] ∧ ¬declared(delivery_semantics(I))"
+        signal_level: P0               # @2479 明文『未声明 = Z2 违例』＋5.5 Z2 列为硬 → P0（MJ-4 判据；与 DFL-001-AP2 同型）
+      - pattern_id: RLP-002-AP3
+        description: "在收件箱事务内引入跨单元远程调用（持锁时长受下游延迟支配）"
+        detection_predicate: "∃ c, t: idempotency(c, [inbox]) ∧ [t 为该消费者的本地事务] ∧ ∃ call ∈ t: [call 为跨单元远程调用]"
+        signal_level: P1               # 侵蚀 @2477 的同事务前提并联动 Z4 预算（超时值进入事务持锁时长），但 Z 系列无直接硬性质可绑定 → P1 限期整改（MJ-4 判据）
+      - pattern_id: RLP-002-AP4
+        description: "收件箱表无清理策略与保留期核定（表深度与最旧记录时龄不可观测）"
+        detection_predicate: "∃ c: idempotency(c, [inbox]) ∧ ¬[清理策略与保留期已登记] ∧ ¬[表深度/时龄可观测]"
+        signal_level: P2               # 「性能：资源占用」族的漂移信号（须以表深度阈值 + 趋势双判据核定）→ P2（MJ-4 判据；与 DFL-001-AP4 同型）
+    formal_anchor:
+      - {property_id: Z2, role: implements}     # 5.5 Z2『投递语义与幂等必答』（硬）→ 本模式是 Z2 在消费侧的原子化实现面（@2477『消费侧去重与业务写同事务』）
+      - {property_id: Y1, role: consumed_by}    # 5.4 施→4：收件箱表是数据集合 → 受 Y1「单一所有者」检查（所有者 = 消费者单元）
+      - {property_id: Z7, role: consumed_by}    # @2477『每条带质量影响卡片』＋5.2.5 卡片消费路径 → 卡片交方面 6 做行为级包络校验
+    references:
+      - {bib_id: 44, support_claim: "5.2.3 消息与协调模式词汇表（收件箱/去重的消费侧原始分类面；5.7 书目 44 登记面逐字明列 5.2.3）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核：作者官网记 ISBN 0321200683〔ISBN-10 形态〕，数字串与母本著录一致；本地 EPUB 自述 isbn13 9780133065091 的差异仍归 G-DFL-1.route 裁决口④／SO-11，开放，本批不裁决）"}
+      - {bib_id: 51, support_claim: "5.2.3 可靠性模式的工程参照（消费侧去重与 Idempotent Consumer 条目的工程实现面）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核在位；母本 5.7 逐字载明 Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46 为提取锚点 → 本条机制内容以 @2477 母本明文为提取锚点，51 只作工程参照，compile_usage 不得在注册表侧降级）"}
+    narrative:
+      benefit_cost_analysis: "收益：把去重判定与业务写收束进同一本地事务，消除 RLP-001 跨事务形态的崩溃窗口（『业务已写、去重未记』或反向）——@2479 的『有效恰好一次』因此在单库事务内可证成；去重口径变更闭合在消费者单元内（触达单元数 = 1），不外溢为跨单元契约变更；与生产侧发件箱（RLP-003/DFL-001）成套即 5.6 示例七的落地形态。代价：事务持锁时长增加（延迟附加项恒 ≥ 0，随表深度与并发单调不减），消费吞吐受锁竞争约束；可用性收束为业务表 ∧ 收件箱表（同事务 → 任一侧不可用即处理失败），不优于业务写单独形态；每消费者一张收件箱表带来存储与清理治理面，保留期须覆盖上游最坏重投递间隔；机制前提强（同库同实例），不成立即退化；事务内不得引入远程调用，否则持锁时长受下游延迟支配并与 Z4 预算互相侵蚀。母本未给量化增量 → 一律只登记界形与单调性（0.4）。"
+      typical_scenarios: "投递语义为 at-least-once 且业务效果不可重复的消费侧（4.2.4 发件箱行第四列 Z2 联动；5.6 示例七赔付捕获）；消费者已有单库本地事务边界、收件箱表可与业务表同库部署的场合（@2477 机制前提）；与生产侧发件箱成套落地以达成有效恰好一次的场合（5.6 示例七『幂等键＋inbox/outbox』）；去重口径需在消费者单元内独立演化的场合（触达单元数 = 1，对比 RLP-001 的跨单元键口径）。"
+      common_misuse: "收件箱表跨库/跨服务却声称有效恰好一次（AP1，@2477 同事务前提缺失）；以机制存在替代 delivery_semantics 声明（AP2，@2479『未声明 = Z2 违例』）；在收件箱事务内做远程调用（AP3，持锁时长受下游支配）；收件箱表无清理与保留期核定（AP4，资源占用漂移）；保留期短于上游最坏重投递间隔（超期重投递不再被吸收）；把收件箱当作跨单元一致性手段（Y6 冲突信号不消解）；为 Δinbox 填无出处数值（0.4＋6.2.1 量化纪律）。"
+
+  - entry_id: RLP-003
+    kind: RLP
+    name: "发件箱（outbox）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（生产侧，4.2.4 已定义，行为面消费其投递语义）＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第三项「**发件箱（outbox）**（生产侧，4.2.4 已定义，行为面消费其投递语义）」＋@2479 投递语义登记纪律
+        - {source_type: clause_id, value: "4.2.4", verified: true}   # 定义面出处（DFL-001 承载；本条目只登记行为面，判读见块头注）
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
+        - {source_type: clause_id, value: "5.4", verified: true}     # 接收约束方面 3 行「投递语义是契约条款」＋施加约束全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z2 硬＋ delivery_semantics/quality_impact_card 谓词
+        - {source_type: clause_id, value: "5.6", verified: true}     # 示例七：幂等键＋inbox/outbox 成套落地（Z2 必答）
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 44, verified: true}
+        - {source_type: bib_id, value: 51, verified: true}
+    typical_reversibility: bounded     # 人工判断：行为面（卡片、幂等/重试/去重纪律）可随投递语义声明一并修订，但已按 at-least-once 建成的消费侧幂等面属既有事实（与 DFL-001 同值同型）。18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：@2477 第三项括号内逐字（生产侧；行为面消费其投递语义）
+        - "生产侧可靠发布的**行为面**：投递语义声明、质量影响卡片、消费侧幂等/去重纪律（@2477 逐字『生产侧，4.2.4 已定义，行为面消费其投递语义』）"
+        - "定义面（业务写与事件写同本地事务、异步中继投递）归 DFL-001，本条目不重复登记定义面界形（0.17.1：条目为准；重叠处置见块头注与 MJ-24）"
+      current_space:                   # 交叉表源：DFL-001 定义面前提＋5.4 接收约束方面 3 行
+        - "[DFL-001 的机制前提已成立（发件箱表与业务表同库同事务、异步中继可部署且堆积可观测）——本条目 requires DFL-001]"
+        - "[投递语义已按 5.5 谓词词汇登记为 delivery_semantics(interaction, at_least_once)，且消费侧幂等前提已声明（Z2 硬；@2479 未声明 = 违例）]"
+      delivery_space:                  # 交叉表源：5.3 交付空间驱动
+        - "[消费侧可承载去重状态（RLP-001/002）的部署与清理运维能力在案——at-least-once 的义务面落在消费者]"
+    envelope:                          # 只登记**行为面**界形；定义面界形见 DFL-001（不重复计入，避免与 DFL-001 双重计数）
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(端到端) = Δrelay（定义面，见 DFL-001）+ Σ 消费侧卡片 latency_budget_delta（去重判定等，RLP-001/002）+ 消费处理耗时 → 按 5.2.5 Σ 消费路径加和；本条目只登记消费侧附加项，不重复登记 Δrelay（0.17.1 条目为准）"
+        source: {source_type: clause_id, value: "5.2.5", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性(有效恰好一次效果) = min(生产侧中继可用性, 消费侧幂等面可用性) → 任一侧缺失即 at-least-once 退化为可重复副作用（5.5 Z2 硬）；生产侧业务写可用性 ⊥ 中间件可用性属定义面（DFL-001），本条目不重复登记"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "触达单元数(Δ 投递语义声明) ≥ 生产者单元 + 全体消费者单元：投递语义是契约条款（5.4 接收约束方面 3 行『投递语义是契约条款』）→ 变更须同步至消费侧幂等面，随消费者数单调不减"
+        source: {source_type: clause_id, value: "5.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "行为面 Δlatency = 消费侧去重判定（RLP-001 的 Δdedup 或 RLP-002 的 Δinbox）+ 投递语义声明与卡片登记的治理开销（非运行时项）→ 运行时附加项恒 ≥ 0；生产侧 Δrelay 归 DFL-001 定义面，本字段不重复计入（避免双重计数）。具体数值母本未给 → 只登记界形与符号（0.4）"
+      failure_modes: ["生产侧已用发件箱而消费侧无幂等面 → 重复投递的业务效果重复（Z2 违例；@2477『行为面消费其投递语义』的义务面缺失）", "投递语义未显式声明即上线（@2479『未声明 = Z2 违例』）", "以中间件 exactly-once 声称替代消费侧幂等（@2479『后者仅指有效恰好一次……非中间件魔法』）", "行为面与定义面分裂登记 → 质量影响卡片缺项，Z7 的行为级包络校验出现盲区（5.2.5『质量预算旁路』漏洞形态）", "把发件箱当作跨单元强一致手段（Y6 冲突信号不消解，级别声明归 CSL 条目）"]
+      consistency_impact: "行为面不改变一致性级别：生产侧写一致性由本地事务保证（定义面，DFL-001），跨单元仍为最终一致（1.2.3 事件驱动行『最终一致为默认』）；重复投递的效果等价性由消费侧幂等承担（Z2）→ 登记为 effectively_once 时其含义仅是效果等价（@2479 逐字）；投递语义作为契约条款进入 X1（5.4 接收约束方面 3 行）"
+      observability_requires: ["投递语义声明与消费侧幂等机制在注册表登记可查（Z2 的机器判定面）", "重复投递率与消费侧去重命中率可观测（行为面是否在吸收重复的判据）", "质量影响卡片五字段齐备且被方面 6 消费可核验（Z7 的『card consumed_by(aspect6)』）"]
+      ops_cost: "[行为面运维增量 = 消费侧去重状态的部署与清理（RLP-001/002）+ 投递语义与卡片的登记治理；生产侧发件箱表与常驻中继作业的运维成本归 DFL-001，本条目不重复计入]"   # 18-B S5 消费字段
+      skill_prerequisites: ["投递语义的显式判定与登记（at-most-once / at-least-once / effectively-once，@2479）", "消费侧幂等形态取舍（RLP-001 跨事务去重 vs RLP-002 同事务收件箱）", "质量影响卡片五字段的完整填写（5.2.5；不得以叙事代替清单）"]
+      aggregation_semantics: itemwise  # 行为面义务逐交互成立（Z2 的 ∀ async interaction）；端到端延迟的加和由 5.2.5 Σ 消费路径在方面 6 侧完成，本条目不承载加和语义
+    compatibility:
+      - peer_entry: DFL-001            # 方向：行为面 → 定义面（@2477 逐字『生产侧，4.2.4 已定义，行为面消费其投递语义』→ 本条目以 DFL-001 的定义面为前提）。DFL-001 @5050-5053 预置『由 RLP 批下游侧承载』在此兑现；DFL-001 已发布 → 按 MJ-5 镜像纪律不回填（0.22 承诺一），单向登记（MJ-17 (iii) 同型）
+        relation: requires
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: RLP-002            # 5.6 示例七逐字『幂等键＋inbox/outbox（赔付捕获的有效恰好一次语义，Z2 必答）』→ 生产侧发件箱与消费侧收件箱成套落地（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.6", verified: true}
+      - peer_entry: RLP-001            # @2479＋4.2.4 第四列『投递语义 at-least-once → 消费者幂等（Z2 联动）』→ 消费侧幂等为行为面必答项（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: STY-003            # 5.4 接收约束方面 1 行『事件驱动 → 协同默认』＋1.4 施→4 事件驱动行『事件日志为一等数据模型』→ 事件驱动风格下的生产侧行为面（STY-003 已发布 → 不回填）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.4", verified: true}
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，与 CRD/DFL 批逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）」；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: RLP-003-AP1
+        description: "生产侧采用发件箱而消费侧未声明幂等机制（行为面义务缺失）"
+        detection_predicate: "∃ I, c: delivery_semantics(I, at_least_once) ∧ [I 经发件箱投递] ∧ [c 为 I 的消费者] ∧ ¬idempotency(c, ·)"
+        signal_level: P0               # 5.5 Z2 硬＋@2477『行为面消费其投递语义』＋4.2.4 第四列 Z2 联动 → P0（MJ-4 判据；与 DFL-001-AP3 同型，本条登记行为面侧）
+      - pattern_id: RLP-003-AP2
+        description: "投递语义未显式声明即上线，或以中间件 exactly-once 声称替代声明"
+        detection_predicate: "∃ I: [I 为经发件箱投递的异步交互] ∧ (¬declared(delivery_semantics(I)) ∨ [声明依据为中间件 exactly-once 声称])"
+        signal_level: P0               # @2479 明文『未声明 = Z2 违例』『非中间件魔法』＋5.5 Z2 硬 → P0（MJ-4 判据）
+      - pattern_id: RLP-003-AP3
+        description: "行为面与定义面分裂登记（卡片缺项，方面 6 无从校验）"
+        detection_predicate: "∃ p: [p 为发件箱模式实例] ∧ (¬quality_impact_card(p, ·) ∨ ¬[卡片被 aspect6 消费])"
+        signal_level: P1               # 5.5 Z7 为升级型（『失败汇入 0.15 升级路径，同 V4』）而非硬性质 → 不满足 MJ-4 的 P0 判据；但 5.2.5 明记缺卡片即『质量预算旁路』盲区 → P1 限期整改
+      - pattern_id: RLP-003-AP4
+        description: "把发件箱的投递语义读作跨单元一致性保证（以 outbox 承担强一致）"
+        detection_predicate: "∃ I: delivery_semantics(I, ·) ∧ [以 I 承担跨所有者强一致需求] ∧ ¬has_approved_exception(·, ·, ·)"
+        signal_level: P1               # 4.5 Y6 为冲突信号面（跨所有者强一致 → Saga/预扣或回溯方面 1）而非可直接判定的硬违例；5.4 接收约束方面 4 行为硬 → 综合定 P1（MJ-4 判据）
+    formal_anchor:
+      - {property_id: Z2, role: implements}     # 5.5 Z2『投递语义与幂等必答』（硬）→ 本条目承载 Z2 的行为面（声明义务与消费侧幂等前提）；定义面实现见 DFL-001
+      - {property_id: Z7, role: consumed_by}    # @2477『每条带质量影响卡片』＋5.5 Z7『card consumed_by(aspect6) ∧ ¬envelope_violation』→ 卡片交方面 6
+      - {property_id: X1, role: consumed_by}    # 5.4 接收约束方面 3 行『投递语义是契约条款』＋施加约束方面 3 行『协调模式产生的新交互 → 契约登记需求』→ 行为面的投递语义声明进入契约注册（X1）被方面 3 消费
+    references:
+      - {bib_id: 44, support_claim: "5.2.3 消息与协调模式词汇表（发件箱/发布订阅的生产侧原始分类面；5.7 书目 44 登记面逐字明列 5.2.3）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核：作者官网记 ISBN 0321200683〔ISBN-10 形态〕，数字串与母本著录一致；本地 EPUB 自述 isbn13 9780133065091 的差异仍归 G-DFL-1.route 裁决口④／SO-11，开放，本批不裁决）"}
+      - {bib_id: 51, support_claim: "5.2.3 可靠性模式的工程参照（生产侧发件箱与投递语义声明的工程实现面）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核在位；本条机制内容的提取锚点是母本 4.2.4 与 @2477 明文，51 只作工程参照，compile_usage 不得在注册表侧降级）"}
+    narrative:
+      benefit_cost_analysis: "收益：把『业务状态已提交』与『事件待投递』收束进同一本地事务，消除生产侧的丢失窗口与双写不一致（业务写成功而消息未发，或反之）——@2477 逐字将其定位为『生产侧，4.2.4 已定义，行为面消费其投递语义』，故本条只登记行为面：投递语义的声明义务与消费侧幂等前提；定义面（发件箱表结构、常驻中继作业、与 4.2.4 数据面的一致性论证）归 DFL-001，两侧不重复计入同一延迟附加项以避免双重计数。与消费侧收件箱（RLP-002）或去重（RLP-001）成套即 5.6 示例七『幂等键＋inbox/outbox（赔付捕获的有效恰好一次语义，Z2 必答）』的落地形态。代价：投递由同步变为异步中继 → 端到端可见延迟附加项恒 ≥ 0（中继轮询间隔或 CDC 滞后），且随中继积压单调不减；可用性收束为 min(生产侧中继可用性, 消费侧幂等面可用性)，任一侧缺失即 at-least-once 退化为可重复副作用（Z2 硬）；投递语义一旦登记即为契约条款（5.4 接收约束方面 3 行），变更触达单元数 ≥ 生产者单元 + 全体消费者单元；行为面与定义面若分裂登记，质量影响卡片即缺项，方面 6 的行为级包络校验出现盲区（5.2.5『质量预算旁路』漏洞形态）。母本未给量化增量 → 一律只登记界形与单调性（0.4）。"
+      typical_scenarios: "业务写与对外事件须原子可见的生产侧（4.2.4 发件箱行的适用面）；投递语义登记为 at-least-once 且消费侧已具备幂等面的异步交互（@2479＋5.4 接收约束方面 3 行）；事件驱动风格下的协同默认形态（5.4 接收约束方面 1 行『事件驱动 → 协同默认』）；与消费侧收件箱成套以达成有效恰好一次的场合（5.6 示例七）；需要以注册表条目承载 Z2 行为面义务、供方面 8 做重复/乱序注入验证的场合（5.4 施加约束方面 8 行）。"
+      common_misuse: "生产侧用发件箱而消费侧无幂等面（AP1，Z2 硬违例，@2477『行为面消费其投递语义』的义务面缺失）；未显式声明投递语义即上线，或以中间件 exactly-once 声称替代声明（AP2，@2479『未声明 = Z2 违例』『非中间件魔法』）；行为面与定义面分裂登记致卡片缺项（AP3，Z7 升级型 → 0.15 升级路径）；把发件箱的投递语义读作跨单元一致性保证（AP4，Y6 冲突信号不消解，级别声明归 CSL 条目）；在本条重复计入生产侧 Δrelay（与 DFL-001 双重计数，违反 5.2.5 Σ 消费路径的加和口径）；为延迟附加项填无出处数值（0.4＋6.2.1 量化纪律）。"
+
+  - entry_id: RLP-004
+    kind: RLP
+    name: "重试 + 指数退避 + 抖动"          # @2477 第四项原形含两个加号 → 按 MJ-21 (iii) 原形登记，不改写为「重试、指数退避与抖动」
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项＋5.2.2 @2473 retriable 定义；界形参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第四项「**重试 + 指数退避 + 抖动**」（母本未给参数与量化增量）
+        - {source_type: clause_id, value: "5.2.2", verified: true}   # @2473 三分类纪律：可重试（幂等 + 暂时性失败假设成立，重试至成功）；关键步之后全部可重试
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径（本条按加和进入路径预算）
+        - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：值班/on-call 能力 → 重试风暴的观测与处置前提
+        - {source_type: clause_id, value: "5.4", verified: true}     # 施加约束方面 6 行（卡片为方面 6 强制消费项）＋方面 8 行（超时与断路行为测试）＋全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z3（pivot_ordering_valid）＋Z4（Σ timeout_budget ≤ sla_bound）＋Z7
+        - {source_type: clause_id, value: "5.6", verified: true}     # 示例一 @2598『SLA 要求的用户等待上界 < 捕获重试的最坏时长』；示例七 @2710 成套落地
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 46, verified: true}
+        - {source_type: bib_id, value: 51, verified: true}
+    typical_reversibility: bounded     # 人工判断：重试上限次数、退避基数与抖动属策略配置面，可逐跳调整而不改动单元职责；但最坏重试时长一经被上游 Z4 预算吸收即成为 SLA 论证前提，收紧须重算路径预算 → 取 bounded（与 CRD-003 @2493 同型判据）。18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：5.2.2 @2473 retriable 定义逐字＋@2477 第四项
+        - "失败为暂时性且被重试操作幂等的交互（5.2.2 @2473 逐字『可重试（幂等 + 暂时性失败假设成立，重试至成功）』——两个前提缺一即不适用）"
+        - "关键步（pivot）之后的步骤（5.2.2 @2473『之后的步骤全部可重试』；关键步本身既不可补偿也不宜重试）"
+        - "同步调用链的瞬时失败面与 at-least-once 异步交互的重投递面（@2477 与 5.6 示例七 @2710 的成套落地语境）"
+      current_space:                   # 交叉表源：5.2.2 前提＋5.4 施→6（卡片为方面 6 强制消费项）
+        - "[消费侧/被调侧已声明幂等（RLP-001 或 RLP-002 之一在册）——5.2.2 明文以幂等为可重试前提]"
+        - "[失败可分类为暂时性（网络抖动、限流、下游过载）而非确定性业务拒绝；分类不明 = Z3 违例 = 阻塞（5.2.2 @2473）]"
+        - "[重试上限次数与退避参数已登记，且最坏重试时长已被上游超时预算（RLP-005）吸收]"
+      delivery_space:                  # 交叉表源：5.3 交付空间驱动
+        - "[重试放大后的峰值负载可被下游容量吸收（值班能力可承载重试风暴的观测、告警与断路处置）]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(带重试) 的上界 = Σ_{k=1..N}（第 k 次尝试耗时 + backoff_k），N = 登记的重试上限次数 → 最坏时长随 N 与退避基数单调不减；5.6 示例一逐字将其作为 Z4 预算不闭合的成因（『SLA 要求的用户等待上界 < 捕获重试的最坏时长』）；母本未给量化值 → 只登记界形与单调性（0.4）"
+        source: {source_type: clause_id, value: "5.6", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性(交互) 的上界受『暂时性失败假设』支配：假设成立时随尝试次数单调不减；假设不成立（确定性失败）时可用性无提升而延迟与负载全额付出 → 收益非无条件，须以失败分类可观测为前提"
+        source: {source_type: clause_id, value: "5.2.2", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "资源占用 = 每次在途尝试一份占用（连接/线程/队列位）+ 退避等待期的状态保持 → 随 N 与并发交互数同阶增长；抖动缺失时多实例重试同步化 → 瞬时占用出现尖峰（@2477 逐字列出『抖动』即为此项的封堵）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "触达单元数(Δ 重试参数) = 调用方单元内 1（策略配置面）；但 Δ 最坏重试时长须同步至路径超时预算与 SLA 论证（RLP-005／Z4）→ 有效触达面 = 调用方 + 路径预算登记处"
+        source: {source_type: clause_id, value: "5.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "Δlatency = Σ 各次尝试耗时 + Σ 退避等待（指数退避 + 抖动）→ 恒 ≥ 0，随重试上限次数 N 与退避基数单调不减；本项按 5.2.5 Σ 消费路径**加和**进入路径延迟预算（aggregation_semantics: additive），5.6 示例一逐字称之为『捕获重试的最坏时长』并以其与 SLA 上界比较判定 Z4 是否闭合。具体数值母本未给 → 只登记界形、符号与单调性，不填无出处数字（0.4）"
+      failure_modes: ["对非幂等操作重试 → 业务效果重复（5.2.2『幂等』前提缺失，Z2 的效果面失守）", "对确定性失败（业务规则拒绝、契约不兼容）重试 → 无效负载放大且延迟全额付出，可用性无提升", "无上限次数或无退避 → 重试风暴，下游过载自我强化（与 RLP-006 的快速失败面互为处置）", "退避无抖动 → 多实例重试同步化，瞬时负载尖峰（@2477 逐字列出『抖动』的成因面）", "最坏重试时长未纳入上游超时预算 → Z4 预算不闭合（5.6 示例一：用户等待上界 < 捕获重试的最坏时长 → 冲突信号走 CH-C）", "重试跨越关键步（pivot）→ 终局操作被重复执行（5.2.2：关键步既不可补偿也不宜重试；Z3 的 pivot_ordering_valid 违例）"]
+      consistency_impact: "重试不改变一致性级别：跨单元仍为最终一致（1.2.3 事件驱动行）；其一致性效果完全由被重试操作的幂等性承担（5.2.2『幂等 + 暂时性失败假设』）→ 未声明幂等即重试会把 at-least-once 的重复投递放大为重复副作用（Z2 硬）；重试期间的中间状态可见性由预扣/隔离语义决定（CRD-008 与 CSL 条目承载），本模式不承载"
+      observability_requires: ["每次尝试的结果与失败原因分类（暂时性 vs 确定性）可观测——不可分类即无法核验重试前提是否成立", "重试次数分布与退避等待时长可观测（最坏重试时长的实测面 = Z4 预算复核依据，5.5 Z4 括注『可推翻指标 = 实测传播延迟』同型）", "重试导致的下游负载放大可观测（重试风暴的早期信号）", "质量影响卡片五字段齐备且被方面 6 消费可核验（Z7）"]
+      ops_cost: "[随重试上限次数与交互数上升：下游容量须按放大后的峰值负载核定（含重试风暴余量）、失败分类与告警须维护、最坏时长须纳入 SLA 论证；低于断路器＋舱壁（不引入新的隔离资源池），高于单次调用形态]"   # 18-B S5 消费字段
+      skill_prerequisites: ["暂时性失败与确定性失败的分类判定（重试前提；分类不明 = Z3 违例 = 阻塞，5.2.2 @2473）", "幂等前提核验（RLP-001／RLP-002 之一已在册且键口径由业务事实稳定导出）", "指数退避与抖动参数核定，并把最坏重试时长纳入 Z4 路径预算（与 RLP-005 联动）", "关键步（pivot）识别——关键步及其之前的补偿步不得以重试处置（5.2.2）"]
+      aggregation_semantics: additive  # 5.2.5 Σ 消费路径＋5.6 示例一逐字『捕获重试的最坏时长』与 SLA 上界直接比较 → 本项沿路径加和（与 RLP-005 的 Z4 Σ 同侧；对比 RLP-001/002/003 的 itemwise）
+    compatibility:
+      - peer_entry: RLP-001            # 方向：重试 → 幂等（5.2.2 @2473 retriable 逐字『幂等 + 暂时性失败假设成立』→ 幂等是重试的明文前提）。RLP-001 侧已以 composable 登记（ENUM_RELATION 无 required_by，MJ-22 (iii) 同型），本侧登记 requires
+        relation: requires
+        evidence: {source_type: clause_id, value: "5.2.2", verified: true}
+      - peer_entry: RLP-005            # 5.5 Z4 逐字『Σ timeout_budget(path) ≤ sla_bound(path)』＋5.6 示例一（重试最坏时长与 SLA 上界比较）→ 重试预算与超时预算须联动核定（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.5", verified: true}
+      - peer_entry: RLP-006            # 5.6 示例七 @2710 逐字『断路器＋舱壁限制故障扩散』与重试同处一套可靠性落地清单 → 重试放大与快速失败互为处置面（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.6", verified: true}
+      - peer_entry: RLP-007            # @2477 逐字『舱壁（线程/连接池按消费者隔离，防单点拖垮全局）』→ 重试占用池配额，重试放大池饱和度 → 池容量核定须按含重试的尝试次数计（同批内双向登记，与 RLP-007 侧一致）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: CRD-005            # 5.2.2 三分类纪律：关键步之后全部可重试 → 编排式 Saga 的 retriable 步骤由本模式承载（CRD-005 已发布 → 按 MJ-5 镜像纪律不回填，0.22 承诺一）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.2", verified: true}
+      - peer_entry: CRD-003            # 5.5 Z5『sync_chain_depth(F) ≤ registered_max_depth』＋Z4 逐级分配 → 同步调用链每跳的重试预算须纳入链级预算（CRD-003 已发布 → 不回填）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.5", verified: true}
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，与 CRD/DFL 批逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格」；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: RLP-004-AP1
+        description: "对未声明幂等的操作重试（含对关键步 pivot 重试）"
+        detection_predicate: "∃ s: step_class(s, retriable) ∧ ¬idempotent(s) ∨ ∃ s: step_class(s, pivot) ∧ [retry](s)"
+        signal_level: P0               # 5.5 Z2 硬（幂等必答）＋Z3 硬（pivot_ordering_valid：关键步之后全部可重试 → 关键步本身不得重试）→ P0（MJ-4 判据）
+      - pattern_id: RLP-004-AP2
+        description: "无上限次数或无退避的重试（含固定间隔紧密重试）"
+        detection_predicate: "∃ I: [retry](I) ∧ (¬[上限次数已登记] ∨ ¬[backoff](I) ∨ [backoff](I) = 常数 ∧ ¬[jitter](I))"
+        signal_level: P0               # @2477 逐字把『指数退避 + 抖动』写入模式名 → 缺失即机制定义性判据缺失（MJ-4 判据第一支）；且重试风暴使 Z4 的 Σ 预算失去上界
+      - pattern_id: RLP-004-AP3
+        description: "最坏重试时长未纳入上游超时预算／SLA 论证（Z4 预算不闭合）"
+        detection_predicate: "∃ path: [retry 最坏时长](path) + Σ timeout_budget(path) > [SLA 上界](path)"
+        signal_level: P1               # 5.5 Z4 为条件硬（『过 0.4 证据门槛时为硬；否则降软 + 保守界』）→ 门槛未过时不满足 MJ-4 的 P0 判据；但 5.6 示例一明记其为 CH-C 冲突信号源 → P1 限期整改
+      - pattern_id: RLP-004-AP4
+        description: "对确定性失败重试（失败原因不可分类即一律重试）"
+        detection_predicate: "∃ I: [retry](I) ∧ ¬[失败原因分类可观测](I)"
+        signal_level: P1               # 5.2.2『暂时性失败假设』为适用前提而非 Z 系列硬性质；假设不成立的后果是可用性与负载双输（选择纪律偏离）→ P1（MJ-4 判据）
+      - pattern_id: RLP-004-AP5
+        description: "退避无抖动导致多实例重试同步化（重试尖峰）"
+        detection_predicate: "∃ I: [backoff](I) ∧ ¬[jitter](I) ∧ [并发实例数] > 1"
+        signal_level: P2               # 「性能：资源占用」族的漂移信号（须以阈值 + 趋势双判据核定），不直接构成 Z 性质违例 → P2（MJ-4 判据；与 RLP-001-AP4 同型）
+    formal_anchor:                     # 交叉表源：5.5 可验证性质（Z3 硬／Z4 条件硬／Z7 升级型）
+      - {property_id: Z3, role: consumed_by}    # 5.5 Z3『∀ saga step: step_class ∈ {compensable, retriable, pivot} ∧ pivot_ordering_valid』（硬）→ 本模式是 retriable 类的执行手段，其可用范围由 Z3 的分类与关键步次序判定给出
+      - {property_id: Z4, role: consumed_by}    # 5.5 Z4『Σ timeout_budget(path) ≤ sla_bound(path)』（条件硬）＋5.6 示例一→ 最坏重试时长是 Σ 的被加项，须进入预算闭合判定
+      - {property_id: Z7, role: consumed_by}    # @2477 逐字『每条带质量影响卡片』＋5.2.5 Σ 消费路径 → 卡片交方面 6 做行为级包络校验
+    references:
+      - {bib_id: 46, support_claim: "5.2.3 断路器、舱壁、超时预算等稳定性模式（重试落在登记面的『等稳定性模式』概括项——书目 46 登记面未逐字明列『重试』，据实登记不改写，判读入 MJ-24）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核：官方 PDF 抽取页记 ISBN-13 978-1-68050-239-8／Book version P1.0—January 2018／作者 Michael T. Nygard，数字串与母本著录 978-1-680-50239-8 相同而连字符分组位置不同；书商页数两说 350 vs 376。差异据实登记入 MJ-24，不改写母本）"}
+      - {bib_id: 51, support_claim: "5.2.3 可靠性模式的工程参照（2026-10-04 复核目录含 Retry 条目，且『Combine patterns』段明文 Pair Retry with Circuit Breaker——该段为书目侧陈述，不充当本注册表 compatibility 的母本依据）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核在位，页面标注 Last updated on 06/04/2026；母本 5.7 逐字『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』→ 本条机制内容以书目 46 为提取锚点，51 只作工程参照；compile_usage 依 5.7 逐字为 metadata_extraction，不得在注册表侧降级）"}
+    narrative:
+      benefit_cost_analysis: "收益：把暂时性失败从『交互失败』转化为『延迟增加』——5.2.2 @2473 的 retriable 类因此有执行手段，关键步之后的步骤全部可重试（Z3 的 pivot_ordering_valid）才有落地形态；可用性在暂时性失败假设成立时随尝试次数单调不减。代价按母本明文有两处硬约束：其一，前提是幂等（5.2.2 逐字），故本模式不可脱离 RLP-001／RLP-002 单独选用，否则 at-least-once 的重复被放大为重复业务效果（Z2 硬）；其二，最坏重试时长直接进入 Z4 的 Σ——5.6 示例一逐字以『SLA 要求的用户等待上界 < 捕获重试的最坏时长』为预算不闭合的成因，即重试的收益以延迟预算为对价，不是免费项。此外指数退避与抖动被母本写入模式名（@2477）而非作为可选优化：无退避即重试风暴、无抖动即多实例同步化尖峰，二者都使资源占用失去上界。母本未给任何参数与量化增量（次数、基数、上限时长均未给）→ 一律只登记界形、符号与单调性，参数须按实例经 0.4 证据门槛核定后登记（0.4＋6.2.1）。"
+      typical_scenarios: "暂时性失败占主导的跨单元调用与消息投递（网络抖动、限流、下游短时过载）；含 retriable 步骤的编排式或协同式 Saga（5.2.2；CRD-005／CRD-006）；关键步（pivot）之后的全部步骤（5.2.2 @2473 逐字）；at-least-once 投递且消费侧已具备幂等面的异步交互（Z2 联动，5.6 示例七 @2710 与幂等键＋inbox/outbox 成套落地）；需要以实测最坏重试时长复核 Z4 路径预算的场合（5.5 Z4 括注『可推翻指标 = 实测传播延迟』同型）。"
+      common_misuse: "对非幂等操作或关键步重试（AP1，Z2／Z3 硬违例）；无上限次数、无退避或固定间隔紧密重试（AP2，@2477 机制名缺失）；最坏重试时长不纳入上游超时预算（AP3，Z4 不闭合 → 冲突信号走 CH-C，5.6 示例一）；失败原因不可分类即一律重试（AP4，暂时性假设未经核验）；退避无抖动（AP5，重试尖峰）；把重试当作可用性不足的替代整改（真正的处置面可能是 RLP-006 断路或 RLP-007 舱壁隔离）；为重试次数与退避基数填无出处数值（0.4＋6.2.1 量化纪律）。"
+
+  - entry_id: RLP-005
+    kind: RLP
+    name: "超时预算"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（括号内界形逐字：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4）；参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第五项「**超时预算**（路径级联超时的预算分配：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4）」
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径（流程延迟预算 = Σ 各步骤卡片 latency_budget_delta + 步骤自身业务耗时）
+        - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：SLA/SLO 目标与值班能力 → 预算复核的运维前提
+        - {source_type: clause_id, value: "5.4", verified: true}     # 接收约束方面 6 行（延迟预算、可用性目标、错误预算，软）＋施加约束方面 6/8 行＋全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z4 条件硬（含括注：过 0.4 门槛为硬，否则降软 + 保守界）＋Z5 软（链深上限）＋timeout_budget(path, allocations) 谓词
+        - {source_type: clause_id, value: "5.6", verified: true}     # 示例一 @2598 Z4 预算不闭合的走查；示例七 @2710『超时预算按 Z4 逐级分配（下游超时 < 上游超时 − 实测传播开销）』
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.4", verified: true}     # 证据门槛：SLA 上界与传播开销估计过门槛时 Z4 为硬
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 46, verified: true}
+        - {source_type: bib_id, value: 51, verified: true}
+    typical_reversibility: bounded     # 人工判断：各级超时值可逐跳调整而不改动单元职责与数据归属；但预算一经写入 SLA 论证即为对外承诺面，收紧须同步上游与全体下游（与 CRD-003 @2493 同值同型判据）。18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：@2477 括号内界形逐字
+        - "跨单元调用路径存在级联超时（上游等待下游）的场合——@2477 逐字『路径级联超时的预算分配』"
+        - "路径有对外 SLA/SLO 上界可引用的场合（Z4 的右端 [SLA 上界](path)；无上界即无从判定闭合）"
+        - "同步调用链与含同步等待步骤的长流程（5.5 Z5 的 sync_chain_depth 与 Z4 的 Σ 同为路径级性质）"
+      current_space:                   # 交叉表源：5.5 Z4 括注（保守界）＋5.4 接收约束方面 6 行
+        - "[各级传播开销有实测或经 0.4 门槛的估计值——未过门槛时 Z4 降软 + 取注册表保守默认（5.5 Z4 括注逐字），可推翻指标 = 实测传播延迟]"
+        - "[路径拓扑（跳数与级联关系）已在册，使 Σ timeout_budget(path) 可被机器求值（5.5 timeout_budget(path, allocations)）]"
+        - "[超时后的处置面已定（快速失败／降级／断路／重试是否纳入预算）——处置面缺失即超时只是延迟上限而无失败语义]"
+      delivery_space:                  # 交叉表源：5.3 交付空间驱动＋5.4 接收约束方面 6 行（软）
+        - "[SLA 上界与错误预算由业务侧给出并可复核（5.4 接收约束方面 6 行为软约束，Z7 校验失败时升级）]"
+        - "[值班能力可承载预算复核与超时告警的常态化核验（拓扑变更即须重算）]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "Σ timeout_budget(path) ≤ sla_bound(path) ∧ ∀ 相邻级: t_downstream < t_upstream − propagation（5.5 Z4 逐字）→ P99(路径) 的上界由 SLA 上界给出，任一跳超时值上调须由其他跳下调或 SLA 上界放宽补偿（预算守恒）；母本未给数值 → 只登记界形与守恒关系（0.4）"
+        source: {source_type: clause_id, value: "5.5", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性(路径) 随超时值非单调：过短 → 正常长尾被误杀为失败（可用性下降）；过长 → 故障传播窗口拉长、在途占用累积（上游先耗尽资源）→ 存在使可用性最大的区间，其位置由实测传播延迟与长尾分布决定，母本未给 → 不填数值（0.4）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "资源占用(等待期) = 并发在途请求数 × 超时时长 → 随超时时长线性不减；级联路径上各级同时持有等待占用 → 总占用随跳数（5.5 Z5 的 sync_chain_depth）单调不减"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "触达单元数(Δ 任一级超时) ≥ 该级上游全体跳（预算守恒要求上游重算）+ SLA 论证登记处 → 随路径跳数单调不减；路径拓扑变更（增/减跳）触达面 = 全路径"
+        source: {source_type: clause_id, value: "5.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "Δlatency = 各级超时值本身构成路径延迟的**上界分配**而非附加开销（超时机制自身的判定开销可忽略）；其预算意义在于 5.2.5 Σ 消费路径：流程延迟预算 = Σ 各步骤卡片 latency_budget_delta + 步骤自身业务耗时，超 SLA → 冲突信号走 CH-C。本项按加和聚合（aggregation_semantics: additive，5.5 Z4 明文 Σ）。母本未给任何数值 → 只登记界形、守恒关系与聚合口径（0.4）"
+      failure_modes: ["各级独立取默认超时（不逐级分配）→ Σ 超 SLA 上界，Z4 不闭合（5.6 示例一的成因面）", "下游超时 ≥ 上游超时 − 传播开销 → 上游先超时，下游工作成为无效负载且错误归因错乱（@2477 逐字界形违例）", "传播开销按便利常数估计而无实测 → Z4 降软 + 保守界，预算判定失去硬约束力（5.5 Z4 括注）", "超时后无处置面（无快速失败/降级/断路）→ 超时只界定延迟而不界定失败语义，调用方行为未定义", "重试最坏时长未计入 Σ → 预算表面闭合而实际不闭合（与 RLP-004 联动，5.6 示例一）", "路径拓扑变更（增跳/改级联）而预算未重算 → 僵尸超时配置（5.4 施→9 守护对象同型漂移）"]
+      consistency_impact: "超时预算不改变一致性级别：它是延迟与失败判定的预算面，跨单元一致性仍由 CSL 条目与 Y6 约束决定；但超时触发点决定补偿/预扣的释放时机（CRD-008 的超时释放、5.2.2 compensable 的补偿窗口）→ 预算变更会改变中间状态的可见时长，须与数据契约新鲜度条款联动（CSL-002/004 侧承载）"
+      observability_requires: ["各级实测耗时分布与传播延迟可观测（Z4 括注『可推翻指标 = 实测传播延迟』的取证面）", "超时触发率按级分列可观测（误杀与预算不足的分判据）", "路径 Σ timeout_budget 与 sla_bound 的闭合状态可机器求值（5.5 timeout_budget(path, allocations) 在册）", "质量影响卡片五字段齐备且被方面 6 消费可核验（Z7）"]
+      ops_cost: "[随路径跳数与拓扑变更频率上升：每级超时值须实测核定、拓扑变更须重算全路径预算、超时告警须按级分列；高于重试（多一层路径级核算），低于舱壁（不引入独立资源池）]"   # 18-B S5 消费字段
+      skill_prerequisites: ["路径拓扑与级联关系的显式建模（5.5 interaction_flow／timeout_budget 谓词的取证前提）", "传播开销的实测取样与 0.4 证据门槛判定（决定 Z4 取硬还是降软 + 保守界）", "预算守恒的逐级分配计算（下游超时 < 上游超时 − 传播开销）", "超时后处置面的选择（快速失败／降级／断路／纳入重试预算，与 RLP-004／RLP-006 联动）"]
+      aggregation_semantics: additive  # 5.5 Z4 逐字以 Σ 表述（Σ timeout_budget(path) ≤ sla_bound(path)）＋5.2.5 Σ 消费路径 → 本项沿路径加和（与 RLP-004 同侧）
+    compatibility:
+      - peer_entry: RLP-004            # 5.6 示例一 @2598 逐字（SLA 上界 < 捕获重试的最坏时长）＋示例七 @2710『超时预算按 Z4 逐级分配』与重试同处一套落地清单 → 重试最坏时长是 Σ 的被加项（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.6", verified: true}
+      - peer_entry: RLP-006            # @2477 逐字『断路器（失败率越阈时快速失败 + 半开探测）』→ 超时触发后的快速失败处置面由断路器承载；5.4 施→8『超时与断路行为测试』并列（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.4", verified: true}
+      - peer_entry: RLP-007            # @2477 逐字『舱壁（线程/连接池按消费者隔离，防单点拖垮全局）』→ 池内排队等待是该级耗时的组成部分，须计入 Σ timeout_budget(path)；池饱和时的快速拒绝是预算耗尽的处置面之一（同批内双向登记，与 RLP-007 侧一致）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: CRD-003            # CRD-003 已登记『链深与超时分配可逐跳调整』（@2493）＋5.5 Z5 sync_chain_depth ≤ registered_max_depth → 同步调用链是本预算的主要适用路径（CRD-003 已发布 → 按 MJ-5 不回填）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.5", verified: true}
+      - peer_entry: CRD-008            # 5.2.2 compensable 的补偿窗口与预扣超时释放由预算给出时机（CRD-008 已发布 → 不回填）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.2", verified: true}
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，与 CRD/DFL 批逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格」；本条正对『超时与断路行为测试』一项；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: RLP-005-AP1
+        description: "下游超时 ≥ 上游超时 − 传播开销（逐级分配界形违例）"
+        detection_predicate: "∃ 相邻级 (u, d): t_d ≥ t_u − [传播开销](u, d)"
+        signal_level: P0               # @2477 括号内逐字给出该界形（机制定义性判据）→ 违例即模式未按定义落地（MJ-4 判据第一支）；后果是上游先超时、下游工作成为无效负载
+      - pattern_id: RLP-005-AP2
+        description: "全链预算不闭合（Σ timeout_budget(path) > sla_bound(path)）"
+        detection_predicate: "∃ path: Σ timeout_budget(path) > [SLA 上界](path)"
+        signal_level: P1               # 5.5 Z4 为条件硬（过 0.4 门槛时为硬；否则降软 + 保守界）→ 门槛未过时不满足 MJ-4 的 P0 判据；但 5.6 示例一明记其为 CH-C 冲突信号源 → P1 限期整改（门槛已过时该信号按 Z4 硬性质升级 P0，MJ-4 判据）
+      - pattern_id: RLP-005-AP3
+        description: "传播开销与 SLA 上界无实测/无出处即取便利常数（Z4 被迫降软）"
+        detection_predicate: "∃ path: ¬[propagation 有实测或过 0.4 门槛的估计](path) ∨ ¬[sla_bound 有出处](path)"
+        signal_level: P1               # 直接触发 5.5 Z4 括注的降软分支（保守界）→ 硬约束力丧失属证据纪律偏离（0.4）而非性质违例 → P1（MJ-4 判据）
+      - pattern_id: RLP-005-AP4
+        description: "超时后无处置面（无快速失败/降级/断路，调用方行为未定义）"
+        detection_predicate: "∃ 级: timeout_budget(·) 已登记 ∧ ¬[fallback](·) ∧ ¬[circuit_breaker](·)"
+        signal_level: P1               # 5.4 施→8『超时与断路行为测试』要求超时行为可验证；处置面缺失使该验证无对象 → 选择纪律偏离，无 Z 硬性质可直接绑定 → P1（MJ-4 判据）
+      - pattern_id: RLP-005-AP5
+        description: "路径拓扑变更而预算未重算（僵尸超时配置）"
+        detection_predicate: "∃ path: [拓扑已变更](path) ∧ ¬[Σ timeout_budget 已重算](path)"
+        signal_level: P2               # 5.4 施→9『协调漂移守护对象：僵尸开关（expiry 超期）』同型漂移信号，须以阈值 + 趋势双判据核定 → P2（MJ-4 判据）
+    formal_anchor:                     # 交叉表源：5.5 可验证性质（Z4 条件硬／Z5 软／Z7 升级型）
+      - {property_id: Z4, role: implements}     # 5.5 Z4 逐字『超时预算闭合』（条件硬）＋@2477 括号内明文标 Z4 → 本条目是 Z4 的实现面（timeout_budget(path, allocations) 谓词在册）
+      - {property_id: Z5, role: consumed_by}    # 5.5 Z5『sync_chain_depth(F) ≤ registered_max_depth』（软，P2 漂移信号）→ 链深决定 Σ 的被加项数，是预算规模的上游约束
+      - {property_id: Z7, role: consumed_by}    # @2477 逐字『每条带质量影响卡片』＋5.2.5 Σ 消费路径 → 卡片交方面 6 做行为级包络校验（Z7 明文『超 SLA → 冲突信号走 CH-C』）
+    references:
+      - {bib_id: 46, support_claim: "5.2.3 断路器、舱壁、超时预算等稳定性模式（母本 5.7 书目 46 登记面逐字明列『超时预算』→ 本条机制内容的提取锚点）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核：官方 PDF 抽取页记 ISBN-13 978-1-68050-239-8／Book version P1.0—January 2018／作者 Michael T. Nygard，数字串与母本著录 978-1-680-50239-8 相同而连字符分组位置不同；书商页数两说 350 vs 376。差异据实登记入 MJ-24，不改写母本）"}
+      - {bib_id: 51, support_claim: "5.2.3 可靠性模式的工程参照（超时与重试/断路的组合工程面）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核在位，页面标注 Last updated on 06/04/2026；母本 5.7 逐字『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』→ 本条机制内容以 @2477 明文与书目 46 为提取锚点，51 只作工程参照；compile_usage 依 5.7 逐字为 metadata_extraction，不得在注册表侧降级）"}
+    narrative:
+      benefit_cost_analysis: "收益：把『各跳自行取超时默认值』的隐式假设变为显式的预算分配问题，使 Z4 可机器求值（timeout_budget(path, allocations) 在册）——@2477 括号内给出两条界形：逐级关系（下游超时 < 上游超时 − 传播开销）与全链关系（Σ ≤ SLA 上界）。前者保证失败归因正确（下游先于上游超时，上游看到的是下游的明确失败而非自身等待耗尽），后者保证对外承诺可兑现。5.6 示例一逐字展示其价值：预算不闭合不是抽象风险，而是走查中可定位的具体冲突（SLA 要求的用户等待上界 < 捕获重试的最坏时长），并给出确定通道（CH-C）。代价：预算是守恒量——任一级放宽须由其他级收紧或 SLA 上界放宽补偿，故超时值的变更触达面是上游全体跳与 SLA 论证登记处，随路径跳数单调不减；预算的有效性依赖实测传播开销，未过 0.4 门槛时 Z4 降软 + 取保守界，约束力显著减弱；等待期资源占用随超时时长线性增长，过长超时把延迟问题转化为资源耗尽问题；拓扑每次变更都要求全路径重算，否则形成僵尸配置（5.4 施→9 守护对象同型）。母本未给任何数值（默认超时、传播开销、SLA 上界均未给）→ 一律只登记界形、守恒关系与聚合口径，数值须按实例经 0.4 门槛核定（0.4＋6.2.1）。"
+      typical_scenarios: "同步调用链（CRD-003）的逐级超时分配；有对外 SLA/SLO 承诺的用户可见路径（5.4 接收约束方面 6 行『延迟预算、可用性目标、错误预算』）；含重试的路径（最坏重试时长须计入 Σ，5.6 示例一）；含预扣/预留的长流程（补偿窗口与超时释放时机由预算给出，CRD-008）；5.6 示例七 @2710『超时预算按 Z4 逐级分配（下游超时 < 上游超时 − 实测传播开销）』的成套落地场合；需要以方面 8『超时与断路行为测试』验证超时行为的场合（5.4 施→8）。"
+      common_misuse: "各级独立取默认超时而不逐级分配（AP1／AP2，Z4 不闭合）；下游超时不小于上游超时减传播开销（AP1，@2477 界形违例）；以便利常数充当传播开销或 SLA 上界（AP3，Z4 被迫降软，0.4 证据门槛未过）；重试最坏时长不计入 Σ（与 RLP-004 联动失守，5.6 示例一）；超时后无处置面（AP4，超时只界定延迟不界定失败语义）；拓扑变更后不重算（AP5，僵尸超时配置）；把超时当作可用性手段而无视等待期资源占用线性增长；为超时值与传播开销填无出处数值（0.4＋6.2.1 量化纪律）。"
+
+  - entry_id: RLP-006
+    kind: RLP
+    name: "断路器"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（括号内机制逐字：失败率越阈时快速失败 + 半开探测）；阈值参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第六项「**断路器**（失败率越阈时快速失败 + 半开探测）」
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
+        - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：值班/on-call 能力 → 断路状态与恢复的处置前提
+        - {source_type: clause_id, value: "5.4", verified: true}     # 施加约束方面 8 行（『超时与断路行为测试』逐字点名）＋方面 9 行（僵尸开关 expiry 超期）＋全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z4 条件硬（断路是超时预算的处置面）＋Z6（expiry 治理同型）＋Z7 升级型
+        - {source_type: clause_id, value: "5.6", verified: true}     # 示例七 @2710『断路器＋舱壁限制故障扩散』
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.4", verified: true}     # 证据门槛：失败率阈值与统计窗口须有实测出处
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 46, verified: true}
+        - {source_type: bib_id, value: 51, verified: true}
+    typical_reversibility: bounded     # 人工判断：阈值、统计窗口与半开探测参数属策略配置面可调整；但断路后的降级面（[fallback] 语义）一经对消费者承诺即形成依赖，撤销须协调消费者 → 取 bounded 而非 free。18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：@2477 括号内机制逐字
+        - "下游失败率可统计且失败会向上游传播（等待耗尽、资源占用累积）的调用点——@2477 逐字『失败率越阈时快速失败』"
+        - "需要把故障限制在局部而非全局拖垮的场合（5.6 示例七 @2710『断路器＋舱壁限制故障扩散』）"
+        - "存在可定义降级面的交互（快速失败后调用方有确定行为；无降级面时断路只是把超时失败提前）"
+      current_space:                   # 交叉表源：5.4 施→8（断路行为测试）＋5.5 Z4 处置面
+        - "[失败判定口径已在册（何为一次失败：超时、5xx、异常分类）——口径不明即失败率不可统计]"
+        - "[失败率阈值与统计窗口有实测出处（未过 0.4 门槛即取保守值并登记为待推翻）]"
+        - "[半开探测的放量策略已定（@2477 逐字含『半开探测』→ 缺失即机制不完整）]"
+      delivery_space:                  # 交叉表源：5.3 交付空间驱动
+        - "[值班能力可承载断路状态告警与恢复核定（长期开启须有 expiry 与清理登记，5.4 施→9 僵尸开关同型）]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "断路开启时 P99(调用点) 的上界 = 断路判定开销（快速失败）→ 显著低于等待超时形态（RLP-005 的 t_timeout）；关闭态 P99 不变（仅增一次状态判定）→ 附加项恒 ≥ 0 且有界；母本未给数值 → 只登记界形与两态差异（0.4）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "可用性(上游) 不再被下游可用性支配（故障扩散被截断）→ 上游可用性上界提升；代价：被断路的下游功能可用性 = 0（无降级面时）或 = 降级面可用性 → 全局 SLO 的达成取决于降级面是否覆盖该功能的必要性"
+        source: {source_type: clause_id, value: "5.6", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "资源占用(等待期) 在断路开启时归零（不再持有在途等待）→ 占用上界由『阈值 × 统计窗口内的失败请求数』给出；关闭态增一份状态与计数占用（常数阶）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "触达单元数(Δ 阈值/窗口) = 调用方单元内 1（策略配置面）；触达单元数(Δ 降级面语义) ≥ 全体消费者单元（降级结果是对外可见行为，属契约面）→ 两类变更的触达面不同阶，须分别登记"
+        source: {source_type: clause_id, value: "5.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "Δlatency = 断路状态判定开销（关闭态与开启态均存在，常数阶）− 开启态免去的等待时长 → 关闭态恒 ≥ 0 且可忽略；开启态为负增量（快速失败早于超时），但该负增量的前提是降级面存在，否则只是把失败提前而非省下预算。本项按 5.2.5 Σ 消费路径逐步骤计入卡片，聚合按 itemwise（逐调用点成立，非路径加和量）。母本未给数值 → 只登记符号与两态界形（0.4）"
+      failure_modes: ["失败判定口径不明（超时/5xx/业务异常混计）→ 失败率失真，断路误开或不开", "无半开探测 → 断路后不自动恢复，须人工介入（@2477 机制面缺失）", "半开探测放量过猛 → 下游未恢复即被再次打满（恢复期抖动）", "无降级面 → 快速失败成为对用户的裸失败，可用性收益不成立", "阈值与统计窗口无实测依据 → 断路成为噪声源（频繁开关）", "断路长期开启而无 expiry 与清理登记 → 功能永久降级成为既成事实（5.4 施→9 僵尸开关同型）", "以断路器替代根因整改 → 下游缺陷被常态化掩盖"]
+      consistency_impact: "断路器不改变一致性级别；但断路点的选择决定长流程中哪一步成为失败点，进而决定补偿/重试路径（5.2.2 三分类：断路使该步成为 retriable 或触发 compensable）→ 断路须与流程步骤分类联动登记；被断路的写操作若已提交而响应丢失，其效果由消费侧幂等承担（Z2），断路不免除幂等义务"
+      observability_requires: ["断路状态（关闭/开启/半开）与其转换时刻可观测且可告警", "失败率与统计窗口的实时值可观测（阈值核定的取证面）", "降级面被触发的次数与其结果可观测（可用性收益是否成立的判据）", "开启时长可观测（长期开启 = 僵尸开关信号，5.4 施→9）", "质量影响卡片五字段齐备且被方面 6 消费可核验（Z7）"]
+      ops_cost: "[随被保护的调用点数上升：每处须核定失败口径、阈值、窗口与降级面，并维护状态告警与恢复核定；高于重试与超时预算（多一层状态机与降级面），与舱壁同级（后者多一层容量核定）]"   # 18-B S5 消费字段
+      skill_prerequisites: ["失败判定口径的定义与异常分类（何为一次失败的注册）", "失败率阈值与统计窗口的实测核定（0.4 证据门槛）", "半开探测的放量策略设计（逐步放量而非全量试探）", "降级面设计（[fallback] 语义须对消费者可预期，属契约面）", "与 RLP-004 重试的联动核定（重试放大失败计数 → 阈值须按含重试的尝试次数计）"]
+      aggregation_semantics: itemwise  # 逐调用点成立（断路状态是调用点局部状态，不沿路径加和）；其对路径 Σ 的影响经由各步骤卡片的 latency_budget_delta 在方面 6 侧汇入（5.2.5）
+    compatibility:
+      - peer_entry: RLP-007            # 5.6 示例七 @2710 逐字『断路器＋舱壁限制故障扩散』→ 两者成套落地（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.6", verified: true}
+      - peer_entry: RLP-005            # 5.4 施→8 逐字『超时与断路行为测试』并列＋Z4 的处置面 → 超时触发后的快速失败由本模式承载（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.4", verified: true}
+      - peer_entry: RLP-004            # 重试放大与快速失败互为处置面（@2477 同处一份可靠性清单）；失败计数口径须与重试联动 → 可组合但阈值核定相互约束（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: CRD-003            # 同步调用链是断路器的主要适用路径（失败沿链传播；CRD-003 已发布 → 按 MJ-5 镜像纪律不回填，0.22 承诺一）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.4", verified: true}
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，与 CRD/DFL 批逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格」；本条正对『断路行为测试』一项；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: RLP-006-AP1
+        description: "无半开探测（断路后不自动恢复，或恢复须人工重启）"
+        detection_predicate: "∃ 调用点: [circuit_breaker](·) ∧ ¬[half_open](·)"
+        signal_level: P0               # @2477 括号内逐字含『半开探测』→ 缺失即机制定义性判据缺失（MJ-4 判据第一支）；后果是断路成为需人工干预的停机面
+      - pattern_id: RLP-006-AP2
+        description: "无降级面即启用断路（快速失败成为对消费者的裸失败）"
+        detection_predicate: "∃ 调用点: [circuit_breaker](·) ∧ ¬[fallback](·) ∧ [该调用点的失败对消费者不可预期]"
+        signal_level: P1               # 5.4 施→3『新交互 → 契约登记需求』：降级结果是对外可见行为属契约面，未登记即契约缺口；无 Z 硬性质直接绑定 → P1（MJ-4 判据）
+      - pattern_id: RLP-006-AP3
+        description: "失败率阈值与统计窗口无实测出处（或失败判定口径混计）"
+        detection_predicate: "∃ 调用点: [circuit_breaker](·) ∧ (¬[阈值有实测出处] ∨ ¬[失败判定口径已注册])"
+        signal_level: P1               # 0.4 证据门槛偏离（阈值成为无出处数字）→ 证据纪律问题而非性质违例；后果是断路成为噪声源 → P1（MJ-4 判据）
+      - pattern_id: RLP-006-AP4
+        description: "断路长期开启而无 expiry 与清理登记（功能永久降级成为既成事实）"
+        detection_predicate: "∃ G: [断路开启时长] > [登记上限] ∧ (¬declared([到期时刻](G)) ∨ now > [到期时刻](G)) ∧ ¬cleanup_filed"
+        signal_level: P2               # 5.4 施→9 守护对象『僵尸开关（expiry 超期）』同型漂移信号（5.5 Z6 的判据形态借用于断路状态）；须以阈值 + 趋势双判据核定 → P2（MJ-4 判据）
+      - pattern_id: RLP-006-AP5
+        description: "断路状态与转换不可观测（无告警，恢复无从核定）"
+        detection_predicate: "∃ 调用点: [circuit_breaker](·) ∧ ¬[状态与转换可观测](·)"
+        signal_level: P2               # 5.2.5『observability_requires 未满足而模式已选用 = 选了但养不起』→ Z7 升级型的输入缺失；属可观测性漂移信号 → P2（MJ-4 判据）
+    formal_anchor:                     # 交叉表源：5.5 可验证性质（Z4 条件硬／Z7 升级型）
+      - {property_id: Z4, role: consumed_by}    # 5.5 Z4『Σ timeout_budget(path) ≤ sla_bound(path)』→ 断路是超时预算的处置面：开启态把该级的实际耗时收敛到判定开销，使 Σ 在故障期仍可闭合
+      - {property_id: Z7, role: consumed_by}    # @2477 逐字『每条带质量影响卡片』＋5.2.5『observability_requires 未满足而模式已选用 = 选了但养不起』→ 卡片交方面 6 做行为级包络校验
+    references:
+      - {bib_id: 46, support_claim: "5.2.3 断路器、舱壁、超时预算等稳定性模式（母本 5.7 书目 46 登记面逐字明列『断路器』→ 本条机制内容的提取锚点）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核：官方 PDF 抽取页记 ISBN-13 978-1-68050-239-8／Book version P1.0—January 2018／作者 Michael T. Nygard，数字串与母本著录 978-1-680-50239-8 相同而连字符分组位置不同；书商页数两说 350 vs 376。差异据实登记入 MJ-24，不改写母本）"}
+      - {bib_id: 51, support_claim: "5.2.3 可靠性模式的工程参照（2026-10-04 复核目录含 Circuit Breaker 条目；『Combine patterns』段明文 Pair Retry with Circuit Breaker——该段为书目侧陈述，不充当本注册表 compatibility 的母本依据）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核在位，页面标注 Last updated on 06/04/2026；母本 5.7 逐字『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』→ 本条机制内容以书目 46 为提取锚点，51 只作工程参照；compile_usage 依 5.7 逐字为 metadata_extraction，不得在注册表侧降级）"}
+    narrative:
+      benefit_cost_analysis: "收益：把『下游故障 → 上游等待耗尽 → 全局拖垮』的传播链在调用点截断——@2477 逐字给出两个机制要件：失败率越阈时快速失败、半开探测恢复。前者使故障期的延迟上界从 t_timeout 收敛到判定开销、等待期资源占用归零；后者使恢复不依赖人工介入。5.6 示例七 @2710 将其与舱壁并列为『限制故障扩散』的成套手段。代价：断路的可用性收益以降级面为前提——无 [fallback] 时快速失败只是把超时失败提前，对用户仍是失败，故降级语义属契约面（5.4 施→3），其变更触达全体消费者；阈值与统计窗口须实测核定，否则断路成为噪声源（频繁开关反而放大抖动）；失败判定口径必须先注册（超时/5xx/业务异常混计即失败率失真）；半开探测的放量策略不当会在恢复期二次打满下游；断路状态是新的可观测义务（5.2.5『选了但养不起』正对此项），且长期开启即僵尸开关（5.4 施→9 守护对象）。母本未给阈值、窗口与放量参数的任何数值 → 一律只登记机制要件、界形与两态差异，数值须按实例过 0.4 门槛（0.4＋6.2.1）。"
+      typical_scenarios: "同步调用链上失败会沿链传播的调用点（CRD-003；5.6 示例七 @2710 成套落地）；下游过载或限流期需要保护上游资源的场合（与 RLP-004 重试互为处置：重试放大负载，断路截断负载）；超时触发后需要确定失败语义的场合（RLP-005 的处置面，5.4 施→8『超时与断路行为测试』）；有可定义降级面（缓存值、默认响应、功能降级）的交互；需要以方面 8 的断路行为测试与混沌注入验证故障隔离的场合（5.4 施→8）。"
+      common_misuse: "无半开探测（AP1，@2477 机制要件缺失，恢复须人工介入）；无降级面即启用（AP2，快速失败成为裸失败，可用性收益不成立）；阈值与统计窗口取便利常数、失败口径混计（AP3，0.4 门槛未过 → 断路成为噪声源）；半开期全量放量（下游未恢复即被再次打满）；断路长期开启而无 expiry 与清理登记（AP4，功能永久降级成为既成事实，5.4 施→9）；断路状态不可观测（AP5，Z7 输入缺失，『选了但养不起』）；以断路器替代根因整改（下游缺陷被常态化掩盖）；把断路当作一致性手段（断路不免除 Z2 的幂等义务）；为阈值与窗口填无出处数值（0.4＋6.2.1 量化纪律）。"
+
+  - entry_id: RLP-007
+    kind: RLP
+    name: "舱壁"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
+    provenance:
+      origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（括号内机制逐字：线程/连接池按消费者隔离，防单点拖垮全局）；池容量参数化与谓词转写（manual，MJ-2 同型）
+      source_pointers:
+        - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第七项「**舱壁**（线程/连接池按消费者隔离，防单点拖垮全局）」
+        - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
+        - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：容量核定与部署配置能力 → 池划分的运维前提
+        - {source_type: clause_id, value: "5.4", verified: true}     # 施加约束方面 8 行（行为验证）＋方面 9 行（漂移守护）＋全体七行
+        - {source_type: clause_id, value: "5.5", verified: true}     # Z1（消费者划分须与已建模交互一致）＋Z4 条件硬（池内排队纳入 Σ）＋Z7 升级型
+        - {source_type: clause_id, value: "5.6", verified: true}     # 示例七 @2710『断路器＋舱壁限制故障扩散』
+        - {source_type: clause_id, value: "0.8", verified: true}
+        - {source_type: clause_id, value: "0.4", verified: true}     # 证据门槛：池容量与排队上限须有实测出处
+        - {source_type: clause_id, value: "6.2.1", verified: true}
+        - {source_type: bib_id, value: 46, verified: true}
+        - {source_type: bib_id, value: 51, verified: true}
+    typical_reversibility: bounded     # 人工判断：池容量与排队上限属配置面可调整；但池划分一经与部署资源预留、容量核定和消费者绑定即形成结构性依赖（重新划分须重做核定并触及部署），且拒绝策略对消费者可见属契约面 → 取 bounded 而非 free。18-B S5 消费字段
+    applicability:
+      problem_space:                   # 骨架源：@2477 括号内机制逐字
+        - "多个消费者共享同一线程/连接池，任一消费者的慢响应或故障会耗尽共享资源从而拖垮其余消费者的场合——@2477 逐字『线程/连接池按消费者隔离，防单点拖垮全局』"
+        - "需要把故障限制在局部而非全局扩散的场合（5.6 示例七 @2710『断路器＋舱壁限制故障扩散』）"
+        - "消费者之间的流量配比与重要性可区分，且可为其各自核定容量上限的场合"
+      current_space:                   # 交叉表源：5.4 施→8（行为验证）＋5.5 Z1（交互已建模）
+        - "[消费者划分已在册（隔离边界的依据 = 5.5 Z1 已显式建模的 inter_unit_interaction；未建模的交互无隔离边界可划）]"
+        - "[各池容量与排队上限有实测出处（未过 0.4 门槛即取保守值并登记为待推翻）]"
+        - "[池饱和时的拒绝策略已定（快速拒绝或有界排队；无处置面时舱壁只是把全局拖垮换成局部无界饥饿）]"
+      delivery_space:                  # 交叉表源：5.3 交付空间驱动
+        - "[部署与容量核定能力可承载按池预留资源（碎片化预留的运维成本）与饱和度告警]"
+    envelope:
+      - metric: "延迟分位数 P99"
+        bound_expr: "P99(消费者 i) 的上界 = 该池排队等待 + 服务时长，且排队等待受该池排队上限约束（有界）→ 局部 P99 随该池饱和度上升；其余消费者的 P99 不受该池故障影响（外溢被阻止）→ 隔离使局部 P99 恶化而全局 P99 上界改善，非单调；母本未给数值 → 只登记界形与非单调性（0.4）"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可用性目标（SLO）"
+        bound_expr: "单点故障被限制在其所属池内（@2477『防单点拖垮全局』）→ 全局可用性上界不再被最弱消费者支配；代价：被隔离消费者的可用性上界 = 其池容量可承载的吞吐上限（池满即拒绝）→ 全局 SLO 的达成取决于池划分与各池容量核定是否覆盖该消费者的必要性"
+        source: {source_type: clause_id, value: "5.6", verified: true}
+      - metric: "性能：资源占用"
+        bound_expr: "每池独立预留 → 总预留 = Σ_i 池容量_i ≥ 共享池形态下的峰值需求（碎片化对价），且空闲池的预留不产生吞吐 → 资源占用上界由池划分给出而非由实际负载给出，整体利用率下降；占用随被隔离消费者数单调上升"
+        source: {source_type: clause_id, value: "5.2.3", verified: true}
+      - metric: "可修改性：典型变更的实现成本（触达单元数）"
+        bound_expr: "触达单元数(Δ 池容量/排队上限) = 该池配置面 1；触达单元数(Δ 池划分：新增或合并消费者) ≥ 容量核定处 + 部署与资源预留配置处 + 该消费者的调用方单元 → 划分变更与容量变更不同阶，须分别登记"
+        source: {source_type: clause_id, value: "5.4", verified: true}
+    cost_profile:
+      latency_budget_delta: "Δlatency = 池内排队等待（该池饱和时 > 0，随饱和度上升，受排队上限约束）+ 池获取与归还开销（常数阶）→ 附加项恒 ≥ 0；隔离不缩短单请求服务时长，其收益体现为『其余消费者的 Δlatency 不因该池故障而上升』（外溢被阻止）。本项按 5.2.5 Σ 消费路径逐步骤计入卡片，聚合按 itemwise（逐池成立，非路径加和量）。母本未给数值 → 只登记符号与界形（0.4）"
+      failure_modes: ["消费者划分与实际故障域不一致（隔离边界划在非故障传播路径上）→ 舱壁不承载隔离收益，只付出碎片化成本", "池容量与排队上限无实测依据 → 过小则正常流量被拒，过大则隔离形同共享", "池饱和后无拒绝策略（无界排队）→ 局部饥饿无界，全局拖垮被换成局部拖垮", "空闲池预留不可回收 → 总预留随消费者数上升而利用率下降（碎片化对价失控）", "池边界与部署/调度配置脱钩 → 拓扑或流量配比变更后池容量失真（5.4 施→9 漂移守护对象）", "以逻辑命名区分而物理共享同一池 → 隔离面不成立（AP1）", "舱壁被当作限流手段替代容量规划 → 峰值需求长期超出总预留"]
+      consistency_impact: "舱壁不改变一致性级别；但池拒绝产生的失败点决定长流程中哪一步失败，进而决定补偿/重试路径（5.2.2 三分类：被拒绝的写操作是否已提交须可判定）→ 拒绝语义须与流程步骤分类联动登记；池隔离不免除幂等义务——被拒绝后重试的写操作仍由消费侧幂等承担（Z2）"
+      observability_requires: ["各池的利用率、排队深度与拒绝次数可观测且可告警（容量核定的取证面）", "池边界与消费者的映射可核验（隔离面是否成立）", "各池容量核定依据可追溯（实测出处，0.4 门槛）", "总预留与实际峰值需求的差额可观测（碎片化对价是否失控）", "质量影响卡片五字段齐备且被方面 6 消费可核验（Z7）"]
+      ops_cost: "[随被隔离的消费者数上升：每池须核定容量、排队上限与拒绝策略，并维护饱和度告警与容量复核定；与断路器同级（后者多一层状态机与降级面，本条多一层容量核定与部署绑定），高于超时预算（后者为单点配置）]"   # 18-B S5 消费字段
+      skill_prerequisites: ["消费者划分与故障域识别（隔离边界须落在故障传播路径上）", "各池容量与排队上限的实测核定（0.4 证据门槛）", "拒绝策略设计（快速拒绝 vs 有界排队；与 RLP-005 超时预算、RLP-006 断路器联动）", "池预留与部署/调度配置的绑定（资源碎片化的容量规划能力）", "饱和度可观测面建设（利用率、排队深度、拒绝计数）"]
+      aggregation_semantics: itemwise  # 逐池成立（池容量与饱和度是池的局部属性，不沿路径加和）；其对路径 Σ 的影响经由各步骤卡片的 latency_budget_delta（含池内排队）在方面 6 侧汇入（5.2.5）
+    compatibility:
+      - peer_entry: RLP-006            # 5.6 示例七 @2710 逐字『断路器＋舱壁限制故障扩散』→ 两者成套落地（同批内双向登记，与 RLP-006 侧一致）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.6", verified: true}
+      - peer_entry: RLP-005            # 池内排队等待是该级耗时的组成部分 → 须纳入 Z4 的 Σ timeout_budget(path)；池饱和时的拒绝是超时预算的处置面之一（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: RLP-004            # 重试占用池配额 → 重试放大池饱和度，池容量核定须按含重试的尝试次数计（同批内双向登记）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.2.3", verified: true}
+      - peer_entry: CRD-003            # 同步调用链是线程/连接池按消费者隔离的主要适用面（链上等待直接占用池资源；CRD-003 已发布 → 按 MJ-5 镜像纪律不回填，0.22 承诺一）
+        relation: composable
+        evidence: {source_type: clause_id, value: "5.4", verified: true}
+    constraints_imposed:               # 交叉表源：5.4「施加约束」表（方面 5 全体七行，与 CRD/DFL 批逐字相同）
+      - {target_aspect: 1, constraint: "协调需求在既定风格下不可行 → 回溯约束声明（CH-E 原型通道，阻塞式）", level: hard}
+      - {target_aspect: 3, constraint: "协调模式产生的新交互 → 契约登记需求（编排者与参与者间的命令契约、事件契约）", level: hard}
+      - {target_aspect: 4, constraint: "流程状态（协调者状态机、Saga 日志、预扣记录）是数据集合，受 Y1–Y8 全约束——流程状态的所有者 = 协调者单元", level: hard}
+      - {target_aspect: 6, constraint: "质量影响卡片 → 行为级包络校验输入；卡片是方面 6 的强制消费项（Q 系列将引用）", level: hard}
+      - {target_aspect: 8, constraint: "行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入", level: conditional}   # 5.4 级别列原文「软/硬按风格」；本条正对『混沌注入』与故障隔离验证一项；ENUM_LEVEL 无复合取值 → 取 conditional（MJ-4 同型判读）
+      - {target_aspect: 9, constraint: "协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化", level: hard}
+      - {target_aspect: 10, constraint: "机器层：Z 谓词集；人类层：覆盖谓词子集 {Z 谓词集} 的投影视图（受众问题 = 行为与协调的时序、事件流与流程状态；记法按实例注册，0.9）", level: hard}
+    anti_patterns:
+      - pattern_id: RLP-007-AP1
+        description: "以逻辑命名区分消费者而物理共享同一线程/连接池（隔离面不成立）"
+        detection_predicate: "∃ 消费者组: [bulkhead](·) ∧ ¬[池边界物理独立](·)"
+        signal_level: P0               # @2477 括号内逐字『线程/连接池按消费者隔离』→ 物理共享即机制定义性判据缺失（MJ-4 判据第一支）；后果是声明的隔离收益完全不成立而碎片化成本已付出
+      - pattern_id: RLP-007-AP2
+        description: "池饱和后无拒绝策略（无界排队）"
+        detection_predicate: "∃ 池: [bulkhead](·) ∧ ¬[排队上限已登记](·) ∧ ¬[快速拒绝](·)"
+        signal_level: P1               # 无 Z 硬性质直接绑定，但池内排队无界使 Z4 的 Σ timeout_budget 无法闭合（5.5 Z4 条件硬的上游前提缺失）→ 契约与预算面缺口 → P1（MJ-4 判据）
+      - pattern_id: RLP-007-AP3
+        description: "池容量与排队上限无实测出处（或消费者划分与实际故障域不一致）"
+        detection_predicate: "∃ 池: [bulkhead](·) ∧ (¬[容量有实测出处] ∨ ¬[划分依据 = 已建模交互](·))"
+        signal_level: P1               # 0.4 证据门槛偏离＋5.5 Z1『inter_unit_interaction: explicitly_modeled』的边界依据缺失 → 证据与建模纪律问题而非性质违例 → P1（MJ-4 判据）
+      - pattern_id: RLP-007-AP4
+        description: "池划分与部署/容量核定脱钩，流量配比或拓扑变更后未重算（长期漂移）"
+        detection_predicate: "∃ 池: [拓扑或流量配比快照] ≠ [池容量核定所依据的快照] ∧ ¬[重算登记]"
+        signal_level: P2               # 5.4 施→9 协调漂移守护对象同型（须以阈值 + 趋势双判据核定）→ P2（MJ-4 判据）
+      - pattern_id: RLP-007-AP5
+        description: "池利用率、排队深度与拒绝次数不可观测（容量核定与饱和告警无从取证）"
+        detection_predicate: "∃ 池: [bulkhead](·) ∧ ¬[利用率与拒绝计数可观测](·)"
+        signal_level: P2               # 5.2.5『observability_requires 未满足而模式已选用 = 选了但养不起』→ Z7 升级型的输入缺失；属可观测性漂移信号 → P2（MJ-4 判据）
+    formal_anchor:                     # 交叉表源：5.5 可验证性质（Z1 硬／Z4 条件硬／Z7 升级型）
+      - {property_id: Z1, role: consumed_by}    # 5.5 Z1『∀ inter_unit_interaction: explicitly_modeled ∧ ∃C ∈ registry: covers(C,·,·)』→ 舱壁的隔离边界按消费者划分，消费者即已建模的交互单元；未显式建模的交互无隔离边界可划（AP3 第二支的依据）
+      - {property_id: Z4, role: consumed_by}    # 5.5 Z4『Σ timeout_budget(path) ≤ sla_bound(path)』→ 池内排队等待是该级耗时的组成部分，须计入 Σ；无界排队（AP2）使 Σ 无法闭合
+      - {property_id: Z7, role: consumed_by}    # @2477 逐字『每条带质量影响卡片』＋5.2.5『observability_requires 未满足而模式已选用 = 选了但养不起』→ 卡片交方面 6 做行为级包络校验
+    references:
+      - {bib_id: 46, support_claim: "5.2.3 断路器、舱壁、超时预算等稳定性模式（母本 5.7 书目 46 登记面逐字明列『舱壁』→ 本条机制内容的提取锚点）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核：官方 PDF 抽取页记 ISBN-13 978-1-68050-239-8／Book version P1.0—January 2018／作者 Michael T. Nygard，数字串与母本著录 978-1-680-50239-8 相同而连字符分组位置不同；书商页数两说 350 vs 376。差异据实登记入 MJ-24，不改写母本）"}
+      - {bib_id: 51, support_claim: "5.2.3 可靠性模式的工程参照（2026-10-04 复核目录含 Bulkhead 条目）", compile_usage: metadata_extraction, trust_grade: "[已核验]（2026-10-04 在线复核在位，页面标注 Last updated on 06/04/2026；母本 5.7 逐字『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』→ 本条机制内容以书目 46 为提取锚点，51 只作工程参照；compile_usage 依 5.7 逐字为 metadata_extraction，不得在注册表侧降级）"}
+    narrative:
+      benefit_cost_analysis: "收益：把『单个消费者的慢响应或故障耗尽共享线程/连接池 → 拖垮其余全部消费者』的传播路径在资源层截断——@2477 逐字给出机制要件（线程/连接池按消费者隔离）与其目的（防单点拖垮全局）。隔离后，任一池的饱和与故障只影响该池对应的消费者，其余消费者的延迟与可用性不再被最弱消费者支配；5.6 示例七 @2710 将其与断路器并列为『限制故障扩散』的成套手段（断路器在调用点截断传播，舱壁在资源层截断传播）。代价：碎片化——每池独立预留使总预留 = Σ 池容量 ≥ 共享池形态下的峰值需求，空闲池的预留不产生吞吐，整体利用率下降；池划分是结构性决策，与部署资源预留和容量核定绑定，重新划分须重做核定（typical_reversibility: bounded）；拒绝策略对消费者可见，属契约面（5.4 施→3）；池内排队等待须计入 Z4 的 Σ timeout_budget，无界排队会使预算无法闭合；池饱和度是新的可观测义务（5.2.5『选了但养不起』正对此项），划分依据还须回溯 Z1 已建模的交互（否则隔离边界划在非故障传播路径上，只付成本不获收益）。母本未给池容量、排队上限与预留比例的任何数值 → 一律只登记机制要件、界形与对价方向，数值须按实例过 0.4 门槛（0.4＋6.2.1）。"
+      typical_scenarios: "多租户或多消费者共享同一后端连接池、其中任一消费者可能慢响应的场合（@2477 逐字面）；同步调用链上等待直接占用线程资源的调用点（CRD-003；5.6 示例七 @2710 与断路器成套落地）；需要为高优先级消费者保住容量、防止低优先级流量挤占的场合（池划分即优先级表达）；批量任务与在线请求混部而须隔离资源以免批量拖垮在线的场合；需要以方面 8 的混沌注入验证故障隔离边界的场合（5.4 施→8）。"
+      common_misuse: "以逻辑命名区分而物理共享同一池（AP1，@2477 机制要件缺失，隔离面不成立）；池划分与实际故障域不一致（边界划在非传播路径上 → 只付碎片化成本）；池容量与排队上限取便利常数（AP3，0.4 门槛未过 → 过小误拒、过大形同共享）；池饱和后无界排队（AP2，全局拖垮被换成局部无界饥饿，且 Z4 的 Σ 无法闭合）；无拒绝语义登记即启用（拒绝是对外可见行为，属契约面）；池划分与部署配置脱钩、流量变更后不重算（AP4，5.4 施→9 漂移）；利用率与拒绝计数不可观测（AP5，Z7 输入缺失）；以舱壁替代容量规划与限流（峰值长期超出总预留）；把舱壁当作一致性手段（不免除 Z2 的幂等义务）；为池容量填无出处数值（0.4＋6.2.1 量化纪律）。"
+
 # ============================================================================
 # 注册表级台账（README §2：注册表级信息一律置于顶层节，不进入条目）
 #
@@ -5654,6 +6440,14 @@ gaps:
     route: "人工裁决（① 书目 5／44 的节级面可否依书目 43 行内文『CDC 机制概念由书目 5/44 承载』下探为 DFL-002（及 DFL-005 的 CQRS 概念面）的行级出处；② 书目 40 的 Y7 性质级面可否下探至「物化视图」行（DFL-005）；③ 书目 35 的『复制/分区机制权威内联来源』面可否下探至 4.2.4 任一行；④ 书目 44 本地 EPUB isbn13 与母本著录形态不一致的处置（补注 vs 更正著录，两者均涉母本改动 → 高影响，走 R2/ADR）；⑤ 书目 43 的 compile_usage=narrative_only『不得充决策性出处』边界确认（DFL-002 现引 43 仅作工程参照留痕，其判据全部取自 4.2.4 表行自身）——G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1 同型 route）：裁决为可 → 相应条目补引并撤销该项；裁决为否或澄清前 → 保持留空，另勘察补三行的行级书目（流处理的时窗与水位线面、ETL/ELT 批管道与可重跑面、物化视图刷新与读模型面）并按 0.12 定 compile_usage → 母本 4.7 参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。登记为 SO-11（入库期义务，consumer M6）。"
     status: open
 
+  - gap_id: G-RLP-1
+    type: 源形态与书目登记面差异（5.2.3 为行内加粗清单非表格 → 无 row_id 维度；书目 46 登记面以「等」概括覆盖『重试』；@2719/@2730 与 @2477 的项集枚举内部不一致）
+    statement: "本批骨架源为母本 5.2.3 @2477 单行行内加粗清单：『注册表条目（每条带质量影响卡片）：**幂等**（幂等键 + 去重表/去重窗口）、**收件箱（inbox）**（消费侧去重与业务写同事务）、**发件箱（outbox）**（生产侧，4.2.4 已定义，行为面消费其投递语义）、**重试 + 指数退避 + 抖动**、**超时预算**（路径级联超时的预算分配：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4）、**断路器**（失败率越阈时快速失败 + 半开探测）、**舱壁**（线程/连接池按消费者隔离，防单点拖垮全局）。』——共 7 项，与前八批的骨架源（1.2.1–1.2.4／4.2.1／4.2.3／5.2.1＋5.2.2／2.2.1／3.2.1＋3.2.2／4.2.2／4.2.4 均为**表格**）形态不同：5.2.3 无表、无行标识，故本批 source_pointers 一律 `{source_type: clause_id, value: \"5.2.3\"}`（＋bib_id），**不含 row_id 维度**。三处差异据实登记：(1) 项集枚举在母本内部不一致——@2719（方面五形式化注释）逐字为『5.2.3 可靠性模式（幂等/inbox/outbox/超时预算/断路器/舱壁）』＝**六项，缺「重试」**；@2730（方面五示例二折衷集）逐字为『可靠性模式={幂等+inbox/outbox(Z2), Z4 逐级分配, 断路器, 舱壁}』＝**五项，亦缺「重试」**且把「超时预算」表述为「Z4 逐级分配」；本批以 5.2.3 定义节自身（@2477）为唯一项集骨架源，不据 @2719／@2730 增删条目。(2) 书目登记面覆盖强度不均——书目 46（Nygard, *Release It!* 2nd ed., @2752）登记面逐字为『5.2.3 断路器、舱壁、超时预算等稳定性模式』，明列三项＋「等」概括；「重试」（RLP-004）与「幂等」「收件箱」（RLP-001/002）不在明列之列，本批依「等」概括面登记 46（判读入 MJ-24）；书目 51（Azure Cloud design patterns, @2757）登记面为『5.2.3 可靠性模式的工程参照』＝**节级**，其行内文明记『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』；书目 44（Hohpe & Woolf, EIP, @2750）登记面为『5.2.1/5.2.3 消息与协调模式词汇表（跨方面 3/5 的共享源头）』＝**节级词汇表面**，本批仅 RLP-001/002/003 三条（幂等/收件箱/发件箱，属消息与协调模式词汇面）引之，RLP-004…RLP-007 不引（其判据不在 44 的登记面内）。(3) 书目 46 著录核验观察项——母本 @2752 著录 ISBN `978-1-680-50239-8`，同行注『本地资源：resources/se PDF（内容核验 ISBN 9781680502398，与著录一致；文件名携带的 9781680500387 系第 1 版残留元数据）』；本批启动前强制核查实测本地 PDF 抽取页的 ISBN 连字符分组为 `978-1-68050-239-8`（与著录 `978-1-680-50239-8` 分组位不同，数字序列同为 9781680502398），且页数存在两说（抽取页 350 vs 376）→ 属书目登记面核验，与 5.2.3 项级出处无关，本批不改母本、不改书目著录。"
+    impact: "与前八批的 G-*-1 不同型：本批七条 references **无空列表**（书目 44×3／46×4／51×7），故 0.17.8 M6 严格式与 0.17.7 门槛 6 在本批不以空集平凡满足；缺口面落在**可机器判定性**与**出处强度**两处：(a) 5.2.3 非表格 → 无 row_id → `profiles.yaml` 的 `kind_profile_RLP.table_rows` 无法给出逐表行数，META 记 1 条 info「table_rows 未给逐表行数 → 覆盖宣称不可机器判定」，`meta.kind_coverage` 的『RLP 全覆盖（5.2.3 全部 7 项）』为人工清点结论而非机器可判（与前八批「表行全覆盖可由 row_id 反查」强度不同）；(b) RLP-004（重试 + 指数退避 + 抖动）的行级出处强度弱于其余六项——依书目 46 概括面「等」＋书目 51 目录明列 Retry 条目，而书目 46 登记面未逐字明列「重试」；本批不据此把 46 降为 narrative_only（母本 @2752 明文 `compile_usage=metadata_extraction`，注册表侧不得改写或降级，MJ-22 (vii) 实测优先纪律），仅在 trust_grade 内如实转述登记面原文并明记「重试」系概括面覆盖；(c) @2719 六项／@2730 五项与 @2477 七项的枚举差异属**母本内部一致性**观察项：若以 @2719 为准则「重试」无登记面，本批仍登记 RLP-004，因其骨架源为 5.2.3 定义节自身且 @2477 逐字含该项、5.2.5 卡片与 5.4 施加项亦以「重试」为词（0.4 禁假精确 → 不合并、不省略）；差异处置涉母本改动 → 高影响，走 R2/ADR，本批不自行裁决；(d) RLP-003（发件箱）的 envelope 仅 3 族（延迟分位数 P99／可用性目标 SLO／可修改性），缺「性能：资源占用」一族——发件箱表与中继作业的资源占用归 DFL-001 的定义面（4.2.4 表行），本条目不重复计入以避免双重计数，事实留痕于 ST-RLP-01.note；(e) 书目 51 目录内 Idempotent Consumer 条目与「Combine patterns」段『Pair Retry with Circuit Breaker』**不充当** compatibility 的母本依据——compatibility 全部以母本明文（5.2.3 @2479 投递语义纪律、5.6 @2710『断路器＋舱壁』、Z4 Σ 明文、4.2.4 表行）为据，51 仅作工程参照留痕。"
+    affected: "RLP-001…RLP-007 全部七条（source_pointers 无 row_id 维度、覆盖宣称不可机器判定）；其中 RLP-004 另受书目 46 登记面未逐字明列『重试』影响，RLP-003 另受 envelope 三族（资源占用归 DFL-001）影响"
+    route: "人工裁决（① 5.2.3 是否在母本侧改为表格形态以提供 row_id 维度（涉母本改动 → 高影响，走 R2/ADR）；② 书目 46 登记面『断路器、舱壁、超时预算**等**稳定性模式』的「等」可否据同节书目 51 行内文『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46 为提取锚点』确认为覆盖「重试」（即 RLP-004 的行级出处成立）与覆盖「幂等/收件箱」（RLP-001/002 现仅引 44＋51）；③ @2719 六项／@2730 五项与 @2477 七项的枚举差异处置（补『重试』vs 认定为示例性省略，两者均涉母本改动）；④ 书目 46 ISBN 连字符分组差异与页数两说的处置（补注 vs 更正著录，均涉母本改动）；⑤ 书目 51 目录内 Idempotent Consumer 条目与「Combine patterns」段可否充 compatibility 或 references 的行级依据——本批明确**不充当**，需裁决确认此边界；⑥ RLP-003 envelope 三族（资源占用归 DFL-001 定义面）的分工是否需在 `kind_profile_DFL`／`kind_profile_RLP` 侧补明文剖面，G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1 同型 route）：裁决为可 → 相应字段补实或母本更正并撤销该项；裁决为否或澄清前 → 保持现登记形态（clause_id 无 row_id、RLP-004 依概括面登记、RLP-003 envelope 三族）。本批不自行裁决、不本地扩张解释面。登记为 SO-12（入库期义务，consumer M6）。"
+    status: open
+
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
 # ---------------------------------------------------------------------------
@@ -5671,7 +6465,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16 (ii)）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载，本简记对其无事实主张
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16 (ii)）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载，本简记对其无事实主张
     date: "2026-09-18"
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5696,7 +6491,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；OWN 批实际迁移对象为 OWN-001…OWN-004 四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；OWN 批实际迁移对象为 OWN-001…OWN-004 四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
     date: "2026-09-22"   # OWN 批入库日（本简记的登记日）；STY 批的 2026-09-18 见 ST-STY-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5721,7 +6517,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
     date: "2026-09-23"   # CSL 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-016 ↔ CSL-001 的 hard_conflict 对（1.2.5 冲突行，PCR-2 闭合）同提交回填。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5747,7 +6544,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为 CRD-001…CRD-008 八条；DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为 CRD-001…CRD-008 八条；DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
     date: "2026-09-24"   # CRD 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-018 ↔ CRD-007 的 hard_conflict 对（1.2.5 冲突行，PCR-1 闭合）同提交回填；CRD-005/CRD-006/CRD-008 → CSL-005 的 requires 由 CRD 侧单方承载（MJ-17 (iii)），CRD-007 → CRD-005 的 requires 依 5.2.2 定义列『编排式 Saga 的泛化』（MJ-5 例外：母本明文依据，非同表取值互斥对）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5774,7 +6572,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；DEC 批实际迁移对象为其中 8 条（DEC-001…DEC-008）；CTR 十二条的迁移事实由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；DEC 批实际迁移对象为其中 8 条（DEC-001…DEC-008）；CTR 十二条的迁移事实由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
     date: "2026-09-26"   # DEC 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨 kind 单向登记：DEC-007 → STY-016 的 composable（evidence 为 2.4 接收约束表方面 1 行，row_id『2.4-方面 1（风格）』）——母本方向为『风格收窄策略可行集』（微服务 → S7 强制；单体 → S7 退化），ENUM_RELATION 封闭枚举无 required_by，本侧若写 requires 将读作『S7 要求微服务』而与『单体 → S7 退化』矛盾，故只登记 composable；STY-016 侧镜像不擅改已批准条目（0.22 承诺一），方向问题留待人工裁决（MJ-20 (vii)）。同批内三对 tension 已双向镜像闭合：DEC-001 ↔ DEC-006（2.6 示例一）、DEC-001 ↔ DEC-002（2.2.2 语义边界判据）、DEC-003 ↔ DEC-004（2.6 示例三/示例四面）。DEC-005/DEC-008 的 compatibility 为空列表系母本无明文对：2.6 示例二推迟分支的 S1/S2 是**处置次序**而非策略互斥对，2.6 示例三的三方不可行源于**事实集合**（contexts=7、teams=2、物理隔离要求）而非策略两两互斥（MJ-9 只登记母本有明文依据的对，判读见 MJ-20 (vii)）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5800,7 +6599,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；CTR 批实际迁移对象为末 12 条，STP 四条的迁移事实由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CTR 批实际迁移对象为末 12 条，STP 四条的迁移事实由 ST-STP-01、DFL 五条由 ST-DFL-01 承载
     date: "2026-09-27"   # CTR 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨 kind 单向登记两类：(i) 三条 requires——CTR-002 → STY-001（适用条件列『请求-响应风格；需要即时结果』＝同步请求-响应）、CTR-003 → STY-002（『异步消息风格；命令类交互』＝异步消息）、CTR-004 → STY-003（『事件驱动风格；多方响应同一业务事实』＝事件驱动（发布订阅）），依据＝kind_profile_CTR.narrative.note 明定的 1.4/3.4 接收约束『方面 1 → 方面 3 硬』，本侧为接收端 → 方向与母本一致，不属 MJ-20 (vii) 的方向倒置情形；ENUM_RELATION 无 required_by 且对侧属已批准条目 → 不回填镜像（MJ-21 (viii)）。(ii) CTR-001 → STY-016 的 hard_conflict（3.4 接收约束方面 1 行明文『微服务 → 跨单元禁止以进程内调用为主手段』，级别硬）——hard_conflict 为对称关系、本可镜像，但 STY-016 属已批准条目 → 不擅改，镜像回填留待人工裁决（MJ-20 (vii) 同型）；CTR-011 → DEC-005 的 tension（3.6 示例三明文点名）同型单侧登记。同批内七对已双向镜像闭合：CTR-002 ↔ CTR-007、CTR-002 ↔ CTR-008、CTR-003 ↔ CTR-004、CTR-004 ↔ CTR-007、CTR-004 ↔ CTR-008、CTR-008 ↔ CTR-011、CTR-010 ↔ CTR-011（均系同批 seed 条目、非已批准条目 → 双向登记，MJ-21 (viii)；其中 CTR-004 侧两条与 CTR-011 侧一条为本批入库时的镜像回填，依据与对侧同源＝3.2.2 默认值列/3.6 示例三，无新增事实主张）。CTR-006 与 CTR-012 的 compatibility 为空列表系母本无明文对：3.2.1 UI/端契约行与 3.2.2 发现与注册行均未给出与其余条目的互斥/依赖明文（MJ-9 只登记母本有明文依据的对，判读见 MJ-21 (viii)）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5827,7 +6627,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；STP 批实际迁移对象为其中 4 条（STP-001…STP-004），DFL 五条的迁移事实由 ST-DFL-01 承载
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；STP 批实际迁移对象为其中 4 条（STP-001…STP-004），DFL 五条的迁移事实由 ST-DFL-01 承载
     date: "2026-09-27"   # STP 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批 2026-09-27 见 ST-CTR-01（与本批同日 → 两条简记以 transition_id 区分，不以日期区分）
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面为七行跨 kind 单侧登记（无同批内镜像对：四条 STP 之间母本无互斥/依赖明文 → 不登记）：(i) 两条 requires——STP-001 → OWN-001（4.2.2 首行第三列判据句『判据是访问路径是否唯一经所有者』＝ OWN-001 的 Y1/Y2 实现面 → 本拓扑以单一所有权为前提）、STP-003 → STY-004（同行第三列『事件溯源风格的存储形态（1.2.3）』＋1.2.3 定义列『状态以事件日志为准（溯源）』），依据＝requires 关系由下游侧承载（MJ-17 (iii)），ENUM_RELATION 无 required_by 且对侧属已发布条目 → 不回填镜像（MJ-5／MJ-21 (viii) 同型）。(ii) 三条 composable——STP-001 → STY-016（1.4 施→4 微服务行『每服务自有数据库为默认』；方向为风格 → 存储拓扑，在被施侧以 composable 登记；『默认 + 偏离须显式记录』不构成构成性必需，因第三列明文『私有 schema 或私有实例均可』→ 不取 requires）、STP-002 → STY-014（『单体风格可用』＝许可性条款）、STP-002 → STY-015（『模块化单体推荐 schema 级隔离（为未来拆分保留缝）』＝推荐性条款），后两条按 MJ-4 同型判读（许可性/候选性条款 → 不升 requires）。(iii) 两条 tension——STP-002 → STY-006（1.2.3 共享数据行反模式明文『以共享数据库实现服务间集成（分布式单体信号）』，且该行适用条件限定『仅限批处理交接、配置分发等弱耦合场景』）、STP-002 → STY-016（1.2.2 微服务行定义列含『独立数据』→ 单一存储实例与该定义性约束相左）。**两条 tension 均不升 hard_conflict**：1.2.5 硬冲突清单未列『共享数据 × 共享数据库』与『微服务 × 共享数据库』两对（该清单在方面 1 只到『微服务 × 跨单元 2PC 作为默认一致性手段』）→ 按 MJ-9『无母本明文不登记更强级别』只记 tension（判读见 MJ-22 (iii)）。STP-004 的 compatibility 为空列表系母本无明文对：4.2.2 末行只给运维面扩张、交付空间硬过滤器与负载证据纪律，未登记与任何已入库条目的互斥/依赖/叠加明文。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5853,7 +6654,8 @@ status_transitions:
             CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
             CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
             STP-001, STP-002, STP-003, STP-004,
-            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005]   # check_ledgers 双向相等要求全集（MJ-16 (ii)）；DFL 批实际迁移对象为末 5 条（DFL-001…DFL-005）
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；DFL 批实际迁移对象为末 5 条（DFL-001…DFL-005）
     date: "2026-09-28"   # DFL 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 10 行登记，分两类：(i) 同批镜像两对（两侧均在本批内登记，不留回填义务）——DFL-002 ↔ DFL-003 composable（4.2.4 尾注把「CDC + Kafka 类流平台」并举为同一组合，其被检查对象是风格自洽性）、DFL-002 ↔ DFL-005 composable（6.6 示例四把「追加 CDC 或物化视图投资并补刷新延迟出处」并列为同一建议重审范围的两个候选）。(ii) 跨 kind 单侧登记六行，对侧一律为已发布条目 → 按 MJ-5／MJ-21 (viii) 不回填镜像（0.22 承诺一）：DFL-001 → STY-003 composable（4.2.4 第三列「事件驱动风格下…的标准解」＋1.4 施→4 事件驱动行；方向为风格 → 流动机制，在被施侧登记；ENUM_RELATION 无 required_by → 取 composable 不造 requires）、DFL-002 → STY-014 tension 与 DFL-003 → STY-014 tension（同一尾注「单体风格下选用 CDC + Kafka 类流平台 = 过度工程信号」的两侧；1.2.5 硬冲突清单未列该对 → 按 MJ-9 不升 hard_conflict，软性标记评审由 Y4 承担）、DFL-005 → STP-003 composable（4.2.2『状态以事件日志为准，物化视图为派生』）、DFL-005 → STP-001 composable（4.2.4 第三列『跨单元查询聚合』＋STP-001 的 typical_scenarios 明文『以派生读模型替代共享库』）、DFL-005 → STY-004 composable（4.2.4 第三列『CQRS 读侧』＋1.2.3 该行第四列『读模型自由优化』；只 composable 不 requires，因 1.2.3 该行与术语表 CQRS 条 @4280 均明记『不必然绑定事件溯源』）。DFL-004 的 compatibility 为空列表系母本无明文对：4.2.4『ETL/ELT 批』行第三/四列未给任何风格对或机制对，尾注点名的过度工程组合由 DFL-002／DFL-003 承载 → 按 MJ-5／MJ-9 不登记。另按 MJ-9 明记两处不成对登记：DFL-003 与 STY-003（4.2.4 未把流处理行与任何风格明文成对，风格自洽性由 Y4 承担）、DFL-005 与 STY-014（尾注未点名物化视图，且 4.2.2『所有者 + 授权读副本』行反把读副本/物化视图列为单体可选形态）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -5865,6 +6667,33 @@ status_transitions:
         - {source_type: clause_id, value: "0.17.6", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
     note: "本批迁移对象为 DFL-001…DFL-005（分块序：4.2.4 表行序五行＝事务性发件箱（outbox）／变更数据捕获（CDC）／流处理／ETL/ELT 批／物化视图 → DFL-001…DFL-005；name 一律取表首列逐字、去粗体标记，MJ-13 (iv)／MJ-20 (i) 同型；DFL-004 的 name 原形即含斜杠「ETL/ELT 批」→ 按 MJ-21 (iii) 原形登记，不改写为「ETL-ELT 批」，术语表 @4283 的书写形态同为「ETL / ELT」）。**scope 含前七批 65 条系 check_ledgers 全集要求的形式面**（MJ-16 (ii)），七批的迁移事实已分别由 ST-STY-01、ST-OWN-01、ST-CSL-01、ST-CRD-01、ST-DEC-01、ST-CTR-01、ST-STP-01 登记。E3 面另单独申请 WV-DFL-E3-01（WV-STY-E3-01 防扩宽条款 (ii)：不沿用前七项、不自动生效；五条 formal_anchor 共 12 个实例，引用 Z2／Y2／Y4／Y1／Y7 五项性质，而该 Waiver 的 scope 只及于其中**硬性质面**——3 项 6 实例（Z2 3、Y2 2、Y1 1），Y4 5 实例（4.5 级别列原文『软（偏离标记评审，过度工程信号）』）与 Y7 1 实例（原文『软（P2）』）明列排除，见该项 scope 明文）；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。**源表有四列**（机制｜定义｜适用条件｜质量影响要点，与 4.2.2 的三列形态不同）→ applicability 取第三列＋4.3 三空间驱动、envelope 取第二列＋第四列的界形、anti_patterns 取第四列的质量影响要点＋4.5/5.5 违例形态，字段归类判读见 MJ-23 (i)。表尾注 @2204 明文『流动机制与风格的自洽性由 Y4 检查』→ 五条一律以 {property_id: Y4, role: consumed_by} 登记该检查面；Y4 为软性质 → 不入 E3 硬性质面。**CDC 一词在母本双义**（术语表 @4277『CDC（数据域）｜Change Data Capture｜出处 4.2.4』；@4278『CDC（契约域）｜Consumer-Driven Contract (testing)｜出处 3.2.2』）→ DFL-002 一律指数据域，全库其余 CDC 出现处均属契约域（由 CTR-009 承载），二者不得互引为出处（判读见 MJ-23 (ii)）。五条的 envelope 一律非空（C-ENV：kind_profile_DFL 的 entry_level_exemptions 为空集，4.2.4 不在豁免条款内），20 项 bound_expr 全为关系式而非具体数值（M3）——母本逐字给出的量以参数化形态引用（[batch_window]、Δrelay、Δcapture、Δrefresh、水位线滞后项、状态后端占用随键基数与窗口长度单调增长），避开 CONCRETE_NUM_RE（MJ-20 (iv) 同型）；6.6 示例四给出的既有实例数值（事件投影读模型的刷新延迟 P99 界 = 800ms，出处＝现状消息基础设施基线测量）**不入 bound_expr 与 latency_budget_delta**，本批只登记其界形、符号与出处要求（M3 假精确门槛＋0.4）。metric 一律限于 G-ENV-1 已登记的四族短形态（延迟分位数 P99／可用性目标（SLO）／可修改性：典型变更的实现成本（触达单元数）／性能：资源占用），不引『可观测性』『安全』『合规』三族（G-ENV-1 与母本 6.2.1 的族数差异系待人工裁决口，本批不触其争议面）。五条 latency_budget_delta 一律填实（界形＋符号＋单调性，不填无出处数字）：kind_profile_DFL 未作 kind_profile_STP 同型的『不降级为选填』明文要求 → 本批据实按各行第二/四列的明文界形填写（发件箱＝以中继投递间隔为下界且随堆积深度单调不减；CDC＝Δcapture + Δrelay 且随日志位点滞后单调不减；流处理＝Δwindow + Δstate_emit，事件时间语义下另加水位线滞后项；批＝以 [batch_window] 为下界、窗口粒度而非连续；物化视图＝Δrefresh 且随刷新链路滞后单调不减），判读见 MJ-23 (iii)。22 条 anti_patterns（信号级实测 P0 11／P1 5／P2 6；逐条分布：DFL-001 P0 3＋P2 1、DFL-002 P0 3＋P2 1、DFL-003 P0 1＋P1 2＋P2 1、DFL-004 P0 2＋P1 2＋P2 1、DFL-005 P0 2＋P1 1＋P2 2）的 pattern_id 严格为 DFL-00N-APi（M2）；其中四项 P1 系母本明文强制但 4.5／5.5 无可绑定硬性质（DFL-003 的时间语义显式选择与水位线登记两项、DFL-004 的装载幂等〔Z2 的判定面是异步交互的投递语义，批装载不属该面〕、DFL-004 的适用面越界＝选型漂移〔第三列明文限定『分析域、报表；对新鲜度要求低的场景』，而 Y4 在 4.5 级别列为软 → 不升 P0〕），一项 P1 系 0.4 禁假精确的出处要求（DFL-005 的刷新延迟出处），判读见 MJ-23 (iv)。**谓词面本批零新增候选**：detection_predicate 剥方括号后出现的调用词只有 data_flow／data_lineage／dataset／owner／access_path／delivery_semantics／idempotency／time_semantics／declared／registered／has_approved_exception 十一词，全部已在 predicate_vocabulary.yaml 登记；data_flow（arity 4）的 mechanism 实参一律以半角方括号占位表达 4.2.4 表内取值（[outbox]／[cdc]／[stream]／[batch]），因该取值集未在词汇表登记为枚举；两个未登记概念按既有合规替代处置——provider 以方括号事实 [C 的提供方 = owner(D, ·)] 表达（先例 @4730）、idempotency_declared 以 idempotency(x, ·) ∧ declared(·) 表达（M4＋MJ-12）。据实记载（精确落点，逐词实测）：4.2.4 侧 outbox_table／relay／cdc_pipeline／stream／batch_window／freshness_clause／rebuildable 七词中，outbox_table／cdc_pipeline／freshness_clause 三词在 DFL 段**零出现**（仅块头注释 @5046 的列名）；relay 1 处（@5083 applicability.problem_space 方括号内）、stream 4 处（@5177／@5277／@5278 applicability 方括号内，@5322 detection_predicate 内作 data_flow(·, ·, ·, [stream]) 的实参）、batch_window 3 处（@5377 envelope.bound_expr、@5389 latency_budget_delta、@5408 detection_predicate 内作 [D 的消费方新鲜度要求 < batch_window(D)] 的方括号占位）、rebuildable 6 处（@5358／@5446 provenance 行内注、@5460 applicability 方括号内、@5515 detection_predicate 内作 ¬data_lineage(V, ·, rebuildable=true) 的实参取值、@5516 signal_level 行内注、@5532 formal_anchor 行内注）→ 后四词**确落 M4 扫描面**（detection_predicate 与 applicability 三空间），但一律以半角方括号占位（被 outside_brackets 剔除）或实参取值形态（rebuildable=true／batch_window(D) 非 name( 起始的调用式，PRED_CALL_RE 不匹配）出现 → 不构成未登记候选；三词零出现者不在扫描面。M4 不扫注释、signal_level 说明、cost_profile／narrative／provenance 行内注（块头注释 @5046-5049 的措辞按 0.22 承诺一不改写，精确事实以本简记与 MJ-23 (v) 为准）。故累计未登记词汇候选仍为 19 词（MJ-19 (i) 4＋MJ-20 (iii) 7＋MJ-21 (v) 8），宜合并为独立 R2 词汇批次（s5g）。DFL-003／DFL-004／DFL-005 的 references 为空列表系 4.2.4 行级书目登记面缺失（G-DFL-1，登记为 SO-11）：4.7 书目 35–43 中只有书目 42（登记面逐字『4.2.4 发件箱模式（提取以原文存档为准）』）与书目 43（『4.2.4 CDC 的工程参照』）为行级指向 4.2.4，分别由 DFL-001／DFL-002 引用；书目 35→4.2.3 谱系与复制/分区、36→补偿一致、37→4.2.2 事件日志、38→4.2.2 多语言持久化、39→4.2.3 降级纪律、40→Y7 可重建性理论基础（性质级）、41→4.2.1 数据产品，跨方面的书目 5（方面一节级）与书目 44（方面五节级）均非行级面 → 按 G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1 同型纪律『节级/表级/性质级面不下探』不扩张（五处具体裁定见 G-DFL-1.impact）。已引两条的 compile_usage 与信任级一律逐字承母本 4.7：书目 42 为 metadata_extraction／[已核验]，书目 43 为 narrative_only／[已核验（工具存在）]→ 后者只作叙述性支撑，不充当 envelope/applicability 的决策性出处（0.12 分级／M6；G-DEC-1 内书目 17 Conway 先例同型；书目 43 行内文明记『CDC 机制概念由书目 5/44 承载』系对其自身降级的补偿说明，非母本建立的 5/44 → 4.2.4 行级挂钩），注册表侧不得改写或降级。空列表三条以 has_path 口径满足 M2（字段在案，project.py @170-177），不以本地造引充数（0.4 禁假精确）。五条的 aggregation_semantics（在 cost_profile 内）一律 itemwise，理由＝母本未给 DFL 的跨机制聚合式（4.2.4 为五种可并存机制的登记面，无跨机制求和语义），不本地造法（MJ-19 (iii) 同型，判读见 MJ-21 (ix)）。constraints_imposed 五条逐字相同七行（4.4『施加约束』表方面 4 全体，与 OWN/CSL/STP 批同源），级别分布 hard 20／soft 15（每条：施→3、施→5、施→9、施→10 取硬，施→2、施→6、施→8 取软；按 MJ-4 判读——禁止性/默认偏离须记录条款 → 硬，许可性/代价计入类条款 → 软，判读见 MJ-22 (iv)）。typical_reversibility：五条一律 bounded（机制可停用而派生物随之停更、不落权威数据；但已建成的下游消费面与幂等约定、时间语义、新鲜度条款属既有事实 → 高于 CSL 类声明性条目的 free，低于 STP-001 存储绑定的 costly）。profiles.yaml 的 kind_profile_DFL.seed_source 两处占位符（table_rows／entry_id_range）于本批填实。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
+
+  - transition_id: ST-RLP-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004,
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
+            STP-001, STP-002, STP-003, STP-004,
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007]   # RLP 批实际迁移对象为末 7 条（RLP-001…RLP-007）；前七批 70 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01 登记
+    date: "2026-10-05"   # RLP 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01、DFL 批 2026-09-28 见 ST-DFL-01
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 32 行登记（relation 实测 composable 30／requires 2，无 tension、无 hard_conflict），分三类：(i) **同批镜像十对，两侧均在本批内登记，不留回填义务**——RLP-001 ↔ RLP-002 composable（5.6 示例七逐字『幂等键＋inbox/outbox（赔付捕获的有效恰好一次语义，Z2 必答）』）、RLP-001 ↔ RLP-003 composable（@2477 发件箱项『生产侧，4.2.4 已定义，行为面消费其投递语义』＋@2479 消费侧必答）、RLP-002 ↔ RLP-003 composable（同一示例七把 inbox/outbox 并举为成套落地）、RLP-004 ↔ RLP-005 composable（5.5 Z4 逐字『Σ timeout_budget(path) ≤ sla_bound(path)』＋5.6 示例一 @2598 把重试最坏时长与 SLA 上界直接比较）、RLP-004 ↔ RLP-006 composable（5.6 示例七 @2710『断路器＋舱壁限制故障扩散』与重试同处一套可靠性落地清单）、RLP-004 ↔ RLP-007 composable（@2477 舱壁项『线程/连接池按消费者隔离』→ 重试占用池配额，池容量核定须按含重试的尝试次数计）、RLP-005 ↔ RLP-006 composable（5.4 施→8『超时与断路行为测试』并列）、RLP-005 ↔ RLP-007 composable（池内排队等待是该级耗时的组成部分 → 计入 Σ）、RLP-006 ↔ RLP-007 composable（示例七逐字成套）。(ii) **跨 kind 单侧登记十二行，对侧一律为已发布条目 → 按 MJ-5／MJ-21 (viii) 不回填镜像**（0.22 承诺一）：RLP-001 → CRD-005 composable（5.2.2 retriable 步骤的幂等前提）、RLP-001 → STY-003 composable（5.4 接收约束方面 1『事件驱动 → 协同默认』）、RLP-002 → DFL-001 composable（4.2.4 消费侧去重与业务写同事务）、RLP-002 → STY-003 composable、**RLP-003 → DFL-001 requires**（5.2.3；方向为行为面 → 定义面，即主指令裁定的『定义面归 DFL、行为面归 RLP』重叠处置在数据面的兑现，DFL-001 块头 @5050-5053 预置『由 RLP 批下游侧承载』在此落地，镜像由本侧单向承载）、RLP-003 → STY-003 composable、RLP-004 → CRD-005 composable（5.2.2 三分类纪律：关键步之后全部可重试）、RLP-004 → CRD-003 composable（5.5 Z5 链深与 Z4 逐级分配）、RLP-005 → CRD-003 composable（CRD-003 @2493『链深与超时分配可逐跳调整』）、RLP-005 → CRD-008 composable（5.2.2 补偿窗口与预扣超时释放的时机由预算给出）、RLP-006 → CRD-003 composable、RLP-007 → CRD-003 composable。(iii) **一处关系不对称且已在行内注明**：RLP-004 → RLP-001 取 requires（5.2.2 @2473 retriable 逐字『幂等 + 暂时性失败假设成立』→ 幂等是重试的明文前提），而 RLP-001 → RLP-004 取 composable，因 ENUM_RELATION = {hard_conflict, tension, composable, requires} **无 required_by** → 不本地造反向关系词（MJ-22 (iii)／MJ-17 (iii) 同型，与 CTR／STP 批既有两例同型，累计第三例，是否补 required_by 归 s5h 裁决）。本批未登记 tension／hard_conflict：5.2.3 与 1.2.5 硬冲突清单均未给出可靠性模式之间的冲突对 → 按 MJ-9 不升不造（母本无明文即不登记）。M6 面：七条 references 一律 2 行、共 14 行（书目 44×3／46×4／51×7），**无空列表**（与 STP 批两条、DFL 批三条的空集情形不同），compile_usage 一律 metadata_extraction、信任级一律逐字承 5.7 登记面，注册表侧不得改写或降级。C-ENV 面：kind_profile_RLP.entry_level_exemptions 为空集 → 七条 envelope 一律非空（27 项，逐条 4/4/3/4/4/4/4；RLP-003 只 3 项系『性能：资源占用』族归 DFL-001 定义面，避免双重计数，见 note）。"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+        - {source_type: clause_id, value: "5.2.3", verified: true}
+    note: "本批迁移对象为 RLP-001…RLP-007（分块序＝母本 5.2.3 @2477 冒号列举的清单序：幂等／收件箱（inbox）／发件箱（outbox）／重试 + 指数退避 + 抖动／超时预算／断路器／舱壁 → RLP-001…RLP-007；name 一律取 @2477 各项引导词逐字、去粗体标记，MJ-13 (iv)／MJ-20 (i) 同型——RLP-004 的 name 原形即含两个加号『重试 + 指数退避 + 抖动』→ 按 MJ-21 (iii) 原形登记，不改写为顿号或斜杠；RLP-002／RLP-003 的 name 原形含全角括号与拉丁名『收件箱（inbox）』『发件箱（outbox）』→ 同为原形登记，与 4.2.4 表首列的书写形态一致）。**scope 含前八批 70 条系 check_ledgers 全集要求的形式面**（MJ-16 (ii)），前八批的迁移事实已分别由 ST-STY-01、ST-OWN-01、ST-CSL-01、ST-CRD-01、ST-DEC-01、ST-CTR-01、ST-STP-01、ST-DFL-01 登记。**源为非表格陈述**（@2477 系『注册表条目（每条带质量影响卡片）：』引导的分号分隔清单，无 5.2.2／4.2.4 类表格行列结构）→ 七条 provenance 一律不含 row_id，source_pointers 共 77 处＝clause_id 63＋bib_id 14（逐条 12/11/10/11/11/11/11），source_type 取值限于 profiles.yaml 已登记的两型（row_id 型只在表源批次出现，MJ-21 (ii) 同型判读）。E3 面另单独申请 WV-RLP-E3-01（WV-STY-E3-01 防扩宽条款 (ii)：不沿用前八项、不自动生效）：七条 formal_anchor 共 20 个实例（逐条 3/3/3/3/3/2/3），引用 Z1／Z2／Z3／Z4／Z5／X1／Y1／Z7 八项性质，而该 Waiver 的 scope 及于**硬性质面 5 项 8 实例**（Z2 implements 3、X1 consumed_by 2、Z1／Z3／Y1 consumed_by 各 1）＋**Z4 条件硬 4 实例**（RLP-005 implements 1＋RLP-004／006／007 consumed_by 3，承 WV-CRD-E3-01 把条件硬纳入 scope 的先例），Z5 软 1 实例（RLP-005 consumed_by）与 Z7 升级型 7 实例（七条各一）明列排除；该 Waiver 批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。**DFL-001 ↔ RLP-003 发件箱重叠的处置在本批兑现**：主指令裁定『定义面归 DFL、行为面归 RLP』→ DFL-001 承载 4.2.4 的机制定义与资源占用族界形，RLP-003 只承载 @2477『生产侧，4.2.4 已定义，行为面消费其投递语义』与 @2479 的消费侧必答面；数据面表现为 RLP-003 → DFL-001 单向 requires（镜像由本侧承载，见 condition (ii)），且 **RLP-003 的 envelope 只 3 族**（27 项逐条 4/4/3/4/4/4/4 中的那个 3），系『性能：资源占用』族（发件箱表深度与中继堆积占用）归 DFL-001 定义面 → 避免同一界形双重计数（M3 与 0.4 同向）。七条 envelope 一律非空（C-ENV：kind_profile_RLP.entry_level_exemptions 为空集，5.2.3 不在豁免条款内），27 项 bound_expr 全为关系式而非具体数值（M3）——母本逐字给出的量以参数化形态或半角方括号事实占位表达（[dedup_window]／[dedup_table]／[inbox]／[retry]／[backoff]／[jitter]／[fallback]／[circuit_breaker]／[half_open]／[bulkhead]／[SLA 上界]／[传播开销] 等），避开 CONCRETE_NUM_RE（MJ-20 (iv) 同型）；metric 一律限于 G-ENV-1 已登记的四族短形态（延迟分位数 P99／可用性目标（SLO）／性能：资源占用／可修改性：典型变更的实现成本（触达单元数）），不引『可观测性』『安全』『合规』三族（G-ENV-1 与母本 6.2.1 的族数差异系待人工裁决口，本批不触其争议面）；latency_budget_delta 七条一律填实（界形＋符号＋单调性，不填无出处数字）：kind_profile_RLP 未作 kind_profile_STP 同型的『不降级为选填』明文要求 → 本批据实按 @2477 各项的明文界形填写，其中 RLP-005 的填法特殊——超时值本身构成路径延迟的**上界分配**而非附加开销（超时机制自身的判定开销可忽略）→ 其 Δlatency 以预算约束形态（Σ timeout_budget(path) ≤ [SLA 上界](path)，5.5 Z4）而非纯增量形态表达，判读见 MJ-24。32 条 anti_patterns（信号级实测 P0 11／P1 13／P2 8；逐条 4/4/4/5/5/5/5）的 pattern_id 严格为 RLP-00N-APi（M2）；P1 十三项中有五项以 Z4 为**条件硬**（5.5 逐字『过 0.4 证据门槛时为硬；否则降软 + 保守界』）为定级依据 → 门槛未过时不满足 MJ-4 的 P0 判据，定 P1 限期整改（RLP-004-AP3 @5985、RLP-005-AP2 @6091、RLP-005-AP3 @6095 直接触发降软分支、RLP-007-AP2 @6302 池内排队无界使 Σ timeout_budget 无法闭合（@6300 description『池饱和后无拒绝策略（无界排队）』、@6302 signal_level 行内注即载此理由；AP3 @6303-6306 另以容量无实测出处定级），另 RLP-002-AP3 @5781 以事务持锁时长联动 Z4 预算为由）；其余八项一律为『母本明文强制但 4.5／5.5 无可直接绑定的硬性质』（Z7 系升级型而非硬性质、Y6 系冲突信号面、5.2.2 的暂时性失败假设系适用前提）或『0.4 证据门槛偏离』（阈值成为无出处数字），逐项理由见各行 signal_level 行内注。**M4 面本批出现四个未登记谓词并已按『不本地扩词汇表』处置**：初稿在 detection_predicate 与 applicability 三空间使用 idempotency_declared／sla_bound／propagation／expiry 四词，predicate_vocabulary.yaml（136 行，词汇量 76）均未登记 → check_m4（project.py @726-751）判为 hard 失败（逐字『未登记谓词（本地造词，禁）：… → 走 R2 提议并登记 vocabulary_gaps』）。扩词汇表属 R2 提案权限，Agent 与工具不自行扩表（0.10 第一条同型纪律）→ 六行改写为已登记词＋半角方括号事实占位（落点行号以 python 逐行实测复核）：@5617 idempotency_declared(consumer) → idempotency(consumer, ·) ∧ declared(·)（DFL 批同型先例，M4＋MJ-12）、@5984／@6029／@6090 sla_bound(path) → [SLA 上界](path)、@6086 propagation → [传播开销]、@6204 expiry(G) → [到期时刻](G)。方括号内内容先被 outside_brackets 剥除、PRED_CALL_RE 只在剥除后的串上取候选 → 改写后不产生未登记候选，且母本 5.5 Z4 的逐字公式形态得以在行内注中原样保留（**sla_bound／propagation 系 Z4 逐字公式词却未入词汇表** → 是否经 R2 正式登记而非长期以方括号占位表达，与 expiry／idempotency_declared 一并归 s5g／s5h 裁决口）。改后复算：**RLP 七条 M4 全过，扫描处数逐条 10/9/9/12/13/12/12、合计 77，词汇量 76 未变，entries 77**。据实记载（精确落点，逐词实测）：四词在 M4 扫描面之外仍按母本逐字形态出现且一律不改写，所在字段为 origin／signal_level／formal_anchor／peer_entry／aggregation_semantics 的行内注与 description、bound_expr、benefit_cost_analysis、constraints_imposed、failure_modes、observability_requires、common_misuse；另有两处虽落在 M4 扫描面之内（@6094 detection_predicate 的 propagation／sla_bound、@6146 applicability.delivery_space 的 expiry），但整体包在半角方括号中、经 outside_brackets 剥除后不产生候选，且系初稿即为该形态而非本批改写落点。逐处清单——idempotency_declared 4 处（@5606／5673／5677／5694）、sla_bound 10 处（@5907／5950／5996／6040／6055／6058／6089／6094／6211／6317）、propagation 2 处（@6040／6094）、expiry 15 处（@5667／5767／5863／5971／6081／6103／6127／6128／6146／6162／6187／6203／6205／6219／6292）；M4 不扫注释与说明字段，块头注释措辞按 0.22 承诺一不改写，精确事实以本简记与 MJ-24 为准。本批另新增方括号 snake_case 占位词 10 个共 28 处（扫描范围＝RLP 七条精确块范围 **@5593-6325**，@6326 为空行、@6327-6333 已属第二节头注释故不计；计数口径＝严格 `[词]` 形态、同词同行多处按次计——[backoff] 与 [jitter] 在 @5980 同行各出现一次并于 @5992 再现；混合短语占位不计入本项词数，如 @5984 的 [retry 最坏时长]／[SLA 上界]、@6029／@6090 的 [SLA 上界]、@6086 的 [传播开销]、@6094 的 [propagation 有实测或过 0.4 门槛的估计]／[sla_bound 有出处]、@6204 的 [到期时刻]／[断路开启时长]／[登记上限]）：[backoff] 3、[bulkhead] 4、[circuit_breaker] 5、[dedup_table] 1、[dedup_window] 1、[fallback] 5、[half_open] 1、[inbox] 3、[jitter] 2、[retry] 3 → 累计未登记词汇候选＝前八批 19 词（MJ-19 (i) 4＋MJ-20 (iii) 7＋MJ-21 (v) 8）＋本批占位 10 词＋本批改写四词中属新候选的 **2 词**（propagation／expiry）＝**31 词**——sla_bound 已在 MJ-19 (i) 四词内、不重复计数，idempotency_declared 经 MJ-12 以 `idempotency(x, ·) ∧ declared(·)` 表达故不入候选（MJ-23 (v) 同型口径），宜合并为独立 R2 词汇批次（s5g）。references 七条一律 2 行、共 14 行、**无空列表**（与 STP 批两条、DFL 批三条的空集情形不同 → G-RLP-1 不以空集为面，而落在**源形态与书目登记面强度**两处，SO-12 承 G-RLP-1.route 六口：① 5.2.3 是否在母本侧改为表格形态以提供 row_id 维度；② 书目 46 登记面的「等」可否据书目 51 行内文确认覆盖「重试」（RLP-004 行级出处成立）与「幂等/收件箱」（RLP-001/002 现仅引 44＋51）；③ @2719 六项／@2730 五项与 @2477 七项的枚举差异处置；④ 书目 46 ISBN 连字符分组差异（978-1-68050-239-8 vs 978-1-680-50239-8）与页数两说（350 vs 376）；⑤ 书目 51 目录内 Idempotent Consumer 条目与「Combine patterns」段不充当 compatibility／references 行级依据之边界确认；⑥ RLP-003 envelope 三族（资源占用归 DFL-001 定义面）是否需在 kind_profile_DFL／kind_profile_RLP 侧补明文剖面）：书目 44×3（RLP-001／002／003；5.7 逐字『→ 5.2.1/5.2.3 消息与协调模式词汇表（跨方面 3/5 的共享源头）』→ 作幂等消费与去重的原始分类面）、书目 46×4（RLP-004／005／006／007；5.7 逐字『→ 5.2.3 断路器、舱壁、超时预算等稳定性模式』，其『等』概括覆盖重试项；本地 resources/se PDF 已内容核验，ISBN 9781680502398 与著录一致，文件名携带的 9781680500387 系第 1 版残留元数据 → 据实登记不改写）、书目 51×7（Azure Cloud design patterns 目录面，2026-10-04 在线复核在位；5.7 逐字『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』→ 51 只作工程参照，**不充当 compatibility／envelope 的母本依据**，本批所有 compatibility 行的 evidence 一律取 clause_id）；compile_usage 一律 metadata_extraction、信任级一律逐字承 5.7 登记面，注册表侧不得改写或降级；书目 44 的本地 EPUB 自述 isbn13 9780133065091 与母本著录 978-0-321-20068-6 的两说仍归 G-DFL-1.route 裁决口④／SO-11，本批不裁决。**M9 面另经数据复算纠正两处缺登**：RLP-007 侧行内注声称与 RLP-004／RLP-005 同批双向登记，而该两侧原未回登 → 各补 1 行（compatibility 30 → 32，补登行 evidence 一律 clause_id 5.2.3），复算同批镜像十对全部双侧登记、缺镜像 0（教训固化：行内注的主张须以数据面复算核验，不可轻信；MJ-22 (vii) 实测优先同型）。补登注释初稿曾误引母本为『舱壁（池/信号量隔离 + 饱和拒绝）』，Read @2477 核对后确认逐字为『舱壁（线程/连接池按消费者隔离，防单点拖垮全局）』→ 两处已修正为母本逐字（纪律固化：任何『母本逐字』引用必须先 Read 母本再落笔）。七条的 aggregation_semantics（在 cost_profile 内）分两制：itemwise ×5（RLP-001／002／003／006／007——各为独立可并存的机制，母本未给跨机制聚合式 → 不本地造法，MJ-19 (iii)／MJ-21 (ix) 同型）、**additive ×2**（RLP-004／005）——RLP-004 的成本随尝试次数累加（Σ 各次尝试耗时 + Σ 退避等待）、RLP-005 的预算沿路径逐级累加（Σ timeout_budget(path)），二者母本明文给出求和语义（5.5 Z4 逐字公式与 5.6 示例一 @2598）→ 取 ENUM_AGG 的 additive 而非 itemwise，判读见 MJ-24。constraints_imposed 七条逐字相同七行（**5.4**『施加约束』表方面 1／3／4／6／8／9／10，表源 @2543-2553：小节标题 @2543、表头 @2545-2546、七行 @2547-2553；系方面二＝协调的 5.x 系列，与前八批所引的 **4.4**『施加约束』表（方面 4 七行 @2251-2257）非同一张表，不得混引，共 49 项，级别分布 hard 42／conditional 7）：方面 1／3／4／6／9／10 一律 hard（禁止性/默认偏离须记录条款，MJ-4 判读），方面 8 一律 **conditional**，逐字为『行为验证要求：事件回放、乱序/重复/丢失注入、补偿路径测试、超时与断路行为测试、（风格允许时）混沌注入』→ 其约束力以风格允许为条件（5.4 施→8 原文的条件形态），既不取 hard 亦不降 soft（ENUM_LEVEL 三值中的第三值首次在本库成批使用，判读见 MJ-24）。typical_reversibility：七条一律 bounded（模式可停用并回退为无该机制的形态、不落权威数据；但已按 at-least-once／幂等约定建成的消费者面、去重表与堆积清理策略、池隔离拓扑属既有事实 → 高于 CSL 类声明性条目的 free，低于 STP-001 存储绑定的 costly）。status 七条一律 seed（C-ST 复核：硬检查全过、kind_profile_RLP.status 非 draft）。profiles.yaml 的 kind_profile_RLP.seed_source 两处占位符（table_rows／entry_id_range）于本批填实，其中 table_rows 据实填为非表格陈述的实情。重验证义务与差异三分类见 0.17.6(3)；bootstrap 通道终止后本迁移关闭（0.17.6(4)）。"
 
 # ---------------------------------------------------------------------------
 # 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）
@@ -6046,6 +6875,28 @@ waivers:
       anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（其余 9 个 kind：RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前七项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前七项累计覆盖 **70** 条 seed 条目（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8＋CTR 12＋STP 4＋DFL 5），八项**独立生效、独立闭合、互不援引**；同名性质（Z2 于 CRD／DFL 两批、Y1 于 OWN／DEC／CTR／STP／DFL 五批、Y2 于 OWN／STP／DFL 三批）在不同批次的引用面各自计息，不合并豁免。本项亦不预设四个未决事项的结果：E3 的守护规则条目仍未建立、级别未定；母本 4.5／5.5 公式侧 **7 词**缺口（MJ-22 (vi)，本批涉及其中 has_approved／provider 2 词）与既有 **19 词**的 R2 登记仍须走完整 ADR＋批准（本项不授权任何批次本地扩词，词表与词数由该批次核定；登记将触发相关 detection_predicate 的 signal_level 由 P1 改级 P0，属守护规则改级，按 0.14＋SO-2／G-STY-4）；G-DFL-1.route 与 SO-11（4.2.4 行级书目面可否下探，含书目 44 本地 EPUB isbn13 与母本 @2750 著录形态不一致的处置）仍待人工裁决，本项不代替该裁决、不使 DFL-003／DFL-004／DFL-005 的 references 空集自动合法化——其现时合法性出处为 2.3＋0.17.7 门槛 6＋M2/M6 平凡满足（**非豁免**，unknown ≠ false，0.18.6 M15）；两条 tension（DFL-002／DFL-003 → STY-014）是否升 hard_conflict、DFL-001↔RLP 的对由 RLP 批下游侧承载、以及全库 `@行号` 与 basis 出处的一致性核验仍待人工裁决（remediation_plan (e)；MJ-23 (vii)／(x)）。"
     status: active             # SM-WV：pending → active（2026-10-04 人类裁决批准生效，豁免期内）；闭合条件见 remediation_plan (3)；DFL 五条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
 
+  - waiver_id: WV-RLP-E3-01
+    rule: "E3（母本 @4009）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"   # 行号实测校正承 WV-STP-E3-01／WV-DFL-E3-01：前七项登记为「@4008」，而实测 @4008 为 E2（同源生成）、E3 在 @4009；偏一成因与「不改写已批准登记」的处置见 MJ-22 (vii)。本项按实测行号登记
+    violation_fact: "RLP 批 7 条条目（RLP-001…RLP-007；5.2.3 可靠性模式 @2477 的行内加粗清单七项＝幂等／收件箱（inbox）／发件箱（outbox）／重试 + 指数退避 + 抖动／超时预算／断路器／舱壁，清单序见 ST-RLP-01 note）经 ST-RLP-01 迁移为 seed（人工种子通道，0.17.6(1)），其 formal_anchor 引用的硬性质（3.5 的 X1 无未登记跨单元交互；4.5 的 Y1 单一所有者或已批准共享写例外；5.5 的 Z1 显式建模＋契约在册、Z2 投递语义与幂等必答、Z3 长流程每步有出路）与条件硬性质（5.5 的 Z4 超时预算闭合）尚无 FVR 条目与检查程序接线：本目录的 scripts/project.py 只做注册表静态自检（M2/M3/M4/M6/M9 + C 系列），不是 FVR 运行器，也不产生 first_full_run 证据 → 『引用 seed 条目的性质』不满足 E3 的 wired ∧ first_full_run has evidence。合法性出处：0.17.6(2)（母本明文规定 seed 期本项按 Waiver 机制登记限期豁免）。本项系 WV-STY-E3-01 防扩宽条款 (ii) 要求的**单独申请**（同通道，五要素齐备＋批准），不沿用前八项、不自动生效。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 RLP-001…RLP-007 七条的 formal_anchor 所引用的性质实例，共 **硬性质 5 项 8 个实例**＋**条件硬 1 项 4 个实例**（脚本逐条统计 property_id×role，非凭记忆）——硬：Z2 投递语义与幂等必答（RLP-001／RLP-002／RLP-003 implements，3 个）、X1 无未登记跨单元交互（RLP-001／RLP-003 consumed_by，2 个）、Z1 显式建模＋契约在册（RLP-007 consumed_by，1 个）、Z3 长流程每步有出路（RLP-004 consumed_by，1 个）、Y1 单一所有者或已批准共享写例外（RLP-002 consumed_by，1 个）；条件硬：Z4 超时预算闭合（RLP-005 implements，RLP-004／RLP-006／RLP-007 consumed_by，4 个）——按 WV-CRD-E3-01 已裁定的先例把条件硬一并纳入本项 scope，**级别最终由 Z4 的证据门槛判定而非本 Waiver 预设**（母本 @2583-2585 明文『SLA 上界与传播开销估计过 0.4 证据门槛时为硬；否则降软 + 保守界：超时取注册表保守默认，可推翻指标 = 实测传播延迟』）。级别依据＝母本各性质行明文标注（python 行序实测：X1 @2009『无未登记跨单元交互 —— 硬』、Y1 @2279-2280『单一所有者（W4 执行域；例外须批准+退出计划）—— 硬』、Z1 @2575-2576『显式建模 + 契约在册（承接方面2/3）—— 硬』、Z2 @2577-2578『投递语义与幂等必答 —— 硬』、Z3 @2579-2582『长流程每步有出路 —— 硬』、Z4 @2583-2585『超时预算闭合 —— 条件硬』）。**明列排除 8 个实例**：Z5 调用链深度上限（RLP-005 consumed_by，1 个；@2586-2587 明定『软（P2 漂移信号，越阈+趋势才告警）』）与 Z7 质量预算校验（七条各 consumed_by，7 个；@2590-2591 明定『升级型（失败汇入 0.15 升级路径，同 V4）』；挂钩依据＝5.2.5 @2499『方面 6 以卡片做**行为级包络校验**（Z7）——行为模式不豁免质量预算』）——E3 只约束 property(hard)，软性质与升级型性质不产生 E3 义务，故不计入豁免面（承 WV-STP-E3-01／WV-DFL-E3-01 已写明的口径）；二者日后若经母本修订升硬，属新的事实面，须另申请（防扩宽条款 (i)/(ii)），不静默扩宽。七条 formal_anchor 实例合计 **20** 个（逐条 3/3/3/3/3/2/3）＝本项覆盖的 12 个（硬 8＋条件硬 4）＋明列排除的 8 个（软 1＋升级型 7）。**不登记于 formal_anchor 因而不构成本项豁免面的性质**：Z6 行为级开关治理闭合（5.2.3 未把开关治理挂到可靠性模式；断路器的长期开启面由 RLP-006-AP4 的 P2 判据承担而不挂 Z6）、Z8 协调者可恢复、X2–X7、Y2–Y8、W／V 系列（5.2.3 无明文挂钩，按「不下探」纪律不扩张）。**不在本项 scope 内**：不含 active 条目、不含 STY 批（WV-STY-E3-01 承担）、不含 OWN 批（WV-OWN-E3-01 承担）、不含 CSL 批（WV-CSL-E3-01 承担）、不含 CRD 批（WV-CRD-E3-01 承担）、不含 DEC 批（WV-DEC-E3-01 承担）、不含 CTR 批（WV-CTR-E3-01 承担）、不含 STP 批（WV-STP-E3-01 承担）、不含 DFL 批（WV-DFL-E3-01 承担）、不含其余 8 个 kind 批次（SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV，各批另单独申请）、不含 E3 以外的编译规范性质（E1/E2/E4 不在本 Waiver 范围）。口径注：前八项 scope 均为其各自批准时点（2026-09-18 seed 仅 STY 24 条；2026-09-22 为＋OWN 28 条；2026-09-23 为＋CSL 33 条；2026-09-24 为＋CRD 41 条；2026-09-26 为＋DEC 49 条；2026-09-27 为＋CTR 61 条；2026-09-28 为＋STP 65 条；2026-09-28 为＋DFL 70 条，该项申请登记日 2026-09-28、人类裁决日 2026-10-04）的口径，按防扩宽条款 (ii) 不随本批外延至 RLP 七条；RLP 七条的豁免范围由本项独立承担，九项 scope 互不重叠。**专项口径**（全库实测计数；本项只覆盖 RLP 侧实例，既有引用面由各自批次的 Waiver 承担，不互相援引、不重复计息）：X1 全库 **15** 实例（CRD consumed_by 3＋CTR consumed_by 3/implements 4＋DEC consumed_by 3＋本项 RLP consumed_by 2）；Y1 全库 **10** 实例（OWN 3＋DEC 1＋CTR 1＋STP 3＋DFL implements 1＋本项 RLP consumed_by 1）；Z1 全库 **7** 实例（CRD implements 4＋DEC 1＋CTR 1＋本项 RLP 1）；Z2 全库 **8** 实例（CRD implements 2＋DFL 3＋本项 RLP implements 3）；Z3 全库 **6** 实例（CRD implements 4＋CSL 1＋本项 RLP 1）；Z4 全库 **7** 实例（CRD consumed_by 3＋本项 RLP implements 1/consumed_by 3，两批均按条件硬纳入各自 scope）。**Z5／Z7 专项口径据实记载**：Z5 全库 **3** 实例（CRD 2＋本项 RLP 1，两批均明列排除、从未被任何 Waiver 承担）；Z7 全库 **15** 实例（CRD consumed_by 8＋本项 RLP consumed_by 7，两批均明列排除、从未被任何 Waiver 承担）——此非遗漏，而系软性质与升级型性质不产生 E3 义务（WV-STP-E3-01 的 scope 已首次把该口径写明），本项延续该口径并把 Z5 1 实例与 Z7 7 实例一并明列排除，以免后续批次误读为『前批已覆盖』。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径同前八项：(1) project.py 自检全过（本批，见 ST-RLP-01 evidence）→ (2) 编译器对 seed 条目执行『人工条目 vs 编译条目』重验证，差异按 0.17.6(3) 三分类处置 → (3) 建立 FVR 条目并为 X1／Y1／Z1／Z2／Z3／Z4 接线，首次全量运行留证（E3 的 first_full_run has evidence）→ (4) 逐条 seed→active（diff 为空 = 低影响简记；diff 非空按三分类分别定级）。本 Waiver 在 (3) 完成时闭合。本批特有前置：(a) **接线所依赖的母本公式词面存在未登记词，须先经 R2 词汇批次核定**——实测（脚本比对 predicate_vocabulary.yaml 三节共 **76** 个已登记名：predicates 59＋formula_words 7＋clause_defined_predicates 10；判词形态按 PRED_CALL_RE @221 的调用式，即 `name(` 起始）：Z2 公式（@2577）所用 declared（formula_words @97）、delivery_semantics（predicates @64）、idempotency（@65）三词均已登记，惟 `idempotency_declared(consumer)` 系复合形态、MJ-12 已裁定以 `idempotency(x, ·) ∧ declared(·)` 表达、不本地造词 → **Z2 可先行接线**；Z3 公式（@2579-2582）所用 step_class、compensation 均已登记（5.5），compensable／retriable／pivot 系 step_class 的枚举取值而非谓词，pivot_ordering_valid 为裸词（非调用式）→ **调用式零缺词，Z3 可接线**；Z4 公式（@2583）所用 timeout_budget 已登记（5.5），惟缺 `sla_bound`、且 `propagation` 为裸词 → **阻于 sla_bound**；X1 公式（@2009）缺 `covers`／`interaction`，Z1 公式（@2575）缺 `covers`／`explicitly_modeled`（inter_unit_interaction 系量词域名）→ **二者同阻于 covers**；Y1 公式（@2279）所用 owner（@47）、shared_write_exception 均已登记，惟缺 `has_approved`（已登记形态为 has_approved_exception/3 @31）→ **阻于 has_approved**，该词已计入 WV-STP-E3-01 所记母本 4.5 公式侧 **7 词**缺口（MJ-22 (vi)），本项不重复计数、不另立新面。本批 detection_predicate 与 applicability 三空间剥方括号后的调用词**全部已登记 → 本批 M4 面零新增未登记候选**（初稿曾用 idempotency_declared／sla_bound／propagation／expiry 四词致 4 处 hard 失败，已按『不本地扩词汇表』改写六行，扫描处数复算逐条 10/9/9/12/13/12/12 合计 77 全过，见 ST-RLP-01 note）。另据实记载：本批新增半角方括号 snake_case 占位词 **10** 个共 **28** 处（backoff 3／bulkhead 4／circuit_breaker 5／dedup_table 1／dedup_window 1／fallback 5／half_open 1／inbox 3／jitter 2／retry 3；被 outside_brackets @208 剔除故不构成 M4 违例，属未登记词汇候选）→ 累计未登记词汇候选＝前八批 **19** 词（MJ-19 (i) 4＋MJ-20 (iii) 7＋MJ-21 (v) 8）＋本批占位 **10** 词＋本批改写四词中属新候选的 **2** 词（propagation／expiry）＝**31** 词——sla_bound 已在 MJ-19 (i) 四词内、不重复计数，idempotency_declared 经 MJ-12 以复合式表达故不入候选（MJ-23 (v) 同型口径）；宜与母本 4.5／5.5 公式侧 7 词缺口合并为独立 R2 词汇批次（s5g）一并裁决，本批不扩词、不以本 Waiver 的批准为前提，词表与词数由该批次核定，本项不预设。故 (3) 的接线在词汇补齐前只对 Z2／Z3 可行，X1／Z1／Y1／Z4 无法求值。(b) **接线面共享、豁免面各自计息**——E3 要求 ∃ fvr_entry（一个性质一个条目），不按批次重复建条目：Z2 与 CRD（implements 2）／DFL（3）共用，本项 RLP implements 3 指向同一性质；Z1 与 CRD（implements 4）／DEC（1）／CTR（1）共用；X1 与 CRD（3）／CTR（7）／DEC（3）共用；Z3 与 CRD（implements 4）／CSL（1）共用；Z4 与 CRD（consumed_by 3）共用；Y1 与 OWN（3）／DEC（1）／CTR（1）／STP（3）／DFL（implements 1）共用。且各性质的判定面不因批次而扩宽：Z2 的判定面是**异步交互的投递语义**（5.2.3 @2479 逐字『每条异步交互显式声明 at-most-once / at-least-once / exactly-once（后者仅指**有效恰好一次**——幂等消费达成的效果等价，非中间件魔法）；未声明 = Z2 违例』），Z3 的判定面是 **saga 步骤三分类**（5.2.2 @2473 逐字『分类不明 = Z3 违例 = 阻塞』），Z4 的判定面是**路径级超时预算分配**（@2477 超时预算项逐字『下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4』）→ 不得把 RLP 侧的反例判据挂到判定面之外的性质上。(c) **Z4 的条件硬门槛不构成分期豁免**——4 个实例全数在豁免面内待接线；若 0.4 证据门槛未过而降软（保守界：超时取注册表保守默认，可推翻指标 = 实测传播延迟），属母本级别判定的事实面变化，本项不预设其结果、亦不据以缩减或延后豁免面（承 WV-CRD-E3-01 先例）；本批 5 条 P1 判据以该条件硬为定级依据（RLP-004-AP3／RLP-005-AP2／RLP-005-AP3／RLP-007-AP3／RLP-002-AP3），门槛过后其 signal_level 是否改级属守护规则改级，按 0.14＋SO-2／G-STY-4 另走批准，不由本 Waiver 预设。(d) **references 面无空集且不阻塞接线**——七条 references 各 2 行、合计 **14** 行（书目 44×3＝RLP-001／002／003、46×4＝RLP-004／005／006／007、51×7），compile_usage 一律 metadata_extraction、信任级一律逐字承 5.7 登记面；G-RLP-1／SO-12 的六个裁决口（5.2.3 是否改为表格形态以提供 row_id 维度、书目 46 的「等」可否据书目 51 行内文确认覆盖重试与幂等/收件箱、@2719 六项与 @2730 五项对 @2477 七项的枚举差异、书目 46 的 ISBN 连字符分组差异与页数两说、书目 51 目录面不充当 compatibility／references 行级依据之边界、RLP-003 envelope 三族是否需在剖面侧补明文）与 E3 的性质接线**相互独立**，其裁决结果不增减本项豁免面。(e) **compatibility 面不因批准而闭合**——**32** 行（composable 30／requires 2／tension 0／hard_conflict 0；逐条 5/4/4/6/5/4/4）：requires 两行＝**RLP-003 → DFL-001**（兑现 WV-DFL-E3-01 的 remediation_plan (e) 与 ruling 明记的『DFL-001↔RLP 的对不登记…由 RLP 批的下游侧承载』；主指令裁定『定义面归 DFL、行为面归 RLP』，5.2.3 @2477 发件箱项逐字『生产侧，4.2.4 已定义，行为面消费其投递语义』，镜像由本侧单向承载）与 **RLP-004 → RLP-001**（5.2.2 @2473 retriable 逐字『幂等 + 暂时性失败假设成立』→ 幂等是重试的明文前提）；ENUM_RELATION = {hard_conflict, tension, composable, requires} **无 required_by** → RLP-001 → RLP-004 记 composable 而反向记 requires，累计第三例方向不对称（是否补 required_by 归 s5h）；同批镜像 **10** 对全部双侧登记（M9 缺 0；其中 RLP-004／RLP-005 → RLP-007 两处系本批数据复算纠正的缺登）；跨 kind 单向 **12** 行（目标 CRD-003×4、STY-003×3、CRD-005×2、DFL-001×2、CRD-008×1），其对侧一律为已发布批次 → 按 MJ-5／MJ-21 (viii) 与 0.22 承诺一不回填镜像；本批未登记 tension／hard_conflict（5.2.3 与 1.2.5 硬冲突清单均未给出可靠性模式之间的冲突对 → 按 MJ-9 不升不造）；`pending_conflict_rows.open_rows` 保持空集。"
+    risk_quantification: "触及面：7 条 × formal_anchor 引用的性质，共 6 项 12 个实例（硬 5 项 8 个：Z2 3、X1 2、Z1 1、Z3 1、Y1 1；条件硬 1 项 4 个：Z4）。利息形态：性质违例的检出时机从『运行时/编译期自动检出』退化为『评审期人工核验』，检出延迟 = 一个决策周期；漏检后果按性质分级——**Z2 漏检**（3 实例，RLP-001／002／003 implements）＝投递语义未声明、或以中间件 exactly-once 配置替代声明（RLP-001-AP1／RLP-003-AP2，P0），而 5.2.3 @2479 明文『exactly-once 仅指**有效恰好一次**——幂等消费达成的效果等价，非中间件魔法』→ 终局是**重复投递在无幂等消费侧静默放大**：发件箱中继与收件箱去重均为至少一次语义下的补偿机制，机制缺位时重复事件直接进入下游状态而无可观测信号；且收件箱表与业务写跨事务却声称有效恰好一次（RLP-002-AP1，P0）会使去重判定失效于崩溃窗口。**X1 漏检**（2 实例，RLP-001／RLP-003 consumed_by）＝去重表与发件箱表成为未登记的跨单元交互面 → 事实接口绕过契约册（X1 @2009『无未登记跨单元交互』），中继进程对表的读写未经所有者与契约登记即成为跨单元依赖。**Z1 漏检**（1 实例，RLP-007 consumed_by）＝舱壁的池划分未显式建模且契约不在册 → 隔离面不成立（RLP-007-AP1，P0：以逻辑命名区分消费者而物理共享同一线程/连接池），单点故障经共享池拖垮全局，与 @2477 舱壁项逐字『线程/连接池按消费者隔离，防单点拖垮全局』直接相反。**Z3 漏检**（1 实例，RLP-004 consumed_by）＝对未声明幂等的操作或关键步（pivot）重试（RLP-004-AP1，P0）→ 补偿失效与终局操作重复执行；5.2.2 @2473 明文『分类不明 = Z3 违例 = 阻塞』，漏检即该阻塞闸门失去可验证内容。**Y1 漏检**（1 实例，RLP-002 consumed_by）＝收件箱表被当作权威状态源 → 同一数据集合出现多所有者，与 Y1 @2279『|{M : owner(D, M)}| = 1 ∨ has_approved(shared_write_exception(D))』直接冲突；该面与 DFL-005 的 Y1 implements（派生物不是所有者）互为上下游，漏检使方面 4／5 的两个 kind 同时失守。**Z4 漏检**（4 实例，条件硬）＝Σ timeout_budget(path) > sla_bound(path)（RLP-005-AP2，P1）或下游超时 ≥ 上游超时 − 传播开销（RLP-005-AP1，P0）→ 级联超时与预算不闭合：上游先行超时使下游工作成为无人接收的孤儿，最坏重试时长未纳入上游预算（RLP-004-AP3，P1）与池内排队无界（RLP-007-AP2／AP3，P1）均使 Σ 无法闭合；门槛未过则降软＋保守界，其漏检形态为『以便利常数充当传播开销与 SLA 上界』（RLP-005-AP3，P1，直接触发降软分支）。缓解：(i) 0.17.5 强制 ADR 附注『依据种子条目，待重验证』；(ii) 本批 **32** 条 anti_patterns 的 P0／P1／P2 信号级判读带 3.5／4.5／5.5 性质指针与 MJ-4 判据留痕，可逐条人工复核（实测 P0 **11**／P1 **13**／P2 **8**；逐条 4/4/4/5/5/5/5；其中 5 条 P1 以 Z4 条件硬为定级依据，见 remediation_plan (c)）；(iii) compatibility 面按 MJ-9 只登记母本有明文依据的对（32 行；requires 2 行分别有 @2477 与 @2473 明文），无明文依据者不静默造规范；(iv) project.py 的 M9／C-ST／C-ENV／M2／M3／M4／M6 静态自检覆盖 peer 存在性、状态资格、RLP 剖面 envelope 非空义务（kind_profile_RLP.entry_level_exemptions 为空集 @326 → 七条一律非空；实测 **27** 项 bound_expr 全为关系式，逐条 4/4/3/4/4/4/4，M3 全过）、pattern_id 与 target_aspect 形态、谓词词汇封闭（本批 M4 面零新增候选）、references 分级七项可机器判定面（**14** 行无空集，M2／M6 非平凡满足）；(v) 累计口径——本项与前八项合计覆盖 **77** 条 seed 条目（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8＋CTR 12＋STP 4＋DFL 5＋RLP 7），九项 scope 互不重叠，豁免面按批次逐项登记，不合并、不互相援引。"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经 WV-OWN-E3-01、WV-CSL-E3-01、WV-CRD-E3-01、WV-DEC-E3-01、WV-CTR-E3-01、WV-STP-E3-01、WV-DFL-E3-01 复用的边界结论（0.17.6(2) 属母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免），本项不另启同一争点的重复裁决；按防扩宽条款 (i)，本项仅援引该结论适用于母本明文通道场合，不将其扩张为一般先例。"
+      status: pending        # 登记即申请（2026-10-05）；批准是人的裁决，Agent 与工具不自行批准——0.10 第一条 / 1.1 纪律二；五要素已于同日正文消息逐项呈报待裁决
+      approved_by: null
+      approved_date: null
+      ruling: null
+      anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（其余 8 个 kind：SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前八项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前八项累计覆盖 **77** 条 seed 条目（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8＋CTR 12＋STP 4＋DFL 5＋RLP 7），九项**独立生效、独立闭合、互不援引**；同名性质（Z2 于 CRD／DFL／RLP 三批、Z4 于 CRD／RLP 两批、X1 于 CRD／CTR／DEC／RLP 四批、Y1 于 OWN／DEC／CTR／STP／DFL／RLP 六批、Z1 于 CRD／DEC／CTR／RLP 四批、Z3 于 CRD／CSL／RLP 三批）在不同批次的引用面各自计息，不合并豁免。**本项亦不预设五个未决事项的结果**：(1) E3 的守护规则条目仍未建立、级别未定；(2) 母本 4.5／5.5 公式侧 **7 词**缺口（MJ-22 (vi)，本批涉及其中 has_approved 1 词）与累计 **31 词**未登记词汇候选（前八批 19＋本批方括号占位 10＋本批改写四词中属新候选的 propagation／expiry 2）的 R2 登记仍须走完整 ADR＋批准（本项不授权任何批次本地扩词，词表与词数由该批次核定；登记将触发相关 detection_predicate 的 signal_level 由 P1 改级 P0，属守护规则改级，按 0.14＋SO-2／G-STY-4）；(3) **Z4 的条件硬门槛不由本项判定**——4 个实例全数在豁免面内，若 0.4 证据门槛未过而降软属母本级别判定的事实面变化，本项不预设其结果、不据以缩减豁免面，本批 5 条以 Z4 为据的 P1 判据是否改级另走批准；(4) G-RLP-1.route 与 SO-12 的六个裁决口（含 5.2.3 是否改为表格形态以提供 row_id 维度、@2719 六项／@2730 五项与 @2477 七项的枚举差异、书目 46 的 ISBN 分组与页数两说）仍待人工裁决，本项不代替该裁决、不使 kind_profile_RLP.seed_source.table_rows 的『覆盖宣称不可机器判定』info 自动闭合；(5) ENUM_RELATION 无 required_by 致 RLP-001↔RLP-004 的方向不对称（累计第三例）是否补词、以及全库 `@行号` 与 basis 出处的一致性核验仍归 s5h——本项 rule 按 ripgrep 实测登记为『E3（母本 @4009）』，而前七项 rule 内均作『@4008』（实测 @4008 为 E2），按 0.22 承诺一**不改写已批准登记**，本项不授权批量回填、亦不视该差异为无害而静默略过。"
+    status: pending            # SM-WV：登记即申请（2026-10-05），待人工裁决；闭合条件见 remediation_plan (3)；RLP 七条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查），故批准延迟不阻断本批入库
+
 # ---------------------------------------------------------------------------
 # 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
 #     禁止留默认值假充来源。此处集中登记判读规则，条目行内只引 MJ 编号。）
@@ -6212,6 +7063,13 @@ manual_judgments:
     affected: "DFL-001…DFL-005 的 name／applicability 三空间／envelope 的 20 项 bound_expr／cost_profile.latency_budget_delta（五条一律填实）与 aggregation_semantics（itemwise ×5）／typical_reversibility（bounded ×5）／compatibility（10 行：composable 8、tension 2、requires 0、hard_conflict 0；DFL-004 空集）／constraints_imposed（35 项，hard 20／soft 15）／anti_patterns 的 22 条 signal_level（P0 11／P1 5／P2 6）／formal_anchor（12 实例：Z2 3、Y2 2、Y1 1、Y4 5、Y7 1）／references（DFL-001 引书目 42、DFL-002 引书目 43、DFL-003／004／005 空集）；G-DFL-1／SO-11／ST-DFL-01.note（本条 (iv)(v) 为其精确事实出处）／WV-DFL-E3-01.scope（硬性质面 3 项 6 实例；Y4 5＋Y7 1 明列排除）；profiles.yaml 的 kind_profile_DFL.seed_source 两占位符（table_rows／entry_id_range）"
     provenance: manual
 
+  - id: MJ-24
+    subject: RLP 批十四项判读——非表格清单源不含 row_id、书目 46『等』的概括覆盖与书目 51 目录面的边界、@2477 七项与 @2719 六项／@2730 五项的枚举差异、DFL-001↔RLP-003 的定义面／行为面分工兑现、formal_anchor 20 实例与 Waiver scope、M4 四词六行改写、M9 镜像补登与关系不对称第三例、RLP-005 的上界分配形态、aggregation additive×2、方面 8 conditional 首次成批使用（表源 5.4 非 4.4）、累计 31 词去重口径、书目 46 的 ISBN 与页数两说、32 条 signal_level 定级、本批四处自我纠错的实测教训
+    judgment: "(i) **源为非表格陈述 → provenance 一律不含 row_id**：5.2.3（heading @2475）的注册表条目清单在 @2477 以『注册表条目（每条带质量影响卡片）：』引导、分号分隔七项，无 4.2.2／4.2.4／3.2.1 类的表格行列结构 → 七条 provenance 只有 clause_id 与 bib_id 两型（source_pointers 共 77 处＝clause_id 63＋bib_id 14，逐条 12/11/10/11/11/11/11），不虚构 row_id（0.4 禁假精确；MJ-21 (ii) 同型：row_id 型只在表源批次出现）；分块序即清单序（幂等／收件箱（inbox）／发件箱（outbox）／重试 + 指数退避 + 抖动／超时预算／断路器／舱壁 → RLP-001…RLP-007），name 取各项引导词逐字、去粗体标记（MJ-13 (iv)／MJ-20 (i)／MJ-21 (iii) 同型：RLP-004 原形即含两个加号、RLP-002／003 原形含全角括号与拉丁名 → 一律原形登记，不改写为顿号或斜杠）。是否在母本侧改为表格形态以提供 row_id 维度属母本改动（R2／ADR 面）→ 登记 G-RLP-1.route ①，本批不预判。(ii) **书目 46 的『等』概括覆盖重试项；书目 51 目录面不充当母本依据**：5.7 书目 46（@2752）登记面逐字为『→ 5.2.3 断路器、舱壁、超时预算等稳定性模式』，其『等』为概括词 → RLP-004（重试）以书目 46 为工程参照属登记面覆盖内（书目 51 的登记面逐字即把『Retry/Circuit Breaker/Bulkhead 的机制内容』指向书目 46《Release It!》第 2 版为提取锚点），不属下探；而 RLP-001／002（幂等／收件箱）不在该『等』的可确认范围内 → 二者只引书目 44（@2750『→ 5.2.1/5.2.3 消息与协调模式词汇表（跨方面 3/5 的共享源头）』→ 作幂等消费与去重的原始分类面）＋书目 51。书目 51（Azure Cloud design patterns 目录面，2026-10-04 在线复核在位）→ **只作工程参照**，其目录内 Idempotent Consumer 条目与「Combine patterns」段不充当 compatibility／envelope／references 的行级母本依据（本批所有 compatibility 行的 evidence 一律取 clause_id）；该边界可否进一步收紧列 G-RLP-1.route ⑤。compile_usage 一律 metadata_extraction、信任级一律逐字承 5.7 登记面，注册表侧不得改写或降级。(iii) **@2477 七项 vs @2719 六项 vs @2730 五项的枚举差异 → 以 @2477 为准、不本地合并**：5.6 示例七的形式化注释在 @2719 列六项『5.2.3 可靠性模式（幂等/inbox/outbox/超时预算/断路器/舱壁）』（重试未列）、在 @2730 列五项『可靠性模式={幂等+inbox/outbox(Z2), Z4 逐级分配, 断路器, 舱壁}』（幂等与 inbox/outbox 并为两项、重试仍未列），而 @2477 为七项 → 三处枚举不同系母本自身在不同叙述层的简写形态，非注册表可裁决的差异；本批一律以 @2477 的七项为条目面（编号与 name 的权威源），@2719／@2730 只作 formal_anchor 与 compatibility 的佐证面，不据其增减条目（编号永不复用／重排，0.22 承诺一）；差异本身登记 G-RLP-1.route ③ 留人工裁决。示例七的两处逐字引用（『超时预算按 Z4 逐级分配（下游超时 < 上游超时 − 实测传播开销）』『断路器＋舱壁限制故障扩散』）经 python 复核确在 @2710；@2732 另载『Z4 实测传播开销→P99≤800ms 闭合（合同界 1s, 过 0.4）』系该示例的现状测量值 → 按 MJ-23 (viii) 同型边界，不写入任何条目的 bound_expr 或 latency_budget_delta。(iv) **DFL-001 ↔ RLP-003 的定义面／行为面分工在本批兑现**：主指令裁定『定义面归 DFL、行为面归 RLP』→ DFL-001 承载 4.2.4 的机制定义与『性能：资源占用』族界形（发件箱表深度与中继堆积占用），RLP-003 只承载 @2477『生产侧，4.2.4 已定义，行为面消费其投递语义』与 @2479 的投递语义登记纪律面；数据面表现为 **RLP-003 → DFL-001 单向 requires**（DFL-001 属已发布条目 → 不回填镜像，MJ-5／MJ-17 (iii)／MJ-23 (vii) 同型），且 **RLP-003 的 envelope 只 3 族**（27 项逐条 4/4/3/4/4/4/4 中的那个 3）→ 避免同一界形在两侧双重计数（M3 与 0.4 同向）。该三族剖面是否需在 kind_profile_DFL／kind_profile_RLP 侧补明文，列 G-RLP-1.route ⑥。(v) **formal_anchor 20 实例与 WV-RLP-E3-01 的 scope 口径**：七条共 20 实例（逐条 3/3/3/3/3/2/3），引用 Z1／Z2／Z3／Z4／Z5／X1／Y1／Z7 八项性质。scope 只及**硬性质面 5 项 8 实例**（Z2 implements 3、X1 consumed_by 2、Z1／Z3／Y1 consumed_by 各 1）＋**Z4 条件硬 4 实例**（RLP-005 implements 1＋RLP-004／006／007 consumed_by 3；承 WV-CRD-E3-01 把条件硬纳入 scope 的先例，MJ-21 (iv) 同型口径），**明列排除** Z5 软 1 实例（RLP-005 consumed_by）与 Z7 升级型 7 实例（七条各一——Z7 系升级型而非硬性质，其级别面与 W3／X3 同归 s5h 证据门槛裁决口）。E3 守护规则条目尚未建立（既有裁决口）→ 该 Waiver 与前八项同型逐批单独申请，不沿用、不自动生效（WV-STY-E3-01 防扩宽条款 (ii)）；批准状态 pending 不阻断本迁移（C-ST 只查硬检查，seed 资格不以 Waiver 为前提）。(vi) **M4 四词六行改写：不本地扩词汇表**：初稿在 detection_predicate 与 applicability 三空间使用 idempotency_declared／sla_bound／propagation／expiry 四词，predicate_vocabulary.yaml（136 行、已登记 76 名＝predicates 59＋formula_words 7＋clause_defined_predicates 10）均未登记 → check_m4（project.py @726-751）判 hard 失败（逐字『未登记谓词（本地造词，禁）：… → 走 R2 提议并登记 vocabulary_gaps』）。扩词属 R2 提案权限，Agent 与工具不自行扩表（0.10 第一条／1.1 纪律二同型）→ 六行改写为已登记词＋半角方括号事实占位，落点经 python 逐行实测复核为 **@5617**（idempotency_declared(consumer) → idempotency(consumer, ·) ∧ declared(·)，DFL 批同型先例＋MJ-12）、**@5984／@6029／@6090**（sla_bound(path) → [SLA 上界](path)）、**@6086**（propagation → [传播开销]）、**@6204**（expiry(G) → [到期时刻](G)）；改后 RLP 七条 M4 全过（扫描处数逐条 10/9/9/12/13/12/12、合计 77），词汇量 76 未变，entries 77。方括号内文先被 outside_brackets（@208）剥除、PRED_CALL_RE（@221）只在剥除后的串上取候选 → 母本 5.5 Z4 的逐字公式形态得以在行内注中原样保留。**据实记载两处判读边界**：（a）四词中 sla_bound 与 propagation 系 5.5 Z4 公式（@2583-2585）的逐字词却未入 clause_defined_predicates → 其性质与 MJ-19 (i)／MJ-20 (iii)／MJ-21 (v) 的公式内词同型（R2 可提议候选），是否长期以方括号占位表达归 s5g；（b）@6094（detection_predicate 的 propagation／sla_bound）与 @6146（applicability.delivery_space 的 expiry）两处虽落在 M4 扫描面之内，但整体包在半角方括号中、剥除后不产生候选，且系初稿即为该形态而非本批改写落点 → 不改写。(vii) **M9 镜像补登两处与关系不对称累计第三例**：数据复算发现 RLP-007 侧行内注声称与 RLP-004／RLP-005 同批双向登记而该两侧原未回登 → 各补 1 行（compatibility 30 → 32，补登行 evidence 一律 clause_id 5.2.3），复算同批镜像十对全部双侧登记、缺镜像 0；教训固化＝行内注的主张须以数据面复算核验，不可轻信（MJ-22 (vii) 实测优先同型）。**ENUM_RELATION 无 required_by 造成的不对称累计第三例**：本批 RLP-001 → RLP-004 为 composable 而 RLP-004 → RLP-001 为 requires（同批两侧同现，语义为『重试须以幂等为前提』而『幂等不须重试』）→ 前两例为 STP 批两条 requires 与 DEC-007→STY-016；是否补 required_by 值归 s5h，本批不自行扩枚举。补登注释初稿曾误引母本为『舱壁（池/信号量隔离 + 饱和拒绝）』，Read @2477 核对后确认逐字为『舱壁（线程/连接池按消费者隔离，防单点拖垮全局）』→ 两处已修正为母本逐字（纪律固化：任何『母本逐字』引用必须先 Read 母本再落笔）。(viii) **RLP-005 的 latency_budget_delta 取上界分配形态**：kind_profile_RLP 未作 kind_profile_STP 同型的『不降级为选填』明文要求 → 七条据实按 @2477 各项的明文界形填写（界形＋符号＋单调性，不填无出处数字，0.4；理由不平移 STP 措辞，MJ-23 (iii) 同型纪律：剖面未声明者不得以他 kind 的剖面措辞充当依据）。RLP-005 特殊——超时值本身构成路径延迟的**上界分配**而非附加开销（超时机制自身的判定开销可忽略）→ 其 Δlatency 以预算约束形态 Σ timeout_budget(path) ≤ [SLA 上界](path)（5.5 Z4 @2583-2585）表达，而非纯增量形态；源＝@2477 逐字『路径级联超时的预算分配：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界』。(ix) **aggregation_semantics 出现 additive×2（本库首次）**：itemwise ×5（RLP-001／002／003／006／007——各为独立可并存的机制，母本未给跨机制聚合式 → 不本地造法，MJ-19 (iii)／MJ-21 (ix) 同型）；**additive ×2**（RLP-004／005）依据为母本明文给出的求和语义——RLP-004 的成本随尝试次数累加（Σ 各次尝试耗时＋Σ 退避等待，@2477『重试 + 指数退避 + 抖动』的机制事实）、RLP-005 的预算沿路径逐级累加（Σ timeout_budget(path)，5.5 Z4 逐字公式＋5.6 示例一 @2598 把重试最坏时长与 SLA 上界直接比较）→ 取 ENUM_AGG 的 additive 而非 itemwise，非本地造法；grouped_max／weighted_avg 二值在本 kind 仍无母本消费路径。(x) **方面 8 的 conditional 首次在本库成批使用，且表源为 5.4 而非 4.4**：constraints_imposed 七条逐字相同七行、共 49 项、级别分布 hard 42／conditional 7；表源系 **5.4『施加约束』表 @2543-2553**（小节标题 @2543、表头 @2545-2546、七行 @2547-2553，方面 1／3／4／6／8／9／10），属方面二＝协调的 5.x 系列，与前八批所引的 **4.4『施加约束』表**（heading @2234、方面 4 七行 @2251-2257）**非同一张表** → 二者 aspect 号重叠而源不同，不得混引（本批台账初稿曾误写 4.4，已按实测更正，见 (xiv)）。方面 8 行（@2551）级别列逐字为『软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）』＝条件级别 → 取 **conditional**（ENUM_LEVEL 三值中唯一能承载『按条件定级』者；取 hard 会虚构母本未给的无条件性、取 soft 会丢失其可升硬面），与 CTR 批 3.4 施→8（@1987 级别列『软/硬按风格』）同型（MJ-21 (x)），而与 STP／DFL 批的 4.4 施→8（@2255 级别列逐字为『软』）**不同源** → 判读不得平移（MJ-22 (iv) 同型纪律）；其升级条件为风格侧的具体裁定，归口母本 5.4 澄清／s5h，不在注册表侧自行定级。其余六方面一律 hard（禁止性／默认偏离须记录条款，MJ-4 判读）；方面 9 行（@2552）逐字为『协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化』→ 系 expiry 一词在母本的明文出处之一（另见 (vi)）。(xi) **累计未登记词汇候选 31 词的去重口径**：前八批 19 词（MJ-19 (i) 4＋MJ-20 (iii) 7＋MJ-21 (v) 8）＋本批方括号占位 10 机制词（backoff／bulkhead／circuit_breaker／dedup_table／dedup_window／fallback／half_open／inbox／jitter／retry）＋本批改写四词中属新候选的 **2 词**（propagation／expiry）＝ **31 词**；去重两面据实——sla_bound 已在 MJ-19 (i) 四词内故不重复计数，idempotency_declared 经 MJ-12 以 `idempotency(x, ·) ∧ declared(·)` 表达故不入候选（MJ-23 (v) 同型口径）。一并归 s5g 独立 R2 词汇批次，与 SO-4 补齐动作同批裁决；**不新增 VG 编号**（VG-01…VG-04 已覆盖该处置形态）。不扩词的理由仍是后果而非资格：登记将触发相关 anti_patterns 的 signal_level 改级，按 0.14＋SO-2／G-STY-4 须走完整 ADR＋批准，不在数据批次内自行执行。(xii) **书目 46 的 ISBN 连字符分组差异与页数两说 → 据实登记不改写**：母本著录 ISBN 978-1-68050-239-8 与另一形态 978-1-680-50239-8 的连字符分组不同（同一 ISBN-13 的两种分组书写）、页数有 350 与 376 两说；本地 resources/se PDF 已内容核验，ISBN 9781680502398 与著录一致，而文件名携带的 9781680500387 系第 1 版残留元数据 → 一律据实登记、不改写母本（0.22 承诺一＋母本零改动前提），裁决口归 G-RLP-1.route ④／s5h。书目 44 的本地 EPUB 自述 isbn13 9780133065091 与母本著录 978-0-321-20068-6 的两说仍归 G-DFL-1.route ④／SO-11，本批不裁决（MJ-23 (ix) 同型）。(xiii) **32 条 signal_level 的定级（P0 11／P1 13／P2 8；逐条 4/4/4/5/5/5/5）**：pattern_id 严格为 RLP-00N-APi（M2），逐条的 pattern_id↔signal_level↔description 已建立全映射以对位核验（见 (xiv)(d)）。P0 十一条＝有 5.5／4.5 硬性质可绑定（多为 Z2 的投递语义面）或属机制的定义性判据；**P1 十三条中有五项以 Z4 为条件硬**（5.5 逐字『过 0.4 证据门槛时为硬；否则降软 + 保守界』）为定级依据 → 门槛未过时不满足 MJ-4 的 P0 判据，定 P1 限期整改：RLP-004-AP3 @5985、RLP-005-AP2 @6091、RLP-005-AP3 @6095（三者直接触发降软分支）、RLP-007-AP2 @6302（池内排队无界使 Σ timeout_budget 无法闭合；@6300 description『池饱和后无拒绝策略（无界排队）』与 @6302 行内注即载此理由，而 AP3 @6303-6306 另以容量无实测出处定级 → 初稿误记为 AP3 已更正）、另 RLP-002-AP3 @5781 以事务持锁时长联动 Z4 预算为由；其余八项一律为『母本明文强制但 4.5／5.5 无可直接绑定的硬性质』（Z7 系升级型而非硬性质、Y6 系冲突信号面、5.2.2 的暂时性失败假设系适用前提）或『0.4 证据门槛偏离』（阈值将成为无出处数字），逐项理由见各行 signal_level 行内注。P1 → P0 的改级只能由 s5g 词汇批次或 s5h 证据门槛裁决触发，本批不自行升级（0.14＋0.22 承诺一）。(xiv) **本批四处自我纠错的实测教训（纪律固化）**：本批台账初稿经逐条 python 实测复核后更正四处，均系『记忆／宽松匹配冒充实测』类错误——（a）**M4 六行改写的落点行号**初稿记 @5981／@6026／@6084／@6080／@6198，实测为 @5984／@6029／@6090／@6086／@6204（旧号分别是 signal_level 行、`applicability:` 键行、`- pattern_id:` 行、方面 8 conditional 行 → 系就近取行的误记）；（b）**5.6 示例一的指针**初稿记 @2597（全库 5 处：条目行内注 3 处＋ST-RLP-01 的 condition @6687 与 note @6696 各 1 处），实测 @2596 为节头『### 5.6 接续场景走查』、**@2597 为空行**、示例一段落在 **@2598** → 五处一律更正为 @2598（其引文『SLA 要求的用户等待上界 < 捕获重试的最坏时长』逐字源自 @2598 正文，与 @2605 形式化注释行『SLA 用户等待上界 < 捕获重试最坏时长 → 预算不闭合』的无「的」形态不同 → 引文本身无误，仅指针差一行）；（c）**constraints_imposed 的表源章节号**初稿记 4.4，实测为 5.4（同句后文已写『5.4 施→8』，自相矛盾）；（d）**RLP-007 的 pattern_id 与 signal_level 未对位**——初稿把 @6302 的定级理由记为 AP3，实测 @6299-6302 为 AP2、AP3 在 @6303-6306 → 已建立 32 条 anti_patterns 的 pattern_id↔signal_level 全映射以对位核验。**另有一处经复核确认初稿正确、不改**：方括号占位『10 词共 28 处』在严格 `[词]` 口径下成立（同词同行多处按次计——[backoff] 与 [jitter] 在 @5980 同行各出现一次并于 @5992 再现；混合短语占位如 @5984 的 [retry 最坏时长]、@6094 的 [propagation 有实测或过 0.4 门槛的估计]／[sla_bound 有出处]、@6204 的 [断路开启时长]／[登记上限] 不计入词数）；复核过程中曾一度按前缀宽松匹配误算为 29 处／retry 4 次，系把混合短语占位的前缀计入所致，另按行去重会漏同行多次出现 → **教训：一切计数须显式声明口径，前缀匹配与按行去重两种偷懒口径皆不可用**。**四条纪律**（承 MJ-22 (vii) 实测优先）：① 入档 @行号一律以 Grep -n 或 python 行序为权威，Read 的显示号在 offset 落空行时偏一；② 章节号与表源须回母本逐字核对，同 aspect 号在不同章可对应不同的表；③ pattern_id 与 signal_level／description 须三元对位核验，不得以邻近行推定；④ 计数类主张须在台账内显式记载口径（扫描范围＋计数规则＋不计入项），否则不可复核。全库 @行号 与 basis 出处的一致性核验（MJ-22 (vii)(g)／MJ-22 (vi)(d) 既有裁决口）经本批 (b)(c) 两例，宜由 s5h 推广为**全库专项核验**（本批只更正 RLP 批自身的 5 处，前八批已发布登记一律不改写，0.22 承诺一＋用户既往裁决）。"
+    basis: "母本 5.2.3（heading @2475、七项清单 @2477、投递语义登记纪律 @2479）、5.2.4（heading @2481、时间语义与水位线 @2483）、5.4『施加约束』表（小节标题 @2543、表头 @2545-2546、七行 @2547-2553；方面 8 行 @2551、方面 9 行 @2552）、4.4『施加约束』表（heading @2234、方面 4 七行 @2251-2257，作对照）、3.4 施→8 行（@1987）、4.5 性质块（Y1 @2279-2280／Y6 @2290-2291）、5.5 机器层谓词块（@2559-2570）与性质块（Z1 @2575-2576／Z2 @2577-2578／Z3 @2579-2582／Z4 @2583-2585／Z5 @2586-2587／Z7 @2590-2591）、5.6（节头 @2596、空行 @2597、示例一段落 @2598、形式化注释 @2600-2610 其中 Z4 校验行 @2605；示例七段落 @2710、其形式化注释 @2713-2735 其中 @2719 六项／@2730 五项／@2732 现状测量值）、5.7 书目 44（@2750）／46（@2752）／51（Azure Cloud design patterns 目录面）、5.2.2（暂时性失败假设）、E1–E4（@4007-4011，E3 @4009）；predicate_vocabulary.yaml（76 名＝predicates 59＋formula_words 7＋clause_defined_predicates 10；vocabulary_gaps VG-01…VG-04；meta.note『新增谓词名 = R2 提议，不得在本文件本地扩词』）；scripts/project.py（ENUM_* 四组常量 @57-62、CONCRETE_NUM_RE @92、has_path @170-177、outside_brackets @208、PRED_CALL_RE @221、调用词提取 @225、check_m4 @726-751、check_m9 @825-835、check_meta @910-961）；profiles.yaml（kind_profile_RLP：status @308、seed_source 两占位符 @318-319、entry_level_exemptions 空集 @326；kind_profile_DFL @250-274；kind_profile_STP @197-221 作对照）；method_registry.yaml（RLP 七条块 @5593-6325、ST-RLP-01 的 condition @6687 与 note @6696、G-RLP-1 @6443-6449、WV-RLP-E3-01）；MJ-4／MJ-5／MJ-9／MJ-12／MJ-13 (iv)／MJ-16 (ii)／MJ-17 (iii)／MJ-19 (i)(iii)／MJ-20 (i)(iii)(iv)／MJ-21 (ii)(iii)(iv)(v)(viii)(ix)(x)／MJ-22 (iii)(iv)(vi)(vii)／MJ-23 (iii)(v)(vii)(viii)(ix)；条款 0.4（禁假精确）／0.10 第一条／0.14（不许运行时即兴改级）／0.17.5／0.17.6／0.17.7 门槛 2 与 6／0.17.8 M2·M3·M4·M6·M9／0.18.6 M15／0.22 承诺一／1.1 纪律二；G-DFL-1／G-ENV-1／G-RLP-1／SO-2／SO-4／SO-11／SO-12／G-STY-4／ST-DFL-01／ST-RLP-01／WV-CRD-E3-01／WV-STY-E3-01 防扩宽条款 (ii)／WV-RLP-E3-01；用户主指令（DFL-001↔RLP-003 的定义面／行为面裁定）"
+    affected: "RLP-001…RLP-007 的 name／provenance（不含 row_id）／source_pointers 77 处／applicability 三空间与 detection_predicate 的 M4 六行改写（@5617／@5984／@6029／@6090／@6086／@6204）／envelope 27 项 bound_expr（RLP-003 只 3 族）／cost_profile.latency_budget_delta（七条填实，RLP-005 取上界分配形态）与 aggregation_semantics（itemwise ×5＋additive ×2）／typical_reversibility（bounded ×7）／anti_patterns 32 条 signal_level（P0 11／P1 13／P2 8）／compatibility 32 行（composable 30／requires 2；镜像补登 2 处）／constraints_imposed 49 项（hard 42／conditional 7，表源 5.4 @2543-2553）／formal_anchor 20 实例／references 14 行（书目 44×3／46×4／51×7，无空集）；predicate_vocabulary.yaml（本批不变，累计候选 31 词登记于此项）；profiles.yaml kind_profile_RLP.seed_source 两占位符（本批填实）；G-RLP-1／SO-12／ST-RLP-01（condition @6687 与 note @6696，本条为其精确事实出处）／WV-RLP-E3-01.scope；README §1 口径 70→77 与新增 §4.6；s5g（31 词 R2 词汇批次）与 s5h（全库 @行号 与 basis 一致性专项核验、ENUM_RELATION 是否补 required_by、Z7 升级型级别面）"
+    provenance: manual
+
 # ---------------------------------------------------------------------------
 # 五、未闭合的冲突矩阵行（1.2.5 是风格条目的强制元数据；peer 条目未建者不得
 #     写入 compatibility —— M9 要求 peer_entry 存在。此节为待回填台账。）
@@ -6321,4 +7179,12 @@ survey_obligations:
     gap_ref: G-DFL-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
+    status: open
+
+  - obligation_id: SO-12
+    kind: 入库期
+    obligation: "补勘 5.2.3 可靠性模式清单（母本 @2477 行内加粗清单，非表格形态）的行级出处与登记面：本批七条 RLP-001…RLP-007 的 source_pointers 一律 {source_type: clause_id, value: 5.2.3}（＋bib_id），**不含 row_id 维度**，故 profiles.yaml 的 kind_profile_RLP.table_rows 无法给出逐表行数、META 记 1 条 info（覆盖宣称『RLP 全覆盖（5.2.3 全部 7 项）』系人工清点结论而非机器可判，与前八批「表行全覆盖可由 row_id 反查」强度不同）；本批 references **无空列表**（书目 44×3／46×4／51×7），故 M6 严格式与 0.17.7 门槛 6 在本批不以空集平凡满足，缺口面落在**可机器判定性**与**出处强度**两处——RLP-004（重试 + 指数退避 + 抖动）的行级出处依书目 46 登记面『5.2.3 断路器、舱壁、超时预算**等**稳定性模式』的「等」概括面成立，而母本 @2752 明文 compile_usage=metadata_extraction，注册表侧不得改写或降级（MJ-22 (vii) 实测优先纪律），本批仅在 trust_grade 内如实转述登记面原文并明记「重试」系概括面覆盖。补入须走母本 4.7 参考文献表扩充（0.12『扩充』语义裁决 + 高影响批准，走 R2/ADR），并须先经人工裁决 G-RLP-1.route 的六个口：① 5.2.3 是否在母本侧改为表格形态以提供 row_id 维度（涉母本改动 → 高影响，走 R2/ADR）；② 书目 46 登记面『断路器、舱壁、超时预算**等**稳定性模式』的「等」可否据同节书目 51 行内文『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46《Release It!》第 2 版为提取锚点』确认为覆盖「重试」（即 RLP-004 的行级出处成立）与覆盖「幂等/收件箱」（RLP-001/002 现仅引 44＋51）；③ @2719（方面五形式化注释）六项『幂等/inbox/outbox/超时预算/断路器/舱壁』／@2730（方面五示例二折衷集）五项『可靠性模式={幂等+inbox/outbox(Z2), Z4 逐级分配, 断路器, 舱壁}』与 @2477 七项的枚举差异处置（补『重试』vs 认定为示例性省略，两者均涉母本改动；本批以 5.2.3 定义节自身 @2477 为唯一项集骨架源，不据 @2719／@2730 增删条目）；④ 书目 46 ISBN 连字符分组差异（母本著录 978-1-680-50239-8 vs 本地 PDF 抽取页实测 978-1-68050-239-8，数字序列同为 9781680502398）与页数两说（抽取页 350 vs 376）的处置（补注 vs 更正著录，均涉母本改动；母本于 @2752 已明文标注『文件名携带的 9781680500387 系第 1 版残留元数据』，本批不改母本、不改书目著录）；⑤ 书目 51（Azure Cloud design patterns，@2757，登记面『5.2.3 可靠性模式的工程参照』＝节级）目录内 Idempotent Consumer 条目与「Combine patterns」段『Pair Retry with Circuit Breaker』可否充 compatibility 或 references 的行级依据——本批明确**不充当**（compatibility 全部以母本明文为据：5.2.3 @2479 投递语义登记纪律、5.6 @2710『断路器＋舱壁』、Z4 Σ 明文、4.2.4 表行；51 仅作工程参照留痕），需裁决确认此边界；⑥ RLP-003（发件箱）envelope 仅 3 族（延迟分位数 P99／可用性目标 SLO／可修改性），缺「性能：资源占用」一族——该族归 DFL-001 的 4.2.4 表行定义面，本条目不重复计入以避免双重计数（事实留痕于 ST-RLP-01.note），其分工是否需在 kind_profile_DFL／kind_profile_RLP 侧补明文剖面（G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1 同型 route）——裁决为可则相应字段补实或母本更正并撤销该项，裁决为否或澄清前则保持现登记形态（clause_id 无 row_id、RLP-004 依概括面登记、RLP-003 envelope 三族）。节级/表级/性质级面不下探纪律承 G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1：G-RLP-1 impact 的五处具体裁定（书目 44 的 EIP 词汇表面只支撑 RLP-001/002/003 三条而 RLP-004…RLP-007 不引、书目 51 目录条目与 Combine patterns 段不充 compatibility 母本依据、书目 46 不因「等」概括而降级为 narrative_only、@2719／@2730 的项集差异不据以增删条目、ISBN 与页数差异只作观察项不改母本）在本项裁决前一律有效，本项不得以 kind 级或节级登记面充数；RLP-003 envelope 缺族亦不得被读作『该条目无资源占用影响』（unknown ≠ false，0.18.6 M15）。另据实记载两项：(甲) 本批新增方括号 snake_case 占位词 10 个共 28 处（扫描范围＝RLP 七条精确块范围 @5593-6325；计数口径＝严格 [词] 形态、同词同行多处按次计——[backoff] 与 [jitter] 在 @5980 同行各出现一次并于 @5992 再现；混合短语占位不计入本项词数，如 @5984 的 [retry 最坏时长]／[SLA 上界]、@6029／@6090 的 [SLA 上界]、@6086 的 [传播开销]、@6094 的 [propagation 有实测或过 0.4 门槛的估计]／[sla_bound 有出处]、@6204 的 [到期时刻]／[断路开启时长]／[登记上限]），十词均非已登记谓词，M4 免检系因 project.py 在提取前剥除半角方括号内容（@208 outside_brackets／@225 提取点），词汇登记归 SO-4 与 s5g R2 批次（累计 31 词＝前八批 19＋本批 10＋新候选 propagation／expiry），本项不新增 VG 编号（VG-01…VG-04 已覆盖）；(乙) DFL-001↔RLP-003 的发件箱重叠已按『定义面归 DFL、行为面归 RLP』处置（compatibility 单向 requires 由 RLP-003 承载镜像，本批另补登两处镜像使 compatibility 30→32），该分工的剖面明文化即上列⑥，本项不自行扩张解释面。"
+    gap_ref: G-RLP-1
+    consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）；0.17.8 M4（detection_predicate 词汇封闭，本批 10 个方括号 snake_case 占位词不得充谓词，归 SO-4／s5g R2）；META 覆盖宣称的可机器判定性（5.2.3 无 row_id → kind_profile_RLP.table_rows 不可逐表反查）"
+    trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）；M4＋R2（发现词汇缺失 → 提议候选，不得本地造词）；M15（unknown → 候选保留 ∧ 勘察义务登记）"
     status: open

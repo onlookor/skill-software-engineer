@@ -10,7 +10,7 @@
 |---|---|---|
 | `profiles.yaml` | 17 个 kind 的字段剖面（元注册条目，0.17.2「字段完备性按 kind 剖面」、0.17.8 `kind_profile(kind, required_fields, optional_fields)`）＋剖面级缺口台账（KP-G1…G4，R2 澄清候选） | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的**数据侧投影**（供 M4 词汇封闭校验） | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；本文件每条带 clause 指针，`project.py` 反向核验指针在母本中可查 |
-| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条＋DFL 5 条，共 70 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
+| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条＋DFL 5 条＋RLP 7 条，共 77 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
 | `scripts/project.py` | 自检（M2/M3/M4/M5/M6/M9 ＋本目录登记的 C 系列）＋同源投影（0.9/E2：人类层由机器层生成，不手写） | 工具；不含规范命题 |
 | `projections/*.md` | 生成物：人类可读投影视图＋自检报告 | **生成物，禁手改**；改源后重跑 `project.py` |
 
@@ -118,6 +118,26 @@
 `profiles.yaml` 的 `kind_profile_DFL.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实。四列源表（机制｜定义｜适用条件｜质量影响要点）到条目字段的归类判读、CDC 一词在母本的双义隔离（数据域 @4277 归 DFL-002／契约域 @4278 归 CTR-009）、`latency_budget_delta` 五条一律填实但理由不平移 STP 批措辞、22 条 `signal_level` 的定级依据（P0 11／P1 5／P2 6）、谓词面精确事实（本批 11 个调用词全部已登记 → 零新增候选，累计仍 19 词）、`formal_anchor` 12 实例的角色分配、`compatibility` 十行（composable 8／tension 2）与 RLP 批重叠处置、6.6 示例四 800ms 不入 `bound_expr` 的边界、书目 44 的 ISBN 观察项、同批镜像与 `pending_conflict_rows` 口径，全文见 `method_registry.yaml` MJ-23 (i)–(xi)。
 
 行级书目登记面：母本 4.7（@2427-2437）九项中**行级**可引者仅书目 42（→ DFL-001 发件箱）与 43（→ DFL-002 CDC），覆盖 5 行中 2 行，故 DFL-003／DFL-004／DFL-005 的 `references` 为**空列表**（M6 平凡通过，非豁免）；缺口登记 `G-DFL-1`（含五个下探裁决口①-⑤，其一为书目 44 本地 EPUB 的 isbn13 与母本 @2750 著录形态不一致的处置）＋勘察义务 `SO-11`。E3 豁免 `WV-DFL-E3-01`（硬性质面 **3 项 6 实例**：Z2 3／Y2 2／Y1 1；软性质 Y4 5 实例＋Y7 1 实例**明列排除**）已于 **2026-10-04** 经人类裁决批准、`status: active`（申请登记 2026-09-28，跨 6 日；裁决全文见台账 `approval.ruling`）；八项 Waiver 全部 active，累计覆盖 **70** 条 seed、scope 互不重叠。§4.2／§4.3／§4.4 末段的批次清单（含 DFL）同样**不回改**；其余 9 kind（RLP/SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
+
+### 4.6 RLP 批（行内清单序入库，母本零改动）
+
+母本既有已发布引用勘察结论（2026-10-05）：母本全文 `RLP` 仅**一处**——@397（0.17.3 kind 封闭枚举行「RLP｜可靠性模式｜方面 5 · 5.2.3」）。**无 `RLP-数字` 形态的已发布引用**（同 CTR／STP／DFL 三批，与 STY/CSL/CRD/DEC 四批不同），故本批无需 R2 修订母本，母本 4427 行／围栏 216 不变。
+
+编号方案＝**行内清单序**（本库首例：骨架源非表格）：母本 5.2.3（heading @2475）的注册表条目清单在 **@2477** 以『注册表条目（每条带质量影响卡片）：』引导、分号分隔七项，无 4.2.2／4.2.4／3.2.1 类的表格行列结构，故七条 `source_pointers` 一律 `{source_type: clause_id, value: "5.2.3"}`（＋bib_id），**不含 `row_id` 维度**；id 序即 @2477 的列举序：
+
+| entry_id | @2477 列举序 | name（取各项引导词逐字） |
+|---|---|---|
+| RLP-001 | 第 1 项 | 幂等 |
+| RLP-002 | 第 2 项 | 收件箱（inbox） |
+| RLP-003 | 第 3 项 | 发件箱（outbox） |
+| RLP-004 | 第 4 项 | 重试 + 指数退避 + 抖动 |
+| RLP-005 | 第 5 项 | 超时预算 |
+| RLP-006 | 第 6 项 | 断路器 |
+| RLP-007 | 第 7 项 | 舱壁 |
+
+`profiles.yaml` 的 `kind_profile_RLP.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实。非表格源的 `provenance` 口径（不含 `row_id`、`name` 取引导词逐字）、书目 46 以「等」概括覆盖「重试」而书目 51 目录面只作工程参照、@2719 六项／@2730 五项与 @2477 七项的枚举差异处置（以 @2477 为准、不本地合并；@2732 的 800ms 系现状测量值不入 `bound_expr`）、DFL-001↔RLP-003 发件箱重叠的**定义面归 DFL／行为面归 RLP** 兑现（单向 `requires` ＋ RLP-003 envelope 只 3 族）、`formal_anchor` 20 实例与 Waiver scope 的对位、M4 四词六行改写落点（@5617／@5984／@6029／@6090／@6086／@6204，不本地扩表）、M9 同批镜像补登两处（`compatibility` 30→32，不对称累计第三例）、`aggregation_semantics` 首次出现 `additive`（RLP-004／005，母本明文求和语义）、方面 8 `conditional` 首次成批使用（表源＝**5.4**『施加约束』@2543-2553，与前八批所引 **4.4** 表 @2251-2257 系两张同名不同源的表，不得混引）、32 条 `signal_level` 定级（P0 11／P1 13／P2 8）、书目 46 的 ISBN 分组与页数两说据实登记不改写，以及**本批四处自我纠错的教训与四条纪律**，全文见 `method_registry.yaml` MJ-24 (i)–(xiv)。
+
+行级书目登记面：本批七条 `references` **无空列表**（书目 44×3／46×4／51×7），故 M6 不以空集平凡满足；缺口面落在**可机器判定性**（无 `row_id` → `kind_profile_RLP.table_rows` 不可逐表反查，覆盖宣称系人工清点）与**出处强度**（RLP-004 依书目 46「等」概括面）两处，登记 `G-RLP-1`（含六个裁决口①-⑥）＋勘察义务 `SO-12`。E3 豁免 `WV-RLP-E3-01`（硬性质面 **5 项 8 实例** ＋ Z4 条件硬 4 实例；软性质 Z5 1 实例与升级型 Z7 7 实例**明列排除**）于 **2026-10-05** 申请登记、`status: pending`，**待人类裁决**——Waiver 批准是人的裁决，Agent 与工具不自行批准（0.10 第一条／1.1 纪律二）；前八项 Waiver 全部 active、累计覆盖 **70** 条 seed，本批七条的 seed 资格在裁决前依 `WV-STY-E3-01` 防扩宽条款 (ii) 的**单独申请**通道挂起。§4.2／§4.3／§4.4／§4.5 末段的批次清单（含 RLP）同样**不回改**；其余 8 kind（SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
 
 ## 5. 状态纪律与自检清单
 
