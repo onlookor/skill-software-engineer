@@ -10,7 +10,7 @@
 |---|---|---|
 | `profiles.yaml` | 17 个 kind 的字段剖面（元注册条目，0.17.2「字段完备性按 kind 剖面」、0.17.8 `kind_profile(kind, required_fields, optional_fields)`）＋剖面级缺口台账（KP-G1…G4，R2 澄清候选） | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的**数据侧投影**（供 M4 词汇封闭校验） | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；本文件每条带 clause 指针，`project.py` 反向核验指针在母本中可查 |
-| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条＋DFL 5 条＋RLP 7 条，共 77 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
+| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条＋DFL 5 条＋RLP 7 条＋SCH 3 条，共 80 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
 | `scripts/project.py` | 自检（M2/M3/M4/M5/M6/M9 ＋本目录登记的 C 系列）＋同源投影（0.9/E2：人类层由机器层生成，不手写） | 工具；不含规范命题 |
 | `projections/*.md` | 生成物：人类可读投影视图＋自检报告 | **生成物，禁手改**；改源后重跑 `project.py` |
 
@@ -138,6 +138,22 @@
 `profiles.yaml` 的 `kind_profile_RLP.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实。非表格源的 `provenance` 口径（不含 `row_id`、`name` 取引导词逐字）、书目 46 以「等」概括覆盖「重试」而书目 51 目录面只作工程参照、@2719 六项／@2730 五项与 @2477 七项的枚举差异处置（以 @2477 为准、不本地合并；@2732 的 800ms 系现状测量值不入 `bound_expr`）、DFL-001↔RLP-003 发件箱重叠的**定义面归 DFL／行为面归 RLP** 兑现（单向 `requires` ＋ RLP-003 envelope 只 3 族）、`formal_anchor` 20 实例与 Waiver scope 的对位、M4 四词六行改写落点（@5617／@5984／@6029／@6090／@6086／@6204，不本地扩表）、M9 同批镜像补登两处（`compatibility` 30→32，不对称累计第三例）、`aggregation_semantics` 首次出现 `additive`（RLP-004／005，母本明文求和语义）、方面 8 `conditional` 首次成批使用（表源＝**5.4**『施加约束』@2543-2553，与前八批所引 **4.4** 表 @2251-2257 系两张同名不同源的表，不得混引）、32 条 `signal_level` 定级（P0 11／P1 13／P2 8）、书目 46 的 ISBN 分组与页数两说据实登记不改写，以及**本批四处自我纠错的教训与四条纪律**，全文见 `method_registry.yaml` MJ-24 (i)–(xiv)。
 
 行级书目登记面：本批七条 `references` **无空列表**（书目 44×3／46×4／51×7），故 M6 不以空集平凡满足；缺口面落在**可机器判定性**（无 `row_id` → `kind_profile_RLP.table_rows` 不可逐表反查，覆盖宣称系人工清点）与**出处强度**（RLP-004 依书目 46「等」概括面）两处，登记 `G-RLP-1`（含六个裁决口①-⑥）＋勘察义务 `SO-12`。E3 豁免 `WV-RLP-E3-01`（硬性质面 **5 项 8 实例** ＋ Z4 条件硬 4 实例；软性质 Z5 1 实例与升级型 Z7 7 实例**明列排除**）已于 **2026-10-06** 经人类裁决批准、`status: active`（申请登记 2026-10-05，跨 1 日；裁决全文见台账 `approval.ruling`）；九项 Waiver 全部 active，累计覆盖 **77** 条 seed、scope 互不重叠。§4.2／§4.3／§4.4／§4.5 末段的批次清单（含 RLP）同样**不回改**；其余 8 kind（SCH/CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
+
+### 4.7 SCH 批（单段落分号序入库，母本零改动）
+
+母本既有已发布引用勘察结论（2026-10-06）：母本全文 `SCH` 仅**一处**——@398（0.17.3 kind 封闭枚举行「SCH｜调度/时间语义策略｜方面 5 · 5.2.4」）。**无 `SCH-数字` 形态的已发布引用**（同 CTR／STP／DFL／RLP 四批，与 STY/CSL/CRD/DEC 四批不同），故本批无需 R2 修订母本，母本 4427 行／围栏 216 不变。
+
+编号方案＝**单段落分号序**（本库首例：骨架源既非表格亦非行内清单）：母本 5.2.4（heading @2481）的正文仅 **@2483** 一段，以分号分隔三项子命题，既无『注册表条目：』类引导词亦无行标识，且三项中仅第二子命题含加粗、该加粗只覆盖术语对『事件时间 vs 处理时间』而非整个子命题（不足以充当条目名），故三条 `source_pointers` 一律 `{source_type: clause_id, value: "5.2.4"}`（＋bib_id），**不含 `row_id` 维度**；`name` 取子命题引导词**原形**（`vs` 与半角斜杠一律不改写为顿号或中文『对比』）；id 序即 @2483 的分号列举序：
+
+| entry_id | @2483 分号列举序 | name（取子命题引导词原形） |
+|---|---|---|
+| SCH-001 | 第 1 项 | 定时器/截止期/cron 的登记 |
+| SCH-002 | 第 2 项 | 事件时间 vs 处理时间的显式选择 |
+| SCH-003 | 第 3 项 | 调度冲突与资源竞争的归属声明 |
+
+`profiles.yaml` 的 `kind_profile_SCH.seed_source` 两占位符（`table_rows`／`entry_id_range`）本批填实，其中 `table_rows` 记「不适用」（非表格源、无逐表行数可给，覆盖宣称系人工清点）。非表格非清单源的 `provenance` 口径（不含 `row_id`、`name` 取子命题原形）、无 `row_id` → C-ENV 落 `elif env` 分支系**数据形态所致而非豁免**、5.5 @2569 `time_semantics` 在册而 @2572 触发条件行未列 → **不为 SCH-002 绑任何 Z 性质**（不扩权，AP1 定 P0 依 @2483＋4.2.4 @2200 双重明文）、`formal_anchor` 空列表**全库首例**（SCH-001／SCH-002）与 SCH-002→DFL-003 跨 kind 单向 `composable` 不回填镜像、同批镜像一对 SCH-001↔SCH-003（5.3 @2521）、5.2.6 @2505／@2506 两处清单均未明列 cron → **不下探 CFG 面**、Y1 取 `consumed_by`（计息 10→11）与不增 Y8 实例、书目 49 的 2026-10-06 在线复核事实与书目 51 本批不引（Scheduler-Agent-Supervisor 专页未归档）、`aggregation_semantics` 一律 `additive`（依 5.2.5 @2499 Σ 明文）、`constraints_imposed` 21 项（hard 18／conditional 3／soft 0，表源＝**5.4**『施加约束』@2543-2553）、15 条 `signal_level` 定级（P0 3／P1 10／P2 2）、M4 零未登记谓词与 snake_case 占位 **0 处**（累计候选仍 31 词、本批零新增）、5.6 @2659『求值调度』同名异指的排除，以及**本批七处自我纠错的教训与五条纪律**，全文见 `method_registry.yaml` MJ-25 (i)–(xiv)。
+
+行级书目登记面：本批三条 `references` 为**两条空列表＋一行书目 49**（SCH-002 系全库**首个** bib_id 49 的 carrier；SCH-001／SCH-003 为空列表 → M6 平凡通过，非豁免）；书目 49 的登记面逐字只覆盖第二子命题，第一／第三子命题**无任何行级书目登记面** → 缺口登记 `G-SCH-1`（含七个裁决口①-⑦）＋勘察义务 `SO-13`（含书目 51 的 Scheduler-Agent-Supervisor 在线专页**先归档再提取**的前置义务，与 cron／CFG 分工对账口）。E3 豁免 `WV-SCH-E3-01`（硬性质面 **1 项 1 实例**：Y1 `consumed_by`；**无排除面**——SCH 侧 Z5／Z7 计息均为 0）本批申请登记 **2026-10-06**、`status: pending`，**待人类裁决**（0.10 第一条／1.1 纪律二：批准是人的裁决，Agent 与工具不自行批准；SCH 三条的 seed 资格不以该 Waiver 为前提——C-ST 只查硬检查，故批准延迟不阻断本批入库）。九项既有 Waiver 仍全部 active（累计覆盖 **77** 条 seed），本项 pending 的 scope 及于本批 3 条 → 覆盖宣称合计 **80** 条（以 `WV-SCH-E3-01.anti_widening` 登记为准）、scope 互不重叠。§4.2–§4.6 末段的批次清单（含 SCH）同样**不回改**；其余 7 kind（CFG/QAT/VFM/GRD/DPS/PRJ/GOV）仍适用同一模式。
 
 ## 5. 状态纪律与自检清单
 
