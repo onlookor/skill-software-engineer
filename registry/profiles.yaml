@@ -342,8 +342,8 @@ profiles:
         - {source_type: clause_id, value: "5.5", verified: true}
     seed_source:
       clause_id: "5.2.4"
-      table_rows: "[待勘察：SCH 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "不适用——5.2.4 系单段落三分号子命题（非表格、非行内清单、无行标识），故无逐表行数可给；覆盖宣称『5.2.4 单段落全部 3 个分号子命题』为人工清点结论、不可机器判定，META 侧据此落 info（G-SCH-1 impact (a)／route ①）"
+      entry_id_range: "SCH-001…SCH-003（分块序＝5.2.4 @2483 分号列举序：定时器/截止期/cron 的登记=001、事件时间 vs 处理时间的显式选择=002、调度冲突与资源竞争的归属声明=003；name 取子命题引导词原形，半角斜杠与拉丁缩写 vs 一律不改写为顿号或中文『对比』，判读见 MJ-25 (i)；非表源无行序可依，取分号序，RLP-001…007 分块序判读同型，裁决见 README §4.7）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics"
