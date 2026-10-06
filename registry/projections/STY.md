@@ -1204,4 +1204,4 @@
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；applicability: 骨架源/交叉表源；constraints_imposed: 交叉表源；formal_anchor: 交叉表源；narrative: 人工判断；status: 人工判断
 
 ---
-生成于 2026-10-05T23:59:16｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`8cf6d2296be1`；`profiles.yaml`→`345f81c160b4`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
+生成于 2026-10-06T22:25:50｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`59a61ca26ea8`；`profiles.yaml`→`345f81c160b4`；`predicate_vocabulary.yaml`→`a10c2164b1a5`
