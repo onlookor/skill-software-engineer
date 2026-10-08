@@ -368,8 +368,8 @@ profiles:
         - {source_type: clause_id, value: "5.2.6", verified: true}
     seed_source:
       clause_id: "5.2.6"
-      table_rows: "[待勘察：CFG 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "不适用——5.2.6 系准决策通道引言（@2503）＋行内加粗清单四项（@2505-2508），非表格、无行标识（亦非 5.2.4 类单段落分号子命题），故无逐表行数可给；覆盖宣称『5.2.6 行内加粗清单全部 4 项』为人工清点结论、不可机器判定，META 侧据此落 info（G-CFG-1 impact (a)／route ①）"
+      entry_id_range: "CFG-001…CFG-004（分块序＝5.2.6 @2505-2508 行内加粗清单列举序：配置 schema 注册=001、决策/参数判别谓词=002、开关生命周期=003、与 0.10 权力条款的联动=004；name 一律取加粗引导词逐字并去粗体标记——CFG-002 原形即含半角斜杠『决策/参数判别谓词』、CFG-004 原形即含条款号『与 0.10 权力条款的联动』→ 按 MJ-21 (iii) 原形登记，不改写为『权力条款联动』（与 RLP-004 同理），判读见 MJ-26 (i)；非表源无行序可依，取清单序，SCH-001…003／RLP-001…007 分块序判读同型，裁决见 README §4.8）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S5 先验权重消费风格默认；flag 谓词入白板（5.5）"
