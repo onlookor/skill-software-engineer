@@ -140,3 +140,24 @@ todo.md 3.7 剩余部分完成：丙类九项全部起草，全文档仅余 #9�
 - **不改动**：全部章节条款正文、字段定义、谓词封闭集（2.3 七词）、#5–#21 编号与状态标记（11.4 的 #9 条件触发状态保留）、附录与反例库；编号空间未动，母本对本规范的引用不受影响。
 - **终检留痕**：本文档 1088→**1082** 行、围栏 **66**（偶数）不变；未新增/删除任何规范段落，故结构计数（章数、表列数）无变动。
 - **波及文本**：编译规范.md（删除占位节 1）。语义裁决与同日母本批次登记见 `软件工程元框架成文法-changlog.md` 2026-09-18 目录治理批次与 2026-09-18（续）3.8 首批条目。
+
+## 2026-10-14：新增形式层目录 `pact/`（三档 PACT v1 rev2 域声明，编译规范.md 正文零改动）
+
+- **触发**：用户要求为本技能与兄弟目录 `../requirements-engineering` 分别建立"适配 PACT 范式的结构"，且软件工程侧按《部署规模裁剪模板》**每个裁剪档位单独出一份**。归属裁定：PACT 形式层是"源 → 产物映射"的一种新产物形态（结构命题的机器可校验投影），规程面属《编译规范》，故登记于本文件；不涉及任何成文法条款的语义变更，母本 changelog 不另立批次。
+- **新增产物（4 个文件）**：
+  - `pact/se_tier1_solo.pact`（档 I，395 行）：40 类型 / 31 前置规则 / 15 角色位 / 9 seed 权威；批准链深度 `m=1`、消解链上限 `N=1`。
+  - `pact/se_tier2_small_team.pact`（档 II，388 行）：41 / 32 / 18 / 9；`m=2`、`N=2`。
+  - `pact/se_tier3_multi_team.pact`（档 III，425 行）：41 / 32 / 20 / 9；`m=3`、`N=3`。**类型集与前置图与档 II 零增删**——多团队不引入新结构命题，只引入新角色位与更高阈值。
+  - `pact/README.md`（96 行）：目录导览六节（权威关系、文件清单与实测计数、校验命令与当前状态、rev2 不表达的七类维度、表达边界索引 E1–E7、变更纪律）。
+- **建模纪律（三条，写入 `pact/README.md` §1 并作为后续批次的约束）**：
+  1. `.pact` **不得新增任何规范命题**。母本规则无法用 rev2 文法表达时，处置是记入该档文件头"已知表达边界"（E 系列）、把规则留在配套内容层执行、按母本 §0.13 提请裁决——**禁止在 `.pact` 里造语法**。
+  2. 每个类型与每条前置规则必须能回指母本条款（文件头逐类型标注指针）；回指不上即幻觉条目，删除。
+  3. 本目录只承载裁剪模板 §1.2 三合法轴中的**粒度**轴；**频次**与**工具形态**两轴在 rev2 中无词汇，一律落配套内容层。
+- **已知表达边界 E1–E7（跨档累积，就地记录于各档文件头）**：E1 前置唯一性（RHS Uniqueness）禁止 `selected_entry` 两路汇聚到同一 `decision_landing`，ADR 路径与简记路径建成两条不相交 Token 流，互斥性编码为 `reads selected_entry when not exists adr_package`（档 I 起）；E2 `produces` 不得携带条件（`ProduceWithCondition`），阈值/存在性判据改挂 `reads`/`consumes`（档 I 起）；E3 权威六级全序 A0–A5（§0.19.2）中只有 A0 有 Token（`external_mandate`），A1–A5 比较是配套层谓词（档 I 起）；E4 让步记录的三个强制消费端在形式层是 `reads`（Rule-R 非破坏）＋ Archive 审计链（档 I 起）；E5 rev2 无时序词汇，"会签先于批准"编码为 Counter 在场性（档 I 起）；E6 `approval_escalation` **只读不消费**，否则 `count approval_escalation >= m` 无法累积、链耗尽判定失效（档 II 起）；E7"角色位互不兼任"不可表达——参与者是不透明标识，无自然人身份、无互斥词汇，形式层只保证存在三个独立的 `produces approval_record` 角色位，不保证由三个不同的人填充（档 III；**部署前须人类复核**）。
+- **机械校验结果（宿主机 `~/projects/pact/target/debug/pact`，离线）**：三档各自 `pact analyze` 六项全绿——`precondition_wf` 良构（0 违规 0 警告）、`reachability` 不可达 0、`gate_coverage` 0、`structural_deadlock` 0、`stranding_risk` 0。与 RE 片段 `../requirements-engineering/pact/re_fragment.pact` 经 `pact compose` 三档组合**均无冲突**（§1.8 C1–C4），合并域终检良构、11 源类型、47/48/48 可达、0 不可达、死锁 0、滞留 0。
+- **两项非零咨询输出的定性（不视为技术债，留痕以备复核）**：
+  - `consumption_reachability` 档 I 30 项 / 档 II、III 31 项——逐项归为三类：常驻注册表资产 8 项（`tri_space_fact`、`re_baseline`、`external_mandate`、`method_registry_entry`、`approval_registry_entry`、`guard_rule_entry`、`fvr_entry`、`projection_rule_entry`）；证据常驻供 `auditor` 只读 10 项（消费即入 Archive 会切断 §8.2.6 审计口）；终态审计工件 12 项。完整归类表见 PACT 仓库 `docs/skill-adaptation.md`。
+  - 合并域 1 项警告 `SEED_PRODUCE_OVERLAP(re_baseline)`——SE 侧持 `seeds re_baseline`、RE 侧持 `produces re_baseline`。意图：SE **单独**部署时基线由外部导入（seed）；RE+SE **同时**部署时基线必须由 RE 验证链生产，此时 SE 侧 seed 权威应撤除。撤除会让 SE 单独部署时 `re_baseline` 不可达，故两份文件保留现状，**由部署决策裁决**（咨询性警告，§1.4.3，不阻塞加载）。
+- **执行偏差登记**：本目录 `AGENTS.MD` 未约束执行环境，但 PACT 仓库 `~/projects/pact/AGENTS.md` 要求开发在 distrobox 容器 `pact-dev` 内进行；本次执行环境 `distrobox` 命令不可达，改用宿主机已构建的 `./target/debug/pact` 做**只读**离线校验（未修改 PACT 仓库任何代码）。偏差性质：校验结果可信（同一二进制来源），但未按该仓库规约在容器内复跑，接地验收时须补做。
+- **不改动**：编译规范.md 全部章节条款正文、字段定义、2.3 谓词封闭集（七词）、#5–#21 编号与状态标记、附录与反例库；成文法母本零改动；`registry/` 零改动（`.pact` 只声明"条目被谁读/消费/生产"的结构位，方法条目内容权威仍在 `registry/method_registry.yaml`，两者不重复登记同一命题）。
+- **波及文本**：新增 `pact/se_tier1_solo.pact`、`pact/se_tier2_small_team.pact`、`pact/se_tier3_multi_team.pact`、`pact/README.md`（4 件）；`README.md`（§2 新增"形式层"子节、§4 依赖关系补 `pact/` 行、§5 阶段 A 第 2 步补选档后取结构位基线、§6 当前状态补一行）；`todo.md`（新增工作项 3.10）。编译规范.md **零改动**。兄弟目录 RE 侧配套层对齐（`stages/s2|s3|s4|s5|s6`、`SKILL.md` §4.6、`README.md`、`PROGRESS.md`）不属本目录治理范围，登记于 PACT 仓库 `docs/skill-adaptation-change.md`。
