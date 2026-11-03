@@ -1738,4 +1738,4 @@
 - **数据来源层**（yaml 行内注释）：provenance: 交叉表源/人工判断/骨架源；typical_reversibility: 人工判断；applicability: 骨架源/交叉表源；envelope: 骨架源；constraints_imposed: 交叉表源；narrative: 人工判断；statement: 骨架源/人工判断；status: 人工判断
 
 ---
-生成于 2026-11-03T19:40:58｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`872d1def4067`；`profiles.yaml`→`0f225f62cc1e`；`predicate_vocabulary.yaml`→`cbdf6da217fa`
+生成于 2026-11-03T21:37:58｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`872d1def4067`；`profiles.yaml`→`42de431a30db`；`predicate_vocabulary.yaml`→`025b999d0251`
