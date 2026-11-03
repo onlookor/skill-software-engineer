@@ -10,7 +10,7 @@
 |---|---|---|
 | `profiles.yaml` | 17 个 kind 的字段剖面（元注册条目，0.17.2「字段完备性按 kind 剖面」、0.17.8 `kind_profile(kind, required_fields, optional_fields)`）＋剖面级缺口台账（KP-G1…G4，R2 澄清候选） | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的**数据侧投影**（供 M4 词汇封闭校验） | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；本文件每条带 clause 指针，`project.py` 反向核验指针在母本中可查 |
-| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条＋DFL 5 条＋RLP 7 条＋SCH 3 条＋CFG 4 条＋QAT 15 条＋VFM 6 条＋DPS 5 条，共 110 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
+| `method_registry.yaml` | 方法条目本体（当前批次：STY 24 条＋OWN 4 条＋CSL 5 条＋CRD 8 条＋DEC 8 条＋CTR 12 条＋STP 4 条＋DFL 5 条＋RLP 7 条＋SCH 3 条＋CFG 4 条＋QAT 15 条＋VFM 6 条＋DPS 5 条＋GRD 3 条＋PRJ 11 条＋GOV 6 条，共 130 条）＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威（条目 schema 逐字采用 0.17.2） |
 | `scripts/project.py` | 自检（M2/M3/M4/M5/M6/M9 ＋本目录登记的 C 系列）＋同源投影（0.9/E2：人类层由机器层生成，不手写） | 工具；不含规范命题 |
 | `projections/*.md` | 生成物：人类可读投影视图＋自检报告 | **生成物，禁手改**；改源后重跑 `project.py` |
 
@@ -280,6 +280,53 @@
 **三、自检与投影**（`--check`／`--project` 实跑，两轮同值）：**948** 条记录｜硬失败 **0**｜软警告 **0**｜entries **110**｜占位符 **1165** 处／110 条｜指针 **1960**／miss **0**（`profiles` **125→151**，`method_registry` **1733**，`predicate_vocabulary` **76**）｜`vocabulary_gaps` **8**｜`gaps` **18**／`survey_obligations` **16**。`索引.md` 剖面表三行＝`status` **seed**／required **18**／optional **0**／N-A **8**／undecided **0**／豁免 **1**。四件投影行数 `STY.md` **1741**／`勘察义务清单.md` **1817**／`索引.md` **271**／`自检报告.md` **269**（合计 4098）**不变**；哈希 `ca4a5f5696af`→`b7626efa62e5`／`e92bb0b6ac4c`→`cd51a10d32d2`／`b1b85bf54ae4`→`3f1cdd32d274`／`0191383b78df`→`df001852ce8e`（两轮重生成终值）；`profiles.yaml` 哈希 `0f225f62cc1e`→**`42de431a30db`**。**无 GRD／PRJ／GOV 条目 → C-ST／META／C-ENV 均无条目级记录；META 的 draft＋条目硬失败面因 `status=seed` 不再成立**（判定依脚本实测，非宣称）。
 
 **四、未做**：`method_registry.yaml`、母本、单行本零改动；无条目 → s5e-10 M2 未启动；**不 commit、不 push**。
+
+### 4.15 KP-G3 闭合登记（`status: open → closed` ＋ 同条目 `closure` 块；母本零改动）
+
+> 编号注：**§4.12／§4.13／§4.14 已分别由 KP-G3 R2、s5g、KP-G3 剖面执行占用**，本节按顺延取 **§4.15**；§4.2–§4.14 的历史陈述与计数**不回改**（0.22 承诺一）。
+
+**一、闭合形态＝改 `status` ＋ 同文件就地追加闭合登记（不另起 `KP-G3-closed`）**。工具依据：`check_ledgers` 对 `profiles.yaml: gaps` 只做**要素齐备**检查（[project.py](file:///home/wgz/projects/skills/software-engineering/registry/scripts/project.py#L1069-L1073)：`gap_id`／`type`／`statement`／`impact`／`route`／`status` 六键非空即过），**`status` 取值不参与任何硬／软判据**；`--project` 的缺口表只遍历 `method_registry.yaml` 的 `gaps`（@1548-1552），剖面缺口不进投影 → `open → closed` 不新增、不减少任何检查记录。与「已发布登记不改写」（0.22 承诺一）的边界：**`statement`／`impact` 逐字未动**，改动的只是一个状态标量；闭合依据以**同条目内新增 `closure` 块**留痕（`gap_ref`／`date`／`ruled_by`／`basis`／`evidence`／`preserved`），并在 `preserved.impact` 显式声明「三剖面 `status=draft`」系 2026-11-03 前的事实、闭合后已过期、以 `closure` 为准。不另起 `KP-G3-closed` 的理由：另起一条会使 `profiles.gaps` **4→5** 且原条目仍 `open`，台账同时出现「仍开放」与「已闭合」两条互相矛盾的记录；就地改状态并留痕，后来人一处可读「原始问题→当时为何 open→现在凭什么闭合」。
+
+**二、实际改动（仅 `registry/profiles.yaml` 的 `gaps` 段）**。@**686-704**（KP-G3 条目，原 @686-691）：`status: open → closed`（@**691**，行内注指向 `closure`）；新增 `closure` 块 @**692-704**（六键）；`statement`（@**688**）／`impact`（@**689**）原文逐字未动；numstat **+14/−1**。`gaps` 仍 **4**，状态计数 `open` **3**／`closed` **1**（首次出现 `closed` 取值；工具无枚举约束，见第一节）。
+
+**三、闭合依据（裁定人＝用户；2026-11-03）**。母本 **0.17.2 @381** 行末追加句（单行本 @**363** 逐字一致）界定 0.8「每种方法条目」含 0.17.3 全部 kind、非质量属性判据者可登记 `not_applicable` 并附 `reason` 与 `provenance.origin=compiled`（R2-KP-G3-01）；数据侧 ADR-KP-G3-01 已执行：三剖面 `status` @**477**／@**546**／@**611** 均为 `seed`、`undecided_fields: []`、`not_applicable` 各 **8** 项、`entry_level_exemptions` 各 **1** 条 `C-ENV`、`seed_source` 两占位符填实。原 `impact` 所述阻断面（C-ST 禁 `seed`）**已不成立**。
+
+**四、验证（`--check`／`--project` 实跑，改前 → 改后）**：
+
+| 指标 | 改前 | 改后 |
+|---|---|---|
+| 自检记录 | 948 | 948 |
+| 硬检查通过／失败 | 807／0 | 807／0 |
+| 软警告 | 0 | 0 |
+| entries | 110 | 110 |
+| 占位符 | 1165 | 1165 |
+| 指针／miss | 1960／0 | 1960／0 |
+| `gaps`（method_registry） | 18 | 18 |
+| `profiles.gaps`（open／closed） | 4（open 4） | 4（open 3／closed 1） |
+| `vocabulary_gaps` | 8 | 8 |
+| `profiles.yaml` sha256 前 12 位 | `42de431a30db` | `13f961d61ff1` |
+
+**五、投影四件（`--project` 重生成）**。行数 `STY.md` **1741**／`勘察义务清单.md` **1817**／`索引.md` **271**／`自检报告.md` **269**（合计 **4098**）**不变**；每件仅 footer **1/1**（生成戳＋`profiles.yaml` 源哈希），四件正文零差异；哈希 `b7626efa62e5`→`8f4674f6a939`／`cd51a10d32d2`→`32343f916677`／`3f1cdd32d274`→`b2ff7b8aa8af`／`c8b11e31bff9`→`70f0bba344f7`（前三项改前取 HEAD 定稿值；`自检报告.md` 改前取 HEAD 定稿值，基线 `--check` 本身会更新生成戳）。
+
+**六、围栏复核**：本文件 **2**（偶数）／`todo.md` **0**／`软件工程元框架成文法-changlog.md` **0**／`profiles.yaml` **0**。
+
+**七、未做**：`method_registry.yaml`（并行任务面，本轮实测工作区未改动）、母本、单行本、`predicate_vocabulary.yaml` **零改动**；**不 commit、不 push**。
+
+### 4.16 s5e-10：GRD／PRJ／GOV 三 kind 入库与 M3 收账（2026-11-03）
+
+**一、批次定义与粒度**。s5e-10 M2 按三个 kind 分批，共 20 条：GRD 3 条（9.2.1 @3581-3585 主表 P0 阻塞级／P1 限期级／P2 监测级，严格表行序；9.2.3 @3595-3626 九信号源本期不收）＋PRJ 11 条（10.2.2 义务表 @3871-3881：1.4／2.4／4.4／5.4／8.4／9.4＋8.2.7 评审点一–五；C4／arc42 的 16 行实例表 @3889-3900 按母本「实例级，非规范」不作种子）＋GOV 6 条（0.5 表 @117-122 六类 ADR，表行序；7.2.3 @3042-3049 简记格式不单列条目，登记为 GOV 块头格式约束：五字段 {唯一ID, 一句话决策, 依据指针, 时间戳, 执行者}＋打包／复查／禁令）。20 条一律 `status: seed`，编号逐字取表首列，0.22 承诺一零改写。
+
+**二、schema 与剖面**。条目字段逐字采用 0.17.2；三 kind 剖面均 status=seed、undecided_fields=[]，各 8 项 N-A（envelope＋cost_profile.*，@381 末句 R2 澄清），C-ENV scope 分别覆盖 GRD-001…003／PRJ-001…011／GOV-001…006；GRD required_extra 为 anti_patterns／formal_anchor，PRJ／GOV 无 extra。PRJ 的 `applicability.delivery_space` 逐条为显式勘察义务（11×2，方括弧形；不空、不伪造、不登记 N-A）→ M2 判待补属预期的诚实状态，登记 G-PRJ-1／SO-18。
+
+**三、台账增量**。`gaps` 18→**21**：G-GRD-1（9.2.3 九信号源未收，与 DPS 9.2.5 部署观测面分工未决）、G-PRJ-1（PRJ delivery_space 待勘察）、G-GOV-1（既有 14 份 WV-*-E3-01 的 scope 均排除三 kind，E3 豁免须逐 kind 申请）。`survey_obligations` 16→**19**：SO-17／SO-18／SO-19 分别对应上述三项。`vocabulary_gaps` **8→8 不变**：本批未引入新谓词（M4 未登记 0），故不新增；`waivers` **14→14 不变**：E3 豁免属人类裁决，M3 不伪造豁免、不预支批准（见 G-GOV-1）。
+
+**四、ST 简记**。既有简记实测为 **14** 条（ST-STY-01…ST-DPS-01，非 13），`scope` 一律 110→**130**，只追加 GRD/PRJ/GOV 二十个 id、不改既有行内注（0.22 承诺一）；新增 ST-GRD-01／ST-PRJ-01／ST-GOV-01，体例沿用「一 kind 一条」（既有台账无按批一条的先例），scope 同为 130；`status_transitions` 14→**17**，全部 scope 与实际 130 条 seed 集合逐项相等。
+
+**五、计数与投影**。`meta.entry_count` 110→**130**；本文件 §1 计数 110→**130**；entries 130（唯一 130）、status=seed 130；事实占位符 1165→**1480**（+315）；硬检查通过 **910**／失败 **0**／软警告 **0**；指针反查 **2130**／miss **0**（method_registry 1903）；seed 资格成立 130；自检记录 1114。四件投影 `--project` 重生成：`STY.md` **1946**／`勘察义务清单.md` **2236**／`索引.md` **300**／`自检报告.md` **298**（合计 **4780**，4098→4780）；sha256 前 12 位 `c92b911980eb`／`9e45f8f0b984`／`bf908a0adbe2`／`cc620d23fdc`（按 STY／勘察／索引／自检顺序）。
+
+**六、围栏复核**：母本 **216**（零改动）／单行本 **36**（零改动）／本文件 **2**（偶数）／`todo.md` **0**／`软件工程元框架成文法-changlog.md` 本批追加段 **0**（全文件 2 处系前序未提交段，只追加不覆盖）／`profiles.yaml` **0**／`method_registry.yaml` **0**。
+
+**七、未做**：不 commit、不 push；E3 Waiver 未申请（待人类裁决，SO-19）；PRJ `delivery_space` 与 GRD 9.2.3 信号源分工为开放勘察项（G-PRJ-1／G-GRD-1）。本轮改动仅 `method_registry.yaml`、本文件、`todo.md`、`软件工程元框架成文法-changlog.md` 与四件投影。
 
 ## 5. 状态纪律与自检清单
 

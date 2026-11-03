@@ -1168,3 +1168,29 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **理由（一句）**：`manual` 管「取值／是否 optional」，`not_applicable` 管「完备性判定」，两者不是同一层——没有母本依据时可以承认「这是人判断的值」，但不能声称「这不需要该字段」。
 - **与 GOV note（原 @558、本轮改后 @670，原文不改写）的关系**：GOV note 原文**保留**（仅其后追加裁决注）；本节只收窄头注适用范围，使「头注允许 manual N-A」与「N-A 需母本明文」不再两读。三 kind 的 N-A 依据为 0.17.2 @381 末句（`provenance: compiled`），不依赖 `manual`。
 - **验证**：复跑 `--check`／`--project`，计数与上一轮一致（**948** 条记录｜硬失败 **0**｜软警告 **0**｜entries **110**｜占位符 **1165**｜指针 **1960**／miss **0**）；四件投影行数不变；围栏 `registry/README.md` **偶数**、`todo.md` **0**、本文件 **0**。**不 commit、不 push。**
+
+## 2026-11-03：KP-G3 闭合登记——`profiles.yaml: gaps/KP-G3` `status: open → closed` ＋ 同条目 `closure` 块（原文零改写、母本零改动）
+
+- **裁定人**：用户（2026-11-03 会话内授权；0.10 第一条：闭合形态与裁定人由人类定，Agent 与工具不自批）。
+- **工具事实（先读工具再动手）**：`check_ledgers` 对 `profiles.yaml: gaps` 只做**要素齐备**检查（`project.py` @**1069-1073**，六键 `gap_id`／`type`／`statement`／`impact`／`route`／`status` 非空即过），**`status` 取值不参与任何硬／软判据**；`--project` 的缺口表只遍历 `method_registry.yaml` 的 `gaps`（@**1548-1552**），剖面缺口不进投影；`registry/scripts/` 下无其他脚本读取 `gaps` → 改 `status` 不新增、不减少任何检查记录。
+- **形态选择（改 status ＋ 同文件就地追加闭合登记；不另起 `KP-G3-closed`）**：`statement`／`impact` 逐字未动，改动的只是状态标量，闭合依据以同条目 `closure` 块留痕（`gap_ref`／`date`／`ruled_by`／`basis`／`evidence`／`preserved`），`preserved.impact` 显式声明「三剖面 `status=draft`」系闭合前事实、已过期、以 `closure` 为准。不另起条目的理由：另起一条会使 `profiles.gaps` **4→5** 且原条目仍 `open`，台账同时出现「仍开放」与「已闭合」两条矛盾记录。
+- **改动（仅 `registry/profiles.yaml` 的 `gaps` 段）**：@**686-704**（KP-G3，原 @686-691）；`status` @**691** `open→closed`（行内注指向 `closure`）；新增 `closure` @**692-704**（六键）；`statement` @**688**／`impact` @**689** 原文逐字未动；numstat **+14/−1**（710 行／围栏 **0**）；`gaps` 仍 **4**，状态计数 `open` **3**／`closed` **1**（`closed` 系首次取值，工具无枚举约束）。
+- **闭合依据**：R2-KP-G3-01 已在母本 **0.17.2 @381** 行末落地（单行本 @**363** 逐字一致），界定 0.8「每种方法条目」含 0.17.3 全部 kind、非质量属性判据者可登记 `not_applicable` 并附 `reason` 与 `provenance.origin=compiled`；数据侧 ADR-KP-G3-01 已执行：`kind_profile_GRD`／`PRJ`／`GOV` `status` @**477**／@**546**／@**611** 均 `seed`、`undecided_fields: []`、`not_applicable` 各 **8** 项、`entry_level_exemptions` 各 **1** 条 `C-ENV`、`seed_source` 两占位符填实 → 原 `impact` 所述「C-ST 禁 seed」阻断面不成立。
+- **验证（`--check`／`--project` 实跑，改前 → 改后同值）**：**948** 条记录｜硬检查通过 **807**／失败 **0**｜软警告 **0**｜entries **110**｜占位符 **1165** 处／110 条｜指针 **1960**／miss **0**｜`gaps` **18**／`survey_obligations` **16**／`vocabulary_gaps` **8**；`profiles.gaps` **4**（改前 `open 4` → 改后 `open 3`／`closed 1`）；`profiles.yaml` sha256 前 12 位 `42de431a30db`→**`13f961d61ff1`**。
+- **投影四件（`--project` 重生成）**：行数 `STY.md` **1741**／`勘察义务清单.md` **1817**／`索引.md` **271**／`自检报告.md` **269**（合计 **4098**）**不变**；每件仅 footer **1/1**（生成戳＋源哈希），正文零差异；哈希 `b7626efa62e5`→`8f4674f6a939`／`cd51a10d32d2`→`32343f916677`／`3f1cdd32d274`→`b2ff7b8aa8af`／`c8b11e31bff9`→`70f0bba344f7`。
+- **登记落点**：`registry/profiles.yaml`（本条本体＋`closure`）；`registry/README.md` 新增 **§4.15**（**§4.12／§4.13／§4.14 已占用**，编号顺延，§4.2–§4.14 不回改）；`todo.md` 追加本批收口块；本条目为 changlog **末尾追加**（历史条目零改写，0.22 承诺一）。
+- **围栏**：`registry/README.md` **2**（偶数）／`todo.md` **0**／本文件 **0**／`profiles.yaml` **0**。
+- **边界**：`registry/method_registry.yaml`（并行任务面，本轮实测工作区未改动）、母本、单行本、`predicate_vocabulary.yaml` **零改动**；**不 commit、不 push。**
+
+## 2026-11-03：s5e-10 M2+M3——GRD／PRJ／GOV 三 kind 入库与注册表收账
+
+- **批次定义**：20 条 = GRD 3（9.2.1 主表 @3581-3585，P0→P1→P2 表行序）＋PRJ 11（10.2.2 义务表 @3871-3881，1.4／2.4／4.4／5.4／8.4／9.4＋8.2.7 评审点一–五；C4／arc42 16 行实例表 @3889-3900 按「实例级，非规范」不收）＋GOV 6（0.5 表 @117-122 六类 ADR，表行序）。一律 `status: seed`，编号逐字取表首列；7.2.3 @3042-3049 的简记格式不单列条目，登记为 GOV 块头格式约束（五字段＋打包／复查／禁令）。
+- **M3 计数**：`meta.entry_count` 110→**130**；README §1 计数 110→**130**；entries **130**（唯一 130）、seed **130**；事实占位符 **1165→1480**（+315）；`gaps` **18→21**（G-GRD-1／G-PRJ-1／G-GOV-1）、`survey_obligations` **16→19**（SO-17／18／19）、`vocabulary_gaps` **8→8**（无新谓词，M4 未登记 0）、`waivers` **14→14**（E3 豁免须逐 kind 人类批准，不伪造）。
+- **ST 简记**：既有实测 **14** 条（非 13），`scope` 110→130；新增 ST-GRD-01／ST-PRJ-01／ST-GOV-01（一 kind 一条体例），`status_transitions` 14→**17**，全部 scope 与 130 条 seed 集合逐项相等。
+- **自检（`--check`／`--project` 实跑）**：**1114** 条记录｜硬检查通过 **910**／失败 **0**｜软警告 **0**｜entries **130**｜占位符 **1480**｜指针 **2130**／miss **0**（method_registry 1903）｜seed 资格成立 130。
+- **投影四件**：`STY.md` **1946**／`勘察义务清单.md` **2236**／`索引.md` **300**／`自检报告.md` **298**（合计 **4780**，4098→4780）；sha256 前 12 位 `c92b911980eb`／`9e45f8f0b984`／`bf908a0adbe2`／`cc620d23fdc`。
+- **登记落点**：`registry/README.md` 新增 **§4.16**（§4.15 后顺延，历史段不回改）；`todo.md` 追加本批次块；本 changlog 末尾追加（历史零改写）。
+- **未决**：PRJ `delivery_space` 逐条勘察（G-PRJ-1／SO-18）；GRD 9.2.3 九信号源与 DPS 9.2.5 分工（G-GRD-1／SO-17）；GRD/PRJ/GOV 的 E3 Waiver 逐 kind 申请（G-GOV-1／SO-19）。
+- **围栏**：`registry/README.md` **2**（偶数）／`todo.md` **0**／本批追加段 **0**（全文件 2 处属前序未提交段）／`profiles.yaml` **0**／`method_registry.yaml` **0**／母本 **216**／单行本 **36**。
+- **边界**：母本、单行本、`predicate_vocabulary.yaml`、`registry/profiles.yaml` 零改动；**不 commit、不 push。**
+
