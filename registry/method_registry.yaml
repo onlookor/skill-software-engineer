@@ -22,14 +22,14 @@
 meta:
   law_file: ../软件工程元框架成文法.md
   registry_version: {major: 1, minor: 0, patch: 0}
-  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）＋种子批次六：CTR（kind 前缀见 0.17.3）＋种子批次七：STP（kind 前缀见 0.17.3）＋种子批次八：DFL（kind 前缀见 0.17.3）＋种子批次九：RLP（kind 前缀见 0.17.3）＋种子批次十：SCH（kind 前缀见 0.17.3）＋种子批次十一：CFG（kind 前缀见 0.17.3）＋种子批次十二：QAT（kind 前缀见 0.17.3）＋种子批次十三：VFM（kind 前缀见 0.17.3）＋种子批次十四：DPS（kind 前缀见 0.17.3）"
+  batch: "种子批次一：STY（kind 前缀见 0.17.3 首行）＋种子批次二：OWN（kind 前缀见 0.17.3）＋种子批次三：CSL（kind 前缀见 0.17.3）＋种子批次四：CRD（kind 前缀见 0.17.3）＋种子批次五：DEC（kind 前缀见 0.17.3）＋种子批次六：CTR（kind 前缀见 0.17.3）＋种子批次七：STP（kind 前缀见 0.17.3）＋种子批次八：DFL（kind 前缀见 0.17.3）＋种子批次九：RLP（kind 前缀见 0.17.3）＋种子批次十：SCH（kind 前缀见 0.17.3）＋种子批次十一：CFG（kind 前缀见 0.17.3）＋种子批次十二：QAT（kind 前缀见 0.17.3）＋种子批次十三：VFM（kind 前缀见 0.17.3）＋种子批次十四：DPS（kind 前缀见 0.17.3）＋种子批次十五：GRD（kind 前缀见 0.17.3；s5e-10 M2）＋种子批次十六：PRJ（kind 前缀见 0.17.3；s5e-10 M2）＋种子批次十七：GOV（kind 前缀见 0.17.3；s5e-10 M2）"
   schema_source: {source_type: clause_id, value: "0.17.2", verified: true}
   kind_enum_source: {source_type: clause_id, value: "0.17.3", verified: true}
   seed_channel_source: {source_type: clause_id, value: "0.17.6", verified: true}
   metric_vocabulary_source: {source_type: clause_id, value: "6.2.1", verified: true}
   signal_level_source: {source_type: clause_id, value: "0.14", verified: true}
-  entry_count: 110
-  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）＋ DEC 全覆盖（2.2.1 全部 8 行）＋ CTR 全覆盖（3.2.1 全部 6 行＋3.2.2 全部 6 行）＋ STP 全覆盖（4.2.2 全部 4 行）＋ DFL 全覆盖（4.2.4 全部 5 行）＋ RLP 全覆盖（5.2.3 清单全部 7 项，非表格源，逐表行数不适用）＋ SCH 全覆盖（5.2.4 单段落全部 3 个分号子命题，非表格源，逐表行数不适用）＋ CFG 全覆盖（5.2.6 行内加粗清单全部 4 项，非表格源，逐表行数不适用）＋ QAT 全覆盖（6.2.5 四属性行内清单全部 15 项战术：性能 5／可用性 3／可修改性 4／安全 3，非表格源，逐表行数不适用；6.2.1 七族中可伸缩性／合规／可观测性三族在 6.2.5 无战术 → 缺口登记为 G-QAT-1，不得本地发明）＋ VFM 全覆盖（8.2.1 @3317 手段映射注册表六类全部 6 项：静态分析／可执行检查程序／模型检查／测试／人工评审／生产监测，非表格源，逐表行数不适用；「测试」一类的五个括注子项（单元/集成/契约/行为注入/端到端）不拆条、8.2.2–8.2.7 其余子节降入六条字段，粒度裁决判读登记为 MJ-28 (i)；@3317 的**计划矩阵本身**（五元组形态）在六类粒度下无承载条目 → 缺口登记为 G-VFM-1，不得本地增设第七条）＋ DPS 全覆盖（9.2.5 @3635-3641 单表全部 5 行，表行序 @3637-3641：滚动发布／蓝绿发布／金丝雀发布／功能开关驱动发布／回滚规程；回滚规程 @3641 在语义上是跨策略义务而非独立策略，但母本置其于「策略」列且 DPS kind 由 9.2.5 整节承载 → 按表行序取 DPS-005、不跳过不改序，判读登记于 ST-DPS-01 与 README §4.11）；其余 3 kind 待后续批次（GRD/PRJ/GOV，0.17.3 表 @400-405 共 17 行，已入库 14 kind）"
+  entry_count: 130
+  kind_coverage: "STY 全覆盖（1.2.1/1.2.2/1.2.3/1.2.4 四表全部行）＋ OWN 全覆盖（4.2.1 全部 4 行）＋ CSL 全覆盖（4.2.3 全部 5 行）＋ CRD 全覆盖（5.2.1 全部 4 行＋5.2.2 全部 4 行）＋ DEC 全覆盖（2.2.1 全部 8 行）＋ CTR 全覆盖（3.2.1 全部 6 行＋3.2.2 全部 6 行）＋ STP 全覆盖（4.2.2 全部 4 行）＋ DFL 全覆盖（4.2.4 全部 5 行）＋ RLP 全覆盖（5.2.3 清单全部 7 项，非表格源，逐表行数不适用）＋ SCH 全覆盖（5.2.4 单段落全部 3 个分号子命题，非表格源，逐表行数不适用）＋ CFG 全覆盖（5.2.6 行内加粗清单全部 4 项，非表格源，逐表行数不适用）＋ QAT 全覆盖（6.2.5 四属性行内清单全部 15 项战术：性能 5／可用性 3／可修改性 4／安全 3，非表格源，逐表行数不适用；6.2.1 七族中可伸缩性／合规／可观测性三族在 6.2.5 无战术 → 缺口登记为 G-QAT-1，不得本地发明）＋ VFM 全覆盖（8.2.1 @3317 手段映射注册表六类全部 6 项：静态分析／可执行检查程序／模型检查／测试／人工评审／生产监测，非表格源，逐表行数不适用；「测试」一类的五个括注子项（单元/集成/契约/行为注入/端到端）不拆条、8.2.2–8.2.7 其余子节降入六条字段，粒度裁决判读登记为 MJ-28 (i)；@3317 的**计划矩阵本身**（五元组形态）在六类粒度下无承载条目 → 缺口登记为 G-VFM-1，不得本地增设第七条）＋ DPS 全覆盖（9.2.5 @3635-3641 单表全部 5 行，表行序 @3637-3641：滚动发布／蓝绿发布／金丝雀发布／功能开关驱动发布／回滚规程；回滚规程 @3641 在语义上是跨策略义务而非独立策略，但母本置其于「策略」列且 DPS kind 由 9.2.5 整节承载 → 按表行序取 DPS-005、不跳过不改序，判读登记于 ST-DPS-01 与 README §4.11）＋ GRD 全覆盖（9.2.1 主表 @3581-3585 全部 3 行：P0 阻塞级／P1 限期级／P2 监测级；9.2.3 @3595-3626 九信号源本期不收 → 缺口 G-GRD-1 与 SO-17）＋ PRJ 全覆盖（10.2.2 义务表 @3871-3881 全部 11 行：1.4／2.4／4.4／5.4／8.4／9.4 ＋ 8.2.7 评审点一–五；C4／arc42 16 行实例表 @3889-3900 按母本「实例级，非规范」不作种子）＋ GOV 全覆盖（0.5 表 @117-122 全部 6 行：完整 ADR／接受约束 ADR／张力承认 ADR／保守假设 ADR／权衡承认 ADR／重审提议；7.2.3 @3042-3049 简记格式不单列条目，登记为 GOV 块头格式约束）；0.17.3 表 @400-405 共 17 行，已入库 17 kind 全覆盖"
 
 entries:
 
@@ -9843,6 +9843,1179 @@ entries:
       benefit_cost_analysis: "收益：回滚规程把「出事后怎么办」从**临场处置**转为**可注册、可演练、可判定**的规程——@3641 定义逐字「每策略必附：回滚判据（自动触发指标）、回滚操作序列、数据回滚方案或『数据不可回滚』显式声明」，三件套把回滚能力的三个面（何时回滚、怎么回滚、数据怎么办）各自形式化。第二项收益是**注册资格**：G3 @3710 逐字「∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)」，@3641 进一步逐字「无回滚规程的部署策略不予注册」——规程不是发布后的补充文档，而是策略注册的前置条件，缺失即策略不成立（AP1，P0）。第三项收益是**数据面判定的显式化**：@3641 逐字「数据不可回滚场景（Y 域迁移类）→ 回滚语义改为『前滚修复』，须显式登记并附前滚预案」——数据迁移类变更的回滚语义本就与流量回滚不同，显式声明把「伪回滚」排除在流程之外（AP2，P0）。代价：其一是**逐策略维护**——四条策略的回滚触达单元集互不相同（envelope 第二项：DPS-001 单批、DPS-002 全量切换、DPS-003 已放量比例、DPS-004 开关扇出），一份通用规程无法覆盖，规程须按策略逐条登记；其二是**判据与序列须可执行而非可读**，文字说明不构成序列（AP3）；其三是**前滚预案**在数据不可回滚时是额外义务（delivery_space 第二项），其成本高于回滚。净判读：回滚规程是策略族的基线义务，它不因某条策略「回滚很快」（如蓝绿）而缩减——「回滚最快」描述的是执行时长，不是规程完备性（G3 无豁免）。"
       typical_scenarios: "全部部署策略的必附项（@3641 逐字「全部策略」）；DPS-001 的批次级回滚规程（触达＝单批实例集）；DPS-002 的切回蓝序列（触达＝全量流量）；DPS-003 的自动判据触发回滚（判据即规程第一项）；DPS-004 的行为回退（关开关＋代码回退序列）；数据迁移类变更的回滚语义判定（@3641 Y 域 → 前滚修复）；@3648 绞杀者迁移的每步回滚预案。反例场合：无回滚判据的「回滚全靠人判断」（AP1，P0）；数据不可回滚但未声明（AP2，P0）；只有回滚脚本而无数据可回滚判定（AP3，P1）。"
       common_misuse: "把回滚规程写成一段文字说明而非可执行序列（AP3 的软形态——序列的可执行性是定义的一部分）；以「回滚脚本存在」代替「数据可回滚判定」（AP3——执行面事实替代语义面判定）；把「回滚很快」当作规程完备性的豁免（G3 has(rollback_procedure) 对全部策略无例外，@3641 逐字）；数据迁移类变更沿用流量回滚语义（未声明「数据不可回滚」，AP2，P0）；一份规程套用四条策略（触达单元集不同，envelope 第二项）；前滚预案缺失而数据不可回滚（@3641 逐字「须显式登记并附前滚预案」）；由 Agent 自行批准规程例外（@3659「部署策略定案属人类」＋0.10 Waiver 批准是人的裁决）。"
+  # ══════════ 方面九：架构守护与演化 · 9.2.1 信号分级 · 单表 3 行 → GRD-001…GRD-003 ══════════
+  # 第十五批（s5e-10）：GRD 守护规则模板 · 方面 9 · 单表 @3581-3585 三行（GRD-001…GRD-003）
+  # 粒度裁决（2026-11-03，M1/M2 已批准）：**条数 = 3**，骨架源 = 9.2.1「P0/P1/P2 信号分级」表三行，
+  # 编号严格按表行序：「P0（阻塞级）」@3583 → GRD-001、「P1（限期级）」@3584 → GRD-002、
+  # 「P2（监测级）」@3585 → GRD-003。**9.2.3 的九条信号源本期不收**——其中部署失败率／回滚率／
+  # 前置时间与 DPS 9.2.5 重叠，须先分工；profiles.yaml 的 seed_source 已登记为后续待办，本块不触碰。
+  # 剖面：kind_profile_GRD 已是 status=seed、undecided_fields=[]；envelope 与 cost_profile.* 共 8 项
+  # 登记为 not_applicable（依据 0.17.2 @381 末句的 R2 澄清，provenance: compiled）→ 本块**不写**
+  # envelope 与 cost_profile；required_extra = anti_patterns + formal_anchor 照常填写。
+  # C-ENV：entry_level_exemptions 的 scope「GRD-001…GRD-003」覆盖本三条，envelope 为空由该豁免显式放行
+  # （非默认省略；project.py @847-862 按 scope 判定）。
+  # 形式化面：GRD-001 → G1 @3706「∀ signal(level=P0): blocking_registered ∧ ¬deployed_without(…)」；
+  # GRD-002 → G5 @3713「now > deadline ∧ ¬closed(w) → auto_escalate(P0) ∧ ¬silent_renewal(w)」；
+  # GRD-003 → G7 @3717「P2 信号告警 → threshold ∧ trend_window 双判据成立（单点越阈只记录）」。
+  # 三条只引用母本已登记性质（0.17.1 零新增规范命题），不据 9.5 谓词面补绑或造词。
+  # 引文中的通道号在 applicability 内写作（[CH-C(2)]）：内层括号为母本 @3583／@3604 逐字，
+  # 外层 ASCII 方括号是 project.py outside_brackets 的剔除面，避免 M4 谓词扫描把通道号读作调用式
+  # （与既有 CFG-002／DPS 块同型书写；本块前两版实测确曾扫出未登记谓词「C」，已按此形态修正）。
+  # 参考资料：9.7 @3836-3840 的行级登记面分别指向 9.2.5／9.2.3／9.2.6／9.2.4，**无指向 9.2.1 的行级面**
+  # → 三条 references: []（G-STY-5 同型纪律：不以不承载主张的文献充当出处；M6 对空集平凡为真）。
+  # 缺口登记留 M3，不在本块自造 gap_id。
+  # 行数中性纪律：本块只新增条目本体与块头判读注；README §1 计数、meta.entry_count、投影重生成、
+  # ST 简记与缺口／豁免登记一律留 M3（用户本轮范围裁决）。
+
+  - entry_id: GRD-001
+    kind: GRD
+    name: "P0（阻塞级）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-GRD-01，M3 落盘）
+    provenance:
+      origin: hybrid                   # 骨架=9.2.1 @3583 表行四列逐字（级别／定义／响应义务／典型信号源）；三空间谓词转写与 reversibility 为人工判断（母本无阈值、无期限数值）
+      source_pointers:
+        - {source_type: clause_id, value: "9.2.1", verified: true}   # @3579 heading＋@3581-3585 表（本条骨架源 @3583）＋@3587 分级纪律
+        - {source_type: row_id, value: "9.2.1-P0（阻塞级）", verified: true}   # @3583 数据行逐字：定义／响应义务／典型信号源
+        - {source_type: clause_id, value: "0.14", verified: true}    # @281-283 信号分级冻结内联定义（P0：违例即阻塞）＝signal_level 交叉表源
+        - {source_type: clause_id, value: "9.2.2", verified: true}   # @3600-3605 Waiver 机制：P0 内部原因不可豁免（@3603）＝applicability 与 AP3 依据
+        - {source_type: clause_id, value: "9.3", verified: true}     # @3653-3659 三空间驱动：值班能力 → P0 响应义务可履行性（@3657）＝delivery_space 交叉表源
+        - {source_type: clause_id, value: "9.4", verified: true}     # @3679-3685 施加约束表＝constraints_imposed 交叉表源
+        - {source_type: clause_id, value: "9.5", verified: true}     # @3691-3701 谓词形态＋@3706 G1「P0 即时阻塞——硬」＝formal_anchor 绑定对象
+        - {source_type: clause_id, value: "0.10", verified: true}    # @235 权力条款：P0 升级裁决与 Waiver 批准属人类（@3659 双使用者条款）
+        - {source_type: clause_id, value: "0.4", verified: true}     # 证据门槛：违例源与判定谓词须有出处；母本未给任何 P0 阈值数值 → 只登记判定对象与界形
+    typical_reversibility: costly      # 人工判断：P0 阻塞一旦漏判，带病发布已发生、保护不可追溯；改级/撤销走注册表变更（@3598 = 完整 ADR + 批准），非自由可逆
+    applicability:
+      problem_space:                   # 骨架源：@3583「定义」列
+        - "[违例触及硬性质（V/W/X/Y/Z/Q/R/T/G 系列在册硬条目）或安全/合规红线]——@3583 逐字「违例触及硬性质…或安全/合规红线」：两项皆为本条的直接触发面"
+        - "[违例已发生而非趋势推测]——@3583 响应义务逐字「不允许带病发布」：阻塞对象是已发生的硬违例；趋势信号归 GRD-002／GRD-003"
+      current_space:                   # 交叉表源：9.2.2 @3602（违例事实与范围须可指认）
+        - "[违例源可指认到具体单元或谓词实例]——@3602 Waiver 准入逐字「违例事实（有出处）、豁免范围（精确到单元/谓词实例）」；P0 阻塞的可执行性同样以可定位为前提（0.4）"
+        - "[硬性质在册且其判定谓词或检测手段在位]——@3587 逐字「信号的级别归属是守护规则注册表条目的字段」：无判定谓词的硬性质不可机器求值（与 M4 词汇封闭同源）"
+      delivery_space:                  # 交叉表源：9.3 @3657
+        - "[即时阻塞的执行面在位（相关变更可冻结）]——@3583 响应义务逐字「即时阻塞：相关变更冻结、升级裁决启动（[CH-C(2)]）」：冻结不是通知动作，须有可执行的变更闸门"
+        - "[升级裁决通道可即时到达责任方]——@3657 逐字「on-call/值班能力 → P0 即时响应义务的可履行性」；无值班能力则 P0 义务不可履行，部署形态可行性缺陷须登记"
+    compatibility: []                  # P0 为级别链的顶层，不依赖下级规则；GRD-002 侧登记 requires（逾期升 P0），本条不回填（单侧登记，MJ-5 同型）
+    constraints_imposed:               # 交叉表源：9.4 施加约束表 @3679-3685（按 P0 级取适用行，非全表逐字复制）
+      - {target_aspect: 0, constraint: "P0 阻塞响应义务；Waiver 是豁免的唯一合法通道", level: hard}
+      - {target_aspect: 1, constraint: "已注册守护规则（P0/P1）→ 风格选择必须一致", level: hard}
+      - {target_aspect: 8, constraint: "整改项 → 回归验证需求；Waiver 闭合 → 验证计划更新", level: soft}
+      - {target_aspect: 10, constraint: "机器层：G 谓词集 + 演化路线图；人类层：覆盖谓词子集 {G 谓词集、演化路线图} 的投影视图", level: hard}
+    anti_patterns:
+      - pattern_id: GRD-001-AP1
+        description: "运行时把 P0 级信号改判为 P1／P2（即兴改级）"
+        detection_predicate: "∃ s, l: [s 为一条 P0 级守护规则信号] ∧ [s 的级别在运行时被改为 l] ∧ l ∈ {P1, P2} ∧ ¬[改级经注册表变更批准]"
+        signal_level: P0               # @3587 逐字「不许运行时即兴改级（升级走注册表变更 = 高影响决策）」＋@3598「规则的新增/改级/改参 = 注册表变更 = 完整 ADR + 批准」→ 违分级纪律本身即硬违例
+      - pattern_id: GRD-001-AP2
+        description: "P0 违例未消除即继续发布或放量（带病发布）"
+        detection_predicate: "∃ s: [s 为 P0 级信号] ∧ [s 未消除且未走 0.6 处置] ∧ [相关变更已执行发布或放量] ∧ ¬[blocking_registered]"
+        signal_level: P0               # @3583 逐字「不允许带病发布」＋@3706 G1「blocking_registered ∧ ¬deployed_without(remediation ∨ approved_waiver)」——G1 为硬性质
+      - pattern_id: GRD-001-AP3
+        description: "内部原因的 P0 违例走 Waiver 豁免"
+        detection_predicate: "∃ w: [w 为 P0 级违例的 Waiver] ∧ [违例源属组织内部可控] ∧ [w 仍被批准]"
+        signal_level: P0               # @3603 逐字「内部原因导致的 P0 违例不可豁免只可整改」＋@3708 G2 的 external_cause 前置条件——违反 G2 为硬性质
+    formal_anchor:
+      - {property_id: G1, role: implements}   # @3706 G1 逐字「∀ signal(level=P0): blocking_registered ∧ ¬deployed_without(remediation ∨ approved_waiver)」——本条是该量词域内的 P0 级模板；G 系列已在 DPS 批首次入账（0.17.1 不新增命题）
+    references: []                     # 9.7 @3836-3840 无指向 9.2.1 的行级书目登记面 → 按 G-STY-5 同型纪律留空（M6 对空集平凡为真；禁止以不承载主张的文献充当出处）
+    narrative:
+      benefit_cost_analysis: "收益：P0 模板把「已发生的硬性质违例」与「流程是否继续」直接绑定——@3583 响应义务逐字「即时阻塞：相关变更冻结、升级裁决启动（CH-C(2)）；不允许带病发布」，阻塞不是责任方的自由裁量，而是级别自带的义务。第二项收益是级别稳定性：@3587 逐字「信号的级别归属是守护规则注册表条目的字段，不许运行时即兴改级」，改级只能走注册表变更（@3598「规则的新增/改级/改参 = 注册表变更 = 完整 ADR + 批准」），由此 P0 不会在交付压力下被稀释。第三项收益是豁免边界清晰：@3603 明文 P0 Waiver 仅当违例源为外部不可控时可批，内部原因只可整改；@3708 G2 把「P0 → external_cause」写成硬性质，边界争议由评审点五裁决留痕。代价：其一是阻塞成本直接落在交付窗口（@3725 示例一明示交期压力改变的是整改优先级与资源，不是信号级别）；其二是执行面依赖值班能力（@3657「无值班能力的部署，P0 响应义务不可履行 = 守护体系不可行」）；其三是误判成本高——把趋势推测当作 P0 事实会制造无效冻结，故触发对象须是已发生的硬违例（applicability.problem_space 第二项）。净判读：P0 是守护体系的刚性底线，其价值恰在不可协商；把 P0 做成「可解释的严重告警」等于取消阻塞语义。"
+      typical_scenarios: "硬性质违例已发生（依赖规则硬违例（V1）、所有权绕过流量（Y2）、合规谓词失败（Y5）、批准闭环破坏（R1）——@3583 典型信号源列逐字）；安全/合规红线触线；契约漂移被判定为未注册交互（X1 违例面，@3614「漂移 = 未注册交互（X1 违例面）→ P0」）；行为级僵尸开关（@3616「Z6 违例 → P0（行为级开关）」）；金丝雀放量中命中 P0 时放量冻结（@3725 示例一）。反例场合：结构漂移早期信号（→应走 GRD-003，@3585）；条件硬性质违例、趋势窗口成立或 Waiver 到期（→应走 GRD-002，@3584）；仅有「感觉风险高」而无违例事实（0.4 出处门槛不成立，不得登记为 P0）。"
+      common_misuse: "以交期或「忙、来不及、下次再说」延后 P0 处置（@3587 逐字「『忙、来不及、下次再说』不构成豁免——豁免只有 Waiver 一条合法通道」）；在运行时把 P0 降级为 P1／P2（@3587「不许运行时即兴改级」；改级须走 @3598 注册表变更）；把内部原因的 P0 违例送 Waiver（@3603「内部原因导致的 P0 违例不可豁免只可整改」＋@3708 G2）；把趋势推测当作 P0 事实（应留 GRD-002／GRD-003 消费，@3584／@3585）；用「已通知责任方」代替「变更已冻结」（@3706 G1 的 blocking_registered 不是通知动作）；无值班能力仍声明 P0 已接线（@3657 的勘察结论须登记为部署形态可行性缺陷）；由 Agent 自行裁决 P0 升级或批准 Waiver（@3659 双使用者条款＋0.10 @235）。"
+
+  - entry_id: GRD-002
+    kind: GRD
+    name: "P1（限期级）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-GRD-01，M3 落盘）
+    provenance:
+      origin: hybrid                   # 骨架=9.2.1 @3584 表行四列逐字；三空间谓词转写与 reversibility 为人工判断（母本无期限数值、无趋势窗口参数）
+      source_pointers:
+        - {source_type: clause_id, value: "9.2.1", verified: true}   # @3579 heading＋@3581-3585 表（本条骨架源 @3584）＋@3587 分级纪律
+        - {source_type: row_id, value: "9.2.1-P1（限期级）", verified: true}   # @3584 数据行逐字：定义／响应义务／典型信号源
+        - {source_type: clause_id, value: "0.14", verified: true}    # @281-283 冻结内联定义（P1：限期整改，超期自动升 P0）＝signal_level 交叉表源
+        - {source_type: clause_id, value: "9.2.2", verified: true}   # @3600-3605 Waiver 五要素、到期处置（@3604）＝applicability 与 AP1 依据
+        - {source_type: clause_id, value: "9.3", verified: true}     # @3653-3659 交付空间：SRE 能力与值班能力＝delivery_space 交叉表源
+        - {source_type: clause_id, value: "9.4", verified: true}     # @3679-3685 施加约束表＝constraints_imposed 交叉表源（含 @3682 粒度上界 P1 实例）
+        - {source_type: clause_id, value: "9.5", verified: true}     # @3691-3701 谓词形态＋@3713 G5「豁免不静默展期——硬」＝formal_anchor 绑定对象
+        - {source_type: clause_id, value: "0.10", verified: true}    # @235 权力条款：P1 升 P0 的裁决与 Waiver 延续属人类
+        - {source_type: clause_id, value: "0.4", verified: true}     # 证据门槛：整改责任、期限与趋势参数须有出处；母本未给任何期限数值 → 只登记义务形态
+    typical_reversibility: costly      # 人工判断：期限一旦错过即自动升 P0，已流逝的整改窗口不可事后补回；改期限/改级走注册表变更（@3598），非自由可逆
+    applicability:
+      problem_space:                   # 骨架源：@3584「定义」列
+        - "[违例触及条件硬性质]——@3584 定义列第一项逐字「违例触及条件硬性质」：条件分支使违例成立依赖未满足的前提，故不以即时阻塞处置"
+        - "[或 P2 信号的趋势窗口判据成立（越阈且持续同向漂移）]——@3584 定义列第二项逐字；趋势窗口参数须为注册参数（@3598 改参 = 注册表变更）"
+        - "[或 Waiver 到期未闭合]——@3584 定义列第三项逐字＋@3604「deadline 到期未闭合 → 自动升 P0」：期限到达即转入 P0"
+      current_space:                   # 交叉表源：9.2.2 @3602
+        - "[违例事实有出处且影响范围可界定]——@3602 五要素逐字「违例事实（有出处）、豁免范围（精确到单元/谓词实例）」；P1 的整改范围同须可指认"
+        - "[整改责任人与期限可登记]——@3584 响应义务逐字「登记整改责任与期限」；两项缺一即 P1 不可执行（AP2）"
+      delivery_space:                  # 交叉表源：9.3 @3657
+        - "[整改资源与回归验证能力在位]——@3657 逐字「SRE 能力 → 金丝雀自动化判据的可行性」＋@3684「整改项 → 回归验证需求」"
+        - "[期限到达时的升级执行面在位]——@3604 逐字「deadline 到期未闭合 → 自动升 P0 + 升级裁决（[CH-C(2)]）」；升级通道不可达则 P1 的自动升 P0 失效"
+    compatibility:
+      - peer_entry: GRD-001            # @3584 逐字「逾期自动升 P0」——P1 的升级目标必须是已登记的 P0 规则；本条登 requires，GRD-001 侧不回填（单侧登记，MJ-5 同型）
+        relation: requires
+        evidence: {source_type: clause_id, value: "9.2.1", verified: true}
+    constraints_imposed:               # 交叉表源：9.4 施加约束表 @3679-3685（按 P1 级取适用行；@3682 的 P1 实例行在此入账）
+      - {target_aspect: 1, constraint: "已注册守护规则（P0/P1）→ 风格选择必须一致", level: hard}
+      - {target_aspect: 2, constraint: "粒度上界类守护规则（如『单服务对外接口数 ≤ 30』，P1）→ 分解策略约束", level: conditional}   # @3682 级别列「硬/软按规则级别」为复合取值 → conditional（0.17.2 枚举无复合值，既有 MJ-4 同型判读）
+      - {target_aspect: 8, constraint: "整改项 → 回归验证需求；Waiver 闭合 → 验证计划更新", level: soft}
+      - {target_aspect: 10, constraint: "机器层：G 谓词集 + 演化路线图；人类层：覆盖谓词子集 {G 谓词集、演化路线图} 的投影视图", level: hard}
+    anti_patterns:
+      - pattern_id: GRD-002-AP1
+        description: "P1 逾期未升 P0，或以「延续」方式静默展期"
+        detection_predicate: "∃ s, t: [s 为 P1 级信号] ∧ [登记期限 t 已过] ∧ ¬[s 已闭合] ∧ ¬[s 已升 P0 处置] ∧ ¬[延续申请作为新 Waiver 重新登记]"
+        signal_level: P0               # @3584「逾期自动升 P0」＋@3604「不允许静默展期」＋@3713 G5 硬性质（auto_escalate ∧ ¬silent_renewal）
+      - pattern_id: GRD-002-AP2
+        description: "P1 登记缺整改责任人或期限（限期整改降为无期限提示）"
+        detection_predicate: "∃ s: [s 为 P1 级信号] ∧ ¬[整改责任人已登记] ∧ ¬[整改期限已登记]"
+        signal_level: P1               # @3584 响应义务逐字「登记整改责任与期限」；缺项使 P1 的结构义务不成立，按 P1 限期整改
+      - pattern_id: GRD-002-AP3
+        description: "P2 单点越阈即改判 P1（趋势窗口判据未成立）"
+        detection_predicate: "∃ s: [s 为 P2 级信号] ∧ [单点越阈] ∧ ¬[趋势窗口判据成立] ∧ [s 已被改判为 P1]"
+        signal_level: P0               # @3584 定义列第二项要求「越阈 + 持续同向漂移」；@3587「不许运行时即兴改级」——缺趋势窗口即改判＝runtime 改级，违分级纪律
+    formal_anchor:
+      - {property_id: G5, role: implements}   # @3713 G5 逐字「∀ w(deadline): now > deadline ∧ ¬closed(w) → auto_escalate(P0) ∧ ¬silent_renewal(w)」——P1 的「逾期自动升 P0」是该性质在级别模板上的直接承载面
+    references: []                     # 9.7 @3836-3840 无指向 9.2.1 的行级书目登记面 → 按 G-STY-5 同型纪律留空（M6 对空集平凡为真）
+    narrative:
+      benefit_cost_analysis: "收益：P1 模板把「尚可修复的违例」转为带期限的整改义务——@3584 响应义务逐字「限期整改：登记整改责任与期限，逾期自动升 P0；期间相关区域变更需附张力承认 ADR」，由此在「立即阻塞」与「仅记录」之间建立可执行的中间档。第二项收益是升级自动化：@3604 逐字「deadline 到期未闭合 → 自动升 P0 + 升级裁决（CH-C(2)），延续申请 = 新 Waiver」，@3713 G5 进一步写成硬性质「now > deadline ∧ ¬closed(w) → auto_escalate(P0) ∧ ¬silent_renewal(w)」，期限由建议变为触发条件。第三项收益是变更与整改并行：P1 期间相关区域变更须附张力承认 ADR，既不冻结交付，也不让整改被无声遗忘。代价：其一是期限与责任人必须真实可执行，登记空转会使 P1 退化为软提示（AP2）；其二是升级判据依赖期限数据的可查询性，期限字段缺失则 G5 不可求值；其三是 P1 的入口包含 P2 趋势窗口成立（@3584），趋势参数须注册（@3598 改参 = 注册表变更），否则升级失去客观依据（AP3）。净判读：P1 是「有期限的债务」，不是「延后的 P0」；期限到达即按 P0 处置，不存在静默续期。"
+      typical_scenarios: "条件硬性质违例（@3584 定义列第一项）；DSM 密度持续恶化、金字塔失真且硬性质无下层覆盖（T5 升级分支）、错误预算燃尽率越阈、共享写例外超期（Y8）——@3584 典型信号源列逐字；P2 趋势窗口判据成立后的升级（@3584 第二项）；Waiver 到期未闭合（@3584 第三项＋@3604）；schema 漂移按 @3615「schema 漂移 → P1」。反例场合：已发生的硬性质违例（→应走 GRD-001，@3583）；单独出现且趋势未成立的结构漂移（→应走 GRD-003，@3585）；无闭合路径且无法整改者（应走 CH-D 升级，不得登记 P1 空转）。"
+      common_misuse: "P1 逾期不升 P0（@3604「不允许静默展期」＋@3713 G5 硬性质）；以「下次再说」推迟整改而不登记期限（@3587）；期限与责任人留空或填不可核的值（@3584 要求登记整改责任与期限，0.4 出处门槛）；把 P2 单点越阈直接判为 P1（@3584 要求趋势窗口判据成立；@3587 禁止运行时即兴改级）；P1 期间相关区域变更不附张力承认 ADR（@3584 明文义务）；把 P1 当作「已降级所以可发布」的通行证（P1 仍是违例，只是响应方式不同）；由 Agent 自行裁决 P1 升 P0（@3659 双使用者条款＋0.10 @235）。"
+
+  - entry_id: GRD-003
+    kind: GRD
+    name: "P2（监测级）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-GRD-01，M3 落盘）
+    provenance:
+      origin: hybrid                   # 骨架=9.2.1 @3585 表行四列逐字；三空间谓词转写与 reversibility 为人工判断（母本无阈值、无趋势窗口参数）
+      source_pointers:
+        - {source_type: clause_id, value: "9.2.1", verified: true}   # @3579 heading＋@3581-3585 表（本条骨架源 @3585）＋@3587 分级纪律
+        - {source_type: row_id, value: "9.2.1-P2（监测级）", verified: true}   # @3585 数据行逐字：定义／响应义务／典型信号源
+        - {source_type: clause_id, value: "0.14", verified: true}    # @281-283 冻结内联定义（P2：监测预警，阈值+趋势窗口双判据）＝signal_level 交叉表源
+        - {source_type: clause_id, value: "9.2.2", verified: true}   # @3605 Waiver 台账周期聚合评审本身进 P2 监测＝applicability 依据
+        - {source_type: clause_id, value: "9.3", verified: true}     # @3655 告警噪声率是现状事实（噪声淹没则 P2 无效化）＋@3657 值班与 SRE 能力＝三空间交叉表源
+        - {source_type: clause_id, value: "9.4", verified: true}     # @3679-3685 施加约束表＝constraints_imposed 交叉表源
+        - {source_type: clause_id, value: "9.5", verified: true}     # @3691-3701 谓词形态＋@3717 G7「P2 双判据告警治理——硬」＋@3720 G9 健康度报表＝formal_anchor 绑定对象
+        - {source_type: clause_id, value: "0.10", verified: true}    # @235 权力条款：P2 信号的消费裁决属人类（信号非结论）
+        - {source_type: clause_id, value: "0.4", verified: true}     # 证据门槛：阈值与趋势窗口须有出处/注册；母本未给任何数值 → 只登记双判据形态
+    typical_reversibility: bounded     # 人工判断：阈值与趋势窗口参数可经注册表变更调整，历史信号可保留；但撤销监测会留下观测缺口（不可追补），故不取 free
+    applicability:
+      problem_space:                   # 骨架源：@3585「定义」列
+        - "[违例为结构漂移早期信号，单独出现时不足以判为硬违例]——@3585 定义列逐字「结构漂移早期信号，单独出现不行动」：单独出现即行动会侵入 P0/P1 的级别语义"
+        - "[信号可绑定阈值与趋势窗口参数]——@3585 响应义务逐字「记录 + 阈值/趋势双判据监测（2.2.4 告警治理）」；无可注册参数则 P2 规则不可执行"
+      current_space:                   # 交叉表源：9.3 @3655
+        - "[观测面足以支撑趋势窗口求值]——@3585「积累后聚合分析」；@3655 逐字「噪声淹没信号的存量告警系统在接入 G 系列前必须先降噪，否则 P2 信号无效化」"
+        - "[历史基线可查（趋势判定有可比对象）]——@3655「既有监控/告警资产勘察」；无基线则趋势窗口无可比对象（0.4 出处门槛）"
+      delivery_space:                  # 交叉表源：9.3 @3657
+        - "[告警治理面在位（双判据参数维护与噪声消化）]——@3585 响应义务＋@3657 逐字「SRE 能力 → 金丝雀自动化判据的可行性」；无治理面则双判据不可维护"
+        - "[聚合分析周期与守护台账可执行]——@3605「Waiver 台账…周期聚合评审（…本身进 P2 监测）」＋@3720 G9「守护健康度周期报表生成」"
+    compatibility:
+      - peer_entry: GRD-002            # @3584 定义列第二项逐字「P2 信号的趋势窗口判据成立（越阈 + 持续同向漂移）」→ 升 P1——本条登 requires，GRD-002 侧不回填（单侧登记，MJ-5 同型）
+        relation: requires
+        evidence: {source_type: clause_id, value: "9.2.1", verified: true}
+    constraints_imposed:               # 交叉表源：9.4 施加约束表 @3679-3685（按 P2 级取适用行；P2 不承担 P0 阻塞义务）
+      - {target_aspect: 1, constraint: "演化观测数据 → 风格重审提议的事实源；部署切分线补充条目的入库通道", level: soft}
+      - {target_aspect: 7, constraint: "可推翻指标命中 → 自动重审提议（过 R2 门槛）", level: hard}
+      - {target_aspect: 10, constraint: "机器层：G 谓词集 + 演化路线图；人类层：覆盖谓词子集 {G 谓词集、演化路线图} 的投影视图", level: hard}
+    anti_patterns:
+      - pattern_id: GRD-003-AP1
+        description: "P2 单点越阈即告警（阈值+趋势窗口双判据未成立）"
+        detection_predicate: "∃ s: [s 为 P2 级信号] ∧ [单点越阈] ∧ ¬[趋势窗口判据成立] ∧ [s 已触发告警]"
+        signal_level: P0               # @3585 响应义务＋@3717 G7 逐字「P2 信号告警 → threshold ∧ trend_window 双判据成立（单点越阈只记录）—— 硬」：G7 为硬性质，违例按 P0
+      - pattern_id: GRD-003-AP2
+        description: "P2 信号单独出现即触发整改或阻塞（监测级被当作行动级）"
+        detection_predicate: "∃ s: [s 为 P2 级信号] ∧ [s 单独出现] ∧ [未达阈值或趋势窗口未成立] ∧ [s 已触发整改或阻塞]"
+        signal_level: P1               # @3585 逐字「单独出现不行动」＋@3584 P1 的入口要求趋势窗口成立——越级行动破坏级别语义，按结构性违例限期整改
+      - pattern_id: GRD-003-AP3
+        description: "P2 信号只记录不聚合（积累后聚合分析义务被架空）"
+        detection_predicate: "∃ s: [s 为 P2 级信号] ∧ [积累期已过] ∧ ¬[已进入聚合分析] ∧ ¬[已进入周期报表]"
+        signal_level: P2               # @3585 响应义务逐字「积累后聚合分析」＋@3720 G9；信号长期不消费属监测缺口，保持 P2 记录与趋势跟踪
+    formal_anchor:
+      - {property_id: G7, role: implements}   # @3717 G7 逐字「P2 信号告警 → threshold ∧ trend_window 双判据成立（单点越阈只记录）—— 硬（告警治理本身受守护）」——本条是该性质在级别模板上的直接承载面
+    references: []                     # 9.7 @3836-3840 无指向 9.2.1 的行级书目登记面 → 按 G-STY-5 同型纪律留空（M6 对空集平凡为真）
+    narrative:
+      benefit_cost_analysis: "收益：P2 模板承担「早期信号不误伤、积累后可判」的职责——@3585 定义逐字「结构漂移早期信号，单独出现不行动」，响应义务为「记录 + 阈值/趋势双判据监测（2.2.4 告警治理）；积累后聚合分析」。由此获得三项能力：其一是降噪，单点越阈只记录、不告警（@3717 G7 逐字「P2 信号告警 → threshold ∧ trend_window 双判据成立（单点越阈只记录）」，且 G7 本身是硬性质）；其二是可积累，信号进入趋势窗口与聚合分析，避免「每次只看见一个点」；其三是守护健康度的数据面，@3720 G9 的 Waiver 密度、P1 逾期率、无据决策消化率等指标由 P2 监测持续供给。代价：其一是观测面与基线是前提，@3655 明示「噪声淹没信号的存量告警系统在接入 G 系列前必须先降噪，否则 P2 信号无效化」；其二是参数治理成本，阈值与趋势窗口是注册参数（@3598 改参 = 注册表变更），本地静默调参会使 G7 不可核；其三是 P2 不产生阻塞，若把 P2 当作行动依据则会侵入 P0/P1 的级别语义（AP2）。净判读：P2 的价值在「让漂移可见而不制造告警疲劳」，它不承诺即时处置，但承诺可积累、可升级、可进入健康度报表。"
+      typical_scenarios: "接口/实现比劣化（W6）、调用链深度越阈（Z5）、僵尸开关（Z6 的非行为级面）、schema 漂移的非硬违例面、简记分级误判积累（R5）、幻觉测试套件——@3585 典型信号源列逐字；Waiver 密度与平均存活期的周期聚合（@3605「本身进 P2 监测」）；守护健康度周期报表（@3720 G9）。反例场合：已触及硬性质或已发生的违例（→应走 GRD-001，@3583）；趋势窗口成立、条件硬性质违例或 Waiver 到期（→应走 GRD-002，@3584）；无阈值与趋势参数的「持续观察」不构成 P2 规则（@3585 双判据是定义的一部分）。"
+      common_misuse: "单点越阈即告警（@3717 G7 硬性质；正确处置是记录并等待趋势窗口）；P2 单独出现即触发整改或阻塞（侵入 P0/P1 语义，@3585「单独出现不行动」）；只记录不聚合、不进入周期分析（@3585「积累后聚合分析」被架空）；在噪声未治理的存量告警系统上直接接入 P2（@3655「否则 P2 信号无效化」）；静默改阈值或趋势窗口而不走注册表变更（@3598）；把 P2 数据直接当作评审结论（P2 是信号，裁决权仍在人类，@3659 双使用者条款）。"
+
+  # ══════════ 方面十：视图表征 · 10.2.2 义务表 11 行 → PRJ-001…PRJ-011 ══════════
+  # 第十六批（s5e-10）：PRJ 投影词汇/规则 · 方面 10 · 10.2.2 义务表 @3869-3881 十一行
+  # 粒度裁决（2026-11-03，用户批准）：**条数 = 11**，编号严格按表行序：
+  # 1.4 @3871 → PRJ-001、2.4 @3872 → PRJ-002、4.4 @3873 → PRJ-003、5.4 @3874 → PRJ-004、
+  # 8.4 @3875 → PRJ-005、9.4 @3876 → PRJ-006、8.2.7 评审点一 × 0.5 @3877 → PRJ-007、
+  # 8.2.7 评审点二 @3878 → PRJ-008、8.2.7 评审点三 @3879 → PRJ-009、
+  # 8.2.7 评审点四 @3880 → PRJ-010、8.2.7 评审点五 @3881 → PRJ-011。
+  # **C4／arc42 的 16 行实例表不收**：母本 @3885 逐字「投影规则示例实例（实例级，非规范）」→ 不作种子。
+  # 剖面：kind_profile_PRJ status=seed、undecided_fields=[]；envelope 与 cost_profile.* 共 8 项 N-A
+  # （0.17.2 @381 末句 R2 澄清）→ 本块不写 envelope／cost_profile；required_extra=[]。
+  # **applicability.delivery_space 已裁定必填**（剖面 narrative 明确「不按 N-A」）→ 逐条写显式勘察义务，
+  # 以 [待勘察：…] 承载部署级事实缺口；不伪造、不留空、不登记 N-A（M2 会判待补，属预期的诚实状态）。
+  # C-ENV：entry_level_exemptions 的 scope「PRJ-001…PRJ-011（10.2.2 义务表）」覆盖本十一条。
+  # 形式化面：十一条均为 E1 @4007「∀ predicate_subset referenced_by(评审点): ∃ view_instance covering it」
+  # 的义务行，故统一 formal_anchor = {property_id: E1, role: implements}；不另绑 E2/E3 以免把投影义务
+  # 误读为视图实现或 FVR 本体（0.17.1 零新增命题）。
+  # 参考资料：10.7 @4198 的 C4／arc42 均已被母本标为实例级非规范；义务行本身无行级书目面 → references: []。
+  # 谓词纪律：applicability 内不写 ASCII 调用式；通道号写作 [CH-A] 等方括号形态，避免 PRED_CALL_RE 误读。
+  # 行数中性纪律：README §1 计数、meta.entry_count、投影重生成、ST／缺口／豁免登记一律留 M3。
+
+  - entry_id: PRJ-001
+    kind: PRJ
+    name: "1.4 架构评审：系统整体组织原则"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-PRJ-01，M3 落盘）
+    provenance:
+      origin: hybrid                   # 骨架=10.2.2 @3871 表行三列逐字；三空间判据与 delivery_space 勘察义务为人工判断
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}   # @3863 heading＋@3869-3881 表＋@3883 履行判据
+        - {source_type: row_id, value: "10.2.2-1.4", verified: true}   # @3871 数据行逐字
+        - {source_type: clause_id, value: "10.2.1", verified: true}   # @3856 投影规则注册表＝履行判据的载体
+        - {source_type: clause_id, value: "1.4", verified: true}      # @1431 方面 1 的「施加于方面 10」行＝义务来源
+        - {source_type: clause_id, value: "10.3", verified: true}     # @3966 三空间驱动（@3972 无工具链→表格形态）
+        - {source_type: clause_id, value: "10.4", verified: true}     # @3982-3988 施加约束表＝constraints_imposed 交叉表源
+        - {source_type: clause_id, value: "10.5", verified: true}     # @4007 E1 表达无缺口——硬
+        - {source_type: clause_id, value: "0.9", verified: true}      # @205 双层表达机制四（视图表征义务）
+    typical_reversibility: bounded     # 人工判断：视图可由谓词快照重投影（E2 同源生成），撤销规则留下历史视图缺口但可重建；属有界可逆
+    applicability:
+      problem_space:
+        - "[架构评审场合存在，且「系统整体组织原则是什么」必须由 {1.5 拓扑谓词集} 回答]——@3871 第二列逐字；该问题不得以单张局部图或叙述替代"
+        - "[所选风格须在投影中显式表达]——@3871 第三列逐字「且必须表达所选风格」；只投影拓扑而不投影风格即义务未履行"
+      current_space:
+        - "[1.5 拓扑谓词集与风格谓词已在共享白板在册]——@4007 E1 的量词域要求 [referenced_by(评审点)] 的子集可求值；无谓词则覆盖关系不可判定"
+        - "[投影规则注册表 10.2.1 可查]——@3883 逐字「某行被履行 = 投影规则注册表（10.2.1）中存在覆盖该谓词子集、且声明了该受众与问题的投影规则」"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 {1.5 拓扑谓词集}、声明「架构评审」受众与「系统整体组织原则」问题、且显式表达所选风格的投影规则——@3883 履行判据；母本不指定记法层级（@3867），须按部署事实登记，禁预设]"
+        - "[待勘察：本部署的建模工具链与谓词素养是否支撑该视图形态——@3972 明示「无建模工具链 → 投影规则退化为表格形态」；实际形态须登记，不得以图形外观冒充覆盖]"
+    compatibility: []                  # 义务行彼此独立，不登记跨条目关系（避免把「同一注册表内的并列义务」误读为方法依赖）
+    constraints_imposed:               # 交叉表源：10.4 @3982-3988 全表（投影规则普遍施加项）
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-001-AP1
+        description: "架构评审无覆盖 {1.5 拓扑谓词集} 的投影规则（该义务行未履行）"
+        detection_predicate: "∃ a, s: [a 为架构评审受众] ∧ [s 为 1.5 拓扑谓词集] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与系统整体组织原则问题]"
+        signal_level: P0               # @4007 E1「表达无缺口 —— 硬」；@3883 逐字「某行无覆盖 → E1 违例」
+      - pattern_id: PRJ-001-AP2
+        description: "投影规则存在但未声明受众与问题（只列谓词子集）"
+        detection_predicate: "∃ r: [r 覆盖 1.5 拓扑谓词集] ∧ ¬[r 声明架构评审受众] ∧ ¬[r 声明系统整体组织原则问题]"
+        signal_level: P1               # @3883 履行判据要求「覆盖该谓词子集、且声明了该受众与问题」；缺声明使覆盖不可审计
+      - pattern_id: PRJ-001-AP3
+        description: "架构视图被手工修改而未回写谓词（双重真相）"
+        detection_predicate: "∃ v: [v 为架构评审视图实例] ∧ [v 与谓词快照比对失败] ∧ ¬[手工修改已回写谓词层]"
+        signal_level: P0               # @4008 E2「同源生成 —— 硬」；@3889-3897 实例表亦以谓词为权威
+    formal_anchor:
+      - {property_id: E1, role: implements}   # @4007 表达无缺口——硬；本条是 E1 量词域中的一个 referenced_by 行
+    references: []                     # 10.7 @4198 的 C4 为实例级非规范；义务行无行级书目面 → 空集（M6 平凡为真）
+    narrative:
+      benefit_cost_analysis: "收益：把「架构评审该看什么」从评审人的临场提问固化为一条可判定的义务——@3871 明确「系统整体组织原则是什么」必须由 {1.5 拓扑谓词集} 回答，且必须表达所选风格。于是评审材料是否够用不再取决于评审人经验，而取决于投影规则注册表是否存在覆盖该子集、声明该受众与问题的规则（@3883）。第二项收益是与 0.9 双层表达的闭环：谓词是权威、视图是投影（@3984），架构评审看到的图与白板事实同源，手工修补视图即触发 E2（@4008）。代价：其一是投影规则维护成本——拓扑谓词或风格变更后须重生成视图，否则形成僵尸投影；其二是受众纪律成本，10.2.1 要求每张视图有明确受众，不得为「通用好看」生成无受众图；其三是表达形态受工具链限制，@3972 明示无建模工具链时退化为表格形态，评审体验下降但义务不降。净判读：架构评审是最高杠杆的评审入口，以一条注册规则换掉「评审靠口头补充」的隐性成本，收益远高于投影维护成本。"
+      typical_scenarios: "新系统首次架构评审；风格定案后生成系统上下文与整体结构视图；风格变更触发投影重生成；外部干系人要求「一张图说清系统怎么组织」；与 10.2.2 实例表并置时，C4 L1/L2 或 arc42 第 3/4 章只是该义务的一种实现候选，不是义务本体（@3885 实例级非规范）。反例场合：只给组件清单而不表达风格（AP2 形态）；视图与谓词快照不一致（AP3，P0）；无任何覆盖规则即开评审（AP1，P0）。"
+      common_misuse: "把 C4/arc42 的某张图当作义务本身（母本 @3885 明写实例级非规范，义务是「覆盖 + 声明受众与问题」）；只投影拓扑不投影风格（@3871 第三列逐字要求）；规则存在但受众/问题留空，事后由评审人代填（@3883 声明是履行判据的一部分）；用手工美化图替代谓词快照（E2 硬，@4008）；以「评审人看得懂」为由省略谓词子集说明（覆盖不可审计）；把 10.2.1 的受众纪律当作可选建议（@3968 明示每张图仍须过受众纪律）。"
+
+  - entry_id: PRJ-002
+    kind: PRJ
+    name: "2.4 分解评审：单元边界与依赖"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-2.4", verified: true}   # @3872 数据行逐字：{2.5 边界谓词集}
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "2.4", verified: true}      # @1670 方面 2 的施加于方面 10 行
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[分解评审场合存在，且「单元边界与依赖」必须由 {2.5 边界谓词集} 回答]——@3872 第二列逐字；边界问题不得以目录树或包名列表替代"
+        - "[评审对象涉及至少一个跨单元依赖判定]——@3872 第三列只声明 {2.5 边界谓词集}；无跨单元依赖时该行的表达义务退化为空集，不得假装覆盖"
+      current_space:
+        - "[2.5 边界谓词集已在共享白板在册]——@4007 E1 的量词域要求子集可求值；边界谓词缺失则「单元边界与依赖」不可判定"
+        - "[投影规则注册表 10.2.1 可查且可判覆盖]——@3883 逐字履行判据；注册表不可查则义务履行状态不可审计"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 {2.5 边界谓词集}、声明「分解评审」受众与「单元边界与依赖」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的边界谓词采集面与视图生成工具是否在位——@3972 工具链决定视图形态；无采集面则边界视图只能手工拼装，属 E2 风险]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-002-AP1
+        description: "分解评审无覆盖 {2.5 边界谓词集} 的投影规则"
+        detection_predicate: "∃ a, s: [a 为分解评审受众] ∧ [s 为 2.5 边界谓词集] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与单元边界依赖问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-002-AP2
+        description: "以目录树/包名列表冒充边界视图（未投影 2.5 谓词）"
+        detection_predicate: "∃ v: [v 为分解评审材料] ∧ [v 仅含目录树或包名] ∧ ¬[v 覆盖 2.5 边界谓词集]"
+        signal_level: P1               # @3883 覆盖关系是履行判据；形态替代不构成覆盖
+      - pattern_id: PRJ-002-AP3
+        description: "边界视图与谓词快照手工分叉"
+        detection_predicate: "∃ v: [v 为分解评审视图实例] ∧ [v 与谓词快照比对失败] ∧ ¬[手工修改已回写谓词层]"
+        signal_level: P0               # E2 @4008 同源生成——硬
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：分解评审最容易退化为「看目录树」——@3872 把「单元边界与依赖」钉在 {2.5 边界谓词集} 上，使边界是否成立由谓词而非包名决定。第二项收益是跨单元依赖的可见性：边界谓词与依赖谓词同源投影后，评审人能区分「同层依赖」与「跨层依赖」，而不是从目录层级猜。第三项收益是与 10.2.1 的受众纪律联动：分解评审是技术决策者受众，视图须声明该受众与问题，避免生成「谁都能看、谁都不够用」的通用图。代价：边界谓词采集需要单元粒度事实，@3972 明示无建模工具链时退化为表格，维护成本仍在；边界变更后投影不重生成会形成僵尸视图（E2 风险）。净判读：分解评审的争议多数源于边界定义不一致，用一条谓词子集义务换掉争议的反复解释，收益稳定。"
+      typical_scenarios: "新模块划分评审；跨团队依赖梳理；目录结构重组前的边界确认；单元粒度与部署粒度不一致时的分解解释；与 C4 L2 容器图或 arc42 第 5 章并置时，后者只是候选形态（实例级非规范）。反例场合：只给目录树（AP2）；边界视图与白板不一致（AP3，P0）；无覆盖规则即评审（AP1，P0）。"
+      common_misuse: "把包名/目录树当作边界谓词投影（@3872 第三列只要 2.5 谓词集）；只画依赖不画边界，或反之（覆盖不完整）；用「团队约定」替代谓词登记（约定不可审计）；边界视图手工分叉（E2 硬）；在无 2.5 谓词采集面的部署上声称已履行（delivery_space 待勘察项未闭合即属待补）；把 C4 容器图当作分解评审的规范形态（@3885 实例级非规范）。"
+
+  - entry_id: PRJ-003
+    kind: PRJ
+    name: "4.4 数据评审：数据所有权与流动"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-4.4", verified: true}   # @3873 数据行逐字：{Y 谓词集、血缘}
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "4.4", verified: true}      # @2234 方面 4 的施加于方面 10 行
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[数据评审场合存在，且「数据所有权与流动」必须由 {Y 谓词集、血缘} 回答]——@3873 第二、三列逐字；不得以表结构清单替代所有权与流动判定"
+        - "[评审涉及至少一条跨单元数据流或所有权变更]——@3873 只声明 Y 谓词集与血缘；无流动事实时该行退化为空集"
+      current_space:
+        - "[Y 谓词集与血缘关系已在共享白板在册]——@4007 E1 要求子集可求值；血缘缺失则「流动」不可判定"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则未声明受众与问题即不可审计"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 {Y 谓词集、血缘}、声明「数据评审」受众与「数据所有权与流动」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的血缘采集面与数据所有权登记面是否在位——@3970 存量文档仅作线索、冲突处以谓词为准重建；无采集面则数据视图不可同源生成]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-003-AP1
+        description: "数据评审无覆盖 {Y 谓词集、血缘} 的投影规则"
+        detection_predicate: "∃ a, s: [a 为数据评审受众] ∧ [s 为 Y 谓词集与血缘] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与数据所有权流动问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-003-AP2
+        description: "以表结构清单冒充数据流动/血缘视图"
+        detection_predicate: "∃ v: [v 为数据评审材料] ∧ [v 仅含表结构或字段清单] ∧ ¬[v 覆盖 Y 谓词集与血缘]"
+        signal_level: P1               # 覆盖关系是履行判据；形态替代不构成覆盖（@3883）
+      - pattern_id: PRJ-003-AP3
+        description: "数据视图与谓词快照手工分叉（尤其血缘边被手工合并）"
+        detection_predicate: "∃ v: [v 为数据评审视图实例] ∧ [v 与谓词快照比对失败] ∧ ¬[手工修改已回写谓词层]"
+        signal_level: P0               # E2 @4008 同源生成——硬；@4020 示例一即血缘/连接边手工合并的拦截
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：数据评审的核心争议是「这份数据归谁、从哪来、到哪去」——@3873 把答案钉在 {Y 谓词集、血缘} 上，表结构清单再详细也不构成所有权与流动的证明。第二项收益是与存量文档纪律的衔接：@3970 明示存量文档降级为线索、冲突处以谓词为准重建投影，数据视图因此不会继承旧文档的所有权错误。第三项收益是血缘可追溯：投影覆盖血缘后，数据评审能追到上游单元与访问路径，而不是只看目标表。代价：血缘采集成本高于表结构导出；@3970 的存量文档重建需要人工确认冲突；视图手工合并血缘边会直接触发 E2（@4020 示例一）。净判读：数据评审的误判多来自「表在谁库里」被当作所有权，用谓词化所有权与血缘把口径统一，收益高且可审计。"
+      typical_scenarios: "新数据集引入评审；跨单元数据流梳理；数据所有权变更；访问路径与血缘审计；与 C4 数据视图族或 arc42 第 6 章并置时，后者只是候选形态（实例级非规范）。反例场合：只给表结构（AP2）；血缘边手工合并（AP3，P0）；无覆盖规则即评审（AP1，P0）。"
+      common_misuse: "把「表在哪个库」当作数据所有权（@3873 要 Y 谓词集）；只画数据流不画血缘，或只画血缘不画所有权；用存量文档直接当投影（@3970 明示冲突处以谓词为准）；手工合并血缘边以「图好看」（E2 硬，@4020）；血缘采集面缺失仍声称已履行（delivery_space 待勘察未闭合）；把 C4 数据视图族当规范形态（@3885 实例级非规范）。"
+
+  - entry_id: PRJ-004
+    kind: PRJ
+    name: "5.4 流程评审：行为与协调的时序、事件流与流程状态"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-5.4", verified: true}   # @3874 数据行逐字：{Z 谓词集}
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "5.4", verified: true}      # @2530 方面 5 的施加于方面 10 行
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[流程评审场合存在，且「行为与协调的时序、事件流与流程状态」必须由 {Z 谓词集} 回答]——@3874 第二、三列逐字；不得以时序图截图替代流程状态判定"
+        - "[评审对象包含至少一个跨单元协调或状态迁移]——@3874 只声明 Z 谓词集；无流程状态时该行退化为空集"
+      current_space:
+        - "[Z 谓词集已在共享白板在册]——@4007 E1 要求子集可求值；状态/事件谓词缺失则流程评审不可判定"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明流程评审受众与问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 {Z 谓词集}、声明「流程评审」受众与「行为与协调的时序、事件流与流程状态」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的事件采集与状态机导出面是否在位——@3972 工具链决定动态视图形态；无采集面则时序图只能手工拼装，属 E2 风险]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-004-AP1
+        description: "流程评审无覆盖 {Z 谓词集} 的投影规则"
+        detection_predicate: "∃ a, s: [a 为流程评审受众] ∧ [s 为 Z 谓词集] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与流程时序状态问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-004-AP2
+        description: "以静态时序图截图冒充流程状态/事件流视图"
+        detection_predicate: "∃ v: [v 为流程评审材料] ∧ [v 为静态截图] ∧ ¬[v 可重放自 Z 谓词快照]"
+        signal_level: P1               # @3883 覆盖 + @3987 投影可重放性；截图不可重放即不构成履行
+      - pattern_id: PRJ-004-AP3
+        description: "流程视图与谓词快照手工分叉（时序被手工调整）"
+        detection_predicate: "∃ v: [v 为流程评审视图实例] ∧ [v 与谓词快照比对失败] ∧ ¬[手工修改已回写谓词层]"
+        signal_level: P0               # E2 @4008 同源生成——硬
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：流程评审最容易被「一张时序图」带过——@3874 把时序、事件流与流程状态钉在 {Z 谓词集} 上，评审人可核对状态迁移是否闭合，而不是只看调用顺序。第二项收益是与动态视图族的衔接：@3897 的 interaction_flow/saga/orchestrator 与状态机投影只是候选形态，义务仍是覆盖 Z 谓词集。第三项收益是可重放性：@3987 要求投影可重放，静态截图不满足，流程评审因此能回到快照复核。代价：事件与状态采集成本高；动态视图对工具链依赖强，@3972 无工具链时退化为表格；手工调整时序列会破坏同源生成。净判读：流程评审的争议多源于「图上看是这样、实际跑不是这样」，Z 谓词化后争议可在快照层复核，收益显著。"
+      typical_scenarios: "跨单元流程评审；Saga/编排器状态机评审；事件流与超时/补偿路径确认；流程状态迁移与回滚评审；与 C4 动态视图族或 arc42 运行时视图并置时，后者只是候选形态。反例场合：静态截图（AP2）；时序手工调整（AP3，P0）；无覆盖规则即评审（AP1，P0）。"
+      common_misuse: "把调用顺序图当作流程状态机（@3874 要 Z 谓词集）；只画成功路径不画补偿/超时分支；把截图当投影（@3987 可重放性不满足）；手工调整时序列以「对齐美观」（E2 硬）；无事件采集面仍声称流程评审已履行（delivery_space 待勘察未闭合）；把 C4 动态视图族当规范形态（@3885 实例级非规范）。"
+
+  - entry_id: PRJ-005
+    kind: PRJ
+    name: "8.4 验证评审入口：验证计划与证据索引"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-8.4", verified: true}   # @3875 数据行逐字：{T 谓词集}
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "8.4", verified: true}      # @3386 方面 8 的施加于方面 10 行
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[验证评审入口场合存在，且「验证计划与证据索引」必须由 {T 谓词集} 回答]——@3875 第二、三列逐字；不得以测试报告汇总替代验证计划结构"
+        - "[评审需要判断验证边界是否覆盖硬性质]——@3875 只声明 T 谓词集；验证计划无 T 谓词覆盖则边界不可判"
+      current_space:
+        - "[T 谓词集与证据工件索引已在共享白板在册]——@4007 E1 要求子集可求值；证据索引缺失则「证据」不可定位"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明验证评审入口受众与问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 {T 谓词集}、声明「验证评审入口」受众与「验证计划与证据索引」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的证据工件存储与索引面是否在位——@3987 投影可重放性纳入证据保全；无索引则验证计划无法回指证据]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-005-AP1
+        description: "验证评审入口无覆盖 {T 谓词集} 的投影规则"
+        detection_predicate: "∃ a, s: [a 为验证评审入口受众] ∧ [s 为 T 谓词集] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与验证计划证据索引问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-005-AP2
+        description: "验证计划无证据索引（只列测试活动）"
+        detection_predicate: "∃ p: [p 为验证计划投影] ∧ [p 列测试活动] ∧ ¬[p 关联证据工件索引]"
+        signal_level: P1               # @3875 第二列要求「验证计划与证据索引」；缺索引使计划不可核
+      - pattern_id: PRJ-005-AP3
+        description: "验证结论声称通过但证据不可重放"
+        detection_predicate: "∃ c: [c 为验证结论] ∧ [c 声称通过] ∧ ¬[c 的证据工件可重放]"
+        signal_level: P0               # E3 @4009「FVR 全覆盖——硬」＋@3987 可重放性；无重放证据即「通过」不成立
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：验证评审入口若只收测试报告，评审人无法判断「验证边界是否成立」——@3875 把答案钉在 {T 谓词集} 上，验证计划因此必须结构化到谓词与证据索引，而不是活动清单。第二项收益是与 E3 的衔接：@4009 要求硬性质有 FVR 条目且接线，验证计划投影覆盖 T 谓词集后，「通过」才有可回指的 FVR 证据。第三项收益是可重放：@3987 把投影可重放性纳入证据保全，验证结论可回到快照复核。代价：证据索引维护成本高；T 谓词与 FVR 条目需双向对齐，错位会造成「有报告无证据」；工具链不足时计划投影退化为表格。净判读：验证评审的价值在边界判断，用 T 谓词与证据索引替代报告堆叠，收益高且可审计。"
+      typical_scenarios: "发布前验证评审；硬性质 FVR 覆盖检查；验证计划与证据索引对齐；外部审计要求验证边界说明；与 8.2.7 评审点四并置时，计划矩阵与 FVR 接线是材料本体。反例场合：只列测试活动（AP2）；声称通过但证据不可重放（AP3，P0）；无覆盖规则即评审（AP1，P0）。"
+      common_misuse: "把测试报告汇总当验证计划（@3875 要 T 谓词集）；只列活动不列证据索引；以「跑过了」代替可重放证据（E3 硬，@4009）；验证计划与 FVR 条目版本错位；无证据存储面仍声称入口已履行（delivery_space 待勘察未闭合）；把某套验证模板当规范形态（母本只定义义务，不指定记法）。"
+
+  - entry_id: PRJ-006
+    kind: PRJ
+    name: "9.4 守护评审：守护台账与健康度"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-9.4", verified: true}   # @3876 数据行逐字：{G 谓词集、演化路线图}
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "9.4", verified: true}      # @3661 方面 9 的施加于方面 10 行
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[守护评审场合存在，且「守护台账与健康度」必须由 {G 谓词集、演化路线图} 回答]——@3876 第二、三列逐字；不得以告警数量统计替代守护健康度"
+        - "[评审需要判断守护规则是否执行、豁免是否闭环]——@3876 只声明 G 谓词集与演化路线图；台账缺失则健康度不可判"
+      current_space:
+        - "[G 谓词集与演化路线图已在共享白板在册]——@4007 E1 要求子集可求值；G 谓词缺失则守护健康度不可判定"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明守护评审受众与问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 {G 谓词集、演化路线图}、声明「守护评审」受众与「守护台账与健康度」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的守护台账与健康度报表数据面是否在位——9.2.2 @3605 Waiver 台账周期聚合＋10.5 @4001 G9 报表；无台账则健康度只剩告警计数]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-006-AP1
+        description: "守护评审无覆盖 {G 谓词集、演化路线图} 的投影规则"
+        detection_predicate: "∃ a, s: [a 为守护评审受众] ∧ [s 为 G 谓词集与演化路线图] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与守护台账健康度问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-006-AP2
+        description: "以告警数量统计冒充守护健康度"
+        detection_predicate: "∃ v: [v 为守护评审材料] ∧ [v 仅含告警数量统计] ∧ ¬[v 覆盖 G 谓词集与演化路线图]"
+        signal_level: P1               # @3876 第三列要求 G 谓词集与路线图；告警计数不承载豁免/整改/健康度
+      - pattern_id: PRJ-006-AP3
+        description: "守护台账与 Waiver 台账分离，健康度不可交叉核对"
+        detection_predicate: "∃ v: [v 为守护评审视图] ∧ [v 缺 Waiver 台账关联] ∧ ¬[v 可回指 9.2.2 台账]"
+        signal_level: P1               # @3605 台账周期聚合进 P2 监测；分离后健康度报表无法证明豁免闭环
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：守护评审若只看告警数量，会把「规则不执行、告警无人理」的守护幻觉当成安静——@3876 把「守护台账与健康度」钉在 {G 谓词集、演化路线图} 上，评审人须看规则执行面、豁免闭环与演化路线。第二项收益是与 9.2.2 台账的衔接：@3605 Waiver 台账周期聚合本身进 P2 监测，投影覆盖后台账可回指，健康度不再是数字游戏。第三项收益是演化可见：路线图投影使「下一步守护补什么」有据可查。代价：G 谓词与台账采集面要求高；台账与投影不同源会造成「报表漂亮、事实分离」；工具链不足时退化为表格。净判读：守护评审是防守护幻觉的最后闸口，用 G 谓词与台账替代告警计数，收益高于采集成本。"
+      typical_scenarios: "季度守护评审；Waiver 台账复核；P0/P1 逾期率与健康度报表；演化路线图评审；与 10.5 G9 健康度报表并置时，报表只是投影形态。反例场合：只看告警数量（AP2）；台账与 Waiver 分离（AP3）；无覆盖规则即评审（AP1，P0）。"
+      common_misuse: "把告警数量少当作健康（@3573 守护幻觉：规则不执行、告警无人理、豁免无限期）；健康度报表不含 Waiver 闭环；演化路线图缺失仍称守护评审完成；守护台账与 Waiver 台账分开维护（双重维护，@3984 硬）；无 G 谓词采集面仍声称已履行（delivery_space 待勘察未闭合）；把某张健康度报表当规范形态（母本只定义义务）。"
+
+  - entry_id: PRJ-007
+    kind: PRJ
+    name: "8.2.7 评审点一 × 0.5：高影响决策该不该批"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-8.2.7 评审点一 × 0.5 批准材料", verified: true}   # @3877 数据行逐字
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "8.2.7", verified: true}    # @3364 评审方法的人类通道保留
+        - {source_type: clause_id, value: "0.5", verified: true}      # @111 ADR 分类与批准材料
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[批准角色须回答「这个高影响决策该不该批」，且答案必须由批准材料承载]——@3877 第二、三列逐字；批准不得以口头汇报替代材料"
+        - "[候选决策已存在且影响范围/可逆性分级已完成]——@3877 第三列要求候选集注册表指针与 applicability 逐条求值记录；无候选即无批准对象"
+      current_space:
+        - "[候选集的注册表条目指针、applicability 逐条求值记录、compatibility 检验结果、S0–S6 规程步骤日志可导出]——@3877 第三列逐字四项"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明批准角色受众与「该不该批」问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖批准材料四要素、声明「批准角色」受众与「高影响决策该不该批」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的批准角色注册表（主批准人／备选链／时限）是否已声明——0.5 @129 逐字「未声明批准角色注册表的部署，所有高影响决策一律走阻塞路径」；缺失即批准不可达]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-007-AP1
+        description: "批准评审无覆盖候选指针/applicability 逐条/compatibility/S0–S6 日志的投影规则"
+        detection_predicate: "∃ a, s: [a 为批准角色受众] ∧ [s 为批准材料四要素] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与该不该批问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-007-AP2
+        description: "批准材料只给结论，缺候选集/applicability 逐条求值记录"
+        detection_predicate: "∃ m: [m 为批准材料] ∧ [m 仅含结论] ∧ ¬[m 含候选集指针与 applicability 逐条求值记录]"
+        signal_level: P0               # @3877 第三列逐字要求四要素；缺项使批准无据（0.5 完整 ADR 必含字段）
+      - pattern_id: PRJ-007-AP3
+        description: "compatibility 检验结果与注册表版本不一致"
+        detection_predicate: "∃ c: [c 为 compatibility 检验结果] ∧ [c 的注册表版本与当前注册表版本不一致] ∧ [c 仍作为批准材料]"
+        signal_level: P1               # @3877 要求 compatibility 检验结果；过期结果使批准材料失真（E4 同源版本纪律 @4010）
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：高影响决策的批准最怕「材料没看全就签字」——@3877 把「该不该批」的材料钉成四要素：候选集注册表指针、applicability 逐条求值记录、compatibility 检验结果、S0–S6 规程步骤日志。批准角色看到的是可回指的结构化材料，而不是汇报口径。第二项收益是与 0.5 的衔接：完整 ADR 必含背景/候选/依据/选择/被拒/影响范围（@117），四要素正是其可投影子集，批准因此有据。第三项收益是批准可达性：@129 要求批准角色注册表声明主批准人/备选链/时限，材料投影与角色注册表同源后，超时升级链可执行。代价：材料准备成本高，尤其 applicability 逐条求值与 S0–S6 日志；compatibility 结果须随注册表版本刷新，过期即失真。净判读：高影响决策的误批代价远高于材料成本，四要素投影是批准路径的最小可信集。"
+      typical_scenarios: "风格定案批准；分解主策略批准；方法注册表变更批准；冲突矩阵例外覆盖批准；批准超时后的备选链升级。反例场合：只给结论（AP2，P0）；compatibility 结果过期（AP3）；无覆盖规则即批准评审（AP1，P0）。"
+      common_misuse: "把汇报 PPT 当批准材料（@3877 要四要素）；只给候选不给我拒候选及原因（0.5 完整 ADR @117）；applicability 只写「已求值」不写逐条记录；compatibility 用旧注册表版本的结果；批准角色注册表未声明仍走批准路径（@129 应走阻塞）；由 Agent 自行批准（0.10 @235＋@3974 双使用者条款）。"
+
+  - entry_id: PRJ-008
+    kind: PRJ
+    name: "8.2.7 评审点二：低影响决策是否免于留痕"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-8.2.7 评审点二", verified: true}   # @3878 数据行逐字
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "8.2.7", verified: true}
+        - {source_type: clause_id, value: "7.2.3", verified: true}    # @3042 简记打包机制五字段
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[抽查评审人须回答「低影响决策是否免于留痕」，且答案必须由简记包承载]——@3878 第二、三列逐字；抽查不得以口头说明替代简记包"
+        - "[被抽查决策已按 7.2.2 判为低影响]——简记只适用于低影响；高影响决策不得以简记承载（7.2.3 @3049 禁止拆分规避）"
+      current_space:
+        - "[简记包条目含唯一ID、一句话决策、依据指针、时间戳、执行者五字段]——@3046 逐字「五个字段缺一不可，缺依据指针的简记 = 公理 A2 违例，登记时即拒绝」"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明抽查评审人受众与「是否免于留痕」问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖简记包五字段、声明「抽查评审人」受众与「低影响决策是否免于留痕」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的简记包周期打包与独立可追溯面是否在位——7.2.3 @3047 逐字「包内条目保持独立可追溯——打包是评审批处理，不是记录合并」；周期值须为注册表条目]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-008-AP1
+        description: "评审点二无覆盖简记包五字段的投影规则"
+        detection_predicate: "∃ a, s: [a 为抽查评审人受众] ∧ [s 为简记包五字段] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与低影响决策留痕问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-008-AP2
+        description: "简记条目缺五字段之一（尤其依据指针）"
+        detection_predicate: "∃ e: [e 为简记条目] ∧ ¬[e 含唯一ID与一句话决策与依据指针与时间戳与执行者五字段]"
+        signal_level: P0               # @3046 逐字「五个字段缺一不可，缺依据指针 = 公理 A2 违例，登记时即拒绝」
+      - pattern_id: PRJ-008-AP3
+        description: "简记包按记录合并，条目不可独立追溯"
+        detection_predicate: "∃ p: [p 为简记包投影] ∧ [p 合并条目记录] ∧ ¬[p 保持条目独立可追溯]"
+        signal_level: P1               # @3047 逐字「打包是评审批处理，不是记录合并」；合并使抽查失去回查粒度
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：低影响决策免于完整 ADR，但最容易被「免于留痕」误读——@3878 把抽查判据钉在简记包上：低影响是否真低、留痕是否齐全，由包内五字段回答。第二项收益是 7.2.3 的机制落地：五字段（唯一ID、一句话决策、依据指针、时间戳、执行者）缺一不可，缺依据指针即 A2 违例（@3046），于是「做过但说不清依据」的决策在抽查时即暴露。第三项收益是防拆分规避：@3049 要求复查谓词对同窗口同谓词集的简记做聚合检测，聚合后越级全部摘出。代价：简记包周期打包与独立可追溯维护成本；抽查仍依赖人类判断；包合并会破坏回查粒度。净判读：简记机制的价值在「轻留痕但不失控」，五字段投影是其最小可信面。"
+      typical_scenarios: "迭代末低影响决策抽查；简记包周期评审；同窗口同谓词集聚合复检；误判防护（低影响实为高影响）摘出；与 8.2.7 评审点二并置时，简记包是材料本体。反例场合：缺依据指针（AP2，P0）；包合并（AP3）；无覆盖规则即抽查（AP1，P0）。"
+      common_misuse: "把简记当「无需留痕」（@3044 逐字「不免于留痕」）；五字段缺一（@3046 缺一不可）；缺依据指针（A2 违例，登记即拒绝）；把大决策拆成 N 条低影响简记（@3049 聚合检测后全部摘出）；包内条目合并成一条记录（@3047 禁止）；事后补记（@3049 时间戳与白板版本交叉校验）；由 Agent 自行认定低影响（0.5 @126 低影响自决有边界，高影响须人批）。"
+
+  - entry_id: PRJ-009
+    kind: PRJ
+    name: "8.2.7 评审点三：材料性判定是否被机械适用"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-8.2.7 评审点三", verified: true}   # @3879 数据行逐字
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "8.2.7", verified: true}
+        - {source_type: clause_id, value: "7.2.4", verified: true}    # @3051 重审门槛 R2 三条件
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[抽查评审人须回答「材料性判定是否被机械适用」，且答案必须由重审提议的事实集与 R2 三条件判定记录承载]——@3879 第二、三列逐字"
+        - "[已存在一条重审提议及其新事实陈述]——7.2.4 @3054-3057 要求逐条判定『有事实／是新／材料性』；无事实即无判定对象"
+      current_space:
+        - "[R2 三条件判定记录可导出：事实出处、时间戳与证据集差、材料性谓词结果]——7.2.4 @3054-3057 逐条"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明抽查评审人受众与「是否机械适用」问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 R2 事实集与三条件判定记录、声明「抽查评审人」受众与「材料性判定是否被机械适用」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的材料性判定谓词是否已登记入注册表——7.2.4 @3057 逐字「判定谓词登记入注册表」；未登记则材料性不可机器复核]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-009-AP1
+        description: "评审点三无覆盖重审事实集与 R2 三条件判定记录的投影规则"
+        detection_predicate: "∃ a, s: [a 为抽查评审人受众] ∧ [s 为重审事实集与 R2 三条件判定记录] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与材料性判定问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-009-AP2
+        description: "只投影 R2 结论，不投影三条件逐条判定"
+        detection_predicate: "∃ m: [m 为重审评审材料] ∧ [m 仅含通过或驳回结论] ∧ ¬[m 含三条件逐条判定记录]"
+        signal_level: P1               # @3879 第三列要求「事实集与 R2 三条件判定记录」；只给结论即机械适用的温床
+      - pattern_id: PRJ-009-AP3
+        description: "把「更好的方法/算法」当作三空间新事实"
+        detection_predicate: "∃ p: [p 为重审提议] ∧ [p 的事实陈述为执行者发现更好方法] ∧ ¬[p 的事实陈述为三空间变化]"
+        signal_level: P1               # 7.2.4 @3059 逐字「不构成新事实——那是执行者状态变化，不是三空间变化；此类提议一律按条件 1 驳回」
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：重审提议最容易被「我发现了更好的做法」推动——@3879 把抽查判据钉在重审提议的事实集与 R2 三条件判定记录上，材料性是否被机械适用可逐条复核。第二项收益是 7.2.4 的可执行化：有事实、是新、材料性三条件逐条机器可查（@3054-3057），其中材料性须触及硬性质或改变包络三值判定。第三项收益是防翻烧饼：@3059 明示「更好的方法/算法」不是新事实，一律按条件 1 驳回，投影记录使驳回理由可引用具体条件。代价：事实集与判定记录维护成本；材料性谓词未登记时不可机器复核；只投影结论会掩盖机械适用。净判读：重审是治理的高风险入口，三条件逐条投影是防止「为改而改」的最小可信面。"
+      typical_scenarios: "重审提议抽查；材料性争议评审；R2 驳回记录复核；新事实与旧证据集比对；与 8.2.7 评审点三并置时，事实集与三条件记录是材料本体。反例场合：只给结论（AP2）；把更好方法当新事实（AP3）；无覆盖规则即抽查（AP1，P0）。"
+      common_misuse: "把「有更好方法」当新事实（7.2.4 @3059 一律驳回）；只投影通过/驳回不投影三条件；材料性谓词未登记仍声称已判定（@3057 要求登记）；以「事实是新的」跳过材料性（三条件缺一不可）；重审通过后静默级联修改下游决策（@3061 逐字「不许静默级联修改」）；由 Agent 自行裁决材料性（@3974 人类保留通道）。"
+
+  - entry_id: PRJ-010
+    kind: PRJ
+    name: "8.2.7 评审点四：验证边界是否成立"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-8.2.7 评审点四", verified: true}   # @3880 数据行逐字
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "8.2.7", verified: true}
+        - {source_type: clause_id, value: "8.2.1", verified: true}    # @3309 验证计划生成
+        - {source_type: clause_id, value: "10.2.4", verified: true}   # @3939 FVR 定稿
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[验证计划评审人须回答「验证边界是否成立」，且答案必须由计划矩阵与 FVR 接线状态承载]——@3880 第二、三列逐字；不得以测试覆盖率为唯一依据"
+        - "[验证计划已按 8.2.1 生成且至少一条硬性质绑定了 FVR 条目]——@3880 第三列要求计划矩阵＋FVR 接线状态；无计划矩阵即无边界对象"
+      current_space:
+        - "[计划矩阵（8.2.1）与 FVR 接线状态（10.2.4）可导出]——@3880 第三列逐字「计划矩阵（8.2.1）+ FVR 接线状态（10.2.4）」"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明验证计划评审人受众与「边界是否成立」问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖计划矩阵与 FVR 接线状态、声明「验证计划评审人」受众与「验证边界是否成立」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的 FVR 接线状态是否可观测——10.2.4 @3939 定稿＋10.5 @4009 E3「硬性质有 fvr_entry ∧ wired ∧ first_full_run 有证据」；无接线观测则边界评审只剩计划文本]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-010-AP1
+        description: "评审点四无覆盖计划矩阵与 FVR 接线状态的投影规则"
+        detection_predicate: "∃ a, s: [a 为验证计划评审人受众] ∧ [s 为计划矩阵与 FVR 接线状态] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与验证边界问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-010-AP2
+        description: "验证计划矩阵缺 8.2.1 必填要素（只列测试用例）"
+        detection_predicate: "∃ m: [m 为计划矩阵投影] ∧ [m 仅含测试用例清单] ∧ ¬[m 含 8.2.1 计划要素]"
+        signal_level: P1               # @3880 第三列要求计划矩阵；用例清单不构成边界论证
+      - pattern_id: PRJ-010-AP3
+        description: "硬性质声称已验证但 FVR 未接线"
+        detection_predicate: "∃ p: [p 为硬性质] ∧ [p 声称通过] ∧ ¬[p 的 FVR 条目已接线]"
+        signal_level: P0               # E3 @4009「FVR 全覆盖：无 FVR 条目的性质不得声称通过 —— 硬」；@3985 同义
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：验证边界评审最容易被覆盖率数字带过——@3880 把「边界是否成立」钉在计划矩阵（8.2.1）与 FVR 接线状态（10.2.4）上，评审人可核对每条硬性质是否既有计划又有可执行检查。第二项收益是与 E3 的闭环：@4009 要求硬性质有 fvr_entry、wired、first_full_run 有证据，@3985 重申「无 FVR 条目的性质不得声称通过」，投影使「声称通过」与「接线状态」可对照。第三项收益是可重放：计划矩阵与证据索引同源，边界结论可回溯。代价：计划矩阵与 FVR 接线维护成本；覆盖率仍可能掩盖未覆盖的硬性质；工具链不足时矩阵退化为表格。净判读：验证边界是发布前最后的质量闸口，用矩阵+接线替代覆盖率单指标，收益高于维护成本。"
+      typical_scenarios: "发布前验证边界评审；硬性质 FVR 接线检查；验证计划矩阵复核；外部审计要求边界论证；与 8.2.7 评审点四并置时，矩阵与接线状态是材料本体。反例场合：只列测试用例（AP2）；声称通过但未接线（AP3，P0）；无覆盖规则即评审（AP1，P0）。"
+      common_misuse: "把覆盖率当边界成立（@3880 要计划矩阵与接线）；只审计划不审 FVR 接线（E3 硬）；硬性质无 fvr_entry 却声称通过（@4009）；计划矩阵缺 8.2.1 要素；FVR 接线状态不可观测仍声称已履行（delivery_space 待勘察未闭合）；由 Agent 自行确认验收判据勘察结论（@3974 人类保留）。"
+
+  - entry_id: PRJ-011
+    kind: PRJ
+    name: "8.2.7 评审点五：Waiver 该不该给"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid
+      source_pointers:
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+        - {source_type: row_id, value: "10.2.2-8.2.7 评审点五", verified: true}   # @3881 数据行逐字
+        - {source_type: clause_id, value: "10.2.1", verified: true}
+        - {source_type: clause_id, value: "8.2.7", verified: true}
+        - {source_type: clause_id, value: "9.2.2", verified: true}    # @3589 Waiver 五要素与守护台账
+        - {source_type: clause_id, value: "10.3", verified: true}
+        - {source_type: clause_id, value: "10.4", verified: true}
+        - {source_type: clause_id, value: "10.5", verified: true}
+        - {source_type: clause_id, value: "0.9", verified: true}
+    typical_reversibility: bounded
+    applicability:
+      problem_space:
+        - "[Waiver 评审人须回答「这个豁免该不该给」，且答案必须由 Waiver 五要素与守护台账承载]——@3881 第二、三列逐字；不得以申请理由替代五要素"
+        - "[存在一条待批 Waiver 且其违例事实已可指认]——9.2.2 @3602 要求违例事实有出处、范围精确到单元/谓词实例；无事实即无豁免对象"
+      current_space:
+        - "[Waiver 五要素与守护台账可导出]——@3881 第三列逐字「Waiver 五要素（9.2.2）+ 守护台账（9.2.2）」；五要素齐备才可评审"
+        - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明 Waiver 评审人受众与「该不该给」问题"
+      delivery_space:
+        - "[待勘察：本部署是否已登记覆盖 Waiver 五要素与守护台账、声明「Waiver 评审人」受众与「这个豁免该不该给」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
+        - "[待勘察：本部署的豁免边界判定面是否在位——9.2.2 @3603 逐字「内部原因导致的 P0 违例不可豁免只可整改」；无外部不可控判定面则边界争议不可裁]"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
+      - {target_aspect: 0, constraint: "FVR 全覆盖：无 FVR 条目的性质不得声称「通过」", level: hard}
+      - {target_aspect: 7, constraint: "视图生成记录、编译产物版本 = 决策证据的组成部分", level: hard}
+      - {target_aspect: 8, constraint: "投影可重放性纳入证据保全的可重放判据", level: soft}
+      - {target_aspect: 0, constraint: "框架自身：编译规程变更权、注册表治理、接地验收", level: hard}
+    anti_patterns:
+      - pattern_id: PRJ-011-AP1
+        description: "评审点五无覆盖 Waiver 五要素与守护台账的投影规则"
+        detection_predicate: "∃ a, s: [a 为 Waiver 评审人受众] ∧ [s 为 Waiver 五要素与守护台账] ∧ ¬[∃ 投影规则覆盖 s 且声明 a 与豁免该不该给问题]"
+        signal_level: P0               # E1 @4007 硬；@3883 无覆盖即 E1 违例
+      - pattern_id: PRJ-011-AP2
+        description: "Waiver 五要素缺项仍投影为可批"
+        detection_predicate: "∃ w: [w 为待批 Waiver] ∧ ¬[w 五要素齐备] ∧ [w 仍显示为可批准]"
+        signal_level: P0               # 9.2.2 @3602 五要素是准入面；缺项使豁免无边界，按 P0 阻塞
+      - pattern_id: PRJ-011-AP3
+        description: "守护台账与 Waiver 要素分离，无法核对闭环"
+        detection_predicate: "∃ v: [v 为 Waiver 评审视图] ∧ [v 缺守护台账关联] ∧ ¬[v 可回指台账闭环状态]"
+        signal_level: P1               # @3881 要求台账与五要素并置；分离使「该不该给」缺历史依据
+    formal_anchor:
+      - {property_id: E1, role: implements}
+    references: []
+    narrative:
+      benefit_cost_analysis: "收益：Waiver 评审最怕「理由充分就批」——@3881 把「该不该给」钉在 Waiver 五要素与守护台账上，评审人须看违例事实、范围、期限、责任与台账闭环，而不是申请书修辞。第二项收益是与 9.2.2 的衔接：五要素是准入面（@3602），P0 内部原因不可豁免只可整改（@3603），投影把边界判定显式化，评审点五的裁决因此可留痕。第三项收益是台账联动：守护台账与 Waiver 要素同源后，豁免到期、逾期升 P0、历史豁免密度都能回查。代价：五要素采集与台账维护成本；边界争议仍需人类裁决（@3603 评审点五）；台账分离会造成「批了但没人记得」。净判读：Waiver 是守护体系的合法泄压阀，五要素+台账投影是防止豁免无限期的可信面。"
+      typical_scenarios: "P1/P2 Waiver 审批；P0 外部不可控豁免审批；Waiver 到期续期（应以新 Waiver 重新登记）；守护台账周期复核；与 8.2.7 评审点五并置时，五要素与台账是材料本体。反例场合：五要素缺项仍批（AP2，P0）；台账分离（AP3）；无覆盖规则即评审（AP1，P0）。"
+      common_misuse: "以「理由充分」替代五要素（@3602）；内部原因 P0 违例申请豁免（@3603 只可整改）；Waiver 无期限或到期静默续期（@3604 延续申请 = 新 Waiver）；台账不记豁免闭环，事后无法核对；由 Agent 自行批准 Waiver（0.10 @235＋@3974）；把评审点五的投影当裁决本身（投影是材料，裁决仍属人类）。"
+
+  # ══════════ 决策治理 · 0.5 ADR 六类 · 单表 6 行 → GOV-001…GOV-006 ══════════
+  # 第十七批（s5e-10）：GOV 治理模板 · 母本 0.5 @111／表 @115-122 六行。
+  # 粒度裁决（2026-11-03，用户批准）：**条数 = 6**，编号严格按表行序：
+  # 完整 ADR @117 → GOV-001、接受约束 ADR @118 → GOV-002、张力承认 ADR @119 → GOV-003、
+  # 保守假设 ADR @120 → GOV-004、权衡承认 ADR @121 → GOV-005、重审提议 @122 → GOV-006。
+  # `row_id` 取表首列正文（剥去 `**` 强调标记；表首列英文括注位于粗体记号之后，
+  # 不参与 row_id 反查，故 row_id 只用中文类型名；`name` 保留英文括注全称）。
+  # **7.2.3 简记格式不单列条目**（母本 0.5 六行之外的低影响留痕机制），作为格式约束登记于
+  # 本判读注（条目 schema 0.17.2 无 `note` 字段，故 note = 本块头注）：
+  #   简记条目 = {唯一ID, 一句话决策, 依据指针（三空间事实／上游决策的白板引用）, 时间戳, 执行者}，
+  #   五字段缺一不可；缺依据指针的简记 = 公理 A2 违例，登记时即拒绝（@3046）。
+  #   简记包按注册周期（默认一个迭代/一周，周期值为注册表条目）打包，交人类抽查评审（T8）；
+  #   包内条目保持独立可追溯——打包是评审批处理，不是记录合并（@3047）。
+  #   复查谓词：打包时对每条简记重跑 impact_scope 计算，越级者摘出（@3048）。
+  #   禁止：简记不得承载高影响决策的拆分规避（同窗口同谓词集聚合检测，聚合后越级 → 全部摘出）；
+  #   不得事后补记（时间戳与白板版本向量交叉校验）（@3049）。
+  # 剖面：kind_profile_GOV status=seed、undecided_fields=[]；envelope 与 cost_profile.* 共 8 项 N-A
+  # （0.17.2 @381 末句 R2 澄清）→ 本块不写 envelope／cost_profile；required_extra=[]。
+  # C-ENV：entry_level_exemptions 的 scope「GOV-001…GOV-006（0.5 六类 ADR 类型）」覆盖本六条。
+  # 形式化面（7.5 @3124-3140，均为母本已登记性质，0.17.1 零新增命题）：
+  #   GOV-001 → R7（evidence_set ≠ ∅ ∧ 有出处）＋ R1（高影响批准闭环）；
+  #   GOV-002 → R7；GOV-003 → R6（临时决策不得硬化传播）；
+  #   GOV-004 → R2（可推翻指标命中 → 重审提议须过门槛）；
+  #   GOV-005 → R7；GOV-006 → R2（三条件）＋ R8（显式影响传播）。
+  # 参考资料：7.7 @3290-3293 的 57/58/59/79 面向 7.2.1（ADR 实践/模板/文档化），其中**仅 57**
+  # 说明句逐字含「0.5 分类扩展的基线形态」→ 只有 GOV-001 引 57；其余五条 references: []
+  # （不以 7.2.1 的书目面冒充 0.5 亚型出处；M6 对空集平凡为真）。
+  # 谓词纪律：applicability 与 detection_predicate 内不写 ASCII 调用式；R 系列性质只写作 [R1] 等方括号形态。
+  # 行数中性纪律：README §1 计数、meta.entry_count、投影重生成、ST 简记、缺口／豁免登记一律留 M3。
+
+  - entry_id: GOV-001
+    kind: GOV
+    name: "完整 ADR"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed                       # draft→seed 简记见顶层 status_transitions（ST-GOV-01，M3 落盘）
+    provenance:
+      origin: hybrid                   # 骨架=0.5 @117 表行三列逐字；分级／批准路径与 R 性质绑定为人工判断
+      source_pointers:
+        - {source_type: clause_id, value: "0.5", verified: true}     # @111 heading＋@115-122 表（本条 @117）＋@124-131 分级／批准／超时链
+        - {source_type: row_id, value: "0.5-完整 ADR", verified: true}   # @117 数据行首列正文逐字
+        - {source_type: clause_id, value: "0.4", verified: true}     # @100-104 硬约束证据门槛：评估依据须有出处
+        - {source_type: clause_id, value: "0.10", verified: true}    # @235 权力条款第一条：高影响决策批准权属人类
+        - {source_type: clause_id, value: "7.2.5", verified: true}   # @3063-3071 批准注册表运行规程（超时链／不可达／临时状态）
+        - {source_type: clause_id, value: "7.5", verified: true}     # @3124 R1 批准闭环；@3138 R7 evidence_set 有出处
+        - {source_type: clause_id, value: "7.7", verified: true}     # @3290 条目 57 说明句含「0.5 分类扩展的基线形态」
+        - {source_type: bib_id, value: "57", verified: true}         # 同上；ADR 实践源头
+    typical_reversibility: free        # 人工判断：记录形态可被 superseded／追加更正，不改变系统事实；被记决策的逆转由 R2 管辖（GOV-006）
+    applicability:
+      problem_space:
+        - "[正常决策：存在多个候选，且已做分析与选择]——@117 第二列逐字「正常决策：存在多个候选，做了分析与选择」"
+        - "[决策须固化六字段：背景、候选集、评估依据（三空间事实引用）、选择、被拒候选及原因、影响范围]——@117 第三列逐字；缺项即记录不成立"
+      current_space:
+        - "[候选集与评估依据可在三空间事实中找到出处]——@117 第三列逐字「评估依据（三空间事实引用）」＋@100-104 证据门槛（可观测／可验证／有出处）"
+        - "[被拒候选可逐一列举并说明原因]——@117 第三列逐字「被拒候选及原因」；若确实无被拒候选，应改判为接受约束 ADR（0.11）而非硬凑完整 ADR"
+      delivery_space:
+        - "[执行者有权对本级决策作出选择；高影响时人类责任方或显式裁决角色在位且可达]——@126-127 分级判据＋@129 批准角色注册表与超时链"
+        - "[批准材料可引用 0.17 注册表条目与 0.18 规程步骤日志（S0–S6）]——@131 逐字"
+        - "[影响范围 × 可逆性可判定：impact_scope 与 reversibility 可求值]——@3124 R1 与 @3133 R5 的量词域前提"
+    compatibility: []                  # 0.5 六类是同一表的并列枚举值，不是方法依赖；不登记跨条目关系（块头注已述）
+    constraints_imposed:               # 交叉表源：0.5 @117 必含字段＋@124-131 分级／批准／材料依据
+      - {target_aspect: 0, constraint: "完整 ADR 六字段齐备：背景、候选集、评估依据（三空间事实引用）、选择、被拒候选及原因、影响范围", level: hard}
+      - {target_aspect: 0, constraint: "高影响决策须经人类责任方或显式裁决角色批准后方可生效；Agent 不获得批准权", level: hard}
+      - {target_aspect: 0, constraint: "低影响决策可执行者自决，但仍须记录（免于完整 ADR 不免于留痕）", level: soft}
+      - {target_aspect: 0, constraint: "批准材料引用注册表条目与 S0–S6 规程日志；分级与实际路由由 R5 校验", level: hard}
+    anti_patterns:
+      - pattern_id: GOV-001-AP1
+        description: "高影响决策未走批准路径（执行者自决或 Agent 代批）"
+        detection_predicate: "∃ d: [d 影响 ≥2 个方面 或 d 不可逆/难逆转] ∧ ¬[存在 approved_by 记录且其角色属于 d 的 role_chain]"
+        signal_level: P0               # @3124 R1「批准闭环——硬」；@235 权力条款第一条
+      - pattern_id: GOV-001-AP2
+        description: "完整 ADR 缺被拒候选及原因（只写结论与选择）"
+        detection_predicate: "∃ d: [d 记为完整 ADR] ∧ ¬[d 列被拒候选] ∧ ¬[d 说明被拒原因]"
+        signal_level: P1               # @117 第三列必含字段；缺项使后续重审无法复现当时取舍
+      - pattern_id: GOV-001-AP3
+        description: "评估依据无三空间出处（凭偏好或方法流行度）"
+        detection_predicate: "∃ d: [d 为完整 ADR] ∧ [d 的评估依据缺出处] ∧ ¬[d 的评估依据可追溯至三空间事实]"
+        signal_level: P0               # @117「三空间事实引用」＋@100-104 证据门槛（公理 A2）
+    formal_anchor:
+      - {property_id: R7, role: implements}   # @3138 ∀D: evidence_set ≠ ∅ ∧ 每条有出处；完整 ADR 是逐决策执行 A2 的载体
+      - {property_id: R1, role: implements}   # @3124 高影响批准闭环；完整 ADR 同时是批准材料主体（@131）
+    references:
+      - {bib_id: 57, support_claim: "支撑 ADR 基线形态（背景／候选／依据／选择／后果）的方法元数据——@3290 说明句逐字「0.5 分类扩展的基线形态」；**不宣称**支撑本框架六字段逐字、分级阈值与批准路径（后者为母本 0.5 @117-131 自定）", compile_usage: metadata_extraction, trust_grade: "[已核验]"}   # @3290 条目 57 的 0.12 分级
+    narrative:
+      benefit_cost_analysis: "收益：完整 ADR 把「为什么这么定」从口头共识固化为六字段结构——@117 逐字要求背景、候选集、评估依据（三空间事实引用）、选择、被拒候选及原因、影响范围。它同时是 0.10 权力条款的操作面：Agent 负责把材料准备到「人类只需裁决」，批准本身仍属人类（@235）；也是 7.5 R7 的载体——evidence_set 非空且每条有出处（@3138）。代价：记录成本随候选数线性上升；六字段齐备不等于论证成立，母本不承诺字段齐全即决策正确；分级判断还要一次 impact_scope × reversibility 求值（@3124 R1 的量词域）。净判读：完整 ADR 是治理体系的基线记录形态，其价值不在文档本身，而在「被拒候选及原因」使后续重审能复现当时的取舍。"
+      typical_scenarios: "风格定案、分解主策略选择等高影响决策（@127）；低影响但多候选的常规选择（@126）；批准材料准备（@131 引用注册表条目与 S0–S6 日志）；与 7.2.3 简记并置时，完整 ADR 是简记升级后的形态，不是简记的替代。反例场合：把外部锁定决策写成完整 ADR（应走 GOV-002 接受约束 ADR，0.11）；把高影响决策以简记留痕（R3 与分级误判防护，@3040）。"
+      common_misuse: "只写选择与被选理由，省略被拒候选（@117 必含字段）；评估依据写「业界常用」而无三空间出处（@117、@100-104）；低影响决策也全量展开（分级失去意义，@126）；把完整 ADR 当作批准本身（批准须 approved_by，@3124 R1）；由 Agent 自批高影响决策（@235）。"
+
+  - entry_id: GOV-002
+    kind: GOV
+    name: "接受约束 ADR（constraint-acceptance）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid                   # 骨架=0.5 @118 表行三列逐字；0.11 现状锁定与证据门槛为交叉表源
+      source_pointers:
+        - {source_type: clause_id, value: "0.5", verified: true}     # @111 heading＋@118 表行＋@124-131 分级／批准
+        - {source_type: row_id, value: "0.5-接受约束 ADR", verified: true}   # @118 数据行首列正文逐字
+        - {source_type: clause_id, value: "0.11", verified: true}    # @247-251 现状锁定规则：单选项、内部一致性检查
+        - {source_type: clause_id, value: "0.4", verified: true}     # @100-104 证据门槛：约束须有出处
+        - {source_type: clause_id, value: "0.10", verified: true}    # @235 高影响批准权属人类
+        - {source_type: clause_id, value: "7.5", verified: true}     # @3138 R7 evidence_set 有出处
+    typical_reversibility: costly      # 人工判断：外部强加／现状锁定不由本团队单方面撤销；撤销须外部制度事实变化并记新 ADR
+    applicability:
+      problem_space:
+        - "[决策空间被外部强加决策或现状锁定压缩到只剩一个选项]——@118 第二列逐字「决策空间被外部强加决策或现状锁定（0.11）压缩到只剩一个选项」"
+        - "[约束须有正式制度文件级出处，且覆盖范围明确]——@249 逐字「组织级强制平台/标准…其出处权威（正式制度文件）」"
+      current_space:
+        - "[锁定项与本方面其他决策、与问题空间目标无矛盾]——@251 逐字「仍须完成内部一致性检查：确认锁定项与本方面其他决策、与问题空间目标无矛盾」"
+        - "[约束出处可追溯（制度文件、组织规范或合同条款）]——@100-104 证据门槛；无出处按「待勘察事实」处理"
+      delivery_space:
+        - "[制度文件持有方或批准角色可确认约束权威性]——@129 批准角色注册表；接受约束不等于免于治理"
+        - "[内部一致性检查暴露矛盾时有可达的 CH-A 第 5 步升级通道]——@251 逐字「若矛盾，走 CH-A 第 5 步（阻塞声明 + 人类裁决）」"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "接受约束 ADR 必含三字段：约束内容与出处、为何无备选分析、内部一致性检查结果", level: hard}
+      - {target_aspect: 0, constraint: "锁定项与其他决策或目标矛盾时走 CH-A 第 5 步（阻塞声明 + 人类裁决），不得自行继续", level: hard}
+      - {target_aspect: 0, constraint: "外部约束须有正式制度文件级出处；无出处不得登记为接受约束", level: hard}
+    anti_patterns:
+      - pattern_id: GOV-002-AP1
+        description: "以「外部强加」跳过内部一致性检查，或发现矛盾仍继续推进"
+        detection_predicate: "∃ d: [d 为接受约束 ADR] ∧ ¬[d 已完成内部一致性检查] ∧ [锁定项与目标或本方面决策存在矛盾]"
+        signal_level: P0               # @251 逐字要求检查且矛盾须走 CH-A 第 5 步阻塞
+      - pattern_id: GOV-002-AP2
+        description: "无出处的「外部强加」被登记为接受约束（把传闻或偏好当制度事实）"
+        detection_predicate: "∃ d: [d 为接受约束 ADR] ∧ ¬[约束有正式制度文件出处] ∧ [约束被作为决策唯一依据]"
+        signal_level: P0               # @100-104 证据门槛；@249 要求出处权威
+      - pattern_id: GOV-002-AP3
+        description: "接受约束 ADR 未写「为何无备选分析」"
+        detection_predicate: "∃ d: [d 为接受约束 ADR] ∧ ¬[d 说明为何无备选分析]"
+        signal_level: P1               # @118 第三列必含字段；缺项使读者无法区分锁定与惰性
+    formal_anchor:
+      - {property_id: R7, role: implements}   # @3138 约束内容与出处、内部一致性检查均属逐决策证据要求
+    references: []                     # 7.7 @3290-3293 的 57/58/59/79 面向 7.2.1；本亚型无行级书目面 → 空集（M6 平凡为真）
+    narrative:
+      benefit_cost_analysis: "收益：接受约束 ADR 让「没有备选」成为可审计的结论而不是默认借口——@118 要求写明约束内容与出处、为何无备选分析、内部一致性检查结果。它把 0.11 的现状锁定规则（组织级强制平台/标准）落成记录：锁定本身是 A2 的体现（决策依据是现状空间的制度事实，@249），但内部一致性检查仍不可省（@251）。代价：需持续维护制度出处，出处失效则不再是接受约束；一致性检查可能暴露矛盾，从而转入 CH-A 第 5 步的阻塞流程（@251），流程不会因「已锁定」而缩短。净判读：接受约束 ADR 的价值在诚实——它区分「真的只有一个选项」与「懒得做备选分析」。"
+      typical_scenarios: "全组织统一 K8s／服务网格规范的覆盖决策（@249）；合同或合规指定的技术路线；既有平台已锁定且迁移成本不可承受的领域；与完整 ADR 并置时，接受约束 ADR 是备选分析被外部事实压缩为零的特例。反例场合：有备选却以「外部要求」搪塞（AP2）；锁定项与目标矛盾仍推进（AP1 与 @251）。"
+      common_misuse: "把内部偏好包装成外部强加（伪造出处，@249 要求正式制度文件）；以「强加」为由跳过内部一致性检查（@251）；不写「为何无备选分析」，使读者无法判断是锁定还是惰性（@118）；约束出处不可追溯仍登记（@100-104）；把接受约束 ADR 用于高影响决策而绕批准路径（@127）。"
+
+  - entry_id: GOV-003
+    kind: GOV
+    name: "张力承认 ADR（acknowledged-tension）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid                   # 骨架=0.5 @119 表行三列逐字；CH-A 第 4 步与临时通道消费限制为交叉表源
+      source_pointers:
+        - {source_type: clause_id, value: "0.5", verified: true}     # @111 heading＋@119 表行＋@124-131
+        - {source_type: row_id, value: "0.5-张力承认 ADR", verified: true}   # @119 数据行首列正文逐字
+        - {source_type: clause_id, value: "0.6", verified: true}     # @0.6(d) 强加决策五步；第 4 步「不一致但目标可达」记张力承认
+        - {source_type: clause_id, value: "0.10", verified: true}    # @242 临时保守通道三条件＋核心不变式
+        - {source_type: clause_id, value: "7.2.5", verified: true}   # @3070 临时状态消费限制（下游只按软约束 + 必附张力承认）
+        - {source_type: clause_id, value: "7.5", verified: true}     # @3135-3137 R6 临时决策不得硬化传播
+    typical_reversibility: bounded      # 人工判断：张力记录可随强加决策撤销而 superseded，但已发生的代价与监测义务不会自动消失
+    applicability:
+      problem_space:
+        - "[服从了强加决策，但内部分析显示它与某目标存在张力；目标仍可达，只是代价上升]——@119 第二列逐字"
+        - "[张力导致的代价可量化，且可指定监测指标]——@119 第三列逐字「代价量化、监测指标」"
+      current_space:
+        - "[强加决策出处、张力描述可写；代价量化有三空间事实支撑]——@119 第三列必含字段＋@100-104 证据门槛"
+        - "[目标可达性已判定，排除 CH-A 第 5 步不可达分支]——@0.6(d)5 目标不可达须阻塞而非记张力承认"
+      delivery_space:
+        - "[监测指标的采集面在位，可长期供给观测值]——@119 必含「监测指标」；无采集面则张力记录不可跟踪"
+        - "[临时状态（provisional-pending-approval）的批准期限与回退预案在位]——@242 临时保守通道三条件"
+        - "[下游消费处可附张力承认 ADR]——@242 逐字「消费处必须附张力承认 ADR」＋@3070"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "张力承认 ADR 必含四字段：强加决策出处、张力描述、代价量化、监测指标", level: hard}
+      - {target_aspect: 0, constraint: "目标不可达不得记张力承认，须走 CH-A 第 5 步产出不可达性证据并发阻塞声明", level: hard}
+      - {target_aspect: 0, constraint: "临时状态决策的下游只按软约束消费，消费处必附张力承认 ADR", level: hard}
+    anti_patterns:
+      - pattern_id: GOV-003-AP1
+        description: "强加决策导致目标不可达，却记张力承认以规避阻塞"
+        detection_predicate: "∃ d: [d 为张力承认 ADR] ∧ [强加决策使某问题空间目标不可达] ∧ ¬[已发出阻塞声明]"
+        signal_level: P0               # @119「目标仍可达」是触发前提；@0.6(d)5 不可达须阻塞
+      - pattern_id: GOV-003-AP2
+        description: "张力承认无代价量化或监测指标"
+        detection_predicate: "∃ d: [d 为张力承认 ADR] ∧ ¬[d 有代价量化] ∧ ¬[d 有监测指标]"
+        signal_level: P1               # @119 第三列必含字段；缺项使张力不可跟踪
+      - pattern_id: GOV-003-AP3
+        description: "临时状态决策被下游作为硬约束源引用而未附张力承认"
+        detection_predicate: "∃ c: [c 为 provisional-pending-approval 决策的下游消费] ∧ [c 按硬约束引用] ∧ ¬[c 附张力承认 ADR]"
+        signal_level: P0               # @242 核心不变式＋@3070；R6 硬
+    formal_anchor:
+      - {property_id: R6, role: implements}   # @3135-3137 ∀下游消费：consumed_as(soft) ∧ ∃ 张力承认——本条是其记录载体
+    references: []                     # 本亚型无行级书目面（7.7 @3290-3293 面向 7.2.1）→ 空集
+    narrative:
+      benefit_cost_analysis: "收益：张力承认 ADR 是「服从但有代价」的专用记录——@119 要求强加决策出处、张力描述、代价量化、监测指标四字段。它防止两类失真：一是把强加决策包装成「无代价的接受」（接受约束 ADR 的误用），二是把目标不可达硬说成「只是代价上升」。@242 进一步规定临时通道决策的下游只能按软约束消费并附张力承认，R6 将其机器化（@3135-3137）。代价：代价量化需要可观测口径，监测指标要长期维护；张力本身不会因记录而消失，记录只是让它可被追踪。净判读：张力承认是治理体系的「诚实账本」，它允许服从，但要求代价与监测可见。"
+      typical_scenarios: "CH-A 第 4 步「不一致但目标可达」的服从记录（@0.6(d)4）；临时保守通道决策的下游消费（@242 必附张力承认）；合规或平台强加导致性能、可修改性代价上升；与 G 系列并置时，张力监测指标是 P2 信号的候选源。反例场合：目标不可达仍记张力承认（应阻塞，@0.6(d)5）；无代价量化与监测指标（AP2）；临时决策被下游当硬约束源（AP3）。"
+      common_misuse: "把目标不可达写成张力承认以规避阻塞（@119 与 @0.6(d)5）；代价量化只有形容词没有观测口径（@119 必含字段）；监测指标不接入任何采集面，记录即失效；临时状态决策被下游当作硬约束引用而不附张力承认（@242、R6）；由 Agent 自行宣告张力可接受（批准权属人类，@235）。"
+
+  - entry_id: GOV-004
+    kind: GOV
+    name: "保守假设 ADR（conservatism-proof）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid                   # 骨架=0.5 @120 表行三列逐字；CH-B 保守界与 0.4 降级规则为交叉表源
+      source_pointers:
+        - {source_type: clause_id, value: "0.5", verified: true}     # @111 heading＋@120 表行＋@124-131
+        - {source_type: row_id, value: "0.5-保守假设 ADR", verified: true}   # @120 数据行首列正文逐字
+        - {source_type: clause_id, value: "0.6", verified: true}     # @0.6(b)1 保守界：对风险取上界、对能力取下界＋可推翻指标
+        - {source_type: clause_id, value: "0.4", verified: true}     # @106 缺判定程序 → 降软约束并记保守假设 ADR
+        - {source_type: clause_id, value: "7.2.4", verified: true}   # @3051-3061 可推翻指标命中后的重审门槛
+        - {source_type: clause_id, value: "7.5", verified: true}     # @3126-3128 R2 重审三条件
+    typical_reversibility: bounded      # 人工判断：可推翻指标即逆转通道；观测越阈便自动触发重审，故为条件化可逆
+    applicability:
+      problem_space:
+        - "[关键信息缺失，且需在缺失处取保守界]——@0.6(b)1 逐字「在信息缺失处取保守假设（对风险取上界、对能力取下界）」"
+        - "[缺失的信息可指明，且保守方向有理由]——@120 第三列必含「缺失的信息、保守假设内容、为何保守」"
+      current_space:
+        - "[保守假设内容与「为何保守」可写，且可推翻指标可定义（观测量 + 阈值）]——@120 第三列逐字「可推翻指标（什么观测值出现时该假设应被重审）」"
+        - "[假设涉及阈值时，阈值须过出处审查]——@100-109 防假精确绕过"
+      delivery_space:
+        - "[可推翻指标的观测面在位]——@0.6(b)1「可观测的量」；无采集面则假设不可推翻"
+        - "[保守选项在方法注册表有登记默认值时，可作为临时通道的选项库]——@242 条件 (i)"
+        - "[选项完全参数化、回退成本有界]——@242 条件 (ii)"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "保守假设 ADR 必含四字段：缺失的信息、保守假设内容、为何保守、可推翻指标", level: hard}
+      - {target_aspect: 0, constraint: "可推翻指标须为可观测的量，实际值越阈即自动触发重审提议", level: hard}
+      - {target_aspect: 0, constraint: "缺判定程序的硬约束降为软约束并记保守假设 ADR；可推翻指标设为「判定程序建立时提请升级为硬」", level: hard}
+    anti_patterns:
+      - pattern_id: GOV-004-AP1
+        description: "保守假设无可推翻指标（不可推翻的永久假设）"
+        detection_predicate: "∃ a: [a 为保守假设 ADR] ∧ ¬[a 定义了可观测量与阈值] ∧ ¬[a 可被观测值推翻]"
+        signal_level: P1               # @120 可推翻指标是必含字段；@0.6(b)1 关系其合法性
+      - pattern_id: GOV-004-AP2
+        description: "用无出处阈值伪装保守界（假精确）"
+        detection_predicate: "∃ a: [a 为保守假设 ADR] ∧ [a 引用具体数值阈值] ∧ ¬[阈值有出处]"
+        signal_level: P0               # @100-109「无出处的精确数字不构成硬化依据」
+      - pattern_id: GOV-004-AP3
+        description: "以保守界承载不可逆或高影响决策，绕过批准路径"
+        detection_predicate: "∃ d: [d 不可逆或高影响] ∧ [d 仅以保守假设推进] ∧ ¬[d 走批准路径]"
+        signal_level: P0               # @242 核心不变式：临时保守通道不得创造不可逆事实
+    formal_anchor:
+      - {property_id: R2, role: triggers}   # @3126-3128 可推翻指标命中 → 重审提议须过 R2 三条件
+    references: []                     # 本亚型无行级书目面 → 空集
+    narrative:
+      benefit_cost_analysis: "收益：保守假设 ADR 把 CH-B 第一种处置（保守界）变成可推翻的临时结论——@120 要求写明缺失信息、假设内容、为何保守，以及可推翻指标。关键在最后一项：假设必须带一个可观测量的阈值，越过即自动触发重审（@0.6(b)1），否则保守界会固化成事实。0.4 @106 把它与硬约束门槛接起来：缺判定程序的约束降为软约束并记保守假设 ADR，可推翻指标设为「判定程序建立时提请升级为硬」。代价：保守界会牺牲一部分性能或能力，且需要持续观测；可推翻指标本身也需要采集面。净判读：保守假设是「信息不足时仍可推进」的合法通道，但它的合法性完全系于可推翻性。"
+      typical_scenarios: "勘察数据不足时的容量／延迟上界假设；缺判定程序的硬约束降级（@106）；CH-B 推迟未到期前的临时参数化选择；可推翻指标命中后自动立案重审（G8 与 R2 联动）。反例场合：无可推翻指标的永久假设（AP1）；用无出处阈值伪装保守界（AP2）；以保守界承载不可逆高影响决策（AP3）。"
+      common_misuse: "把保守假设当作最终结论（@0.6(b)1 明示可推翻指标越阈即重审）；可推翻指标写成「定期复核」这类无阈值表述（@120 必含字段）；编造精确阈值充作保守界依据（@100-109 防假精确）；用保守界绕过高影响批准（@242 临时通道不得创造不可逆事实）；假设条件已消失却不撤销记录（应由重审提议处理，GOV-006）。"
+
+  - entry_id: GOV-005
+    kind: GOV
+    name: "权衡承认 ADR（acknowledged-tradeoff）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid                   # 骨架=0.5 @121 表行三列逐字；CH-C 折衷与下限合法性为交叉表源
+      source_pointers:
+        - {source_type: clause_id, value: "0.5", verified: true}     # @111 heading＋@121 表行＋@124-131
+        - {source_type: row_id, value: "0.5-权衡承认 ADR", verified: true}   # @121 数据行首列正文逐字
+        - {source_type: clause_id, value: "0.6", verified: true}     # @0.6(c)1 优先级可定时折衷；下限合法性来源；@0.6(c)2 不可定时升级
+        - {source_type: clause_id, value: "0.10", verified: true}    # @237 评审权与重审门槛不因 Agent 使用者而减
+        - {source_type: clause_id, value: "7.5", verified: true}     # @3138 R7 逐决策证据有出处
+    typical_reversibility: bounded      # 人工判断：牺牲下限已声明；逆转须重新论证下限合法性并可能触发重审
+    applicability:
+      problem_space:
+        - "[多个目标不能同时满足，须做冲突折衷并牺牲某目标的一部分]——@121 第二列逐字「冲突折衷：多个目标不能同时满足，牺牲了某目标的一部分」"
+        - "[冲突双方与优先级依据可指明]——@121 第三列逐字「冲突双方、优先级依据及出处」"
+      current_space:
+        - "[优先级来源属外部显式指定，或由业务目标推导并附推导过程]——@0.6(c)1 两种优先级来源"
+        - "[被牺牲目标的下限合法性来源可写（为什么可以牺牲到这个程度而不再多）]——@121 第三列逐字"
+      delivery_space:
+        - "[下限合法性可由责任方复核（如合同 SLA 持有方）]——@0.6(c)1 外部显式指定（合同条款）权威性最高"
+        - "[被牺牲面的监测指标在位，避免下限静默漂移]——@121 必含「牺牲了什么」＋代价可观测"
+        - "[优先级不可辩护时有可达的人类裁决通道]——@0.6(c)2 升级人类裁决"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "权衡承认 ADR 必含四字段：冲突双方、优先级依据及出处、牺牲了什么、牺牲的下限合法性来源", level: hard}
+      - {target_aspect: 0, constraint: "优先级须为外部显式指定或由业务目标推导（附推导过程）；不可辩护时升级人类裁决", level: hard}
+      - {target_aspect: 0, constraint: "不允许无界牺牲：牺牲必须有下限合法性来源", level: hard}
+    anti_patterns:
+      - pattern_id: GOV-005-AP1
+        description: "冲突折衷无下限合法性来源（无界牺牲）"
+        detection_predicate: "∃ d: [d 为权衡承认 ADR] ∧ [某目标被部分牺牲] ∧ ¬[存在下限合法性来源]"
+        signal_level: P0               # @121 逐字「牺牲的下限合法性来源」；@0.6(c)1 不允许无界牺牲
+      - pattern_id: GOV-005-AP2
+        description: "优先级由执行者偏好决定，而非外部指定或业务目标推导"
+        detection_predicate: "∃ d: [d 为权衡承认 ADR] ∧ [优先级依据为执行者偏好] ∧ ¬[外部显式指定] ∧ ¬[附业务目标推导过程]"
+        signal_level: P1               # @0.6(c)1 优先级来源的封闭两类；不可辩护须升级
+      - pattern_id: GOV-005-AP3
+        description: "只写「已权衡」而未写牺牲了什么"
+        detection_predicate: "∃ d: [d 为权衡承认 ADR] ∧ ¬[d 说明被牺牲的目标与程度]"
+        signal_level: P1               # @121 第三列必含字段
+    formal_anchor:
+      - {property_id: R7, role: implements}   # @3138 优先级依据与下限合法性均须有出处
+    references: []                     # 本亚型无行级书目面 → 空集
+    narrative:
+      benefit_cost_analysis: "收益：权衡承认 ADR 把「牺牲了什么、为什么可以牺牲到这个程度」写清楚——@121 要求冲突双方、优先级依据及出处、牺牲内容、牺牲的下限合法性来源。最后一项是防无界牺牲的闸门：折衷必须说明为什么到这个程度为止，例如可用性从 99.99% 降到 99.9% 仍满足合同 SLA（@0.6(c)1 的折衷范例）。优先级来源被限定为外部显式指定或由业务目标推导并附推导过程，不可辩护时升级人类裁决（@0.6(c)1/2）。代价：优先级论证与下限合法性需要出处；牺牲面需要长期监测，否则下限会漂移。净判读：权衡承认不美化妥协，它把妥协变成可复核的边界。"
+      typical_scenarios: "性能与可用性不可同时满足的折衷；合规要求与交付时限冲突时按外部显式优先级折衷（@0.6(c)1）；强加决策与目标存在张力但不构成不可达时的权衡记录；与张力承认 ADR 并置时，前者记「服从强加」的代价，本条记「互相冲突目标」的牺牲。反例场合：无下限合法性来源（AP1）；优先级由执行者偏好决定（AP2）；只写「已权衡」而不写牺牲什么（AP3）。"
+      common_misuse: "把「我们权衡过了」当作内容（@121 四字段缺一不可）；牺牲没有下限，任意压缩目标（@121 下限合法性来源）；优先级来源写「大家认为」而非外部指定或业务推导（@0.6(c)1）；把权衡承认当作审批替代（高影响仍须批准，@127）；牺牲面不设监测指标，下限静默漂移。"
+
+  - entry_id: GOV-006
+    kind: GOV
+    name: "重审提议（proposed-reopen）"
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed
+    provenance:
+      origin: hybrid                   # 骨架=0.5 @122 表行三列逐字；R2 三条件与驳回纪律为交叉表源
+      source_pointers:
+        - {source_type: clause_id, value: "0.5", verified: true}     # @111 heading＋@122 表行＋@124-131
+        - {source_type: row_id, value: "0.5-重审提议", verified: true}     # @122 数据行首列正文逐字
+        - {source_type: clause_id, value: "7.2.4", verified: true}   # @3051-3061 R2 三条件、驳回纪律、重审传播
+        - {source_type: clause_id, value: "0.4", verified: true}     # @100-104 有事实条件须过证据门槛
+        - {source_type: clause_id, value: "7.5", verified: true}     # @3126-3128 R2；@3140 R8 显式影响传播
+        - {source_type: clause_id, value: "0.10", verified: true}    # @235 重审结论的批准权属人类
+    typical_reversibility: free        # 人工判断：提议本身不改变已定决策；驳回／撤回无系统后果，故为自由可逆
+    applicability:
+      problem_space:
+        - "[已定决策需要重新打开，且提议附三空间新事实]——@122 第二列＋第三列逐字「触发重审的三空间新事实（无新事实的重审提议一律驳回）」"
+        - "[执行者偏好或方法进步不构成新事实]——@3059 逐字「执行者发现了更好的方法/算法/模式不构成新事实」"
+      current_space:
+        - "[事实集每条满足 0.4 出处门槛（有出处、可观测）]——@3055 R2 条件 1"
+        - "[事实是新的：后于决策批准时间且不在原证据集中]——@3056 R2 条件 2"
+        - "[材料性可判定：触及决策绑定的硬性质，或改变包络校验三值结果]——@3057 R2 条件 3"
+      delivery_space:
+        - "[决策记录含批准时间与证据集，使「是新」可求值]——@3127 R2 的量词域前提"
+        - "[材料性判定谓词已登记入方法注册表]——@3057 逐字「判定谓词登记入注册表」"
+        - "[下游血缘可查询，重审通过后逐一目检]——@3061 逐字；@3140 R8 硬"
+    compatibility: []
+    constraints_imposed:
+      - {target_aspect: 0, constraint: "重审提议必附 ≥1 条满足 0.4 出处门槛的新事实；无新事实一律驳回", level: hard}
+      - {target_aspect: 0, constraint: "R2 三条件（有事实／是新／材料性）须逐条机器可查；驳回须引用未通过的具体条件", level: hard}
+      - {target_aspect: 0, constraint: "重审通过后按当前分级重走流程；下游血缘逐一目检，禁止静默级联修改", level: hard}
+    anti_patterns:
+      - pattern_id: GOV-006-AP1
+        description: "以「发现更好的方法／算法／模式」为由提重审（非三空间新事实）"
+        detection_predicate: "∃ r: [r 为重审提议] ∧ [r 的事实集仅含执行者能力或工具进步] ∧ ¬[r 的事实集含三空间新事实]"
+        signal_level: P1               # @3059 一律按条件 1 驳回；驳回本身留痕
+      - pattern_id: GOV-006-AP2
+        description: "新事实未过材料性判定却被受理（事实虽新但不材料）"
+        detection_predicate: "∃ r: [r 为重审提议] ∧ [r 被受理] ∧ ¬[事实触及决策绑定的硬性质] ∧ ¬[事实改变包络三值判定]"
+        signal_level: P0               # @3057 材料性是 R2 硬条件；@3126-3128 R2 硬
+      - pattern_id: GOV-006-AP3
+        description: "重审通过后静默级联修改下游，未逐一目检血缘"
+        detection_predicate: "∃ r: [r 重审通过] ∧ [下游决策被修改] ∧ ¬[下游血缘逐一目检记录在案]"
+        signal_level: P0               # @3061 逐字「不许静默级联修改」＋@3140 R8 硬
+    formal_anchor:
+      - {property_id: R2, role: implements}   # @3126-3128 三条件准入；驳回须引用未过条件
+      - {property_id: R8, role: implements}   # @3140 重审准入 → 下游血缘逐一目检记录
+    references: []                     # 本亚型无行级书目面（7.7 @3290-3293 面向 7.2.1）→ 空集
+    narrative:
+      benefit_cost_analysis: "收益：重审提议把「重开决策」的触发权交给三空间而非优化冲动——@122 要求附触发重审的三空间新事实与影响范围；7.2.4 把准入条件机器化为 R2 三条件：有事实（满足 0.4 出处门槛）、是新（f.timestamp > D.approved_at 且 f ∉ D.evidence_set）、材料性（触及 D 绑定的硬性质或改变包络三值判定）（@3055-3057）。@3059 明确「发现了更好的方法/算法/模式」不构成新事实，一律按条件 1 驳回——这是防翻烧饼的核心。通过后按当前分级重走流程，下游血缘逐一目检（@3061），R8 将其机器化（@3140）。代价：新事实采集与材料性判定需要注册表谓词；驳回也要留痕并引用未过条件，治理成本不为零。净判读：重审提议不是「再讨论一次」的许可，而是一张必须过三条件的入场券。"
+      typical_scenarios: "演化观测数据推翻原勘察假设（如变更频率实测为原假设 4 倍，@3147 走查示例）；外部制度或合规事实变化；包络三值判定结果改变（@3057 材料性第二支）；与 7.2.3 简记并置时，简记是被重审的对象候选而非提议本体。反例场合：以「更好方法」提重审（AP1，按条件 1 驳回）；新事实未过材料性却受理（AP2）；通过后静默级联修改下游（AP3）。"
+      common_misuse: "把执行者能力进步或新工具出现当作三空间新事实（@3059 明示驳回）；只写事实不写影响范围（@122 必含字段）；跳过材料性判定直接重开（@3057）；驳回不引用未过条件（@3059 驳回纪律）；重审通过后不目检下游血缘（@3061、R8）；由 Agent 自行批准重审结论（@235）。"
+
 # 注册表级台账（README §2：注册表级信息一律置于顶层节，不进入条目）
 #
 # 本区不含规范命题。每一项或为「母本已有规定的执行留痕」，或为「缺口/人工判断
@@ -9998,6 +11171,30 @@ gaps:
     route: "人工裁决（① 8.2.1 @3317 的计划矩阵五元组是否在母本侧另立承载面（表格化以提供 row_id，或明列矩阵为独立注册表 kind）——涉母本改动 → 高影响，走 R2/ADR；本批不本地增设第七条（粒度已裁决，MJ-9 不扩张）；② 8.5 @3417-3425 九机器层谓词与 T 系列公式侧八词是否补注册为 `predicate_vocabulary.yaml` 谓词——1.5 谓词表扩充属高影响 → ADR＋批准；本批以 VG-07 承载、归 s5g，不本地扩词（VG-04 (i)／VG-05 (i) 同型判读）；③ 6.2.1 @2781-2787 七族是否补『验证效能类』三指标（检出能力／覆盖／误报率）的在册 metric 形态，使 `kind_profile_VFM.narrative.note`（profiles.yaml @442）的期望面与 M3 词汇封闭相容——涉 profiles.yaml 与母本双侧改动 → 高影响；本批改以被守护的质量属性族为映射轴、零新增 metric 名；④ @442 note 后半『若 8.2 未提供可参数化界…不得升 seed』的判读边界是否需在剖面侧补明文（区分『参数化界形』与『数值区间』两义）——本批依 MJ-28 (v) 认定界形已满足门槛 2 而六条已升 seed，若裁决为否 → 六条须按 C-ST 回落 draft（涉已发布条目改写与 profiles.yaml 改写 → 高影响）；⑤ 9.2.2 @3594-3595 的 G 系列九槽注册形态何时入库（GRD kind），以及入库后 VFM-001 的适应度函数面与 VFM-006 的方面 9 共享信号源面是否回填 compatibility 镜像（本批不回填，MJ-5）；⑥ @3372 第五评审点『例外/Waiver 评审』的对侧系台账而非条目 → M9 的 peer_entry 判据是否需为『条目 ↔ 台账』关系扩 ENUM_RELATION 或另立承载面（涉 project.py @831 与既有条目改写 → 高影响）；⑦ 0.17.2 @360 是否补 target_aspect 的取值域明文（含 0 = 『全部方面（1–10）』的编码约定），使 8.4 @3406 与方面 7／9／10 三批同类行（7.4 @3090／@3099-3101、9.4 @3679、10.4 @3984-3985）有母本据可依——本批以 2026-10-11 用户裁决为据编码 0，不自行造法；⑧ @3330 金字塔失真信号的两个定性判据（端到端层占比越限、单元层覆盖率与端到端通过率背离）是否补界值与趋势窗口参数，以及 @3334-3338 五项行为注入（回放／乱序重复丢失注入／补偿路径／超时断路／混沌注入）的准入条件是否补明文（涉母本改动 → 高影响；补明文前本批一律不填数值以守 0.4 与 @2789，无据面由 SO-16 承载）；⑨ 8.7 @3557-3563 是否补 VFM-003（模型检查）与 VFM-005（人工评审）的行级书目登记行——本批明确**不以不承载该主张的文献充当出处**（0.17.7 门槛 6），需裁决确认此边界；⑩ T5／T7 的级别面（T5 系 P2/P1 信号级形态、T7 无级别注）是否在母本侧补行内注，以及补注后 WV-VFM-E3-01 的排除面是否随之收缩——本批据实分列并明文排除，不预支该后果，G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1／G-RLP-1／G-SCH-1／G-CFG-1／G-QAT-1 同型 route）：裁决为可 → 相应字段补实或母本更正并撤销该项；裁决为否或澄清前 → 保持现登记形态（clause_id 无 row_id、VFM-003／005 references 空列表、数值一律不填、计划矩阵不增设条目、G 系列与 GRD 面不回填、target_aspect: 0 沿用同一编码、六条 seed 资格不因 ④ 预支而回撤）。本批不自行裁决、不本地扩张解释面。登记为 SO-16（入库期义务，consumer M6）。"
     status: open
 
+  - gap_id: G-GRD-1
+    type: 源形态与分工缺口（9.2.3 九信号源未收；与 DPS 9.2.5 观测面重叠）
+    statement: "母本 9.2.1 @3581-3585 主表三行已由 GRD-001…GRD-003 全覆盖；9.2.3 @3595-3626 的九个信号源本期不收。其中部署失败率／回滚率／前置时间三项与 9.2.5 @3637-3641 部署策略的观测面同源（DPS-003／DPS-005 等条目亦承载部署观测），若同时在 GRD 与 DPS 登记，同一信号出现双载体（违反 0.9 唯一真相）。另 9.2.3 信号源是否各自成条、还是作为 9.2.1 三级的信号汇聚面，母本未给行级判据。"
+    impact: "GRD 覆盖宣称只限 9.2.1 三行，不含 9.2.3 九信号源（不得读作『GRD 已覆盖全部守护信号』）。projects/勘察义务清单新增 SO-17 一项。不影响 GRD-001…GRD-003 的 seed 资格（三行的 row_id 与 clause 指针均可反查）。"
+    affected: "GRD kind 的覆盖宣称；DPS-003／DPS-005 的信号源面"
+    route: "人工裁决（信号源归属 GRD、DPS 或另立 kind；分工前保持不收）→ 登记 SO-17；分工后如新增条目，走 0.17.5 draft→seed 与 M3 重跑。"
+    status: open
+
+  - gap_id: G-PRJ-1
+    type: 勘察义务缺口（PRJ-001…PRJ-011 的 delivery_space 全条待勘察）
+    statement: "母本 10.2.2 义务表 @3871-3881 十一行给出评审对象、输入与输出等义务面，但未给出交付空间的可判定事实：谁组织评审、评审人能力门槛、评审周期与时限、批准角色注册表映射。十一章的交付驱动段 @3972-3974 只给方向性事实（『交付驱动』与双使用者定位），不足以填实逐条 delivery_space。"
+    impact: "PRJ-001…PRJ-011 的 applicability.delivery_space 均为 [待勘察：…] 显式勘察义务（不空、不伪造、不登记 N-A）→ M2 判待补属预期的诚实状态；不影响 seed 资格（字段在案、非空、显式义务），但投影的勘察义务清单新增 22 项（11 条 × 2 项）。"
+    affected: "PRJ-001…PRJ-011 共 11 条"
+    route: "0.18 S0 交付空间勘察（评审组织事实、能力与角色注册表），填实后由 M15 关闭 → 登记 SO-18。不得以 10.3 的方向性陈述冒充逐条事实（0.4 出处门槛）。"
+    status: open
+
+  - gap_id: G-GOV-1
+    type: 豁免与批准缺口（E3 豁免的 kind scope 未覆盖 GRD/PRJ/GOV）
+    statement: "既有 14 份 WV-*-E3-01 的 scope 逐字限定为『申请当时 status=seed 的条目集合』（WV-DPS-E3-01 scope 明文排除 GRD/PRJ/GOV），扩用即扩宽条款。GRD／PRJ／GOV 三 kind 的 E3 编译豁免须逐 kind 另单申请，并经人类责任方批准（0.10 第一条 @235；9.2.2 五要素 @3589）。本批 M3 不伪造豁免、不预支批准。"
+    impact: "三 kind 进入编译期时 E3 面暂无豁免可依；不影响 project.py --check（E3 不在其检查矩阵，是编译规范侧约束）。条目 seed 资格不因缺豁免而回退。"
+    affected: "GRD-001…GRD-003、PRJ-001…PRJ-011、GOV-001…GOV-006"
+    route: "人类裁决（0.10 第一条）＋ 9.2.2 五要素；批准后另立 WV-GRD-E3-01／WV-PRJ-E3-01／WV-GOV-E3-01 → 登记 SO-19。批准前保持待申请状态，不得以 pending 伪装已批准。"
+    status: open
+
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
 # ---------------------------------------------------------------------------
@@ -10021,7 +11218,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16 (ii)）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载，本简记对其无事实主张；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；scope 按 check_ledgers「每条简记 scope 与全部 status=to 条目集双向相等」扩至全集（MJ-16 (ii)）；STY 批 24 条的迁移事实与日期不变；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载，本简记对其无事实主张；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-18"
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10052,7 +11252,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；OWN 批实际迁移对象为 OWN-001…OWN-004 四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；OWN 批实际迁移对象为 OWN-001…OWN-004 四条；CSL 五条的迁移事实由 ST-CSL-01、CRD 八条由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-22"   # OWN 批入库日（本简记的登记日）；STY 批的 2026-09-18 见 ST-STY-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10083,7 +11286,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CSL 批实际迁移对象为其中 5 条（CSL-001…CSL-005）；CRD 八条的迁移事实由 ST-CRD-01、DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-23"   # CSL 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-016 ↔ CSL-001 的 hard_conflict 对（1.2.5 冲突行，PCR-2 闭合）同提交回填。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10115,7 +11321,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为 CRD-001…CRD-008 八条；DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CRD 批实际迁移对象为 CRD-001…CRD-008 八条；DEC 八条由 ST-DEC-01、CTR 十二条由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-24"   # CRD 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨批双向登记：STY-018 ↔ CRD-007 的 hard_conflict 对（1.2.5 冲突行，PCR-1 闭合）同提交回填；CRD-005/CRD-006/CRD-008 → CSL-005 的 requires 由 CRD 侧单方承载（MJ-17 (iii)），CRD-007 → CRD-005 的 requires 依 5.2.2 定义列『编排式 Saga 的泛化』（MJ-5 例外：母本明文依据，非同表取值互斥对）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10148,7 +11357,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；DEC 批实际迁移对象为其中 8 条（DEC-001…DEC-008）；CTR 十二条的迁移事实由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；DEC 批实际迁移对象为其中 8 条（DEC-001…DEC-008）；CTR 十二条的迁移事实由 ST-CTR-01、STP 四条由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-26"   # DEC 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨 kind 单向登记：DEC-007 → STY-016 的 composable（evidence 为 2.4 接收约束表方面 1 行，row_id『2.4-方面 1（风格）』）——母本方向为『风格收窄策略可行集』（微服务 → S7 强制；单体 → S7 退化），ENUM_RELATION 封闭枚举无 required_by，本侧若写 requires 将读作『S7 要求微服务』而与『单体 → S7 退化』矛盾，故只登记 composable；STY-016 侧镜像不擅改已批准条目（0.22 承诺一），方向问题留待人工裁决（MJ-20 (vii)）。同批内三对 tension 已双向镜像闭合：DEC-001 ↔ DEC-006（2.6 示例一）、DEC-001 ↔ DEC-002（2.2.2 语义边界判据）、DEC-003 ↔ DEC-004（2.6 示例三/示例四面）。DEC-005/DEC-008 的 compatibility 为空列表系母本无明文对：2.6 示例二推迟分支的 S1/S2 是**处置次序**而非策略互斥对，2.6 示例三的三方不可行源于**事实集合**（contexts=7、teams=2、物理隔离要求）而非策略两两互斥（MJ-9 只登记母本有明文依据的对，判读见 MJ-20 (vii)）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10180,7 +11392,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CTR 批实际迁移对象为末 12 条，STP 四条的迁移事实由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；CTR 批实际迁移对象为末 12 条，STP 四条的迁移事实由 ST-STP-01、DFL 五条由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-27"   # CTR 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面含跨 kind 单向登记两类：(i) 三条 requires——CTR-002 → STY-001（适用条件列『请求-响应风格；需要即时结果』＝同步请求-响应）、CTR-003 → STY-002（『异步消息风格；命令类交互』＝异步消息）、CTR-004 → STY-003（『事件驱动风格；多方响应同一业务事实』＝事件驱动（发布订阅）），依据＝kind_profile_CTR.narrative.note 明定的 1.4/3.4 接收约束『方面 1 → 方面 3 硬』，本侧为接收端 → 方向与母本一致，不属 MJ-20 (vii) 的方向倒置情形；ENUM_RELATION 无 required_by 且对侧属已批准条目 → 不回填镜像（MJ-21 (viii)）。(ii) CTR-001 → STY-016 的 hard_conflict（3.4 接收约束方面 1 行明文『微服务 → 跨单元禁止以进程内调用为主手段』，级别硬）——hard_conflict 为对称关系、本可镜像，但 STY-016 属已批准条目 → 不擅改，镜像回填留待人工裁决（MJ-20 (vii) 同型）；CTR-011 → DEC-005 的 tension（3.6 示例三明文点名）同型单侧登记。同批内七对已双向镜像闭合：CTR-002 ↔ CTR-007、CTR-002 ↔ CTR-008、CTR-003 ↔ CTR-004、CTR-004 ↔ CTR-007、CTR-004 ↔ CTR-008、CTR-008 ↔ CTR-011、CTR-010 ↔ CTR-011（均系同批 seed 条目、非已批准条目 → 双向登记，MJ-21 (viii)；其中 CTR-004 侧两条与 CTR-011 侧一条为本批入库时的镜像回填，依据与对侧同源＝3.2.2 默认值列/3.6 示例三，无新增事实主张）。CTR-006 与 CTR-012 的 compatibility 为空列表系母本无明文对：3.2.1 UI/端契约行与 3.2.2 发现与注册行均未给出与其余条目的互斥/依赖明文（MJ-9 只登记母本有明文依据的对，判读见 MJ-21 (viii)）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10213,7 +11428,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；STP 批实际迁移对象为其中 4 条（STP-001…STP-004），DFL 五条的迁移事实由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；STP 批实际迁移对象为其中 4 条（STP-001…STP-004），DFL 五条的迁移事实由 ST-DFL-01 承载；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-27"   # STP 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批 2026-09-27 见 ST-CTR-01（与本批同日 → 两条简记以 transition_id 区分，不以日期区分）
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面为七行跨 kind 单侧登记（无同批内镜像对：四条 STP 之间母本无互斥/依赖明文 → 不登记）：(i) 两条 requires——STP-001 → OWN-001（4.2.2 首行第三列判据句『判据是访问路径是否唯一经所有者』＝ OWN-001 的 Y1/Y2 实现面 → 本拓扑以单一所有权为前提）、STP-003 → STY-004（同行第三列『事件溯源风格的存储形态（1.2.3）』＋1.2.3 定义列『状态以事件日志为准（溯源）』），依据＝requires 关系由下游侧承载（MJ-17 (iii)），ENUM_RELATION 无 required_by 且对侧属已发布条目 → 不回填镜像（MJ-5／MJ-21 (viii) 同型）。(ii) 三条 composable——STP-001 → STY-016（1.4 施→4 微服务行『每服务自有数据库为默认』；方向为风格 → 存储拓扑，在被施侧以 composable 登记；『默认 + 偏离须显式记录』不构成构成性必需，因第三列明文『私有 schema 或私有实例均可』→ 不取 requires）、STP-002 → STY-014（『单体风格可用』＝许可性条款）、STP-002 → STY-015（『模块化单体推荐 schema 级隔离（为未来拆分保留缝）』＝推荐性条款），后两条按 MJ-4 同型判读（许可性/候选性条款 → 不升 requires）。(iii) 两条 tension——STP-002 → STY-006（1.2.3 共享数据行反模式明文『以共享数据库实现服务间集成（分布式单体信号）』，且该行适用条件限定『仅限批处理交接、配置分发等弱耦合场景』）、STP-002 → STY-016（1.2.2 微服务行定义列含『独立数据』→ 单一存储实例与该定义性约束相左）。**两条 tension 均不升 hard_conflict**：1.2.5 硬冲突清单未列『共享数据 × 共享数据库』与『微服务 × 共享数据库』两对（该清单在方面 1 只到『微服务 × 跨单元 2PC 作为默认一致性手段』）→ 按 MJ-9『无母本明文不登记更强级别』只记 tension（判读见 MJ-22 (iii)）。STP-004 的 compatibility 为空列表系母本无明文对：4.2.2 末行只给运维面扩张、交付空间硬过滤器与负载证据纪律，未登记与任何已入库条目的互斥/依赖/叠加明文。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10245,7 +11463,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；DFL 批实际迁移对象为末 5 条（DFL-001…DFL-005）；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 七条的迁移事实由 ST-RLP-01 承载；check_ledgers 双向相等要求全集（MJ-16 (ii)）；DFL 批实际迁移对象为末 5 条（DFL-001…DFL-005）；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-09-28"   # DFL 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 10 行登记，分两类：(i) 同批镜像两对（两侧均在本批内登记，不留回填义务）——DFL-002 ↔ DFL-003 composable（4.2.4 尾注把「CDC + Kafka 类流平台」并举为同一组合，其被检查对象是风格自洽性）、DFL-002 ↔ DFL-005 composable（6.6 示例四把「追加 CDC 或物化视图投资并补刷新延迟出处」并列为同一建议重审范围的两个候选）。(ii) 跨 kind 单侧登记六行，对侧一律为已发布条目 → 按 MJ-5／MJ-21 (viii) 不回填镜像（0.22 承诺一）：DFL-001 → STY-003 composable（4.2.4 第三列「事件驱动风格下…的标准解」＋1.4 施→4 事件驱动行；方向为风格 → 流动机制，在被施侧登记；ENUM_RELATION 无 required_by → 取 composable 不造 requires）、DFL-002 → STY-014 tension 与 DFL-003 → STY-014 tension（同一尾注「单体风格下选用 CDC + Kafka 类流平台 = 过度工程信号」的两侧；1.2.5 硬冲突清单未列该对 → 按 MJ-9 不升 hard_conflict，软性标记评审由 Y4 承担）、DFL-005 → STP-003 composable（4.2.2『状态以事件日志为准，物化视图为派生』）、DFL-005 → STP-001 composable（4.2.4 第三列『跨单元查询聚合』＋STP-001 的 typical_scenarios 明文『以派生读模型替代共享库』）、DFL-005 → STY-004 composable（4.2.4 第三列『CQRS 读侧』＋1.2.3 该行第四列『读模型自由优化』；只 composable 不 requires，因 1.2.3 该行与术语表 CQRS 条 @4280 均明记『不必然绑定事件溯源』）。DFL-004 的 compatibility 为空列表系母本无明文对：4.2.4『ETL/ELT 批』行第三/四列未给任何风格对或机制对，尾注点名的过度工程组合由 DFL-002／DFL-003 承载 → 按 MJ-5／MJ-9 不登记。另按 MJ-9 明记两处不成对登记：DFL-003 与 STY-003（4.2.4 未把流处理行与任何风格明文成对，风格自洽性由 Y4 承担）、DFL-005 与 STY-014（尾注未点名物化视图，且 4.2.2『所有者 + 授权读副本』行反把读副本/物化视图列为单体可选形态）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10277,7 +11498,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 批实际迁移对象为末 7 条（RLP-001…RLP-007）；前七批 70 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01 登记；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 三条的迁移事实由 ST-SCH-01 承载；RLP 批实际迁移对象为末 7 条（RLP-001…RLP-007）；前七批 70 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01 登记；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-10-05"   # RLP 批入库日（本简记的登记日）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01、DFL 批 2026-09-28 见 ST-DFL-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 32 行登记（relation 实测 composable 30／requires 2，无 tension、无 hard_conflict），分三类：(i) **同批镜像十对，两侧均在本批内登记，不留回填义务**——RLP-001 ↔ RLP-002 composable（5.6 示例七逐字『幂等键＋inbox/outbox（赔付捕获的有效恰好一次语义，Z2 必答）』）、RLP-001 ↔ RLP-003 composable（@2477 发件箱项『生产侧，4.2.4 已定义，行为面消费其投递语义』＋@2479 消费侧必答）、RLP-002 ↔ RLP-003 composable（同一示例七把 inbox/outbox 并举为成套落地）、RLP-004 ↔ RLP-005 composable（5.5 Z4 逐字『Σ timeout_budget(path) ≤ sla_bound(path)』＋5.6 示例一 @2598 把重试最坏时长与 SLA 上界直接比较）、RLP-004 ↔ RLP-006 composable（5.6 示例七 @2710『断路器＋舱壁限制故障扩散』与重试同处一套可靠性落地清单）、RLP-004 ↔ RLP-007 composable（@2477 舱壁项『线程/连接池按消费者隔离』→ 重试占用池配额，池容量核定须按含重试的尝试次数计）、RLP-005 ↔ RLP-006 composable（5.4 施→8『超时与断路行为测试』并列）、RLP-005 ↔ RLP-007 composable（池内排队等待是该级耗时的组成部分 → 计入 Σ）、RLP-006 ↔ RLP-007 composable（示例七逐字成套）。(ii) **跨 kind 单侧登记十二行，对侧一律为已发布条目 → 按 MJ-5／MJ-21 (viii) 不回填镜像**（0.22 承诺一）：RLP-001 → CRD-005 composable（5.2.2 retriable 步骤的幂等前提）、RLP-001 → STY-003 composable（5.4 接收约束方面 1『事件驱动 → 协同默认』）、RLP-002 → DFL-001 composable（4.2.4 消费侧去重与业务写同事务）、RLP-002 → STY-003 composable、**RLP-003 → DFL-001 requires**（5.2.3；方向为行为面 → 定义面，即主指令裁定的『定义面归 DFL、行为面归 RLP』重叠处置在数据面的兑现，DFL-001 块头 @5050-5053 预置『由 RLP 批下游侧承载』在此落地，镜像由本侧单向承载）、RLP-003 → STY-003 composable、RLP-004 → CRD-005 composable（5.2.2 三分类纪律：关键步之后全部可重试）、RLP-004 → CRD-003 composable（5.5 Z5 链深与 Z4 逐级分配）、RLP-005 → CRD-003 composable（CRD-003 @2493『链深与超时分配可逐跳调整』）、RLP-005 → CRD-008 composable（5.2.2 补偿窗口与预扣超时释放的时机由预算给出）、RLP-006 → CRD-003 composable、RLP-007 → CRD-003 composable。(iii) **一处关系不对称且已在行内注明**：RLP-004 → RLP-001 取 requires（5.2.2 @2473 retriable 逐字『幂等 + 暂时性失败假设成立』→ 幂等是重试的明文前提），而 RLP-001 → RLP-004 取 composable，因 ENUM_RELATION = {hard_conflict, tension, composable, requires} **无 required_by** → 不本地造反向关系词（MJ-22 (iii)／MJ-17 (iii) 同型，与 CTR／STP 批既有两例同型，累计第三例，是否补 required_by 归 s5h 裁决）。本批未登记 tension／hard_conflict：5.2.3 与 1.2.5 硬冲突清单均未给出可靠性模式之间的冲突对 → 按 MJ-9 不升不造（母本无明文即不登记）。M6 面：七条 references 一律 2 行、共 14 行（书目 44×3／46×4／51×7），**无空列表**（与 STP 批两条、DFL 批三条的空集情形不同），compile_usage 一律 metadata_extraction、信任级一律逐字承 5.7 登记面，注册表侧不得改写或降级。C-ENV 面：kind_profile_RLP.entry_level_exemptions 为空集 → 七条 envelope 一律非空（27 项，逐条 4/4/3/4/4/4/4；RLP-003 只 3 项系『性能：资源占用』族归 DFL-001 定义面，避免双重计数，见 note）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10309,7 +11533,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 批实际迁移对象为末 3 条（SCH-001…SCH-003）；前九批 77 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01 登记；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 四条的迁移事实由 ST-CFG-01 承载；SCH 批实际迁移对象为末 3 条（SCH-001…SCH-003）；前九批 77 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01 登记；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-10-06"   # SCH 批入库日（本简记的登记日，＝书目 49 在线复核日，块头注释 @6382）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01、DFL 批 2026-09-28 见 ST-DFL-01、RLP 批 2026-10-05 见 ST-RLP-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 3 行登记（relation 实测 composable 3／requires 0，无 tension、无 hard_conflict），分两类：(i) **同批镜像一对，两侧均在本批内登记，不留回填义务**——SCH-001 ↔ SCH-003 composable（5.3 @2521 逐字『既有集成形态勘察（隐式协调是常态：定时任务互相踩、共享表当邮箱〔4.2.4/3.2.3 的反模式在行为面的投影〕）』→『互相踩』的成立同时需要触发面登记与裁决权归属，二者互为前提，母本明文成对）。(ii) **跨 kind 单侧登记一行，对侧为已发布条目 → 按 MJ-5／MJ-21 (viii) 不回填镜像**（0.22 承诺一）：SCH-002 → DFL-003 composable（4.2.4 流处理行第四列 @2200 逐字『事件时间 vs 处理时间语义必须显式（方面 5 的 5.2.4 联动）』→ 该联动由母本明文挂在 4.2.4 侧、DFL-003 已发布且原未回登，镜像由本侧单向承载）。(iii) **本批无关系不对称例**：requires 0 行 → 不构成 ENUM_RELATION 缺 required_by 的第四例（累计仍三例，归 s5h）；另 **SCH-001 ↔ SCH-002 不登记**（@2483 第一／第二子命题并列而不互相约束，母本无成对明文 → 按 MJ-9 不升不造，块头注释 @6374-6393 已明记）。本批未登记 tension／hard_conflict：5.2.4 与 1.2.5 硬冲突清单均未给出调度/时间语义策略之间的冲突对。M6 面：三条 references 合计 **1 行**（仅 SCH-002 引书目 49，compile_usage 逐字承 5.7 @2755 为 metadata_extraction、信任级 [已核验] 逐字承登记面，注册表侧不得改写或降级）；**SCH-001／SCH-003 为空列表**（全库 36 处同型先例，如 DFL-003 @5340）→ 以 has_path 口径满足 M2（project.py @170-177），M6 对空列表平凡为真而非豁免，不以本地造引充数（0.4 禁假精确）；空列表成因＝5.7 书目 44–51 中无行级指向 @2483 第一／第三子命题者（G-SCH-1 statement (1)，义务面登记为 SO-13）。C-ENV 面：kind_profile_SCH.entry_level_exemptions 为空集 → 三条 envelope 一律非空（12 项，逐条 4/4/4）；**源指针无 row_id**（5.2.4 系单段落三分号子命题、非表格源）→ check_cenv 的 row_clauses 为空 → 落 `elif env` 分支判 ok（系数据形态所致，不是豁免）。C-ID／C-ST 面：三条 pattern_id 严格为 SCH-00N-APi；status 三条一律 seed（硬检查全过、kind_profile_SCH.status 非 draft）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10341,7 +11568,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # CFG 批实际迁移对象为末 4 条（CFG-001…CFG-004）；前十批 80 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01 登记；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # CFG 批实际迁移对象为末 4 条（CFG-001…CFG-004）；前十批 80 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01 登记；QAT 十五条的迁移事实由 ST-QAT-01 承载（2026-10-10 第十二批扩列）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-10-08"   # CFG 批入库日（本简记的登记日，＝书目 48 在线复核日与本地存档核验日，块头注释 @6781）；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01、DFL 批 2026-09-28 见 ST-DFL-01、RLP 批 2026-10-05 见 ST-RLP-01、SCH 批 2026-10-06 见 ST-SCH-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 **3 行**登记（relation 实测 composable 2／requires 1，无 tension、无 hard_conflict；CFG-004 为 `compatibility: []` @7160），分两类：(i) **同批镜像一对，两侧均在本批内登记，不留回填义务**——CFG-001 ↔ CFG-003 composable（5.2.6 @2507 逐字『每个行为级开关诞生即带审查期/到期日（`expiry` 字段）』＝@2505 五槽中『生命周期』槽的实例化，两面对同一登记项 → 母本明文成对；镜像先例 SCH-001 ↔ SCH-003）。(ii) **同批单向 requires 一行，由下游侧承载、上游侧不回填镜像**（MJ-17 (iii) 同型）——CFG-002 → CFG-001 requires（@2506 括注逐字『登记入注册表，不允许运行时即兴判断』＋『仅在登记值域内调参』以值域已登记为前提，无 CFG-001 则判别谓词无从求值）；ENUM_RELATION 无 required_by 取值 → 方向不对称累计**第四例**（前三例 @4716／@4891／@5845，是否补镜像归 s5h）。**不登记面四处依块头『与其他方面的重叠处置』③-⑥ 段（@6751-6769）逐处留注**：③ CFG-003 ↔ RLP-006（Z6 判据形态的借用系 RLP-006 侧行内注 @6205，母本未把开关生命周期与断路器明文成对）、④ CFG-003 ↔ 9.2.5 @3640（该行明文挂钩但 DPS kind 未入库，peer_entry 不存在 → M9 @831 要求在案，走 source_pointer 与行内注）、⑤ CFG-004 ↔ 0.10 权力条款（系条款挂钩而非注册表条目成对，0.10 无条目实体 → 走 source_pointer＋formal_anchor＋narrative）、⑥ CFG-001／CFG-002 ↔ SCH-001（＝SO-13 (丁) 对账义务的履行面，对账结论全文落于该段并明文『SO-13 (丁) 据此可闭合』，未闭合面交 SO-14）。本批未登记 tension／hard_conflict：5.2.6 与 1.2.5 硬冲突清单均未给出配置治理策略之间的冲突对。M6 面：四条 references 合计 **1 行**（仅 CFG-003 引书目 48，compile_usage 逐字承 5.7 @2754 为 metadata_extraction、信任级 [已核验] 逐字承登记面，注册表侧不得改写或降级；系全库**首个** bib_id 48 的 carrier，实测批前 `bib_id: 48` 全库 0 命中）；**CFG-001／CFG-002／CFG-004 为空列表**（全库批后 **32** 处同型、批前 29 处，严格口径 `^    references: \\[\\]`，条目区）→ 以 has_path 口径满足 M2（project.py @170-177），M6 对空列表平凡为真而非豁免，不以本地造引充数（0.4 禁假精确）；空列表成因＝5.7 书目 44–51／65 中无行级指向 @2505／@2506／@2508 者（书目 65 经母本 @2754 明文『降为 Google 单家实践补充，不构成替代依据』→ 不充任出处），义务面登记为 SO-14。C-ENV 面：kind_profile_CFG.entry_level_exemptions 为空集（profiles.yaml @382）→ 四条 envelope 一律非空（**16 项**，逐条 4/4/4/4）；**源指针无 row_id**（5.2.6 @2505-2508 系行内加粗清单、非表格源）→ check_cenv 的 row_clauses 为空 → 落 `elif env` 分支判 ok（系数据形态所致，不是豁免；SCH 批同型判读 MJ-25 (ii)）。C-ID／C-ST 面：四条 pattern_id 严格为 CFG-00N-APi；status 四条一律 seed（硬检查全过、kind_profile_CFG.status 非 draft @361）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10373,7 +11603,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # QAT 批实际迁移对象为末 15 条（QAT-001…QAT-015）；前十一批 84 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01／ST-CFG-01 登记（2026-10-10 第十二批扩列后的末批）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # QAT 批实际迁移对象为末 15 条（QAT-001…QAT-015）；前十一批 84 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01／ST-CFG-01 登记（2026-10-10 第十二批扩列后的末批）；VFM 六条的迁移事实由 ST-VFM-01 承载（2026-10-16 第十三批扩列）
     date: "2026-10-10"   # QAT 批入库日（本简记的登记日；机器 date 实测 2026-10-10 22:30:38 CST，MJ-22 (vii) 以机器为准）；两项用户裁决日为 2026-10-09（块头 @7210-7212）→ 与 CFG 批批准日 2026-10-09、QAT 批入库日 2026-10-10 形成跨日口径，二者不得互代；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01、DFL 批 2026-09-28 见 ST-DFL-01、RLP 批 2026-10-05 见 ST-RLP-01、SCH 批 2026-10-06 见 ST-SCH-01、CFG 批 2026-10-08 见 ST-CFG-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 **4 行**登记（relation 实测 tension 2／requires 2，无 composable、无 hard_conflict；余十一条为 `compatibility: []` @7349／@7534／@7719／@7806／@7893／@7980／@8067／@8154／@8335／@8422／@8510，has_path @170-177 判在案），分两类：(i) **母本明文成对的 tension 两行，peer 均在批外且已发布 → 按 0.22 承诺一不回填镜像**——QAT-002 → CSL-001（@7437-7439，据 6.2.5 @2834 逐字『多副本 → 一致性负担 + 成本』）、QAT-004 → CSL-004（@7622-7624，据 @2834 逐字『缓存 → 新鲜度条款』）；实测对侧 peer 集 CSL-001＝[STY-016 hard_conflict]、CSL-004＝[]，且全库非 QAT 条目回指 QAT-* 者为**空集** → 镜像缺失系既成事实面，只登记不改写，是否补镜像归 s5h。(ii) **requires 两行由下游侧承载、上游侧不回填镜像**（MJ-17 (iii) 同型）——QAT-011 → CFG-001（@8242-8244）、QAT-015 → RLP-006（@8599-8601）；ENUM_RELATION 无 required_by 取值 → 方向不对称登记链**第五例（@8242）／第六例（@8607）**（链上前四例 @4716／@4891／@5845／@6951；**链口径 ≠ 普查口径**，普查口径实测 relation=requires 批前 16／批后 18、双向 0，判读见 MJ-27 (viii)）；实测对侧 CFG-001＝[CFG-003 composable]、RLP-006＝[RLP-007／RLP-005／RLP-004／CRD-003 composable]，两批均已发布 → 同上。**peer 唯一可定与不可定的分列**：6.2.5 @2831 对方面 2／方面 3 只指名『方面』（逐字『联动方面 2』『联动方面 3 契约』）而未指名具体机制 → QAT-009（语义内聚）／QAT-010（限制依赖）的 peer 非唯一可定，只留行内注、不造 peer_entry（MJ-9 不扩张＋0.4 禁假精确，MJ-27 (vi)）。**不登记面依块头『与其他方面的重叠处置』③-⑥ 段（@7242-7249）与逐条行内注 @7440-7446（三面：QAT-006 故障检测／CSL-004 最终一致／STP-001 每服务自有数据库）、@7625-7631（三面：QAT-002／DFL-005 物化视图／RLP-006 断路器）、@8245-8248（三面）、@8602-8607（四面，其中 @8606 列链上前五例、@8607 明文本例为第六例）逐处留注**（先例 CFG-001 @6855-6862）。本批未登记 hard_conflict：6.2.5 与 1.2.5 硬冲突清单均未给出战术之间的禁止并用对，@2834 明文为『负担』『条款』→ 取 tension 而非 hard_conflict。M6 面：十五条 references 一律空列表（15 行 @7379／@7477／@7564／@7662／@7749／@7836／@7923／@8010／@8097／@8184／@8278／@8365／@8453／@8541／@8642，严格口径 `^    references: \\[\\]`；全库键行 **99**＝空列表 **47**＋非空块 **52**，reference 项总数 **83** 批前＝批后、本批零新增）→ 以 has_path 口径满足 M2（project.py @170-177），M6 对空列表平凡为真而非豁免，不以本地造引充数（0.4 禁假精确）；义务面登记为 SO-15。C-ENV 面：kind_profile_QAT.entry_level_exemptions 为空集（profiles.yaml @410）→ 十五条 envelope 一律非空（**60 项**，逐条一律 4）；**源指针无 row_id**（6.2.5 @2829-2832 系四属性行内顿号清单、非表格源）→ check_cenv 的 row_clauses 为空 → 落 `elif env` 分支（@858）判 ok（系数据形态所致，不是豁免；SCH／CFG 批同型判读 MJ-25 (ii)）。C-ID／C-ST 面：60 个 pattern_id 严格为 QAT-0NN-APi、bad 集为空；status 十五条一律 seed（硬检查全过、kind_profile_QAT.status 非 draft @391）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10405,7 +11638,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # VFM 批实际迁移对象为末 6 条（VFM-001…VFM-006）；前十二批 99 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01／ST-CFG-01／ST-QAT-01 登记（2026-10-16 第十三批扩列后的末批）；十二条既有简记的 scope 于 2026-10-16（G-VFM-1 落盘同日）由 99 条扩至 105 条，硬失败 12 → 0
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # VFM 批实际迁移对象为末 6 条（VFM-001…VFM-006）；前十二批 99 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01／ST-CFG-01／ST-QAT-01 登记（2026-10-16 第十三批扩列后的末批）；十二条既有简记的 scope 于 2026-10-16（G-VFM-1 落盘同日）由 99 条扩至 105 条，硬失败 12 → 0
     date: "2026-10-17"   # VFM 批入库日（本简记的登记日；机器 date 实测 2026-10-17 22:18:16 与 22:47:34 CST 两次同值，MJ-22 (vii) 以机器为准）；两项用户裁决日为 2026-10-11（块头 @8650-8663 粒度裁决／@8668-8678 target_aspect 编码裁决）；本批内另生跨日：G-VFM-1 落盘日为 2026-10-16、ST-VFM-01 及其后三件落盘日为 2026-10-17 → 同批跨日，二者不得互代；WV-QAT-E3-01 的人类裁决日亦为 2026-10-11，与本批两项裁决同日而不同事件，亦不得互代；STY 批 2026-09-18 见 ST-STY-01、OWN 批 2026-09-22 见 ST-OWN-01、CSL 批 2026-09-23 见 ST-CSL-01、CRD 批 2026-09-24 见 ST-CRD-01、DEC 批 2026-09-26 见 ST-DEC-01、CTR 批与 STP 批 2026-09-27 见 ST-CTR-01／ST-STP-01、DFL 批 2026-09-28 见 ST-DFL-01、RLP 批 2026-10-05 见 ST-RLP-01、SCH 批 2026-10-06 见 ST-SCH-01、CFG 批 2026-10-08 见 ST-CFG-01、QAT 批 2026-10-10 见 ST-QAT-01
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 **3 行**登记（relation 实测 requires 3，无 composable、无 tension、无 hard_conflict；余四条为 `compatibility: []` @8932／9018／9241／9341，has_path @170-177 判在案），一律为 **requires 且由下游侧单方承载、上游侧不回填镜像**（MJ-17 (iii) 同型）——VFM-001 → CFG-001（@8841-8842，据 8.2.1 @3345 逐字「配置注册表比对：实际配置项 vs 注册表（**5.2.6 的静态面**，未注册配置项…）」）、VFM-004 → CTR-009（@9125-9126，据 @3327 契约层逐字「CDC（消费者驱动契约测试，X4/T6）」＋T6 @3439）、VFM-004 → CTR-010（@9128-9129，据 T6 @3439 量词域「∀ C(**lifecycle=published**)」＋契约生命周期 @4405-4411）；ENUM_RELATION 无 required_by 取值 → 方向不对称显式登记链**第七、八、九例**（链上前六例 @4716／@4891／@5845／@6951／@8242／@8607，承 QAT 批第五、六例；**链口径 ≠ 全库单向 requires 普查口径**，普查口径实测 relation=requires 批前 18／批后 **21**、双向 0，判读见 MJ-27 (viii)）；实测对侧 CFG-001＝[CFG-003 composable]、CTR-009／CTR-010 均已发布 → 按 0.22 承诺一不回填镜像，且全库非 VFM 条目回指 VFM-* 者为**空集**（镜像缺失系既成事实面，只登记不改写，是否补镜像归 s5h）。**peer 唯一可定与不可定的分列**：块头 @8749-8770『不登记的诸面①-⑤』中，① VFM-006 ↔ 方面 9 守护规则（@3317「与方面 9 共享信号源」＋@3409）的 peer 不可定——GRD kind 全库尚未入库（2026-10-11 实测 kinds 十二种无 GRD）；② VFM-005 ↔ Waiver 评审（@3372 第五评审点逐字「例外/Waiver 评审（方面 9 预告）：守护规则豁免的人工评审」）的对侧为本文件顶层 `waivers` **台账而非 entries 条目** → 无 peer_entry 可指（M9 @831 要求 peer_entry 在案）；③ VFM-002 ↔ VFM-003（@3317 并列「可执行检查程序（白板谓词上的机器判定）」与「模型检查（状态机性质 Z3/Z8 类）」而未成对，作用面差别为谓词求值 vs 状态空间穷举）；④ VFM-001 ↔ VFM-004（@3342「V1/W4/X1/Y2 类结构性性质在代码/模型上的**静态**判定」与 @3323-3328 的动态面分工明确，但母本未写成成对关系）→ 四处均只留行内注、不造 peer_entry（MJ-9 不扩张＋0.4 禁假精确，MJ-27 (vi)）。**不登记面依块头 @8749-8770 与逐条行内注逐处留注**（先例 CFG-001 @6855-6862、QAT-011 @8245-8248、QAT-015 @8602-8610）。本批未登记 hard_conflict 亦未登记 tension：8.2 与 1.2.5 硬冲突清单均未给出验证手段之间的禁止并用对，@3317『手段映射注册表』系**并列枚举**而非成对关系，母本无代价权衡明文 → 一律不造（0.17.1 零新增规范命题）。M6 面：六条 references 为**四非空两空**（非空块 4 处 @8872／8963／9180／9379，reference 项 **7**＝@8873 书目 13／@8964 书目 61／@9181-9184 书目 60・62・63・65／@9380 书目 64；空列表 2 行 @9058〔VFM-003〕／@9277〔VFM-005〕，严格口径 `^    references: \\[\\]`；全库键行 **105**＝空列表 **49**＋非空块 **56**，reference 项总数 **90**（批前 83 → +7））→ 源为 8.7 @3557-3563 的**行级书目登记表**（每行带 ISBN＋trust_grade＋compile_usage＋明文指向的子节），符合 CSL-005 @2297-2298 的行级登记条件，故本批系**首个 references 非空的 kind**（对照 QAT 批十五条一律空列表：6.7 @7266-7271 系尾注、无 ISBN／trust_grade／compile_usage 槽 → 两批差别在母本登记面形态而非宽严）；VFM-003／VFM-005 在 8.7 无行级对应行 → `references: []`（unknown ≠ false，**0.18.6 M15**；不以不承载该主张的文献充当出处，0.17.7 门槛 6），义务面登记为 SO-16；另 @3563 尾注逐字「不重复著录」→ 书目 28／29（carrier CTR-009）与 5／47（carrier STY-001／002／003／004／016 载 5、CRD-005／006 载 47）**只留注不新增 carrier**（避免关系数虚增，QAT-015 @8608 同型纪律）。C-ENV 面：kind_profile_VFM.entry_level_exemptions 为空集（profiles.yaml @440）→ 六条 envelope 一律非空（**23 项**，逐条 4／4／3／5／3／4 **非一律**，键行 @8820／8912／9001／9101／9224／9320）；**源指针无 row_id**（8.2.1 @3313／@3317 系散文与行内顿号清单、非表格源）→ check_cenv 的 row_clauses 为空 → 落 `elif env` 分支（@858）判 ok（系数据形态所致，不是豁免；SCH／CFG／QAT 批同型判读 MJ-25 (ii)）。C-ID／C-ST 面：24 个 pattern_id 严格为 VFM-00N-APi、bad 集为空；status 六条一律 seed（@8791／8883／8974／9068／9194／9287，硬检查全过、kind_profile_VFM.status 非 draft @419）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10437,7 +11673,10 @@ status_transitions:
             CFG-001, CFG-002, CFG-003, CFG-004,
             QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
             QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
-            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005]   # 本简记的实际迁移对象为末 5 条（DPS-001…DPS-005）；前十三批 105 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01／ST-CFG-01／ST-QAT-01／ST-VFM-01 登记；十三条既有简记的 scope 于 2026-11-03 由 105 条扩至 110 条，硬失败 13 → 0（2026-11-03 第十四批扩列）
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]   # 本简记的实际迁移对象为末 5 条（DPS-001…DPS-005）；前十三批 105 条系 check_ledgers 双向相等要求的全集形式面（MJ-16 (ii)），其迁移事实已分别由 ST-STY-01／ST-OWN-01／ST-CSL-01／ST-CRD-01／ST-DEC-01／ST-CTR-01／ST-STP-01／ST-DFL-01／ST-RLP-01／ST-SCH-01／ST-CFG-01／ST-QAT-01／ST-VFM-01 登记；十三条既有简记的 scope 于 2026-11-03 由 105 条扩至 110 条，硬失败 13 → 0（2026-11-03 第十四批扩列）
     date: "2026-11-03"   # DPS 批入库日与用户裁决日（未取具体时刻，不臆造时点）
     condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）。本批 M9 面共 **9 行**（requires 5／composable 4）：同批跨策略镜像 8 行（DPS-001／002／003／004 → DPS-005 requires 四条，依 @3641『无回滚规程的部署策略不予注册』；DPS-005 → DPS-001…004 composable 四条），跨 kind 单侧 1 行（DPS-004 → CFG-003 requires，依 @3640『开关即 Z6 治理对象（expiry 纪律全适用）』＋CFG 批块头注释④『DPS 批建成时由其侧登记、不回填』，MJ-5）。C-ENV 面：kind_profile_DPS.entry_level_exemptions 为空集 → 五条 envelope 一律非空（15 项，逐条 3）。C-ID／C-ST 面：15 个 pattern_id 严格 DPS-00N-APi；status 五条一律 seed。E3 面另单申请 WV-DPS-E3-01（不沿用既有 Waiver：其 scope 均限定为申请当时 status=seed 的条目集合，扩用即扩宽条款），approval.status 经人类裁决为 approved、approved_date 2026-11-03（用户未给具体时刻，不写时点、不写近似值，0.4）。"
     evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
@@ -10449,6 +11688,111 @@ status_transitions:
         - {source_type: clause_id, value: "0.17.6", verified: true}
         - {source_type: clause_id, value: "9.2.5", verified: true}
     note: "本批迁移对象为 DPS-001…DPS-005（表行序＝母本 9.2.5『部署策略注册表条目』表五行，@3635-3641：滚动发布／蓝绿发布／金丝雀发布／功能开关驱动发布／回滚规程）。**粒度与编号裁决（2026-11-03 用户批准）**：条数＝5，严格按表行序、不跳过不改序（0.22 承诺一）。**DPS-005『回滚规程』语义判读（2026-11-03 用户裁决：维持现状）**：其『适用条件』列 @3641 逐字『全部策略（无回滚规程的部署策略不予注册）』→ 语义上系**跨策略义务**而非独立发布策略；但母本将其置于 @3635 表头『策略』列、且 0.17.3 的 DPS kind 由 9.2.5 整节承载 → 按表行序取 DPS-005，不重排编号、不另立义务 kind；判读痕迹已留于块头 @9385-9419 与本简记，正式登记于此（0.22 承诺一）。**归属判据** @3631：不改变部署拓扑（单元数量/边界/节点映射/网络边界/端点拓扑）的发布决策归方面 9，改变拓扑者归方面 1（五条共同适用前提）。**形式化面**：G3 @3710『∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)』为硬性质，五条共同锚点（implements）；G4 @3711-3712 仅绑 DPS-003（implements）；Z6 @2588 仅绑 DPS-004（implements）。G 系列 property_id 此前全库未入账（实测在册仅 V/W/X/Y/Z/Q/T 七系列）→ 本批 G3／G4 **首次入账**（承 VFM 批 T 系列首建同型；只引用母本已登记性质文本、不新增规范命题，0.17.1）。**M9 面**：合计 9 行＝requires 5／composable 4，分两类——(i) 同批跨策略镜像 8 行：DPS-001／002／003／004 → DPS-005 requires 四条（依 @3641『每策略必附』＋『无回滚规程的部署策略不予注册』，回滚规程是全部策略的注册前提）＋DPS-005 → DPS-001…004 composable 四条（依同一 @3641 的复用关系），八行由本批两侧同时登记、无回填义务；(ii) 跨 kind 单侧 1 行：DPS-004 → CFG-003 requires（依 @3640 逐字『开关即 Z6 治理对象（expiry 纪律全适用）』＋CFG 批块头注释④『DPS 批建成时由其侧登记（不回填，MJ-5）』）；CFG-003 侧按 MJ-5 不回填镜像（0.22 承诺一）。ENUM_RELATION 无 required_by → 方向不对称面承既有链，不本地造词。**MJ-9 不扩张三面**（母本未把条目明文成对者只留注、不造关系）：① DPS-002 ↔ DFL-002——@3638『数据层双写/迁移方案是必答项（联动 Y 域）』系方面级联动、未明指 CDC 条目；② DPS-001 ↔ CTR-007／CTR-008——@3637『版本间协议兼容（X 系列契约约束）』系属性族指针、CTR 侧未成对；③ DPS-003 ↔ VFM-006——@3639『生产观测能力就绪』与 VFM-006 同源但两批均未写成对。三面判读留于块头 @9407-9414。**constraints_imposed**：7 项 × 5 条＝35 项，表源＝9.4『施加约束』表七行 @3679-3685（五条逐字相同，取本方面全体行同型）；target_aspect 分布 {0,1,2,7,8,10}；级别 hard 4／soft 2／conditional 1（@3682『硬/软按规则级别』系复合取值 → conditional，MJ-4 同型）。**references**：9.2.5 面由书目 67 行级承载（9.7 @3836 逐字 compile_usage=metadata_extraction），DPS-001…005 五条共同 carrier；9.7 @3839 第 70 条逐字『书目 46《Release It!》2nd ed. 支撑 9.2.5 回滚与稳定性判据，不重复著录』→ DPS-005 另引 46（既有 46 的 carrier 均为 5.2.3 面，不构成同面重复计息）；合计 6 项、五条全非空（DPS-001…004 各 1、DPS-005 2）。**C-ENV**：kind_profile_DPS.entry_level_exemptions 为空集 → 五条 envelope 一律非空（15 项，逐条 3）；latency_budget_delta 五条一律填实（剖面 required）。**C-ID／C-ST**：15 个 pattern_id 严格 DPS-00N-APi；status 五条一律 seed。**E3 面**：另单申请 WV-DPS-E3-01（不沿用既有 Waiver——其 scope 均限定为申请当时 status=seed 的条目集合，扩用即扩宽条款）；approval.status 经人类裁决为 approved、approved_by 归属用户本人、approved_date 2026-11-03（用户未给具体时刻 → 不写时点、不写近似值，0.4）。**scope 面**：105 → 110；前十三条既有简记（ST-STY-01…ST-VFM-01）的 scope 于 2026-11-03 同步由 105 扩至 110，只加 DPS 五个 id、不改其既有行内注（0.22 承诺一：历史登记只增不改）；本简记的实际迁移事实只覆盖末 5 条，全集形式面与迁移事实两个口径不得互代（MJ-16 (ii)）。**占位符面**：DPS 五条 73 处事实占位（逐条 15／17／15／13／13），全库 1092 → 1165 处／105 → 110 条。**缺口评估（G-DPS-1）**：经实测判定**不成立**——(a) 9.2.5 表 5 行由 5 条全覆盖，无未承载行；(b) 五条 references 全非空、无 M6 空集面；(c) G3／G4／Z6 三锚点均已在条目 formal_anchor 落位；(d) 唯一未闭合者系**词汇面**（9.5 @3697-3698 的 deploy_strategy／canary_gate 未在册）→ 按词汇缺口登记 predicate_vocabulary.yaml VG-08，不另立 G-DPS-1；故 gaps 批前＝批后 18、survey_obligations 16 条不增（M15 的逐占位符枚举由 projections/勘察义务清单.md 承载，通用义务已由 SO-6 覆盖）。**计数面（本条落盘后实跑）**：entries 105 → 110；status_transitions 13 → 14。**日期口径**：本简记 date＝2026-11-03（用户裁决日；机器 date 未取具体时刻，不臆造时点）；DPS 条目入库日＝2026-11-03（M2 同日）。母本零改动：9.2.5 表文本逐字未改（母本 4427 行／围栏 216）；本文件围栏 0。重验证义务（0.17.6(3)(4)）：所引行号与计数均以 python 行序／grep -n 实测取得；本简记插入后 waivers 及其后行号顺移，任何后续插入须重新实测锚点。"
+
+  - transition_id: ST-GRD-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004,
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
+            STP-001, STP-002, STP-003, STP-004,
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007,
+            SCH-001, SCH-002, SCH-003,
+            CFG-001, CFG-002, CFG-003, CFG-004,
+            QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
+            QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]
+    date: "2026-11-03"
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+        - {source_type: clause_id, value: "9.2.1", verified: true}
+    note: "本简记迁移对象为 GRD-001…GRD-003（母本 9.2.1 @3581-3585 主表三行，表行序 P0→P1→P2；9.2.1 面 row_id 逐条反查）。9.2.3 @3595-3626 九信号源本期不收（部署失败率／回滚率／前置时间与 DPS 9.2.5 重叠，须先分工）→ 缺口 G-GRD-1／勘察义务 SO-17，不本地收编。C-ENV：kind_profile_GRD.entry_level_exemptions 覆盖 GRD-001…GRD-003，envelope／cost_profile.* 按剖面 N-A 不填。E3 面：既有 14 份 WV-*-E3-01 的 scope 均排除 GRD/PRJ/GOV（逐字见 WV-DPS-E3-01 scope）→ 须逐 kind 另单申请；未获人类批准前不伪造豁免，登记 G-GOV-1。scope 面：110 → 130；前十四条既有简记同步扩列，只加 GRD/PRJ/GOV 二十个 id、不改其既有行内注（0.22 承诺一）。本简记的实际迁移事实只覆盖 3 条，全集形式面与迁移事实两个口径不得互代（MJ-16 (ii)）。"
+
+  - transition_id: ST-PRJ-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004,
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
+            STP-001, STP-002, STP-003, STP-004,
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007,
+            SCH-001, SCH-002, SCH-003,
+            CFG-001, CFG-002, CFG-003, CFG-004,
+            QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
+            QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]
+    date: "2026-11-03"
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+        - {source_type: clause_id, value: "10.2.2", verified: true}
+    note: "本简记迁移对象为 PRJ-001…PRJ-011（母本 10.2.2 义务表 @3871-3881 十一行，表行序；C4／arc42 16 行实例表 @3889-3900 按母本『实例级，非规范』不作种子）。applicability.delivery_space 逐条为显式勘察义务（方括弧形，无伪造、无 N-A）→ M2 判待补属预期诚实状态，登记 G-PRJ-1／勘察义务 SO-18。C-ENV：kind_profile_PRJ.entry_level_exemptions 覆盖 PRJ-001…PRJ-011，envelope／cost_profile.* 按剖面 N-A 不填。E3 面同 ST-GRD-01：须逐 kind 另单申请，未获批准前不伪造（G-GOV-1）。scope 面：110 → 130；前十四条既有简记同步扩列，不改其既有行内注（0.22 承诺一）。本简记实际迁移事实只覆盖 11 条（MJ-16 (ii)）。"
+
+  - transition_id: ST-GOV-01
+    from: draft
+    to: seed
+    scope: [STY-001, STY-002, STY-003, STY-004, STY-005, STY-006, STY-007, STY-008,
+            STY-009, STY-010, STY-011, STY-012, STY-013, STY-014, STY-015, STY-016,
+            STY-017, STY-018, STY-019, STY-020, STY-021, STY-022, STY-023, STY-024,
+            OWN-001, OWN-002, OWN-003, OWN-004,
+            CSL-001, CSL-002, CSL-003, CSL-004, CSL-005,
+            CRD-001, CRD-002, CRD-003, CRD-004, CRD-005, CRD-006, CRD-007, CRD-008,
+            DEC-001, DEC-002, DEC-003, DEC-004, DEC-005, DEC-006, DEC-007, DEC-008,
+            CTR-001, CTR-002, CTR-003, CTR-004, CTR-005, CTR-006,
+            CTR-007, CTR-008, CTR-009, CTR-010, CTR-011, CTR-012,
+            STP-001, STP-002, STP-003, STP-004,
+            DFL-001, DFL-002, DFL-003, DFL-004, DFL-005,
+            RLP-001, RLP-002, RLP-003, RLP-004, RLP-005, RLP-006, RLP-007,
+            SCH-001, SCH-002, SCH-003,
+            CFG-001, CFG-002, CFG-003, CFG-004,
+            QAT-001, QAT-002, QAT-003, QAT-004, QAT-005, QAT-006, QAT-007, QAT-008,
+            QAT-009, QAT-010, QAT-011, QAT-012, QAT-013, QAT-014, QAT-015,
+            VFM-001, VFM-002, VFM-003, VFM-004, VFM-005, VFM-006, DPS-001, DPS-002, DPS-003, DPS-004, DPS-005,
+            GRD-001, GRD-002, GRD-003, PRJ-001, PRJ-002, PRJ-003, PRJ-004,
+            PRJ-005, PRJ-006, PRJ-007, PRJ-008, PRJ-009, PRJ-010, PRJ-011,
+            GOV-001, GOV-002, GOV-003, GOV-004, GOV-005, GOV-006]
+    date: "2026-11-03"
+    condition: "M2 ∧ M3 ∧ M4 ∧ M5 ∧ M6 全过（0.17.5 迁移条件）；seed 资格另含 M9 ∧ C-ENV ∧ C-ST ∧ C-ID（README §5，其中 M5 为软检查，警告不阻断）"
+    evidence: "scripts/project.py --check 的输出 projections/自检报告.md（逐条逐检查项的通过/失败与理由）。任一条硬检查未过 → 该条按 C-ST 回落 status: draft，本简记对其失效。"
+    impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.5", verified: true}
+        - {source_type: clause_id, value: "0.17.6", verified: true}
+        - {source_type: clause_id, value: "0.5", verified: true}
+    note: "本简记迁移对象为 GOV-001…GOV-006（母本 0.5 @111／表 @115-122 六行，表行序：完整 ADR／接受约束 ADR／张力承认 ADR／保守假设 ADR／权衡承认 ADR／重审提议）。7.2.3 @3042-3049 的简记格式不单列条目，登记为 GOV 块头格式约束：五字段 {唯一ID, 一句话决策, 依据指针, 时间戳, 执行者} 缺一不可；简记包按注册周期打包交人类抽查、包内条目独立可追溯；打包时重跑 impact_scope、越级者摘出；禁止拆分规避与事后补记。C-ENV：kind_profile_GOV.entry_level_exemptions 覆盖 GOV-001…GOV-006，envelope／cost_profile.* 按剖面 N-A 不填。E3 面同 ST-GRD-01：须逐 kind 另单申请，未获批准前不伪造（G-GOV-1）。scope 面：110 → 130；前十四条既有简记同步扩列，不改其既有行内注（0.22 承诺一）。本简记实际迁移事实只覆盖 6 条（MJ-16 (ii)）。"
 
 # ---------------------------------------------------------------------------
 # 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）
@@ -11117,4 +12461,28 @@ survey_obligations:
     gap_ref: G-VFM-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处；VFM-003／VFM-005 为空列表 → 严格式平凡为真，不得读作无外部文献支撑；8.7 @3557-3563 系**行级**书目登记表〔每行带 ISBN＋trust_grade＋compile_usage＋明文指向的子节〕符合 CSL-005 @2297-2298 的行级登记条件，与 QAT 批 6.7 尾注面〔无 ISBN／trust_grade／compile_usage 槽〕成因不同）；0.17.8 M4（detection_predicate 与 applicability 的词汇封闭；本批 **11** 个调用词一律在册、未登记 **0**，8.5 九机器层谓词与 T 系列公式侧八词不得本地造词，归 SO-4／s5g R2 与 VG-07）；0.17.8 M3（metric 词汇封闭；验证效能类三指标在 6.2.1 七族内无在册形态 → 本批零新增、改以被守护质量属性族为轴，扩表前禁止本地新增 metric 名）；0.17.8 M9（peer_entry 须在案；GRD kind 未入库、G 系列性质全库未入账、waivers 系台账非条目 → compatibility 五面只留注，是否扩 ENUM_RELATION 待裁决）；0.4 禁假精确＋6.2.1 量化纪律 @2789（无据不填数值区间；envelope 只登界形与单调方向、latency_budget_delta 只登构成项与批内相对序）；META 覆盖宣称的可机器判定性（8.2.1 无 row_id → kind_profile_VFM.table_rows @429 记不适用、entry_id_range @430 的裁决指针落 registry/README §4.10；meta.kind_coverage 的『VFM 全覆盖（8.2.1 手段映射注册表全部 6 类）』为人工清点结论而非机器可判，与 RLP／SCH／CFG／QAT 四批同弱）；0.18.2 S1／S4（S1 候选装配 @529-535：applicability 求值与 unknown ≠ false → 候选保留；S4 包络校验 @553-559：消费 envelope.bound_expr，其数值面待本项勘察）与 0.18.4 各方面实例化映射 @593『验证手段（8）：S3 主导（CI/测试能力过滤）；T1 悬置禁令』（@592 系同表『质量战术（6）』行、不适用本 kind；profiles.yaml @433 selection_profile.variant 即 @593 逐字转录）；0.18.6 M15（unknown ≠ false → 空列表与留空一律登记勘察义务，不得读作否定）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）；M4＋R2（发现词汇缺失 → 提议候选，不得本地造词）；M3（扩表前禁止本地新增 metric 名）；M9（peer_entry 全部存在方可登关系，E3 同型）；M15（unknown → 候选保留 ∧ 勘察义务登记）；0.4（禁假精确 → 无据不填数值区间）；0.22 承诺一（已发布登记不改写、差异只登记）；0.10 第一条 @235／9.2.2 @3600（Waiver 批准是人的裁决 → 本项不因 WV-VFM-E3-01 获批准而闭合、亦不因其 pending 而暂停）"
+    status: open
+
+  - obligation_id: SO-17
+    kind: 入库期
+    obligation: "裁决 9.2.3 @3595-3626 九个信号源的归属：其中部署失败率／回滚率／前置时间与 DPS 9.2.5 @3637-3641 部署观测面同源，须先分工（GRD 承载、DPS 承载、或另立信号源 kind），避免同一信号双载体（0.9 唯一真相）。分工前保持不收，GRD 覆盖宣称只限 9.2.1 三行。"
+    gap_ref: G-GRD-1
+    consumer: "9.2.1 信号汇聚；9.2.5 部署策略观测面；0.14 守护分级"
+    trigger_rule: "0.9 唯一真相；M9（peer 关系须在案）；M15（未知归属 → 不本地收编）"
+    status: open
+
+  - obligation_id: SO-18
+    kind: 入库期
+    obligation: "补勘 PRJ-001…PRJ-011 的交付空间事实：评审组织者与责任方、评审人能力门槛、评审周期与时限、批准角色注册表映射。逐条填实 PRJ 的 applicability.delivery_space 两项（现均为 [待勘察：…] 显式义务），填实后由 M15 关闭并复核 M2。"
+    gap_ref: G-PRJ-1
+    consumer: "0.18.2 S0（交付空间装配）；0.17.8 M2／M15；0.10 批准角色注册表"
+    trigger_rule: "0.4 出处门槛（正式组织文件/角色注册表/评审记录）；M15（unknown ≠ false）；0.18 S0 勘察任务"
+    status: open
+
+  - obligation_id: SO-19
+    kind: 入库期
+    obligation: "就 GRD／PRJ／GOV 三 kind 的 E3 编译豁免逐 kind 另单申请（既有 14 份 WV-*-E3-01 的 scope 均排除这三 kind），按 9.2.2 五要素起草并由人类责任方批准；批准前不得以 pending 伪装已批准，也不得扩用既有 Waiver 的 scope。"
+    gap_ref: G-GOV-1
+    consumer: "9.2.2 Waiver 五要素；0.10 第一条（批准权属人类）；编译规范 E3 面"
+    trigger_rule: "0.10 第一条 @235；9.2.2 @3589-3600；0.22 承诺一（不改写既有 Waiver）"
     status: open
