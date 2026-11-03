@@ -688,7 +688,20 @@ gaps:
     statement: "非 0.18 选型路径的 kind（GRD/PRJ/GOV）是否须声明 0.8 包络与 cost_profile，母本无明文；0.8 表述为「每种方法条目」，未界定「方法条目」是否含守护规则模板/投影规则/治理模板。"
     impact: "三个剖面 status=draft，undecided_fields 明列；这些 kind 的条目在缺口闭合前不得声明 status=seed（README §5 C-ST）。"
     route: R2 提议澄清候选
-    status: open
+    status: closed           # 2026-11-03：R2-KP-G3-01 已落地、三剖面已转 seed；statement／impact 原文不改写（0.22 承诺一），闭合依据见下方 closure
+    closure:
+      gap_ref: KP-G3
+      date: 2026-11-03
+      ruled_by: "用户（人类裁决人；0.10 第一条：Agent 与工具不自行裁定）"
+      basis: "R2-KP-G3-01 落地：母本 0.17.2 同一行末尾追加一句（母本 @381、单行本 @363，逐字一致），界定 0.8「每种方法条目」含 0.17.3 全部 kind，非质量属性判据者可在剖面登记 not_applicable 并附 reason 与 provenance.origin=compiled；数据侧由 ADR-KP-G3-01 执行，GRD／PRJ／GOV 三剖面 status draft→seed、undecided_fields→[]、not_applicable 各 8 项（envelope ＋ 7 个 cost_profile.*）、entry_level_exemptions 各 1 条 C-ENV 全批豁免、seed_source 两占位符填实。"
+      evidence:
+        - "profiles.yaml @477／@546／@611：kind_profile_GRD／PRJ／GOV status: seed（原 draft 缘由留在 note 历史句）"
+        - "profiles.yaml @539／@604／@670：各 kind narrative.note 追加裁决注、原文保留"
+        - "project.py @1069-1073：profiles gaps 的 status 只做要素齐备（presence）检查，取值不参与任何硬／软判据"
+        - "2026-11-03 复跑：948 条记录｜硬失败 0｜软警告 0｜entries 110｜profiles.gaps 4（status 计数 open 3／closed 1）"
+      preserved:
+        statement: "原文保留，未改写（原始问题＝「非 0.18 选型路径的 kind 是否须声明 0.8 包络与 cost_profile」）。"
+        impact: "原文保留，未改写；其中「三个剖面 status=draft」系 2026-11-03 前的事实陈述，闭合后已过期，以本 closure 为准。"
   - gap_id: KP-G4
     type: 术语不一致（0.17.6 差异分类 c）
     statement: "0.17.2 举例用「projection_vocabulary 条目」，0.17.3 封闭枚举中对应 kind 前缀为 PRJ、名称为「投影词汇/规则」；两处术语未对齐。"
