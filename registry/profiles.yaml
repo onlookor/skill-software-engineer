@@ -456,8 +456,8 @@ profiles:
         - {source_type: clause_id, value: "9.2.5", verified: true}
     seed_source:
       clause_id: "9.2.5"
-      table_rows: "[待勘察：DPS 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "9.2.5（5 行：滚动发布／蓝绿发布／金丝雀发布／功能开关驱动发布／回滚规程）"
+      entry_id_range: "DPS-001…DPS-005（表行序 @3637-3641，MJ-13 (iv) 同型；回滚规程 @3641 按表行序取 DPS-005）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S3 主导（on-call/观测能力）；G3 注册完整性在 S6 检验"
