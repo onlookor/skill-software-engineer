@@ -12,6 +12,8 @@
 #      物化公式：required_fields = common_required − optional − not_applicable + required_extra
 #   3. optional / not_applicable 每项必须带 reason 与 provenance（0.17.6 第四层：人工判断兜底，
 #      禁默认值假充）；无母本依据者 provenance.origin = manual。
+#      provenance.origin = manual 仅适用于字段取值与 optional 判定；not_applicable 属完备性判定，
+#      须有母本明文依据，不得以 manual 替代（2026-11-03 用户裁定；与 GOV 剖面 note 并存，不再两读）。
 #   4. status=draft 的剖面表示其字段适用性缺母本依据，缺口已登记于 gaps，不得用于放行 seed 条目。
 
 meta:
@@ -472,7 +474,7 @@ profiles:
     describes_kind: GRD
     name: 守护规则模板 · kind 剖面
     version: {major: 1, minor: 0, patch: 0}
-    status: draft            # 字段适用性缺母本依据，见 gaps KP-G3
+    status: seed             # 2026-11-03：R2-KP-G3-01 闭合（0.17.2 @381 末句；原 draft 缘由见 note 历史句）
     provenance:
       origin: manual
       source_pointers:
@@ -483,8 +485,8 @@ profiles:
         - {source_type: clause_id, value: "9.2.1", verified: true}
     seed_source:
       clause_id: "9.2"
-      table_rows: "[待勘察：GRD 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "9.2.1（3 行：P0 阻塞级／P1 限期级／P2 监测级）"
+      entry_id_range: "GRD-001…GRD-003（表行序 @3583-3585；9.2.3 九信号源暂不收——部署类信号与 DPS 9.2.5 重叠，须先分工，登记为后续待办）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "[缺口：0.18.4 未登记方面 9 守护规则模板的规程变体——GRD 由方面 9 消费而非 0.18 选型规程（0.17.4 消费者二）]"
@@ -492,18 +494,56 @@ profiles:
       - anti_patterns            # 规则体：detection_predicate + signal_level（0.17.4 消费者二「直接播种 G 规则」）
       - formal_anchor            # 0.14/9.2.1 分级锚点
     optional: []
-    not_applicable: []
-    undecided_fields: [envelope, cost_profile, compatibility, constraints_imposed, applicability]
-    entry_level_exemptions: []
+    not_applicable:
+      - field: envelope
+        reason: "R2 澄清（0.17.2 @381 末句）：GRD 守护规则模板不以质量属性为选择判据，0.8 包络义务按本剖面登记为 not_applicable；显式豁免而非省略。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.latency_budget_delta
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.failure_modes
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.consistency_impact
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.observability_requires
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.ops_cost
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.skill_prerequisites
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.aggregation_semantics
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+    undecided_fields: []
+    entry_level_exemptions:
+      - scope: "GRD-001…GRD-003（9.2.1 主表 P0／P1／P2）"
+        field: envelope
+        check: C-ENV
+        reason: "GRD 守护规则模板不改变质量属性包络；0.8 包络义务经 R2-KP-G3-01 澄清为 not_applicable；C-ENV 对非 1.2.x 源行且 envelope 为空的条目按本豁免显式放行（project.py @847-862）。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
     narrative:
-      note: "本剖面为 draft：GRD 条目是否须声明 0.8 包络、是否须填 applicability 三空间，母本无明文（0.8 表述为「每种方法条目」，守护规则模板是否属「方法条目」待澄清）→ gaps KP-G3。"
+      note: "本剖面为 draft：GRD 条目是否须声明 0.8 包络、是否须填 applicability 三空间，母本无明文（0.8 表述为「每种方法条目」，守护规则模板是否属「方法条目」待澄清）→ gaps KP-G3。2026-11-03 裁决注：R2-KP-G3-01 已在 0.17.2 @381 末句落地，status 由 draft 转 seed；种子面只取 9.2.1 主表 3 条（P0／P1／P2），9.2.3 九信号源暂不收（部署类信号与 DPS 9.2.5 重叠，须先分工）；原文保留为历史。"
 
   # ── 方面 10 ──
   - entry_id: kind_profile_PRJ
     describes_kind: PRJ
     name: 投影词汇/规则 · kind 剖面
     version: {major: 1, minor: 0, patch: 0}
-    status: draft            # 仅 latency_budget_delta 的 N-A 有母本明文，其余待澄清
+    status: seed             # 2026-11-03：R2-KP-G3-01 闭合（0.17.2 @381 末句；原 draft 缘由见 note 历史句）
     provenance:
       origin: hybrid
       source_pointers:
@@ -512,8 +552,8 @@ profiles:
         - {source_type: clause_id, value: "10.2.2", verified: true}
     seed_source:
       clause_id: "10.2.2"
-      table_rows: "[待勘察：PRJ 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "10.2.2 义务表（11 行：1.4／2.4／4.4／5.4／8.4／9.4 ＋ 8.2.7 评审点一–五）"
+      entry_id_range: "PRJ-001…PRJ-011（义务表行序 @3871-3881；C4／arc42 16 行实例表母本明文「实例级，非规范」→ 不作种子）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "[缺口：0.18.4 未登记方面 10 的规程变体]"
@@ -524,17 +564,51 @@ profiles:
         reason: "母本 0.17.2 明示例：「projection_vocabulary 条目无 latency_budget_delta」——本项为唯一有明文依据的 N-A 判定"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
-    undecided_fields: [envelope, cost_profile.consistency_impact, cost_profile.ops_cost, compatibility, applicability.delivery_space]
-    entry_level_exemptions: []
+      - field: envelope
+        reason: "R2 澄清（0.17.2 @381 末句）：PRJ 投影词汇/规则不改变质量属性包络，0.8 包络义务按本剖面登记为 not_applicable；显式豁免而非省略。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.failure_modes
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.consistency_impact
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.observability_requires
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.ops_cost
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.skill_prerequisites
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.aggregation_semantics
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+    undecided_fields: []
+    entry_level_exemptions:
+      - scope: "PRJ-001…PRJ-011（10.2.2 义务表）"
+        field: envelope
+        check: C-ENV
+        reason: "PRJ 投影词汇/规则不改变质量属性包络；0.8 包络义务经 R2-KP-G3-01 澄清为 not_applicable；C-ENV 对非 1.2.x 源行且 envelope 为空的条目按本豁免显式放行（project.py @847-862）。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
     narrative:
-      note: "术语不一致已登记 gaps KP-G4（0.17.2 用「projection_vocabulary」，0.17.3 kind 名为 PRJ/「投影词汇/规则」）。"
+      note: "术语不一致已登记 gaps KP-G4（0.17.2 用「projection_vocabulary」，0.17.3 kind 名为 PRJ/「投影词汇/规则」）。2026-11-03 裁决注：R2-KP-G3-01 已在 0.17.2 @381 末句落地，status 由 draft 转 seed；applicability.delivery_space 裁定为必填、不按 N-A——该字段仍须逐条勘察取值，非 N-A（不伪装为豁免）；种子面只取 10.2.2 义务表 11 条，C4／arc42 16 行实例表母本明文「实例级，非规范」→ 不作种子。"
 
   # ── 治理 ──
   - entry_id: kind_profile_GOV
     describes_kind: GOV
     name: 治理模板（ADR 亚型、简记格式等）· kind 剖面
     version: {major: 1, minor: 0, patch: 0}
-    status: draft            # 字段适用性缺母本依据，见 gaps KP-G3
+    status: seed             # 2026-11-03：R2-KP-G3-01 闭合（0.17.2 @381 末句；原 draft 缘由见 note 历史句）
     provenance:
       origin: manual
       source_pointers:
@@ -544,18 +618,56 @@ profiles:
         - {source_type: clause_id, value: "7.2.3", verified: true}
     seed_source:
       clause_id: "0.5/7.2.3"
-      table_rows: "[待勘察：GOV 批次读取时填实]"
-      entry_id_range: "[待裁决]"
+      table_rows: "0.5（6 行：完整 ADR／接受约束 ADR／张力承认 ADR／保守假设 ADR／权衡承认 ADR／重审提议）"
+      entry_id_range: "GOV-001…GOV-006（表行序 @117-122；7.2.3 简记格式不单列条目，作 note 内格式约束）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "[缺口：0.18.4 未登记治理模板的规程变体——GOV 由 0.13/方面 7 消费（0.17.4 消费者四）]"
     required_extra: []
     optional: []
-    not_applicable: []
-    undecided_fields: [envelope, cost_profile, compatibility, constraints_imposed, applicability]
-    entry_level_exemptions: []
+    not_applicable:
+      - field: envelope
+        reason: "R2 澄清（0.17.2 @381 末句）：GOV 治理模板（ADR 亚型、简记格式）不改变质量属性包络，0.8 包络义务按本剖面登记为 not_applicable；显式豁免而非省略。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.latency_budget_delta
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.failure_modes
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.consistency_impact
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.observability_requires
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.ops_cost
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.skill_prerequisites
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.aggregation_semantics
+        reason: "R2 澄清（0.17.2 @381 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+    undecided_fields: []
+    entry_level_exemptions:
+      - scope: "GOV-001…GOV-006（0.5 六类 ADR 类型）"
+        field: envelope
+        check: C-ENV
+        reason: "GOV 治理模板（ADR 亚型、简记格式）不改变质量属性包络；0.8 包络义务经 R2-KP-G3-01 澄清为 not_applicable；C-ENV 对非 1.2.x 源行且 envelope 为空的条目按本豁免显式放行（project.py @847-862）。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
     narrative:
-      note: "治理模板（ADR 亚型、简记格式）不改变系统质量属性包络，但「不改变」需母本明文方可作 N-A 判定，否则为默认值假充（0.17.6 第四层禁令）→ gaps KP-G3。"
+      note: "治理模板（ADR 亚型、简记格式）不改变系统质量属性包络，但「不改变」需母本明文方可作 N-A 判定，否则为默认值假充（0.17.6 第四层禁令）→ gaps KP-G3。2026-11-03 裁决注：R2-KP-G3-01 已在 0.17.2 @381 末句落地，status 由 draft 转 seed；种子面只取 0.5 六行，7.2.3 简记格式不单列条目、作为 note 内格式约束；原文保留为历史。"
 
 # ── 剖面级缺口（R2 澄清候选；不静默造规则）──
 gaps:

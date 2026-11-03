@@ -243,6 +243,44 @@
 
 台账与计数面（终值以 `--check`／`--project` 实跑为准）：`ST-DPS-01`（draft→seed，scope **110** 条全集形式面、实际迁移对象为末 **5** 条，date 2026-11-03）；`WV-DPS-E3-01`（**第十四次**单独申请，`approval.status: approved`／条目 `status: active`／`approved_date: 2026-11-03`，**未给具体时刻→不写时点、不写近似值**；scope 硬性质 **3 项 7 实例**＝G3 5／G4 1／Z6 1）；`MJ-29`；词汇缺口 **`VG-08`**（9.5 @3697-3700 的 deploy_strategy／canary_gate／evolution_path／strangler_sequence ＋ 公式侧 `gate_verdict`，只登记、不扩词，归 s5g）；**`G-DPS-1` 经评估不成立**（9.2.5 五行全覆盖、五条 references 全非空、G3／G4／Z6 锚点均落位，唯一未闭合者系词汇面 → 由 `VG-08` 承载）→ gaps 仍 **18**、`survey_obligations` 仍 **16**。全批计数：entries **105 → 110**；占位符 **1092 → 1165** 处／**110** 条（DPS **73**＝15／17／15／13／13）；指针 **1848 → 1931（M2）→ 1934（M3）**／miss **0**（`method_registry` 1647→1730→**1733**／`profiles` **125**／`predicate_vocabulary` **76**）；自检记录 **906（M1 基线）→ 947（M2）→ 948（M3）**｜硬失败 **14 → 0**｜软警告 **0**；`status_transitions` **13→14**；`waivers` **13→14**（**全部 active·全部 approved**，累计覆盖 **110** 条 seed、scope 互不重叠）；`manual_judgments` **28→29**；`vocabulary_gaps` **5→6**；`profiles.gaps` 仍 **4**；`pending_conflict_rows` 开放 **0**／已闭合 **4**。四件投影重生成：`STY.md` 1657→**1741**／`勘察义务清单.md` 1714→**1817**（逐条枚举 1165 处、DPS 侧 73）／`索引.md` 263→**271**／`自检报告.md` 256→**269**（`--check` 先行生成）＝合计 3890→**4098**；源哈希 `method_registry.yaml`→**`872d1def4067`**、`profiles.yaml`→**`0f225f62cc1e`**、`predicate_vocabulary.yaml`→**`cbdf6da217fa`**。母本零改动（4427 行／围栏 216）；§4.2–§4.10 末段的批次清单**不回改**（0.22 承诺一）；其余 **3** kind（GRD/PRJ/GOV）仍适用同一模式，且受 s5e-10 阻断口限制。
 
+### 4.12 KP-G3 R2 母本澄清（0.17.2 同行追加；母本 1/1、行数中性）
+
+2026-11-03 用户批准 `R2提案-KP-G3-包络义务适用范围.md` 的推荐读法（**宽读**）与拟改写文本，并给出四项授权边界：①只闭合 `envelope`／`cost_profile` 轴；②`applicability` 不纳入 N-A（另案，本轮不做）；③PRJ 的 `applicability.delivery_space` 保持必填、不按 N-A（保留「诚实失败」）；④母本改动只允许在 0.17.2 同一行末尾追加一句，不新增行、不改其他条款。
+
+改写位置（锚点实测，非盲信提案行号）：母本 `软件工程元框架成文法.md` @**381** 行末；单行本 `软件工程元框架总纲单行本.md` @**363** 行末（同一句、逐字一致）。追加句界定 0.8 所称「每种方法条目」＝0.17.3 封闭枚举的全部 kind，并允许 kind 不以质量属性为选择判据时把 `envelope`／`cost_profile` 在本剖面登记为 `not_applicable`（逐项附 `reason` 引用本条、`provenance.origin=compiled`），此为显式豁免而非省略；该句只界定 0.8 包络义务，不改变其他字段的必填判定。
+
+断言实测：母本 `split('\n')` **4428**／行数 **4427**／围栏 **216**，改前改后**不变**；`git diff --numstat`＝**1/1**（`--word-diff` 只出现该句追加词）；sha256 `206c018ce309…` → `2663fc119f39…`。单行本 `git diff` 只含该句（numstat **1/1**），行数 **1285**／`split('\n')` **1286**／围栏 **36** 不变；sha256 `6fdb3d084507…` → `93fd7406db4b…`。
+
+**本轮不产生条目、不改剖面**：`entries` 仍 **110**；`profiles.yaml` 三 kind 的 `status`／`undecided_fields`／`not_applicable`／`entry_level_exemptions` **未动**（待 `entry_id_range` 与「条目面两读」裁决，见 `ADR草案-GRD-PRJ-GOV-剖面变更.md`）；`--check`／`--project` 未跑、四件投影未重生成；s5e-10 M2 仍**未启动**。§4.2–§4.11 末段的批次清单**不回改**（0.22 承诺一）。
+
+### 4.13 s5g 词汇表欠账收口（VG-06／VG-07；两项裁决；无新增条目、母本零改动）
+
+> 编号注：**§4.12 已由 KP-G3 R2 登记占用**（@246-254），本节按顺延取 **§4.13**；§4.11 及更早的批次清单与计数陈述**不回改**（0.22 承诺一）。
+
+**来源**：QAT 批块头 @7279-7284 ＋ G-QAT-1 statement (8)／route ⑥（`method_registry.yaml` @9987／@9990）预告 `VG-06`；VFM 批块头 @8708-8716 ＋ G-VFM-1 statement (3)／route ②（@9995／@9998）预告 `VG-07`。两处只预告未落盘；`VG-08` 因避撞号先落于 s5e-9（DPS）。
+
+**落盘**：`predicate_vocabulary.yaml` 新增 `VG-06`／`VG-07`，五字段（`id`／`missing_need`／`workaround`／`affected`／`route`）与 `VG-04`／`VG-05` 同型；编号 **VG-01…VG-08** 连续，`VG-08` 既有文本未改。
+
+**裁决一（`mapped` 并条）**：`mapped` 归 `VG-06`（母本唯一出处 6.5 @2901 Q6）；`VG-07` 移除该词并在 `missing_need` 留移出注、`route` 留编号注（8.5／T1–T9 @3417-3445 实测无此词）→ `VG-07` 覆盖 **十七→十六** 词（九机器层＋七公式侧）。G-VFM-1 预告文本不改写（0.22 承诺一）。
+
+**裁决二（QAT 七词并入）**：批次块头 @7279-7283 的 Q1–Q3／Q7 面七词（`routed_to`／`weight_source`／`band`／`defined`／`monitored`／`human_ruling_pending`／`selected`）并入 `VG-06` 补充组，**不另立 `VG-09`**；`VG-06` 合计 **十三词**（六＋七）。G-QAT-1「六词」正式口径不改写、差异在条内登记；`satisfied` 仍按关系词排除。
+
+**计数**：`vocabulary_gaps` **6→8**（VG-01…VG-08 连续）；在册谓词 **76**（predicates 59＋formula_words 7＋clause_defined_predicates 10）**未变**；两批 `detection_predicate`／`applicability` 未登记调用式实测 **0**（缺口只在定义面）；`entries` 仍 **110**，`gaps` 18／`survey_obligations` 16／`manual_judgments` 29／`status_transitions` 14／`waivers` 14 未动。
+
+**自检与投影**：948 条记录｜硬失败 **0**｜软警告 **0**｜占位符 **1165** 处／110 条｜指针 **1934**／miss **0**；四件投影重生成，行数 `STY.md` **1741**／`勘察义务清单.md` **1817**／`索引.md` **271**／`自检报告.md` **269**（合计 4098）**未变**，三件仅 footer 更新、`自检报告.md` 另含台账行 `vocabulary_gaps 6→8`；源哈希 `predicate_vocabulary.yaml` `cbdf6da217fa`→`67a11b81cec1`→**`025b999d0251`**（两轮迭代终值），`method_registry.yaml` `872d1def4067`／`profiles.yaml` `0f225f62cc1e` 未变。母本零改动（4427 行／围栏 216）。
+
+### 4.14 KP-G3 剖面执行＋`manual` 口径收窄（2026-11-03；母本零改动）
+
+> 编号注：**§4.12／§4.13 已分别由 KP-G3 R2 与 s5g 占用**，本节按顺延取 **§4.14**；§4.2–§4.13 的历史陈述与计数**不回改**（0.22 承诺一）。
+
+**一、剖面变更（ADR-KP-G3-01 落地，仅 `profiles.yaml`）**。用户裁定种子面三读：GRD 只取 **9.2.1 主表 3 条**（P0／P1／P2），9.2.3 九信号源暂不收（部署类信号与 DPS 9.2.5 重叠，须先分工）；PRJ 只取 **10.2.2 义务表 11 条**，C4／arc42 16 行实例表母本明文「实例级，非规范」→ 不作种子；GOV 只取 **0.5 六行**，7.2.3 简记格式不单列条目、作 note 内格式约束。三件 `status` `draft`→`seed`；`undecided_fields`→`[]`（PRJ 的 `applicability.delivery_space` **移出但仍必填**，note 追加「该字段仍须逐条勘察取值，非 N-A」——保留诚实失败，不伪装成豁免）；`not_applicable` 每 kind **8 项**（`envelope` ＋ 7 个 `cost_profile.*`），依据 0.17.2 @381 末句、`provenance: compiled`；`entry_level_exemptions` 每 kind **1 条 `C-ENV` 全批豁免**（scope＝GRD-001…GRD-003／PRJ-001…PRJ-011／GOV-001…GOV-006）；`seed_source` 两占位符填实。
+
+**二、`provenance.origin = manual` 口径收窄（头注 @13-14 追加）**。裁定人＝用户。头注原文保留，其后追加：「`provenance.origin = manual` 仅适用于字段取值与 `optional` 判定；`not_applicable` 属完备性判定，须有母本明文依据，不得以 `manual` 替代。」理由：`manual` 管「取值／是否 optional」，`not_applicable` 管「完备性判定」，两者不是同一层——没有母本依据时可以承认「这是人判断的值」，但不能声称「这不需要该字段」。**与 GOV note（原 @558、本轮改后 @670，原文不改写）的关系**：本节只收窄头注适用范围，使「头注允许 manual N-A」与「需母本明文方可 N-A」不再两读；三 kind 的 N-A 依据为 0.17.2 @381 末句（`provenance: compiled`），不依赖 `manual`。
+
+**三、自检与投影**（`--check`／`--project` 实跑，两轮同值）：**948** 条记录｜硬失败 **0**｜软警告 **0**｜entries **110**｜占位符 **1165** 处／110 条｜指针 **1960**／miss **0**（`profiles` **125→151**，`method_registry` **1733**，`predicate_vocabulary` **76**）｜`vocabulary_gaps` **8**｜`gaps` **18**／`survey_obligations` **16**。`索引.md` 剖面表三行＝`status` **seed**／required **18**／optional **0**／N-A **8**／undecided **0**／豁免 **1**。四件投影行数 `STY.md` **1741**／`勘察义务清单.md` **1817**／`索引.md` **271**／`自检报告.md` **269**（合计 4098）**不变**；哈希 `ca4a5f5696af`→`b7626efa62e5`／`e92bb0b6ac4c`→`cd51a10d32d2`／`b1b85bf54ae4`→`3f1cdd32d274`／`0191383b78df`→`df001852ce8e`（两轮重生成终值）；`profiles.yaml` 哈希 `0f225f62cc1e`→**`42de431a30db`**。**无 GRD／PRJ／GOV 条目 → C-ST／META／C-ENV 均无条目级记录；META 的 draft＋条目硬失败面因 `status=seed` 不再成立**（判定依脚本实测，非宣称）。
+
+**四、未做**：`method_registry.yaml`、母本、单行本零改动；无条目 → s5e-10 M2 未启动；**不 commit、不 push**。
+
 ## 5. 状态纪律与自检清单
 
 生命周期见 0.17.5。`draft→seed` = bootstrap 期专用迁移，条件 **M2–M6 全过**（低影响：简记 ＋ provenance 登记，简记见 `method_registry.yaml: status_transitions`）。`project.py` 执行：
