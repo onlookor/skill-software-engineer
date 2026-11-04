@@ -1081,13 +1081,62 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
 
 # ═══════════════════════════ 6. 普查与词汇装配 ═══════════════════════════
 
+# 显式事实标记：以 `待勘察：` 开头（书写约定），或整句以 `待勘察` 结尾（值位未定，如
+# DPS-004 bound_expr「到期时刻具体值待勘察」）。中间提及（如叙事里的「待勘察事实」）不计。
+FACT_PLACEHOLDER_RE = re.compile(r'^待勘察(?:[：:]|\s|$)|待勘察$')
+PLACEHOLDER_FIELD_ORDER = [
+    'applicability.problem_space',
+    'applicability.current_space',
+    'applicability.delivery_space',
+    'anti_patterns.detection_predicate',
+    'cost_profile',
+    'envelope.bound_expr',
+    'narrative',
+    'other',
+]
+
+
+def placeholder_field(path: str) -> str:
+    """把字段路径归入可审计的槽类别（README §3.3 新口径）。"""
+    if path.startswith('applicability.'):
+        return 'applicability.' + path.split('.')[1].split('[')[0]
+    if 'detection_predicate' in path:
+        return 'anti_patterns.detection_predicate'
+    if path.startswith('cost_profile'):
+        return 'cost_profile'
+    if path.startswith('envelope') and 'bound_expr' in path:
+        return 'envelope.bound_expr'
+    if path.startswith('narrative'):
+        return 'narrative'
+    return 'other'
+
+
 def census_placeholders(entries: list) -> dict:
-    """逐条逐字段路径枚举方括号事实占位符（README §3.3 / 母本 0.18.6 M15）。
-    排除 0.12 可信度标注（[已核验]/[存疑]/[未核验]/[待核验]）——非事实占位。
-    返回 {entry_id: [(字段路径, 占位事实文本)]}。"""
-    out = {}
+    """方括号内容分账（README §3.3 新口径 / 母本 0.18.6 M15）。
+
+    判定式（显式、可审计）：
+      · 排除 0.12 可信度标注（[已核验]/[存疑]/[未核验]/[待核验]）——单独由
+        census_trust_marks 统计，既不进事实也不进槽；
+      · 方括号内容带显式事实标记 → 事实占位（真·待勘察，M15 义务）：
+        以 `待勘察：` 开头，或整句以 `待勘察` 结尾（见 FACT_PLACEHOLDER_RE）；
+      · 其余 → 未绑定槽（谓词／参数槽，决策期求值，不计事实债）。
+
+    不重复计数：每处方括号只归一类，事实数＋槽数 ≡ 原方括号总数。
+    返回：
+      {all, facts, slots}  # entry_id → [(字段路径, 文本)]
+      total / fact_total / slot_total
+      by_field  # 字段类别 → {fact, slot}
+      by_kind   # kind → {字段类别: 槽数}
+      kind_facts  # kind → 事实数
+    """
+    all_out, facts, slots = {}, {}, {}
+    by_field = {g: {'fact': 0, 'slot': 0} for g in PLACEHOLDER_FIELD_ORDER}
+    by_kind: dict = {}
+    kind_facts: dict = {}
+    total = fact_total = slot_total = 0
     for e in entries:
         eid = str(e.get('entry_id'))
+        kind = str(e.get('kind'))
         strs = []
         walk_strings(e, '', strs)
         items = []
@@ -1096,23 +1145,41 @@ def census_placeholders(entries: list) -> dict:
                 if TRUST_PREFIX_RE.match(span):
                     continue
                 items.append((path, span[1:-1].strip()))
-        # 同一字段路径内多处占位（如 detection_predicate 的合取支）加 #n 序号消歧
+        # 同一字段路径内多处方括号（如 detection_predicate 的合取支）加 #n 序号消歧
         seen: dict = {}
-        numbered = []
-        for path, txt in items:
+        for path, _ in items:
             seen[path] = seen.get(path, 0) + 1
-            numbered.append((path, txt))
         dup = {p for p, n in seen.items() if n > 1}
         cnt: dict = {}
-        items = []
-        for path, txt in numbered:
+        numbered = []
+        for path, txt in items:
             if path in dup:
                 cnt[path] = cnt.get(path, 0) + 1
                 path = f'{path}#{cnt[path]}'
-            items.append((path, txt))
-        if items:
-            out[eid] = items
-    return out
+            numbered.append((path, txt))
+        if not numbered:
+            continue
+        all_out[eid] = numbered
+        for path, txt in numbered:
+            group = placeholder_field(path)
+            is_fact = bool(FACT_PLACEHOLDER_RE.search(txt))
+            total += 1
+            if is_fact:
+                fact_total += 1
+                facts.setdefault(eid, []).append((path, txt))
+                by_field[group]['fact'] += 1
+                kind_facts[kind] = kind_facts.get(kind, 0) + 1
+            else:
+                slot_total += 1
+                slots.setdefault(eid, []).append((path, txt))
+                by_field[group]['slot'] += 1
+                by_kind.setdefault(kind, {})
+                by_kind[kind][group] = by_kind[kind].get(group, 0) + 1
+    return {
+        'all': all_out, 'facts': facts, 'slots': slots,
+        'total': total, 'fact_total': fact_total, 'slot_total': slot_total,
+        'by_field': by_field, 'by_kind': by_kind, 'kind_facts': kind_facts,
+    }
 
 
 def census_trust_marks(entries: list) -> dict:
@@ -1287,9 +1354,10 @@ def _kind_census(entries: list) -> list:
 
 
 def render_survey(ctx: dict) -> str:
-    """勘察义务清单.md：Part A 决策期占位符逐条枚举 + Part B 入库期 SO 台账。"""
+    """勘察义务清单.md：Part A 决策期事实占位逐条枚举 + 槽汇总 + Part B 入库期 SO 台账。"""
     reg_doc, ph, tm = ctx['reg_doc'], ctx['placeholders'], ctx['trust_marks']
-    total = sum(len(v) for v in ph.values())
+    facts, slots = ph['facts'], ph['slots']
+    n_total, n_fact, n_slot = ph['total'], ph['fact_total'], ph['slot_total']
     ttot = sum(len(v) for v in tm.values())
     doubt = sum(1 for v in tm.values() for _, g in v if g == '存疑')
     L = ['# 勘察义务清单', '', GEN_NOTE, '',
@@ -1297,17 +1365,29 @@ def render_survey(ctx: dict) -> str:
          '- **决策期**（Part A）：每个事实占位符在选型时逐条求值 真/假/未知，记录入 selection_log；'
          '未知 → 候选保留 ∧ 登记勘察任务（M15），**禁沉默排除**；无出处阈值禁填（0.17.7 门槛 2）。',
          '- **入库期**（Part B）：台账 survey_obligations（SO）是义务本身的登记面。', '',
-         '## Part A｜决策期：事实占位符逐条枚举', '']
-    if not ph:
+         '## Part A｜决策期：事实占位逐条枚举（新口径）', '',
+         f'- 方括号总数 **{n_total}** ＝ 事实占位 **{n_fact}** ＋ 未绑定槽 **{n_slot}**。',
+         '- 判定式：方括号内容以 `待勘察：` 开头，或整句以 `待勘察` 结尾（值位未定）→ 事实占位；'
+         '其余 → 谓词／参数槽（决策期求值，**不计事实债**）；0.12 可信度标注单列（见下节）。',
+         f'- 本表只列事实占位；槽的字段分布见「未绑定槽汇总」，逐条核对见自检报告「占位符口径」。', '']
+    if not facts:
         L += ['（本批无事实占位符）', '']
-    for eid in sorted(ph):
-        rows = ph[eid]
+    for eid in sorted(facts):
+        rows = facts[eid]
         L += [f'### {eid}（{len(rows)} 处）', '',
-              '| # | 字段路径 | 占位事实（待决策期求值） |', '|---|---|---|']
+              '| # | 字段路径 | 事实占位（待决策期求值） |', '|---|---|---|']
         for i, (path, txt) in enumerate(rows, 1):
             L.append(f'| {i} | `{path}` | {md_cell(txt)} |')
         L.append('')
-    L += [f'**合计：{len(ph)} 个条目 / {total} 个占位符**。汇总义务见台账 SO-6（Part B）。', '',
+    L += ['### 未绑定槽汇总（不计事实债）', '',
+          '| 字段类别 | 槽数 |', '|---|---|']
+    for group in PLACEHOLDER_FIELD_ORDER:
+        n = ph['by_field'][group]['slot']
+        if n:
+            L.append(f'| `{group}` | {n} |')
+    L += [f'| **合计** | **{n_slot}** |', '',
+          f'**合计：事实占位 {n_fact} 处（{len(facts)} 个条目）／未绑定槽 {n_slot} 处；'
+          f'原方括号总数 {n_total}**。汇总义务见台账 SO-6（Part B）。', '',
           '### 可信度标注盘点（0.12）', '']
     if not tm:
         L += ['（无可信度标注）', '']
@@ -1333,7 +1413,8 @@ def render_self_check(ctx: dict) -> str:
     rep, entries, seeds, reg_doc = ctx['rep'], ctx['entries'], ctx['seeds'], ctx['reg_doc']
     hard_f, soft_f = rep.failures('hard'), rep.failures('soft')
     n_hard_ok = len([r for r in rep.rows if r.level == 'hard' and r.ok is True])
-    n_ph = sum(len(v) for v in ctx['placeholders'].values())
+    ph = ctx['placeholders']
+    n_total, n_fact, n_slot = ph['total'], ph['fact_total'], ph['slot_total']
     verdicts: dict = {}
     for s in seeds.values():
         verdicts[s['verdict']] = verdicts.get(s['verdict'], 0) + 1
@@ -1348,13 +1429,60 @@ def render_self_check(ctx: dict) -> str:
          f'本报告是**静态自检**，不是 FVR 运行器（{e3txt}）。', '',
          '## 汇总', '',
          f'- 硬检查：通过 **{n_hard_ok}** 项／失败 **{len(hard_f)}** 项；软警告 {len(soft_f)} 项',
-         f'- 条目：{len(entries)} 条；事实占位符合计 {n_ph} 处（逐条枚举见 勘察义务清单.md）',
+         f'- 条目：{len(entries)} 条；占位符（新口径）：事实占位 **{n_fact}** 处／'
+         f'未绑定槽 **{n_slot}** 处（原方括号总数 {n_total}；旧口径亦为 1480，'
+         f'见 README §4.16／§4.17，不回改）',
          '- seed 资格：' + ('、'.join(f'{k} {v} 条' for k, v in sorted(verdicts.items())) or '（无）'),
          f'- 指针反查：{ctx["ptr_total"]} 个，miss {ctx["ptr_miss"]} 个', '']
     L += ['### 指针反查（PTR）分文件', '', '| 文件 | 指针数 | 命中 | miss |', '|---|---|---|---|']
     for name, (n, okn, misses) in ctx['per_file'].items():
         L.append(f'| {name} | {n} | {okn} | {len(misses)} |')
-    L += ['', '## 逐条矩阵', '',
+    L += ['', '## 占位符口径（新，README §3.3）', '',
+          '判定式：方括号 `[...]` 表示谓词／参数槽（决策期求值）；仅内容以 `待勘察：` 开头、'
+          '或整句以 `待勘察` 结尾者（值位未定）为**事实占位**；0.12 可信度标注单列，不计入任一类。'
+          '**事实占位＋未绑定槽 ≡ 原方括号总数**。', '',
+          f'- 原方括号总数：**{n_total}**',
+          f'- 事实占位（真·待勘察，M15 义务）：**{n_fact}**',
+          f'- 未绑定槽（谓词／参数，不计事实债）：**{n_slot}**', '',
+          '### 按字段分解', '',
+          '| 字段类别 | 事实 | 槽 | 合计 |', '|---|---|---|---|']
+    for group in PLACEHOLDER_FIELD_ORDER:
+        cell = ph['by_field'][group]
+        if cell['fact'] or cell['slot']:
+            L.append(f'| `{group}` | {cell["fact"]} | {cell["slot"]} | {cell["fact"] + cell["slot"]} |')
+    L += [f'| **合计** | **{n_fact}** | **{n_slot}** | **{n_total}** |', '',
+          '### 按 kind 分解', '',
+          '| kind | 事实 | problem | current | delivery | detection | cost | bound | narrative | 槽合计 | 合计 |',
+          '|---|---|---|---|---|---|---|---|---|---|---|']
+    kinds = set(ph['by_kind']) | set(ph['kind_facts'])
+    for k in sorted(kinds, key=lambda x: (-(ph['kind_facts'].get(x, 0)
+                                            + sum(ph['by_kind'].get(x, {}).values())), x)):
+        groups = ph['by_kind'].get(k, {})
+        cells = [groups.get(g, 0) for g in (
+            'applicability.problem_space', 'applicability.current_space',
+            'applicability.delivery_space', 'anti_patterns.detection_predicate',
+            'cost_profile', 'envelope.bound_expr', 'narrative')]
+        nf = ph['kind_facts'].get(k, 0)
+        ns = sum(groups.values())
+        L.append(f'| {k} | {nf} | ' + ' | '.join(map(str, cells)) + f' | {ns} | {nf + ns} |')
+    L += [f'| **合计** | **{n_fact}** | **{ph["by_field"]["applicability.problem_space"]["slot"]}** | '
+          f'**{ph["by_field"]["applicability.current_space"]["slot"]}** | '
+          f'**{ph["by_field"]["applicability.delivery_space"]["slot"]}** | '
+          f'**{ph["by_field"]["anti_patterns.detection_predicate"]["slot"]}** | '
+          f'**{ph["by_field"]["cost_profile"]["slot"]}** | '
+          f'**{ph["by_field"]["envelope.bound_expr"]["slot"]}** | '
+          f'**{ph["by_field"]["narrative"]["slot"]}** | **{n_slot}** | **{n_total}** |', '',
+          '### 事实占位清单（逐条可核）', '',
+          '| # | entry_id | 字段路径 | 原文片段 |', '|---|---|---|---|']
+    n = 0
+    for eid in sorted(ph['facts']):
+        for path, txt in ph['facts'][eid]:
+            n += 1
+            L.append(f'| {n} | {eid} | `{path}` | {md_cell(_flat(txt, 90))} |')
+    if n == 0:
+        L.append('| — | — | — | （无事实占位） |')
+    L += ['', f'**事实占位合计 {n_fact} 处；槽 {n_slot} 处；原方括号总数 {n_total} 处。**', '',
+          '## 逐条矩阵', '',
           '图例：✓ 过 ｜ ✗ 败 ｜ – 不适用/跳过 ｜ · 无记录。'
           'seed 资格 = M2∧M3∧M4∧M6∧M9∧C-ENV∧C-ST（README §5；M5 软警告不阻断；C-ID 全局面并入）。', '',
           '| entry_id | status | C-ID | M2 | M3 | M4 | M5 | M6 | M9 | C-ENV | C-ST | seed 资格 |',
@@ -1636,8 +1764,9 @@ def main(argv=None) -> int:
         write_text('勘察义务清单.md', render_survey(ctx))
         write_text('索引.md', render_index(ctx))
     hard_f, soft_f = rep.failures('hard'), rep.failures('soft')
-    n_ph = sum(len(v) for v in ctx['placeholders'].values())
-    print(f'自检：{len(rep.rows)} 条记录｜硬失败 {len(hard_f)}｜软警告 {len(soft_f)}｜占位符 {n_ph} 处')
+    ph = ctx['placeholders']
+    print(f'自检：{len(rep.rows)} 条记录｜硬失败 {len(hard_f)}｜软警告 {len(soft_f)}｜'
+          f'占位符 {ph["total"]} 处＝事实 {ph["fact_total"]}＋槽 {ph["slot_total"]}')
     print(f'产物：{PROJ_DIR}/' + ('（四件）' if args.project else '（自检报告.md）'))
     if hard_f:
         for r in hard_f[:20]:

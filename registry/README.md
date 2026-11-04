@@ -31,7 +31,7 @@
 
 1. **词汇封闭**：`applicability` 三空间谓词与 `anti_patterns.detection_predicate` 只能使用 `predicate_vocabulary.yaml` 登记的谓词名（编译规范 2.3「谓词名注册」：发现缺失 → R2 提议，**不得本地造词**）。缺失词汇登记为缺口（见 `gaps`）。
 2. **语法**：联接 `∧`、析取 `∨`、否定 `¬`、蕴含 `→`、量化 `∀`/`∃` 前置、通配 `·`（编译规范 2.3 BNF）。
-3. **事实占位符**：方括号 `[…]` 表示待勘察事实（如 `[关注点可按抽象级别自然切分]`）。占位符求值结果为 `unknown` 时按 **M15**：候选保留 ＋ 勘察义务登记，**禁沉默排除**（0.18.6）。`project.py` 统计占位符数量并输出勘察义务清单。
+3. **谓词／参数槽与事实占位（新口径，2026-11-04）**：方括号 `[…]` 表示**谓词／参数槽**——`applicability` 三空间与 `detection_predicate` 是谓词，`cost_profile`／`envelope.bound_expr` 是参数；它们在决策期求值，**不计事实债**。**待勘察事实必须带显式标记**：以 `待勘察：` 开头（如 `[待勘察：本部署是否…]`），或整句以 `待勘察` 结尾（值位未定，如 `[到期时刻具体值待勘察]`）；仅句中提及（如叙事里的「待勘察事实」）不计。`[已核验]`／`[存疑]`／`[未核验]`／`[待核验]` 按 0.12 是可信度标注，单列统计、不计入任一类。事实占位求值 `unknown` 时按 **M15**：候选保留 ＋ 勘察义务登记，**禁沉默排除**（0.18.6）。`project.py` 输出「总数＝事实＋槽」三行与按字段／按 kind 两张分解表；`勘察义务清单.md` 只逐条枚举事实占位。旧口径（全部方括号计为事实占位，1480 处）见 §4.16 与 changlog，**不回改**。
 4. **公式约定词**（`approved`/`declared`/`registered`/`sourced`/`compatible`/`has`/`now`）按编译规范 2.3 内建语义表使用，不算白板谓词。
 5. **三值语义**：`{true, false, unknown}`；两值实现 = 编译缺陷（编译规范 2.3(3)）。
 
@@ -328,6 +328,31 @@
 
 **七、未做**：不 commit、不 push；E3 Waiver 未申请（待人类裁决，SO-19）；PRJ `delivery_space` 与 GRD 9.2.3 信号源分工为开放勘察项（G-PRJ-1／G-GRD-1）。本轮改动仅 `method_registry.yaml`、本文件、`todo.md`、`软件工程元框架成文法-changlog.md` 与四件投影。
 
+### 4.17 占位符口径改造（方案 b，2026-11-04）
+
+丙类工具改造：不改母本、不改任何条目、不改 `status`、不改 `profiles.yaml`。判定式显式化为 `FACT_PLACEHOLDER_RE`（以 `待勘察：` 开头，或整句以 `待勘察` 结尾；仅句中提及不计），`census_placeholders` 返回 `all/facts/slots` 三账，`render_survey`／`render_self_check`／CLI 改用新口径。
+
+**旧口径（历史，不回改）**：§4.16 记 1165→**1480**（全部方括号一律计为待勘察事实）。
+
+**新口径（本次实测）**：方括号总数 **1480 ＝ 事实占位 23 ＋ 未绑定槽 1457**。
+
+| 字段类别 | 事实 | 槽 | 合计 |
+|---|---|---|---|
+| `applicability.problem_space` | 0 | 173 | 173 |
+| `applicability.current_space` | 0 | 207 | 207 |
+| `applicability.delivery_space` | 22 | 169 | 191 |
+| `anti_patterns.detection_predicate` | 0 | 764 | 764 |
+| `cost_profile` | 0 | 127 | 127 |
+| `envelope.bound_expr` | 1 | 16 | 17 |
+| `narrative` | 0 | 1 | 1 |
+| **合计** | **23** | **1457** | **1480** |
+
+按 kind（事实＋槽）：QAT 248／STY 166／PRJ 165（含事实 22）／CTR 115／RLP 110／VFM 102／GOV 95／DPS 73（含事实 1）／CRD 67／DFL 63／CFG 60／GRD 55／DEC 54／SCH 40／STP 36／OWN 16／CSL 15。
+
+**不变量（本次实测）**：entries **130**、seed **130**、自检记录 **1114**、硬失败 **0**／软警告 **0**、指针 **2130**／miss **0** 全部不变；源哈希未变（`method_registry.yaml`→`13712a329e91`、`profiles.yaml`→`13f961d61ff1`、`predicate_vocabulary.yaml`→`025b999d0251`）。四件投影 `--project` 重生成：`STY.md` **1946** 行／`勘察义务清单.md` **206** 行／`索引.md` **300** 行／`自检报告.md` **372** 行；本次 sha256 前 12 位 `23f54527f1a7`／`3c853e99093b`／`8e7be57b5897`／`56b1c2472eaa`（按 STY／勘察／索引／自检顺序）。勘察清单由 2236 行降至 206 行，是把 1457 个槽移出义务清单的直接结果（事实仅 23 条）。
+
+**遗留**：PRJ 22 项「问句式事实写入 `delivery_space` 谓词槽」仍是类型错误，处置见 `../ADR草案-PRJ交付空间-谓词槽纠正.md`（ADR-PRJ-2-01，草案，待人类批准）；问句式硬检查（方案 c）仍待裁（先需解决 schema 无事实槽的问题）。
+
 ## 5. 状态纪律与自检清单
 
 生命周期见 0.17.5。`draft→seed` = bootstrap 期专用迁移，条件 **M2–M6 全过**（低影响：简记 ＋ provenance 登记，简记见 `method_registry.yaml: status_transitions`）。`project.py` 执行：
@@ -355,7 +380,7 @@ python3 scripts/project.py --check      # 仅自检，输出报告并写 project
 python3 scripts/project.py --project    # 自检 + 生成人类层投影（projections/）
 ```
 
-投影产物：`projections/STY.md`（条目人类可读视图，含四层数据源标注）、`projections/自检报告.md`、`projections/勘察义务清单.md`（M15 占位符汇总）、`projections/索引.md`。
+投影产物：`projections/STY.md`（条目人类可读视图，含四层数据源标注）、`projections/自检报告.md`（含「占位符口径」新分解）、`projections/勘察义务清单.md`（事实占位逐条＋槽汇总）、`projections/索引.md`。
 
 ## 7. 变更纪律
 
