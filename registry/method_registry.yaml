@@ -10061,7 +10061,7 @@ entries:
   - entry_id: PRJ-001
     kind: PRJ
     name: "1.4 架构评审：系统整体组织原则"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-PRJ-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=10.2.2 @3871 表行三列逐字；三空间判据与 delivery_space 勘察义务为人工判断
@@ -10082,9 +10082,9 @@ entries:
       current_space:
         - "[1.5 拓扑谓词集与风格谓词已在共享白板在册]——@4007 E1 的量词域要求 [referenced_by(评审点)] 的子集可求值；无谓词则覆盖关系不可判定"
         - "[投影规则注册表 10.2.1 可查]——@3883 逐字「某行被履行 = 投影规则注册表（10.2.1）中存在覆盖该谓词子集、且声明了该受众与问题的投影规则」"
+        - "[投影规则已登记：覆盖 {1.5 拓扑谓词集}、受众＝架构评审、问题＝系统整体组织原则，且显式表达所选风格（@3883；@3867 记法层级按部署事实登记，禁预设）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 {1.5 拓扑谓词集}、声明「架构评审」受众与「系统整体组织原则」问题、且显式表达所选风格的投影规则——@3883 履行判据；母本不指定记法层级（@3867），须按部署事实登记，禁预设]"
-        - "[待勘察：本部署的建模工具链与谓词素养是否支撑该视图形态——@3972 明示「无建模工具链 → 投影规则退化为表格形态」；实际形态须登记，不得以图形外观冒充覆盖]"
+        - "[∃ 建模工具链与谓词素养，可支撑 {1.5 拓扑谓词集} 的视图形态（@3972；无工具链则投影退化为表格形态，属已知降级）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []                  # 义务行彼此独立，不登记跨条目关系（避免把「同一注册表内的并列义务」误读为方法依赖）
     constraints_imposed:               # 交叉表源：10.4 @3982-3988 全表（投影规则普遍施加项）
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10116,7 +10116,7 @@ entries:
   - entry_id: PRJ-002
     kind: PRJ
     name: "2.4 分解评审：单元边界与依赖"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10137,9 +10137,9 @@ entries:
       current_space:
         - "[2.5 边界谓词集已在共享白板在册]——@4007 E1 的量词域要求子集可求值；边界谓词缺失则「单元边界与依赖」不可判定"
         - "[投影规则注册表 10.2.1 可查且可判覆盖]——@3883 逐字履行判据；注册表不可查则义务履行状态不可审计"
+        - "[投影规则已登记：覆盖 {2.5 边界谓词集}、受众＝分解评审、问题＝单元边界与依赖（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 {2.5 边界谓词集}、声明「分解评审」受众与「单元边界与依赖」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的边界谓词采集面与视图生成工具是否在位——@3972 工具链决定视图形态；无采集面则边界视图只能手工拼装，属 E2 风险]"
+        - "[∃ 边界谓词采集面与视图生成工具（@3972；无采集面则边界视图只能手工拼装，属 E2 风险）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10171,7 +10171,7 @@ entries:
   - entry_id: PRJ-003
     kind: PRJ
     name: "4.4 数据评审：数据所有权与流动"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10192,9 +10192,9 @@ entries:
       current_space:
         - "[Y 谓词集与血缘关系已在共享白板在册]——@4007 E1 要求子集可求值；血缘缺失则「流动」不可判定"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则未声明受众与问题即不可审计"
+        - "[投影规则已登记：覆盖 {Y 谓词集、血缘}、受众＝数据评审、问题＝数据所有权与流动（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 {Y 谓词集、血缘}、声明「数据评审」受众与「数据所有权与流动」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的血缘采集面与数据所有权登记面是否在位——@3970 存量文档仅作线索、冲突处以谓词为准重建；无采集面则数据视图不可同源生成]"
+        - "[∃ 血缘采集面与数据所有权登记面（@3970；冲突处以谓词为准重建）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10226,7 +10226,7 @@ entries:
   - entry_id: PRJ-004
     kind: PRJ
     name: "5.4 流程评审：行为与协调的时序、事件流与流程状态"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10247,9 +10247,9 @@ entries:
       current_space:
         - "[Z 谓词集已在共享白板在册]——@4007 E1 要求子集可求值；状态/事件谓词缺失则流程评审不可判定"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明流程评审受众与问题"
+        - "[投影规则已登记：覆盖 {Z 谓词集}、受众＝流程评审、问题＝行为与协调的时序、事件流与流程状态（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 {Z 谓词集}、声明「流程评审」受众与「行为与协调的时序、事件流与流程状态」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的事件采集与状态机导出面是否在位——@3972 工具链决定动态视图形态；无采集面则时序图只能手工拼装，属 E2 风险]"
+        - "[∃ 事件采集面与状态机导出面（@3972；无采集面则时序图只能手工拼装，属 E2 风险）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10281,7 +10281,7 @@ entries:
   - entry_id: PRJ-005
     kind: PRJ
     name: "8.4 验证评审入口：验证计划与证据索引"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10302,9 +10302,9 @@ entries:
       current_space:
         - "[T 谓词集与证据工件索引已在共享白板在册]——@4007 E1 要求子集可求值；证据索引缺失则「证据」不可定位"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明验证评审入口受众与问题"
+        - "[投影规则已登记：覆盖 {T 谓词集}、受众＝验证评审入口、问题＝验证计划与证据索引（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 {T 谓词集}、声明「验证评审入口」受众与「验证计划与证据索引」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的证据工件存储与索引面是否在位——@3987 投影可重放性纳入证据保全；无索引则验证计划无法回指证据]"
+        - "[∃ 证据工件存储与索引面（@3987；无索引则验证计划无法回指证据）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10336,7 +10336,7 @@ entries:
   - entry_id: PRJ-006
     kind: PRJ
     name: "9.4 守护评审：守护台账与健康度"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10357,9 +10357,9 @@ entries:
       current_space:
         - "[G 谓词集与演化路线图已在共享白板在册]——@4007 E1 要求子集可求值；G 谓词缺失则守护健康度不可判定"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明守护评审受众与问题"
+        - "[投影规则已登记：覆盖 {G 谓词集、演化路线图}、受众＝守护评审、问题＝守护台账与健康度（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 {G 谓词集、演化路线图}、声明「守护评审」受众与「守护台账与健康度」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的守护台账与健康度报表数据面是否在位——9.2.2 @3605 Waiver 台账周期聚合＋10.5 @4001 G9 报表；无台账则健康度只剩告警计数]"
+        - "[∃ 守护台账与健康度报表数据面（9.2.2 @3605 周期聚合；10.5 @4001 G9 报表；无台账则健康度只剩告警计数）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10391,7 +10391,7 @@ entries:
   - entry_id: PRJ-007
     kind: PRJ
     name: "8.2.7 评审点一 × 0.5：高影响决策该不该批"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10413,9 +10413,10 @@ entries:
       current_space:
         - "[候选集的注册表条目指针、applicability 逐条求值记录、compatibility 检验结果、S0–S6 规程步骤日志可导出]——@3877 第三列逐字四项"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明批准角色受众与「该不该批」问题"
+        - "[投影规则已登记：覆盖批准材料四要素、受众＝批准角色、问题＝高影响决策该不该批（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
+        - "[批准角色注册表已声明：含主批准人、备选批准链与批准时限（0.5 @129 逐字；未声明则所有高影响决策一律走阻塞路径）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖批准材料四要素、声明「批准角色」受众与「高影响决策该不该批」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的批准角色注册表（主批准人／备选链／时限）是否已声明——0.5 @129 逐字「未声明批准角色注册表的部署，所有高影响决策一律走阻塞路径」；缺失即批准不可达]"
+        - "[∃ 批准材料投影面：可把候选集条目指针、applicability 逐条求值、compatibility 检验与 S0–S6 日志同源导出为一页审批材料（@3877 第三列；@3883）]"   # ADR-PRJ-2-01 §4（补交付能力谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10447,7 +10448,7 @@ entries:
   - entry_id: PRJ-008
     kind: PRJ
     name: "8.2.7 评审点二：低影响决策是否免于留痕"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10469,9 +10470,9 @@ entries:
       current_space:
         - "[简记包条目含唯一ID、一句话决策、依据指针、时间戳、执行者五字段]——@3046 逐字「五个字段缺一不可，缺依据指针的简记 = 公理 A2 违例，登记时即拒绝」"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明抽查评审人受众与「是否免于留痕」问题"
+        - "[投影规则已登记：覆盖简记包五字段、受众＝抽查评审人、问题＝低影响决策是否免于留痕（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖简记包五字段、声明「抽查评审人」受众与「低影响决策是否免于留痕」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的简记包周期打包与独立可追溯面是否在位——7.2.3 @3047 逐字「包内条目保持独立可追溯——打包是评审批处理，不是记录合并」；周期值须为注册表条目]"
+        - "[∃ 简记包周期打包面与独立可追溯索引面（7.2.3 @3047；周期值须为注册表条目）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10503,7 +10504,7 @@ entries:
   - entry_id: PRJ-009
     kind: PRJ
     name: "8.2.7 评审点三：材料性判定是否被机械适用"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10525,9 +10526,10 @@ entries:
       current_space:
         - "[R2 三条件判定记录可导出：事实出处、时间戳与证据集差、材料性谓词结果]——7.2.4 @3054-3057 逐条"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明抽查评审人受众与「是否机械适用」问题"
+        - "[投影规则已登记：覆盖 R2 事实集与三条件判定记录、受众＝抽查评审人、问题＝材料性判定是否被机械适用（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
+        - "[材料性判定谓词已登记入注册表（7.2.4 @3057 逐字；未登记则材料性不可机器复核）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 R2 事实集与三条件判定记录、声明「抽查评审人」受众与「材料性判定是否被机械适用」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的材料性判定谓词是否已登记入注册表——7.2.4 @3057 逐字「判定谓词登记入注册表」；未登记则材料性不可机器复核]"
+        - "[∃ R2 材料性判定投影面：事实出处、时间戳、证据集差与三条件判定结果可同源导出（7.2.4 @3054-3057；@3883）]"   # ADR-PRJ-2-01 §4（补交付能力谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10559,7 +10561,7 @@ entries:
   - entry_id: PRJ-010
     kind: PRJ
     name: "8.2.7 评审点四：验证边界是否成立"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10582,9 +10584,10 @@ entries:
       current_space:
         - "[计划矩阵（8.2.1）与 FVR 接线状态（10.2.4）可导出]——@3880 第三列逐字「计划矩阵（8.2.1）+ FVR 接线状态（10.2.4）」"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明验证计划评审人受众与「边界是否成立」问题"
+        - "[投影规则已登记：覆盖计划矩阵与 FVR 接线状态、受众＝验证计划评审人、问题＝验证边界是否成立（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
+        - "[FVR 接线状态可观测：每条硬性质有 fvr_entry、wired 与 first_full_run 证据（10.2.4 @3939；10.5 @4009 E3）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖计划矩阵与 FVR 接线状态、声明「验证计划评审人」受众与「验证边界是否成立」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的 FVR 接线状态是否可观测——10.2.4 @3939 定稿＋10.5 @4009 E3「硬性质有 fvr_entry ∧ wired ∧ first_full_run 有证据」；无接线观测则边界评审只剩计划文本]"
+        - "[∃ 验证计划投影面：计划矩阵与 FVR 接线状态可同源导出，并可回指证据工件（@3880 第三列；@3939／@4009）]"   # ADR-PRJ-2-01 §4（补交付能力谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -10616,7 +10619,7 @@ entries:
   - entry_id: PRJ-011
     kind: PRJ
     name: "8.2.7 评审点五：Waiver 该不该给"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed
     provenance:
       origin: hybrid
@@ -10638,9 +10641,9 @@ entries:
       current_space:
         - "[Waiver 五要素与守护台账可导出]——@3881 第三列逐字「Waiver 五要素（9.2.2）+ 守护台账（9.2.2）」；五要素齐备才可评审"
         - "[投影规则注册表 10.2.1 可查]——@3883 履行判据；规则须声明 Waiver 评审人受众与「该不该给」问题"
+        - "[投影规则已登记：覆盖 Waiver 五要素与守护台账、受众＝Waiver 评审人、问题＝这个豁免该不该给（@3883；@3867）]"   # ADR-PRJ-2-01 §3.1（由 delivery_space 迁入）
       delivery_space:
-        - "[待勘察：本部署是否已登记覆盖 Waiver 五要素与守护台账、声明「Waiver 评审人」受众与「这个豁免该不该给」问题的投影规则——@3883；母本不指定记法层级（@3867），禁预设]"
-        - "[待勘察：本部署的豁免边界判定面是否在位——9.2.2 @3603 逐字「内部原因导致的 P0 违例不可豁免只可整改」；无外部不可控判定面则边界争议不可裁]"
+        - "[∃ 豁免边界判定面：可区分外部不可控与内部原因（9.2.2 @3603；无判定面则边界争议不可裁）]"   # ADR-PRJ-2-01 §3.2（改写为能力前提谓词）
     compatibility: []
     constraints_imposed:
       - {target_aspect: 0, constraint: "同源生成：谓词为权威，视图为投影，禁止双重维护", level: hard}
@@ -11186,6 +11189,15 @@ gaps:
     affected: "PRJ-001…PRJ-011 共 11 条"
     route: "0.18 S0 交付空间勘察（评审组织事实、能力与角色注册表），填实后由 M15 关闭 → 登记 SO-18。不得以 10.3 的方向性陈述冒充逐条事实（0.4 出处门槛）。"
     status: open
+
+  - gap_id: G-PRJ-2
+    type: 类型与空间归属错误（PRJ delivery_space 22 项问句误入谓词槽）
+    statement: "PRJ-001…PRJ-011 的 22 项 delivery_space 以「待勘察：…是否…」问句写入 @342 的谓词槽：14 项属现状空间事实（是否已登记／已声明／可观测），8 项属交付空间能力前提但仍是问句。逐项处置与改写文本见 `ADR-PRJ-2-01` §3；本项不改写既有记录（0.22）。
+    2026-11-04 按 ADR-PRJ-2-01 执行：14 项迁入 current_space、8 项改写为 ∃ 能力前提，PRJ-007／009／010 各补 1 项交付能力谓词；PRJ-001…PRJ-011 version 1.0.0→1.1.0。"
+    impact: "22 项原被计为事实债（旧口径）；改写后 delivery_space 恢复为能力前提谓词，新口径事实占位降至 1（仅 DPS-004 envelope.bound_expr）。PRJ 11 条 content version.minor +1；母本零改动、无 @行号 位移；四件投影重生成。"
+    affected: "PRJ-001…PRJ-011 共 11 条、22 项；profiles.yaml 与母本不受影响"
+    route: "ADR-PRJ-2-01 §8 执行清单已由人类批准并执行（2026-11-04）；执行后本 gap 关闭。后续口径变更仍须新 ADR＋人类批准（0.13 @271）。"
+    status: closed
 
   - gap_id: G-GOV-1
     type: 豁免与批准缺口（E3 豁免的 kind scope 未覆盖 GRD/PRJ/GOV）
@@ -12474,10 +12486,10 @@ survey_obligations:
   - obligation_id: SO-18
     kind: 入库期
     obligation: "补勘 PRJ-001…PRJ-011 的交付空间事实：评审组织者与责任方、评审人能力门槛、评审周期与时限、批准角色注册表映射。逐条填实 PRJ 的 applicability.delivery_space 两项（现均为 [待勘察：…] 显式义务），填实后由 M15 关闭并复核 M2。"
-    gap_ref: G-PRJ-1
+    gap_ref: G-PRJ-2
     consumer: "0.18.2 S0（交付空间装配）；0.17.8 M2／M15；0.10 批准角色注册表"
     trigger_rule: "0.4 出处门槛（正式组织文件/角色注册表/评审记录）；M15（unknown ≠ false）；0.18 S0 勘察任务"
-    status: open
+    status: closed
 
   - obligation_id: SO-19
     kind: 入库期
@@ -12486,3 +12498,11 @@ survey_obligations:
     consumer: "9.2.2 Waiver 五要素；0.10 第一条（批准权属人类）；编译规范 E3 面"
     trigger_rule: "0.10 第一条 @235；9.2.2 @3589-3600；0.22 承诺一（不改写既有 Waiver）"
     status: open
+
+  - obligation_id: SO-20
+    kind: 入库期
+    obligation: "按 ADR-PRJ-2-01 §3／§4 改写 PRJ-001…PRJ-011 的 22 项 delivery_space、补 PRJ-007／009／010 三项交付能力谓词，每条约 version.minor +1；执行后重跑 --check／--project 并复核不变量。2026-11-04 已执行：14 项迁 current_space、8 项改写为 ∃ 能力谓词、3 项新增；PRJ 11 条 version 1.1.0；事实占位 23→1、槽 1457→1482、方括号总数 1480→1483。"
+    gap_ref: G-PRJ-2
+    consumer: "0.17.2 @333（内容变更 version 递增）；0.17.2 @342（delivery_space 为能力前提谓词）；0.13 @271（批准后执行）；M15／M2 复核"
+    trigger_rule: "0.13 完整 ADR＋人类批准；0.22 承诺一（既有记录不改写、变更以追加登记）；执行后 --check／--project 归零"
+    status: closed
