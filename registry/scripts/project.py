@@ -1079,6 +1079,53 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
                 f'vocabulary_gaps {vg}｜profiles.gaps {kpg}')
 
 
+# 有意悬空的 open gap：白名单附理由，不按异常计。G-PRJ-1 由 ADR-PRJ-2-01 §5.2 指定保留为
+# 「曾把类型错误误判为数据缺口」的历史记录，不补 SO、不关闭；关闭须新 ADR 授权。
+GAP_SO_WHITELIST = {
+    'G-PRJ-1': 'ADR-PRJ-2-01 §5.2 指定历史留痕：G-PRJ-1 原文保留、不补 SO、不关闭。',
+}
+
+
+def check_gap_so_integrity(rep, reg_doc):
+    """信息级：gap↔SO 双向引用完整性（不参与 seed 资格，不作硬失败）。"""
+    gaps = {g['gap_id']: g for g in (reg_doc.get('gaps') or [])}
+    sos = reg_doc.get('survey_obligations') or []
+    open_gaps = {gid for gid, g in gaps.items() if g.get('status') == 'open'}
+    refs, covered = {}, {}
+    bad_ref, non_gap = [], 0
+    for s in sos:
+        oid = s['obligation_id']
+        toks = [x.strip() for x in re.split(r'[,，;；]', str(s.get('gap_ref') or '')) if x.strip()]
+        # gap_ref 允许混写词汇缺口／README 等交叉引用；仅对 G-<KIND>-<n> 形态校验 gap 存在性。
+        gap_toks = [t for t in toks if re.fullmatch(r'G-[A-Z]+-[0-9]+', t)]
+        non_gap += len(toks) - len(gap_toks)
+        refs[oid] = gap_toks
+        for t in gap_toks:
+            if t not in gaps:
+                bad_ref.append((oid, t))
+                continue
+            if s.get('status') == 'open' and gaps[t].get('status') == 'closed':
+                rep.fail('GAP-SO', oid, f'open SO 指向已 closed gap {t}', level='info')
+            if s.get('status') == 'open':
+                covered.setdefault(t, []).append(oid)
+    for t in sorted({t for _, t in bad_ref}):
+        ids = [oid for oid, x in bad_ref if x == t]
+        rep.fail('GAP-SO', ','.join(ids), f'gap_ref 指向不存在的 gap {t}', level='info')
+    dangling = []
+    for gid in sorted(open_gaps):
+        if covered.get(gid):
+            continue
+        if gid in GAP_SO_WHITELIST:
+            rep.add('GAP-SO', gid, 'info', True, '有意悬空：' + GAP_SO_WHITELIST[gid])
+        else:
+            dangling.append(gid)
+            rep.fail('GAP-SO', gid, 'open gap 无 open SO 承接', level='info')
+    rep.add('GAP-SO', '引用完整性', 'info', not dangling and not bad_ref,
+            f'open gaps {len(open_gaps)}｜有 open SO 承接 {len(open_gaps) - len(dangling)}｜'
+            f'白名单悬空 {len([g for g in open_gaps if g in GAP_SO_WHITELIST])}｜'
+            f'无承接 {len(dangling)}｜SO {len(sos)}｜坏引用 {len(bad_ref)}｜非 gap 交叉引用 {non_gap}')
+
+
 # ═══════════════════════════ 6. 普查与词汇装配 ═══════════════════════════
 
 # 显式事实标记：以 `待勘察：` 开头（书写约定），或整句以 `待勘察` 结尾（值位未定，如
@@ -1736,6 +1783,7 @@ def run_checks():
     check_meta(rep, reg_doc, entries, idx, mat, prof_status)
     check_cst(rep, entries, mat, prof_status)
     check_ledgers(rep, reg_doc, vocab_doc, profiles_doc)
+    check_gap_so_integrity(rep, reg_doc)
     ctx = {
         'rep': rep, 'idx': idx, 'reg_doc': reg_doc, 'profiles_doc': profiles_doc,
         'vocab_doc': vocab_doc, 'entries': entries, 'mat': mat, 'prof_status': prof_status,
