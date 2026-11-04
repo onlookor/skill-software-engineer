@@ -5593,11 +5593,12 @@ entries:
   - entry_id: RLP-001
     kind: RLP
     name: "幂等"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（幂等键 + 去重表/去重窗口）＋界形参数化与谓词转写（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.3-R-01", verified: true}   # 行内标记（5.2.3-R-01）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 首项「**幂等**（幂等键 + 去重表/去重窗口）」＋@2479 投递语义登记纪律
         - {source_type: clause_id, value: "5.2.2", verified: true}   # 三分类纪律：compensable『补偿已设计且幂等』、retriable『幂等 + 暂时性失败假设成立』
         - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
@@ -5698,11 +5699,12 @@ entries:
   - entry_id: RLP-002
     kind: RLP
     name: "收件箱（inbox）"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（消费侧去重与业务写同事务）＋界形参数化与谓词转写（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.3-R-02", verified: true}   # 行内标记（5.2.3-R-02）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第二项「**收件箱（inbox）**（消费侧去重与业务写同事务）」
         - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
         - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：值班/on-call 能力 → failure_modes 运维前提
@@ -5798,11 +5800,12 @@ entries:
   - entry_id: RLP-003
     kind: RLP
     name: "发件箱（outbox）"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（生产侧，4.2.4 已定义，行为面消费其投递语义）＋界形参数化与谓词转写（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.3-R-03", verified: true}   # 行内标记（5.2.3-R-03）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第三项「**发件箱（outbox）**（生产侧，4.2.4 已定义，行为面消费其投递语义）」＋@2479 投递语义登记纪律
         - {source_type: clause_id, value: "4.2.4", verified: true}   # 定义面出处（DFL-001 承载；本条目只登记行为面，判读见块头注）
         - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
@@ -5894,11 +5897,12 @@ entries:
   - entry_id: RLP-004
     kind: RLP
     name: "重试 + 指数退避 + 抖动"          # @2477 第四项原形含两个加号 → 按 MJ-21 (iii) 原形登记，不改写为「重试、指数退避与抖动」
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项＋5.2.2 @2473 retriable 定义；界形参数化与谓词转写（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.3-R-04", verified: true}   # 行内标记（5.2.3-R-04）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第四项「**重试 + 指数退避 + 抖动**」（母本未给参数与量化增量）
         - {source_type: clause_id, value: "5.2.2", verified: true}   # @2473 三分类纪律：可重试（幂等 + 暂时性失败假设成立，重试至成功）；关键步之后全部可重试
         - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径（本条按加和进入路径预算）
@@ -6006,11 +6010,12 @@ entries:
   - entry_id: RLP-005
     kind: RLP
     name: "超时预算"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（括号内界形逐字：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4）；参数化与谓词转写（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.3-R-05", verified: true}   # 行内标记（5.2.3-R-05）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第五项「**超时预算**（路径级联超时的预算分配：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4）」
         - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径（流程延迟预算 = Σ 各步骤卡片 latency_budget_delta + 步骤自身业务耗时）
         - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：SLA/SLO 目标与值班能力 → 预算复核的运维前提
@@ -6116,11 +6121,12 @@ entries:
   - entry_id: RLP-006
     kind: RLP
     name: "断路器"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（括号内机制逐字：失败率越阈时快速失败 + 半开探测）；阈值参数化与谓词转写（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.3-R-06", verified: true}   # 行内标记（5.2.3-R-06）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第六项「**断路器**（失败率越阈时快速失败 + 半开探测）」
         - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
         - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：值班/on-call 能力 → 断路状态与恢复的处置前提
@@ -6221,11 +6227,12 @@ entries:
   - entry_id: RLP-007
     kind: RLP
     name: "舱壁"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2477 行内加粗清单项（括号内机制逐字：线程/连接池按消费者隔离，防单点拖垮全局）；池容量参数化与谓词转写（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.3-R-07", verified: true}   # 行内标记（5.2.3-R-07）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2477 第七项「**舱壁**（线程/连接池按消费者隔离，防单点拖垮全局）」
         - {source_type: clause_id, value: "5.2.5", verified: true}   # 质量影响卡片五字段与 Σ 消费路径
         - {source_type: clause_id, value: "5.3", verified: true}     # 交付空间驱动：容量核定与部署配置能力 → 池划分的运维前提
@@ -6395,11 +6402,12 @@ entries:
   - entry_id: SCH-001
     kind: SCH
     name: "定时器/截止期/cron 的登记"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-SCH-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.4 @2483 第一分号子命题逐字「定时器/截止期/cron 的登记」（三种触发形态并列，登记义务不因形态而豁免）；界形参数化、失败模式与技能前提（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.4-SCH-01", verified: true}   # 行内标记（5.2.4-SCH-01）
         - {source_type: clause_id, value: "5.2.4", verified: true}   # @2483 第一子命题（本条骨架源）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2506 判别谓词：配置变更是否触及 Z 谓词 → cron/定时器变更的级别归属；母本明列「阈值、池大小、超时值」而**未明列 cron 表达式** → 据实登记入 G-SCH-1／MJ-25 (v)，本批不在注册表侧扩列（0.17.1）
         - {source_type: clause_id, value: "5.3", verified: true}     # @2521 现状空间驱动逐字「隐式协调是常态：定时任务互相踩、共享表当邮箱」→ 现状协调清单是重设计的第一可行集输入；@2525-2526 交付空间驱动（可观测性过滤器、值班能力）
@@ -6493,11 +6501,12 @@ entries:
   - entry_id: SCH-002
     kind: SCH
     name: "事件时间 vs 处理时间的显式选择"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-SCH-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.4 @2483 第二分号子命题逐字（含括注：事件时间 = 事实发生时刻，处理时间 = 系统见到时刻；乱序容忍度以水位线表达）；界形参数化、失败模式与验证面（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.4-SCH-02", verified: true}   # 行内标记（5.2.4-SCH-02）
         - {source_type: clause_id, value: "5.2.4", verified: true}   # @2483 第二子命题（本条骨架源，含 watermark 内联释义）
         - {source_type: clause_id, value: "4.2.4", verified: true}   # @2200「流处理」行第四列逐字「事件时间 vs 处理时间语义必须显式（方面 5 的 5.2.4 联动）」＝母本明文成对（compatibility → DFL-003 的 evidence）
         - {source_type: clause_id, value: "5.5", verified: true}     # @2569 time_semantics(stream, event_time|processing_time, watermark_policy) 谓词（本条的机器层落点）＋@2572 触发条件行（**不含 time_semantics**，据实登记）＋@2590 Z7
@@ -6591,11 +6600,12 @@ entries:
   - entry_id: SCH-003
     kind: SCH
     name: "调度冲突与资源竞争的归属声明"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-SCH-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.4 @2483 第三分号子命题逐字（含括注：哪个单元有权调度哪个流程——调度权也是所有权的一种，受 Y1 同型约束）；界形参数化与失败模式（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.4-SCH-03", verified: true}   # 行内标记（5.2.4-SCH-03）
         - {source_type: clause_id, value: "5.2.4", verified: true}   # @2483 第三子命题（本条骨架源，含 Y1 同型约束的明文挂钩）
         - {source_type: clause_id, value: "4.5", verified: true}     # @2279-2280 Y1 逐字「∀D: |{M : owner(D, M)}| = 1 ∨ has_approved(shared_write_exception(D)) // 单一所有者（W4 执行域；例外须批准+退出计划）—— 硬」＝本条 formal_anchor 的锚点
         - {source_type: clause_id, value: "5.3", verified: true}     # @2521 现状空间驱动逐字「隐式协调是常态：定时任务互相踩、共享表当邮箱」＝调度冲突的现状面（compatibility → SCH-001 的 evidence）
@@ -6800,11 +6810,12 @@ entries:
   - entry_id: CFG-001
     kind: CFG
     name: "配置 schema 注册"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2505 行内加粗引导词「配置 schema 注册」逐字；登记对象四形态（开关、阈值、路由规则、池大小）与五槽 {键, 值域, 作用域, 级别, 生命周期} 均母本逐字；界形参数化、失败模式与技能前提（manual，MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.6-CFG-01", verified: true}   # 行内标记（5.2.6-CFG-01）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2503 引言段（准决策通道／纪律的潜在旁路；四条共同 problem_space 源）＋@2505 本条骨架源（登记义务与五槽逐字）
         - {source_type: clause_id, value: "8.2.4", verified: true}   # @3345「配置注册表比对：实际配置项 vs 注册表（5.2.6 的静态面，未注册配置项 = 违例）」＝本条登记面的唯一静态验证钩子
         - {source_type: clause_id, value: "5.5", verified: true}     # @2567 flag 谓词四槽：五槽中「作用域」「级别」「生命周期」即 scope／level／expiry 三槽的白板形态（0.9 唯一真相，两处各自取值即两处真相）
@@ -6899,11 +6910,12 @@ entries:
   - entry_id: CFG-002
     kind: CFG
     name: "决策/参数判别谓词"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2506 行内加粗引导词「决策/参数判别谓词」逐字；二分判据（改变任一 Z 系列谓词取值 → 行为级变更 = 决策／不触及 Z 谓词且仅在登记值域内调参 → 参数级变更 = 低影响）、两处括注例（开关切换同步↔异步路径 = 改变 interaction_flow.kind；切换编排器启停 = 改变协调风格）、升格条件（超时值变更若影响 Z4 预算闭合则升为行为级）与机器可查面（@2508 变更前后 Z 谓词快照比对、按硬约束阻塞）均母本逐字；@2506 括注「登记入注册表，不允许运行时即兴判断」在加粗引导词之外 → 记入本注与 narrative.common_misuse，不入 name（MJ-21 (iii) 同型：加粗引导词是 name 的唯一骨架源）。判据的实例化清单（何谓「触及 Z 谓词」）、失败模式与技能前提为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "5.2.6-CFG-02", verified: true}   # 行内标记（5.2.6-CFG-02）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2506 判据全文（本条骨架）＋@2508 机器可查面（快照比对、按硬约束阻塞）＋@2503 引言段（准决策通道＝判别义务的存在理由）
         - {source_type: clause_id, value: "5.5", verified: true}     # @2567 flag 第三槽逐字「level: behavior|parameter（5.2.6 判别谓词的产出）」＝本条判据的产出位；@2572 触发条件末句「配置变更触发 = 变更前后 Z 谓词快照比对，5.2.6」；Z4 @2583-2585 超时预算闭合（升格条件所绑定的性质）
         - {source_type: clause_id, value: "0.10", verified: true}    # 权力条款第一条 @235：凡高影响决策一律走批准路径，Agent 不获得豁免裁决与批准的权力 → @2506「记 ADR + 批准」与 @2508「按硬约束阻塞」的权力源
@@ -6998,11 +7010,12 @@ entries:
   - entry_id: CFG-003
     kind: CFG
     name: "开关生命周期"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2507 行内加粗引导词「开关生命周期」逐字；三项实体内容（诞生即带审查期/到期日、到期未清理 → P2 漂移信号、交方面 9 守护 G 系列）与两处括注（`expiry` 字段；僵尸开关 = 隐式架构分支，腐化源）均母本逐字，无改写。级别归属的**双读**取自两处明文并据实分列：@2507 与 9.2.1 @3585 记 P2（监测级），9.2.3 @3616 记「Z6 违例 → P0（行为级开关）；其余 P2」→ 本条 AP 分列 P0／P1／P2，母本内部差异**不在注册表侧择一改写**（0.22 承诺一），登记入 G-CFG-1 route ④ 与 MJ-26 (vii)。「诞生即带」的落地面（由谁在何时写入 expiry、以何载体承载、存量开关是否补登）母本未给 → manual（MJ-2 同型：骨架 hybrid、判据与落地面人工）
       source_pointers:
+        - {source_type: row_id, value: "5.2.6-CFG-03", verified: true}   # 行内标记（5.2.6-CFG-03）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2507 本条骨架全文逐字（生命周期三项＋僵尸开关定义＋交方面 9 守护）；@2503 引言段「构成**准决策通道**」作四条共同 problem_space 源；@2505 五槽中「生命周期」槽＝本条的登记落点（compatibility 镜像依据）；@2508 机器可查面为到期判定的求值前提
         - {source_type: clause_id, value: "5.5", verified: true}     # @2567 flag 谓词第四槽逐字「flag(G, scope, level, expiry)  // level: behavior|parameter（5.2.6 判别谓词的产出）」→ expiry 系**在册谓词的槽位**而非本批新造词（谓词名在册、槽名不在册，处置见块头未登记谓词段）；Z6 @2588-2589 逐字「∀ flag(G,_,behavior,_): ∃ approved(ADR(G)) ∧ declared(expiry(G)) ∧ now ≤ expiry(G) ∨ cleanup_filed」＋标注「行为级开关治理闭合 —— 硬」＝本条 formal_anchor 的绑定对象，其四支即 AP1-AP3 的判据源
         - {source_type: clause_id, value: "5.4", verified: true}     # 施加约束方面 9 行 @2552 逐字「协调漂移守护对象：隐式时序假设再现、僵尸开关（expiry 超期）、卡片 observability_requires 退化」→ 母本明文把 expiry 超期交方面 9 守护（＝@2507「交方面 9 守护（G 系列）」的对侧面）；接收约束 @2540；七行 @2547-2553 全文入 constraints_imposed（方面 8 行系 @2551，与方面 9 行 @2552 相邻而不同行，承 MJ-25 (xiii) 的同表异行纪律，不得混引）
@@ -7108,11 +7121,12 @@ entries:
   - entry_id: CFG-004
     kind: CFG
     name: "与 0.10 权力条款的联动"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2508 行内加粗引导词「与 0.10 权力条款的联动」**逐字含条款号**，不改写为「权力条款联动」（块头 name 段：MJ-21 (iii) 同型，与 RLP-004 @5896 保留原形同理）；三项实体内容（禁止以参数级之名行行为级之实、判别谓词机器可查〔变更前后 Z 谓词快照比对〕、规避行为 = 纪律违例并按硬约束阻塞）均母本逐字，无改写。「联动」的落地形态（谁执行比对、在哪一层阻塞、违例如何登记与升级）母本未给 → manual（MJ-2 同型）；0.10 无注册表条目实体 → 联动面以 source_pointer＋formal_anchor＋narrative 承载，compatibility 留空并注（块头注释⑤）
       source_pointers:
+        - {source_type: row_id, value: "5.2.6-CFG-04", verified: true}   # 行内标记（5.2.6-CFG-04）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2508 本条骨架全文逐字（三项实体内容）；@2503 引言段「构成**准决策通道**——它们能在不走 ADR 的情况下改变运行时行为，是纪律的潜在旁路」＝本条要封堵的对象；@2506 判据本体（CFG-002 承载）是本条联动的前提
         - {source_type: clause_id, value: "0.10", verified: true}    # 权力条款第一条 @235 逐字「**权力条款第一条**：Agent **不获得豁免裁决与批准的权力**。凡 0.5 分级中的高影响决策（风格定案、分解主策略），无论使用者是人还是 Agent，一律走批准路径。Agent 的角色是把决策所需的全部结构化材料（候选、依据、包络校验结果、张力）准备到"人类只需裁决"的程度。」；heading @229 逐字「使用者地位：AI Agent 为主，人类结论不削弱」＝本条 problem_space 第一项的源；`value: "0.10"` 全库此前计息 3（实测），本条为第四处
         - {source_type: clause_id, value: "5.3", verified: true}     # @2528 双使用者条款逐字：「配置注册表构建与变更判别」属 Agent 自主面，而「**行为级配置变更（触及 Z 谓词者）属高影响或按级别升格，走批准路径**」＋末句「能力提升不改变批准权力分配（权力条款第一条）」→ 本条即该末句在 5.2.6 侧的执行面
@@ -7298,11 +7312,12 @@ entries:
   - entry_id: QAT-001
     kind: QAT
     name: "引入并发"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2829 性能族列举序首项「引入并发」逐字；界形参数化、失败模式、观测前提与技能前提为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-01", verified: true}   # 行内标记（6.2.5-Q-01）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2829 骨架源（性能族五项列举序第一）＋@2827「达成手段从战术注册表选择…禁止即兴发明战术」＋@2834 卡片义务与 Q6 闭合
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2781 性能族指标行（延迟分位数 P50/P99、吞吐量、资源占用）＝envelope.metric 封闭词汇源＋@2789 量化纪律
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic(g, t) ∧ tactic_card(t, card)＝战术条目的机器层形态；@2899-2900 Q5；@2901 Q6
@@ -7385,11 +7400,12 @@ entries:
   - entry_id: QAT-002
     kind: QAT
     name: "维持多副本"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2829 性能族列举序第二项「维持多副本」逐字；@2834 明文代价「多副本 → 一致性负担 + 成本」为母本逐字；界形与观测前提为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-02", verified: true}   # 行内标记（6.2.5-Q-02）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2829 骨架源＋@2834 逐字「多副本 → 一致性负担 + 成本」（本条 tension 与 Q4 triggers 的母本明文依据）
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2781 性能族指标行＋@2782 可用性/可靠性族指标行（SLO、错误预算）＝envelope.metric 封闭词汇源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2897-2898 Q4（有代价可达必量化必留痕）；@2901 Q6
@@ -7483,11 +7499,12 @@ entries:
   - entry_id: QAT-003
     kind: QAT
     name: "增加资源"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2829 性能族列举序第三项「增加资源」逐字；界形与技能前提为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-03", verified: true}   # 行内标记（6.2.5-Q-03）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2829 骨架源（性能族列举序第三）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2781 性能族指标行（吞吐量、资源占用）＋@2784 可伸缩性族指标行（单位资源增量带来的容量增量）＝envelope.metric 源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6
@@ -7570,11 +7587,12 @@ entries:
   - entry_id: QAT-004
     kind: QAT
     name: "减少开销"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2829 性能族列举序第四项「减少开销（批处理/缓存）」逐字；name 取括注前的战术名（块头 name 段），括注「批处理/缓存」为本条的两个形态、转入 applicability 与 narrative 承载；@2834 明文代价「缓存 → 新鲜度条款」为母本逐字；界形与技能前提为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-04", verified: true}   # 行内标记（6.2.5-Q-04）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2829 骨架源（性能族列举序第四）＋@2834 逐字「缓存 → 新鲜度条款」（本条 tension 与 Q4 triggers 的母本明文依据）
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2781 性能族指标行（延迟分位数、吞吐量、资源占用）＝envelope.metric 封闭词汇源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2897-2898 Q4（有代价可达必量化必留痕）；@2901 Q6
@@ -7668,11 +7686,12 @@ entries:
   - entry_id: QAT-005
     kind: QAT
     name: "限制排队"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2829 性能族列举序第五项（末项）「限制排队」逐字；界形与阈值形态为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-05", verified: true}   # 行内标记（6.2.5-Q-05）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2829 骨架源（性能族列举序第五）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2781 性能族指标行＋@2782 可用性/可靠性族指标行（SLO、错误预算）＝envelope.metric 封闭词汇源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -7755,11 +7774,12 @@ entries:
   - entry_id: QAT-006
     kind: QAT
     name: "故障检测"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2830 可用性族列举序第一项「故障检测（心跳/看门狗）」逐字（name 取列举项本体，括注两形态入 applicability 与 skill_prerequisites）；界形与阈值形态为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-06", verified: true}   # 行内标记（6.2.5-Q-06）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2830 骨架源（可用性族列举序第一）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2782 可用性/可靠性族指标行（SLO、错误预算、MTTR、RPO/RTO）＋@2787 可观测性族指标行＝envelope.metric 封闭词汇源；度量方式「生产观测、故障演练、注入测试」为本条的验证面
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -7842,11 +7862,12 @@ entries:
   - entry_id: QAT-007
     kind: QAT
     name: "恢复"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2830 可用性族列举序第二项「恢复（主动冗余/被动冗余/ spare）」逐字（母本 `/ spare` 前含一个空格，原样引用不改写）；界形与演练前提为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-07", verified: true}   # 行内标记（6.2.5-Q-07）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2830 骨架源（可用性族列举序第二，括注三形态）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2782 可用性/可靠性族指标行（SLO、错误预算、MTTR、RPO/RTO）＝envelope.metric 封闭词汇源；度量方式「故障演练、注入测试」为本条 RTO/RPO 的唯一实证面
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -7929,11 +7950,12 @@ entries:
   - entry_id: QAT-008
     kind: QAT
     name: "故障预防"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2830 可用性族列举序第三项（末项）「故障预防（事务、过程监视器）」逐字（name 取列举项本体，括注两形态分列登记）；界形与范围形态为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-08", verified: true}   # 行内标记（6.2.5-Q-08）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2830 骨架源（可用性族列举序第三）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2781 性能族指标行（事务协调开销）＋@2782 可用性/可靠性族指标行＋@2783 可修改性族指标行（事务边界侵入触达面）＝envelope.metric 封闭词汇源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -8016,11 +8038,12 @@ entries:
   - entry_id: QAT-009
     kind: QAT
     name: "语义内聚"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2831 可修改性族列举序第一项「语义内聚（联动方面 2）」逐字（括注的联动面入 constraints_imposed 与 compatibility 留注）；界形与密度形态为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-09", verified: true}   # 行内标记（6.2.5-Q-09）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2831 骨架源（可修改性族列举序第一，明文「联动方面 2」）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2783 可修改性族指标行（典型变更的实现成本：触达单元数、跨边界契约变更数；变更前置时间；度量方式含 DSM 密度）＝envelope.metric 封闭词汇源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -8103,11 +8126,12 @@ entries:
   - entry_id: QAT-010
     kind: QAT
     name: "限制依赖"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2831 可修改性族列举序第二项「限制依赖（联动方面 3 契约）」逐字（括注的联动面入 constraints_imposed 与 compatibility 留注）；依赖规则的判据形态为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-10", verified: true}   # 行内标记（6.2.5-Q-10）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2831 骨架源（可修改性族列举序第二，明文「联动方面 3 契约」）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2783 可修改性族指标行（典型变更的实现成本：触达单元数、跨边界契约变更数；变更前置时间；度量方式含 DSM 密度）＝envelope.metric 封闭词汇源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -8190,11 +8214,12 @@ entries:
   - entry_id: QAT-011
     kind: QAT
     name: "参数化配置"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2831 可修改性族列举序第三项「参数化配置（联动方面 5 配置子维度）」逐字；联动面的治理规则取 5.2.6 @2505-2508 四项逐字（CFG 批同源）；值域与判别形态为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-11", verified: true}   # 行内标记（6.2.5-Q-11）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2831 骨架源（可修改性族列举序第三，明文「联动方面 5 配置子维度」）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2783 可修改性族指标行（变更前置时间为本条主收益面）＋@2789 量化纪律（参数化公式或区间、目标值四者之外无合法来源）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2501-2508 配置管理子维度四项＝本条联动面的权威源：@2503「准决策通道…纪律的潜在旁路」、@2505 schema 注册五元组、@2506 决策/参数判别谓词、@2507 开关生命周期与 expiry、@2508 与 0.10 权力条款的联动
@@ -8284,11 +8309,12 @@ entries:
   - entry_id: QAT-012
     kind: QAT
     name: "抽象中介"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2831 可修改性族列举序第四项「抽象中介」逐字（四项中**唯一无括注联动面**者：语义内聚「联动方面 2」、限制依赖「联动方面 3 契约」、参数化配置「联动方面 5 配置子维度」皆有括注，本项无 → compatibility 不据 @2831 登记任何 peer）；中介形态与判据为 manual（MJ-2 同型）
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-12", verified: true}   # 行内标记（6.2.5-Q-12）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2831 骨架源（可修改性族列举序第四，末项，无括注）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2783 可修改性族指标行（收益面）＋@2781 性能族指标行（延迟与资源占用的代价面）＝envelope.metric 封闭词汇源
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -8371,11 +8397,12 @@ entries:
   - entry_id: QAT-013
     kind: QAT
     name: "抵抗攻击"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2832 安全族列举序第一项「抵抗攻击（认证/授权/加密）」逐字（括注三机制为**手段列举**而非联动面指名，母本未将其分列为三条 → 不本地拆分，MJ-9 同型；三机制分别闭合「身份不可信」「访问越权」「数据明文」三类攻击面）；判据形态为 manual
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-13", verified: true}   # 行内标记（6.2.5-Q-13）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2832 骨架源（安全族列举序第一，明文「认证/授权/加密」）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2785 安全族指标行（攻击面清单闭合率、漏洞修复时限、敏感数据访问路径合规率｜静态扫描、渗透测试、Y5 联动）＝envelope.metric 封闭词汇源＋@2781 性能族指标行（代价面）
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -8459,11 +8486,12 @@ entries:
   - entry_id: QAT-014
     kind: QAT
     name: "检测攻击"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2832 安全族列举序第二项「检测攻击（审计日志→联动 Y 域血缘）」逐字（括注为**手段＋联动面**双成分：手段＝审计日志、联动面＝Y 域血缘 → 联动面指名唯一可定，故本条登记 formal_anchor Y5，与 QAT-013 的「手段列举」型括注不同）；判据形态为 manual
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-14", verified: true}   # 行内标记（6.2.5-Q-14）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2832 骨架源（安全族列举序第二，明文「审计日志→联动 Y 域血缘」）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2785 安全族指标行（攻击面清单闭合率、漏洞修复时限、敏感数据访问路径合规率｜静态扫描、渗透测试、Y5 联动）＋@2787 可观测性族指标行（卡片 observability_requires（5.2.5）满足率、追踪覆盖率｜基础设施勘察）＝envelope.metric 封闭词汇源＋@2781 性能族（代价面）
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2899-2900 Q5（硬）；@2901 Q6（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -8547,11 +8575,12 @@ entries:
   - entry_id: QAT-015
     kind: QAT
     name: "从攻击恢复"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2832 安全族列举序第三项「从攻击恢复（限流/熔断联动 5.2.3）」逐字（括注为**手段＋联动面**双成分：限流与熔断为两个手段面、联动面明文指向 5.2.3；母本未将限流与熔断分列为两条 → 不本地拆分，MJ-9 同型，与 QAT-013 的三机制同处置）；判据形态为 manual
       source_pointers:
+        - {source_type: row_id, value: "6.2.5-Q-15", verified: true}   # 行内标记（6.2.5-Q-15）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2832 骨架源（安全族列举序第三，明文「限流/熔断联动 5.2.3」）＋@2827 战术注册表选择义务＋@2834 卡片义务
         - {source_type: clause_id, value: "6.2.1", verified: true}   # @2785 安全族指标行＝envelope.metric 封闭词汇源＋@2782 可用性/可靠性族（SLO、错误预算、MTTR、RPO/RTO）＋@2781 性能族（延迟分位数、资源占用，代价面）
         - {source_type: clause_id, value: "6.5", verified: true}     # @2884 tactic ∧ tactic_card；@2899-2900 Q5（硬）；@2901 Q6 逐字「目标-手段闭合 —— 软（缺口走 CH-B）」为 AP1 的性质面（本条不触发 Q4：@2834 两例明文代价不含本条，不类推）
@@ -8787,11 +8816,12 @@ entries:
   - entry_id: VFM-001
     kind: VFM
     name: "静态分析"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3317 手段映射注册表六类列举序**第一项**「静态分析（结构性性质 V1/W4/X1 类）」逐字；判据形态（四类检查面 @3342-3345 的展开与级别归属）为 manual
       source_pointers:
+        - {source_type: row_id, value: "8.2.1-T-01", verified: true}   # 行内标记（8.2.1-T-01）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3311 三方面输入反向生成＋@3313-3315 三输入＋@3317 手段映射注册表六类（本条骨架源）＋计划矩阵五元组形态
         - {source_type: clause_id, value: "8.2.4", verified: true}   # @3342-3345 四行＝本条的四类检查面：依赖规则检查／DSM 通道二全量消费／schema 契约静态比对／配置注册表比对
         - {source_type: clause_id, value: "8.2", verified: true}     # @3307 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
@@ -8879,11 +8909,12 @@ entries:
   - entry_id: VFM-002
     kind: VFM
     name: "可执行检查程序"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3317 手段映射注册表六类列举序**第二项**「可执行检查程序（白板谓词上的机器判定）」逐字；判据形态（8.2.5 三触发的展开与 8.2.6 七要素的入库门槛）为 manual
       source_pointers:
+        - {source_type: row_id, value: "8.2.1-T-02", verified: true}   # 行内标记（8.2.1-T-02）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3311-3317 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源）＋计划矩阵五元组（自动化级别/触发点/证据形态三槽即本条的登记面）
         - {source_type: clause_id, value: "8.2.5", verified: true}   # @3349-3355 三项形式化触发 T-F1/T-F2/T-F3（定稿）＋@3355 三分「T-F1 管判定权，T-F2 管重跑权，T-F3 管引用权」＝本条的义务源
         - {source_type: clause_id, value: "8.2.6", verified: true}   # @3359-3362 证据保全机制（定稿）：七要素／可重放性／保存期限／双使用者同义务＝本条的产出面
@@ -8970,11 +9001,12 @@ entries:
   - entry_id: VFM-003
     kind: VFM
     name: "模型检查"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3317 手段映射注册表六类列举序**第三项**「模型检查（状态机性质 Z3/Z8 类）」逐字；判据形态（适用域界定、被检模型与实现的同源要求、穷举 vs 抽样的分界）为 manual
       source_pointers:
+        - {source_type: row_id, value: "8.2.1-T-03", verified: true}   # 行内标记（8.2.1-T-03）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3311-3317 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源）＋@3317 末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」＝本条对状态机硬性质的独占义务源
         - {source_type: clause_id, value: "5.5", verified: true}     # @2557-2593 方面 5 形式化锚点：Z3 @2579-2582（step_class ∈ {compensable, retriable, pivot} ∧ pivot_ordering_valid）与 Z8 @2592-2593（orchestrator_state durable ∧ recoverable）＝@3317 括注所举的两例性质；Z4 @2583-2585（Σ timeout_budget ≤ sla_bound ∧ 相邻级严格递减）为本条可穷举判定的第三例
         - {source_type: clause_id, value: "8.2", verified: true}     # @3307 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
@@ -9064,11 +9096,12 @@ entries:
   - entry_id: VFM-004
     kind: VFM
     name: "测试"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3317 手段映射注册表六类列举序**第四项**「测试（单元/集成/契约/行为注入/端到端）」逐字；**括注五子项不拆为独立条目**（2026-10-11 人工裁决，理由见块头粒度段：五项是同一手段的分层形态而非五类手段，拆分将使 T4/T6/T7 的量词域被切碎）；判据形态（四层职责归属、金字塔失真双判据、注入条件准入、抽样率登记）为 manual
       source_pointers:
+        - {source_type: row_id, value: "8.2.1-T-04", verified: true}   # 行内标记（8.2.1-T-04）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3311-3317 反向生成三输入中两条即本条的输入面——@3314「2. **目标集**：方面 6 的六要素场景（响应度量 → 测试判据）」、@3315「3. **契约与流程集**：方面 3 的已发布契约（→ 契约测试）、方面 5 的流程与卡片 `failure_modes`（→ 注入用例）」；@3317 六类列举＝本条骨架源，末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」＝本条对动态判据族的基础义务
         - {source_type: clause_id, value: "8.2.2", verified: true}   # @3319-3330 测试分层（金字塔及其失真信号）：@3321「单元 → 集成 → 契约 → 端到端的四层组合，各层职责由性质归属决定」＋@3323-3328 四层表（单元 @3325 seam 可用性／集成 @3326 替身登记义务／契约 @3327 CDC 与 schema 演化／端到端 @3328「最贵最脆，只承载无法下沉的判据」）＋@3330 失真信号 P2 与升 P1 条件＝本条的主体降入节
         - {source_type: clause_id, value: "8.2.3", verified: true}   # @3332-3338 行为验证专项（方面 5 施加项的执行域）五项：事件回放 @3334／乱序重复丢失注入 @3335／补偿路径测试 @3336／超时与断路 @3337／混沌注入 @3338（条件准入 (i)(ii)＋能力无出处时的保守界）＝@3317 括注第四子项「行为注入」的降入节
@@ -9190,11 +9223,12 @@ entries:
   - entry_id: VFM-005
     kind: VFM
     name: "人工评审"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3317 手段映射注册表六类列举序**第五项**「**人工评审**（8.2.7，人类通道）」逐字；判据形态（五评审点义务集、批准与问责的结构需要、通道保留≠通道加重的裁剪纪律）为 manual
       source_pointers:
+        - {source_type: row_id, value: "8.2.1-T-05", verified: true}   # 行内标记（8.2.1-T-05）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3311-3317 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源，第五项）＋@3317 末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」——本条是「须人类作实质判断」族性质的唯一合法 means，故该族硬性质的 T1 义务由本条独占承载
         - {source_type: clause_id, value: "8.2.7", verified: true}   # @3364-3374＝本条的**主体源**：@3366「以下评审点是验证计划的**不可自动化删减项**（T8 硬性质）」＋@3368-3372 五评审点（设计评审／简记包抽查／材料性抽查／验证计划评审／例外-Waiver 评审）＋@3374 存在的理由（批准与问责的结构需要）与裁剪纪律（通道保留 ≠ 通道加重）
         - {source_type: clause_id, value: "8.2.6", verified: true}   # @3357-3362 证据保全机制：@3359 七要素（本条产出的评审记录同样须齐备）、@3360 可重放性、@3361 保存期限、@3362 **双使用者同义务**逐字「人类抽查评审的记录（8.2.7）同样是证据工件（执行者 = 人类署名）」＝本条受 T3 约束的明文据
@@ -9283,11 +9317,12 @@ entries:
   - entry_id: VFM-006
     kind: VFM
     name: "生产监测"
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3317 手段映射注册表六类列举序**第六项**「生产监测（与方面 9 共享信号源）」逐字；判据形态（观测面前提、双判据告警治理、放量与回滚判据的注册参数化、汇聚信号源登记）为 manual
       source_pointers:
+        - {source_type: row_id, value: "8.2.1-T-06", verified: true}   # 行内标记（8.2.1-T-06）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3311-3317 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源，第六项）＋@3317 括注逐字「生产监测（**与方面 9 共享信号源**）」＝本条与守护规则的信号共用面；@3317 触发点四形态中本条取「周期」与「回归触发条件命中」两形态（生产信号是连续流而非离散事件）
         - {source_type: clause_id, value: "9.2.1", verified: true}   # @3579-3587 P0/P1/P2 信号分级的**正式化定义域**（@3573 逐字「本方面是 0.14 信号分级（P0/P1/P2）的**权威定义域**，是方面 2/3/4/5/6/8 全部漂移信号的**汇聚消费端**」）＝本条 signal_level 定级依据与 AP 分级源；@3587 分级纪律「不许运行时即兴改级」
         - {source_type: clause_id, value: "9.2.2", verified: true}   # @3589-3605 守护规则注册与 Waiver：@3594-3595 条目形态九槽中第四槽逐字「检测手段（静态检查程序/**生产监测**/周期勘察）」＝母本明文把本条列为守护规则的三种检测手段之一；@3598「规则的新增/改级/改参 = 注册表变更 = 完整 ADR + 批准」＝本条参数的治理面；@3600-3604 Waiver 机制
@@ -11036,7 +11071,17 @@ gaps:
     impact: "受影响条目的 applicability.current_space / delivery_space 留空 []（行内注 G-STY-1，逐条清单由 project.py 汇总）。S1 求值时该两维不参与过滤 → 候选面偏宽，由 S2 约束排除、S4 包络校验与纪律二批准兜住。留空不得被读作『该维不适用』（unknown ≠ false，0.18.6 M15）。"
     affected: "STY-001…STY-024 中标注 G-STY-1 的 applicability 空列表（本批绝大多数条目）"
     route: "勘察补录（三空间事实须过 0.4 出处门槛）；若需母本表增设列 → R2 提议（表格变更 = 高影响，不本地扩表）"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-STY-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-G-STY-ENV-01）"
+      basis: "1.2.1–1.2.4「适用条件」列经裁定只定问题空间；现状/交付空间为部署事实，[]＝该部署尚未勘察、不等于不适用；过滤偏宽由接地编译期填报解决（README §4.23）。母本 0 行改动，未以「母本已补」结案。"
+      evidence:
+        - "ADR草案-G-STY-1-G-ENV-1-接地编译前置.md（ADR-G-STY-ENV-01 决策一）"
+        - "registry/README.md §4.23（职责边界裁定）"
+        - "母本零改动；SO-1 保持 open"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-STY-2
     type: 交叉表源不足（1.4 约束接口表无风格实例行）
@@ -11061,7 +11106,17 @@ gaps:
     impact: "envelope.metric 只能取封闭词汇 → 按语义映射到最相近族，并在行内注记映射理由（例：『可测试性↑↑』→ 可修改性族，落点为核心可脱离适配器单测的变更成本；『可重用性↑』→ 可修改性族；『可扩展性↑↑』→ 可修改性族；『带宽↓』→ 性能族资源占用；『一致性管理复杂度↑』无指标族 → 归 cost_profile.consistency_impact 而非 envelope）。映射为人工判断，不得被读作母本已登记该指标族。"
     affected: "STY-008（可测试性）、STY-011（可重用性/可并行）、STY-012（可扩展性）、STY-013（灵活性/可调试性）、STY-017（互操作性）、STY-019（带宽/一致性）等 envelope 与 cost_profile 行"
     route: "R2 提议扩 6.2.1 指标族或明示映射表；扩表前禁止本地新增 metric 名（M3 词汇封闭）"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-ENV-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-G-STY-ENV-01）"
+      basis: "6.2.1 四族封闭词汇不扩；定性要点→四族映射表落 registry/README §4.23，未覆盖项显式归 cost_profile；predicate_vocabulary.yaml 零改动。"
+      evidence:
+        - "ADR草案-G-STY-1-G-ENV-1-接地编译前置.md（ADR-G-STY-ENV-01 决策二）"
+        - "registry/README.md §4.23（映射表与三条约束）"
+        - "6.2.1 未扩；predicate_vocabulary.yaml 零改动"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-STY-3
     type: 参考资料源缺失（M6 出处门槛无法满足）
@@ -11077,7 +11132,17 @@ gaps:
     impact: "STY-011-AP2（黑板隐式协议）、STY-013-AP1（过滤器旁路数据依赖）、STY-014-AP1（单体内部边界穿透）、STY-015-AP1（模块边界穿透）暂定 P1（结构漂移限期整改）。相应 dependency_rule 一旦登记在案，该违例即构成 V1 违例直接来源 → 按 MJ-4 判据升 P0。升级属守护规则改级 = 注册表变更（完整 ADR + 批准，0.13/9.2.2），不在本批自行执行。"
     affected: "STY-011、STY-013、STY-014、STY-015 的 anti_patterns.signal_level"
     route: "勘察三处边界的依赖规则事实 → R2 提议 1.5 补 boundary/dependency_rule 登记面"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-STY-4
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-INLINE-MARK-01）"
+      basis: "1.5 @1467 dependency_rule 行尾已行内登记三族边界规则（单体内部禁止反向依赖／模块化单体仅上层依赖下层／管道-过滤器不得绕过上下游直接读写数据源），V1 可绑定；母本行数不变。反模式由 P1 升 P0 仍按 MJ-4 在实例侧执行，不在本项预支。"
+      evidence:
+        - "ADR草案-行内标记方案-五项gap.md（ADR-INLINE-MARK-01 §2）"
+        - "母本 1.5 @1467 三族边界规则注释；母本零插行"
+        - "G-STY-4 由 SO-2 承接"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-STY-5
     type: 参考资料源缺失（子维度四元方法无行级登记提取面）
@@ -11169,7 +11234,17 @@ gaps:
     impact: "与前八批的 G-*-1 不同型：本批七条 references **无空列表**（书目 44×3／46×4／51×7），故 0.17.8 M6 严格式与 0.17.7 门槛 6 在本批不以空集平凡满足；缺口面落在**可机器判定性**与**出处强度**两处：(a) 5.2.3 非表格 → 无 row_id → `profiles.yaml` 的 `kind_profile_RLP.table_rows` 无法给出逐表行数，META 记 1 条 info「table_rows 未给逐表行数 → 覆盖宣称不可机器判定」，`meta.kind_coverage` 的『RLP 全覆盖（5.2.3 全部 7 项）』为人工清点结论而非机器可判（与前八批「表行全覆盖可由 row_id 反查」强度不同）；(b) RLP-004（重试 + 指数退避 + 抖动）的行级出处强度弱于其余六项——依书目 46 概括面「等」＋书目 51 目录明列 Retry 条目，而书目 46 登记面未逐字明列「重试」；本批不据此把 46 降为 narrative_only（母本 @2752 明文 `compile_usage=metadata_extraction`，注册表侧不得改写或降级，MJ-22 (vii) 实测优先纪律），仅在 trust_grade 内如实转述登记面原文并明记「重试」系概括面覆盖；(c) @2719 六项／@2730 五项与 @2477 七项的枚举差异属**母本内部一致性**观察项：若以 @2719 为准则「重试」无登记面，本批仍登记 RLP-004，因其骨架源为 5.2.3 定义节自身且 @2477 逐字含该项、5.2.5 卡片与 5.4 施加项亦以「重试」为词（0.4 禁假精确 → 不合并、不省略）；差异处置涉母本改动 → 高影响，走 R2/ADR，本批不自行裁决；(d) RLP-003（发件箱）的 envelope 仅 3 族（延迟分位数 P99／可用性目标 SLO／可修改性），缺「性能：资源占用」一族——发件箱表与中继作业的资源占用归 DFL-001 的定义面（4.2.4 表行），本条目不重复计入以避免双重计数，事实留痕于 ST-RLP-01.note；(e) 书目 51 目录内 Idempotent Consumer 条目与「Combine patterns」段『Pair Retry with Circuit Breaker』**不充当** compatibility 的母本依据——compatibility 全部以母本明文（5.2.3 @2479 投递语义纪律、5.6 @2710『断路器＋舱壁』、Z4 Σ 明文、4.2.4 表行）为据，51 仅作工程参照留痕。"
     affected: "RLP-001…RLP-007 全部七条（source_pointers 无 row_id 维度、覆盖宣称不可机器判定）；其中 RLP-004 另受书目 46 登记面未逐字明列『重试』影响，RLP-003 另受 envelope 三族（资源占用归 DFL-001）影响"
     route: "人工裁决（① 5.2.3 是否在母本侧改为表格形态以提供 row_id 维度（涉母本改动 → 高影响，走 R2/ADR）；② 书目 46 登记面『断路器、舱壁、超时预算**等**稳定性模式』的「等」可否据同节书目 51 行内文『Retry/Circuit Breaker/Bulkhead 的机制内容以书目 46 为提取锚点』确认为覆盖「重试」（即 RLP-004 的行级出处成立）与覆盖「幂等/收件箱」（RLP-001/002 现仅引 44＋51）；③ @2719 六项／@2730 五项与 @2477 七项的枚举差异处置（补『重试』vs 认定为示例性省略，两者均涉母本改动）；④ 书目 46 ISBN 连字符分组差异与页数两说的处置（补注 vs 更正著录，均涉母本改动）；⑤ 书目 51 目录内 Idempotent Consumer 条目与「Combine patterns」段可否充 compatibility 或 references 的行级依据——本批明确**不充当**，需裁决确认此边界；⑥ RLP-003 envelope 三族（资源占用归 DFL-001 定义面）的分工是否需在 `kind_profile_DFL`／`kind_profile_RLP` 侧补明文剖面，G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1 同型 route）：裁决为可 → 相应字段补实或母本更正并撤销该项；裁决为否或澄清前 → 保持现登记形态（clause_id 无 row_id、RLP-004 依概括面登记、RLP-003 envelope 三族）。本批不自行裁决、不本地扩张解释面。登记为 SO-12（入库期义务，consumer M6）。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-RLP-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-INLINE-MARK-01）"
+      basis: "@2477 七项已加 [R-01]…[R-07]；profiles 声明 5.2.3（7 行）；RLP-001…007 各补 row_id 5.2.3-R-01…07 且 version 1.0.0→1.1.0；META 可逐行机器核验。"
+      evidence:
+        - "ADR草案-行内标记方案-五项gap.md（ADR-INLINE-MARK-01 §2）"
+        - "母本 5.2.3 @2477 [R-01]…[R-07]"
+        - "registry/profiles.yaml kind_profile_RLP.table_rows＝5.2.3（7 行）；RLP-001…007 row_id 5.2.3-R-01…07／version 1.1.0"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-SCH-1
     type: 源形态与登记面缺口（5.2.4 系单段落三分号子命题 → 无 row_id／无项级维度；5.5 @2572 触发条件行未列 time_semantics；5.2.6 两处清单未明列 cron／定时器周期；书目 49 登记面仅覆盖三子命题中一项；书目 51 明记 Scheduler-Agent-Supervisor 专页本地未归档）
@@ -11177,7 +11252,17 @@ gaps:
     impact: "与 G-RLP-1 同型但强度更弱（骨架源项数 3 ＜ 7，且两条 references 空列表）：(a) 5.2.4 非表格、非清单 → 无 row_id → `profiles.yaml` 的 `kind_profile_SCH.table_rows` 无法给出逐表行数，META 记 1 条 info「table_rows 未给逐表行数 → 覆盖宣称不可机器判定」，`meta.kind_coverage` 的『SCH 全覆盖（5.2.4 单段落全部 3 个分号子命题，非表格源，逐表行数不适用）』为人工清点结论而非机器可判（与前八批「表行全覆盖可由 row_id 反查」强度不同，与 RLP 批同弱）；(b) SCH-001／SCH-003 的 references: []（0.17.8 M6 严格式 ∀ reference ∈ E 对空集平凡为真；0.17.7 门槛 6 要求文献载明所支撑主张，禁止以不承载该主张的文献充当出处），SCH-002 的 1 行书目 49 系**全库首例**（此前 bib_id 49 零引用），其 trust_grade 逐字承母本 @2755『[已核验]』＋本批 2026-10-06 在线复核事实（VLDB 官方 PDF 抽取成功），compile_usage=metadata_extraction 不得由注册表侧改写或降级（MJ-22 (vii) 实测优先纪律）；(c) formal_anchor 全批**仅 1 实例**＝SCH-003 → `[{property_id: Y1, role: consumed_by}]`（依 @2483 第三子命题括注『调度权也是所有权的一种，受 Y1 同型约束』明文，角色取 consumed_by 而非 implements 的理由入 MJ-25 (viii)），SCH-001／SCH-002 为**空列表**——全库首例 formal_anchor 空列表条目（project.py @651 `or []` 与 @1447-1449 `if fa:` 均容忍空列表，实测 `--check` 硬失败 0／软警告 0）；其直接后果为 **E3 豁免面收缩至硬性质 1 项 1 个实例**：WV-SCH-E3-01 与前九项不同型，**无软性质／升级型排除面**（SCH-001／SCH-002 无 formal_anchor 故无 Z5／Z7 实例可排除，Z7 全库计息仍 15 未变），Y1 全库计息 10 → **11**；(d) 5.5 @2572 不含 time_semantics → SCH-002 的五条 anti_patterns 无 Z 系列硬性质可绑定，AP1 定 P0 系依母本双重明文义务（@2483『显式选择』＋4.2.4 @2200 第四列『事件时间 vs 处理时间语义必须显式（方面 5 的 5.2.4 联动）』）而非硬性质计息，AP2 定 P1（@2572 不触发），AP5 取 P1 并注『风格确定为事件驱动后按 MJ-4 判据升 P0』（5.4 @2551『软/硬按风格』＋VG-03 workaround）→ 本批级别面弱于 RLP 批；(e) 方面 8 一律 conditional（表源＝**5.4** @2551『软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）』，与 RLP 批同引 5.4 而非 4.4，两张同名不同源的表不得混引）；constraints_imposed 21 项＝hard **18**／conditional **3**／soft **0**，target_aspect 一律 [1,3,4,6,8,9,10]（七方面，5.4 @2547-2553 表行序）；(f) 5.2.6 与 SCH-001 的 cron 登记分工重叠未在母本明文 → 本批不下探 CFG 面，留待 CFG 批入库时与 SCH-001 对账，重复计息风险由 MJ-25 (v) 承载；(g) 三条 envelope 各 4 族（合计 12）、applicability 8／8／8（problem_space 3＋current_space 3＋delivery_space 2）、aggregation_semantics 一律 additive（依 5.2.5 @2499『流程的延迟预算 = Σ 各步骤卡片 latency_budget_delta + 步骤自身业务耗时』的 Σ 明文，不取 grouped_max，判读入 MJ-25 (x)）；(h) 留空不得被读作『该项无外部文献支撑』（unknown ≠ false，0.18.6 M15）。"
     affected: "SCH-001…SCH-003 全部三条（source_pointers 无 row_id 维度、覆盖宣称不可机器判定）；其中 SCH-001／SCH-003 另受 references 空列表影响，SCH-001／SCH-002 另受 formal_anchor 空列表影响，SCH-002 另受 5.5 @2572 未列 time_semantics（五条 anti_patterns 无硬性质可绑定）与书目 49 著录口径差异（ACM DL 侧句首大写规范化形态）影响；SCH-003 另受书目 51 专页未归档（不充任行级出处）影响；profiles.yaml 的 kind_profile_SCH.table_rows／entry_id_range 两占位符本批填实"
     route: "人工裁决（① 5.2.4 是否在母本侧改为表格或加粗清单形态以提供 row_id／项级维度（涉母本改动 → 高影响，走 R2/ADR）；② 5.5 @2572 触发条件行是否补列 `time_semantics`（涉母本改动 → 高影响；补列后 SCH-002 的 anti_patterns 方可绑定 Z 系列硬性质，本批不预支该后果）；③ 5.2.6 @2505『配置 schema 注册』括注与 @2506『决策/参数判别谓词』示例集是否补列 cron 表达式与定时器周期（与未来 CFG 批联动；涉母本改动 → 高影响）；④ 『退出计划』（4.5 Y1 @2280 行内注『例外须批准+退出计划』）与『到期时刻』（Y8 @2294 `deadline` 第三实参位）是否经 R2 补注册为 `predicate_vocabulary.yaml` 谓词，使 SCH-003-AP3 由 P1 升 P0——属守护规则改级，按 0.14＋SO-2／G-STY-4 另走批准，不由本批自决；⑤ 书目 49 登记面『5.2.4 事件时间/处理时间/水位线语义』可否扩至第一子命题（定时器/截止期/cron）或第三子命题（调度冲突与资源竞争）——本批明确**不充当**，需裁决确认此边界；⑥ 母本 5.7 是否补登《The Dataflow Model Revisited》（VLDB vol. 19 no. 12）——本批不入库、不引用（0.12『扩充』语义裁决＋高影响批准，走 R2/ADR）；⑦ 书目 49 著录题名与 ACM DL 句首大写规范化形态的著录口径差异处置（VLDB 官方 PDF 侧与母本著录逐字一致；补注 vs 认定无需改动，前者涉母本改动 → 高影响），G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1／G-RLP-1 同型 route）：裁决为可 → 相应字段补实或母本更正并撤销该项；裁决为否或澄清前 → 保持现登记形态（clause_id 无 row_id、SCH-001／SCH-003 references 空列表、SCH-001／SCH-002 formal_anchor 空列表、SCH-002 定级不绑硬性质、cron 面不下探 CFG）。本批不自行裁决、不本地扩张解释面。登记为 SO-13（入库期义务，consumer M6）。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-SCH-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-INLINE-MARK-01）"
+      basis: "@2483 三子命题已加 [SCH-01]…[SCH-03]，@2572 触发条件追加／time_semantics；profiles 声明 5.2.4（3 行）；SCH-001…003 各补 row_id 5.2.4-SCH-01…03 且 version+1；META 可逐行核验。"
+      evidence:
+        - "ADR草案-行内标记方案-五项gap.md（ADR-INLINE-MARK-01 §2）"
+        - "母本 5.2.4 @2483 [SCH-01]…[SCH-03]＋@2572 ／time_semantics"
+        - "registry/profiles.yaml kind_profile_SCH.table_rows＝5.2.4（3 行）；SCH-001…003 row_id 5.2.4-SCH-01…03／version 1.1.0"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-CFG-1
     type: 源形态与登记面缺口（5.2.6 系行内加粗清单四项 → 无 row_id／无项级维度；expiry 载体形态与 Z 谓词快照采集面母本未给；母本内部级别差异〔@2507＋9.2.1 @3585 记 P2 vs 9.2.3 @3616 记「Z6 违例 → P0（行为级开关）；其余 P2」〕；RLP-006 借用 Z6 判据形态而未在 formal_anchor 计息；方括号在 applicability 内兼承「非谓词面」与「待勘察占位」两义而机器判据不区分；接收方 DPS／GRD 两 kind 未入库；书目 48 分类轴与母本二分法不同轴）
@@ -11185,7 +11270,17 @@ gaps:
     impact: "与 G-SCH-1 同型（骨架源为行内加粗清单而非表格 → 无 row_id），但强度更高（项数 4 ＞ 3，且本批建成全库**首个 CFG kind**、首建 Z6 计息）：(a) 5.2.6 非表格 → 无 row_id → `profiles.yaml` 的 `kind_profile_CFG.table_rows`（@371 占位符）无法给出逐表行数，本批填实为『行内加粗清单 4 项，非表格源，逐表行数不适用』形态、`entry_id_range`（@372）填 CFG-001…CFG-004；META 记 info「table_rows 未给逐表行数 → 覆盖宣称不可机器判定」，`meta.kind_coverage` 的『CFG 全覆盖（5.2.6 行内加粗清单全部 4 项）』为人工清点结论而非机器可判（与 RLP／SCH 两批同弱，弱于前八批的 row_id 可反查）；(b) references：CFG-003 的 1 行书目 48 系**全库首例**（批前 bib_id 48 计息 0，实测 git HEAD 54486d7 版），trust_grade『[已核验]』承母本 @2754 著录＋2026-10-08 在线复核与本地存档内容核验双证，compile_usage=metadata_extraction 逐字取 @2754 登记面，不得由注册表侧改写或降级（MJ-22 (vii) 实测优先）；CFG-001／CFG-002／CFG-004 → references 空列表（批前空块 29 → 批后 **32**，非空块 51 → **52**，references 项数 82 → **83**）；(c) formal_anchor：全批 **3 实例**（CFG-002 → Z4 consumed_by／CFG-003 → Z6 implements／CFG-004 → Z6 consumed_by），CFG-001 为空列表（全库**第三例**，前两例 SCH-001 @6486／SCH-002 @6583）；计息 Z4 7→**8**、Z6 0→**2**、总实例 242→**245**（Z7 15／Y1 11 未变）；**E3 豁免面**＝硬性质 3 实例，其中 Z6 两实例依 @2589『行为级开关治理闭合 —— 硬』为无条件硬，Z4 一实例依 @2584『超时预算闭合 —— 条件硬』＋@2585『SLA 上界与传播开销估计过 0.4 证据门槛时为硬；否则降软』为**条件硬** → WV-CFG-E3-01 的排除面须显式记载该条件性（条件未证成时 Z4 降软，豁免面随之收缩），本批不预支该后果；(d) 级别面：anti_patterns 20 条＝P0 **9**／P1 **7**／P2 **4**（批前 P0 71／P1 92／P2 27 → 批后 P0 80／P1 99／P2 31），母本内部级别差异（@2507＋@3585 vs @3616）导致同一对象分列而非归一 → 级别归属须落入 9.2.2 @3594-3595 九槽形态而非留在散文，归一化属高影响决策（@3587）；(e) 方面 8 一律 conditional（表源＝**5.4** @2551 方面 8 行『软/硬按风格（事件驱动 → 回放与乱序注入必备，承接 1.4）』，ENUM_LEVEL 无复合取值 → 取 conditional，与 SCH-001 @6462 同判读）；方面 9 一律 hard（表源＝5.4 @2552 方面 9 行，与 @2507『交方面 9 守护（G 系列）』两处明文互指；@2551 与 @2552 相邻而不同行，承 MJ-25 (xiii) 的同表异行纪律）；constraints_imposed 28 项＝hard **24**／conditional **4**／soft **0**（批前 476 → 批后 **504**），target_aspect 一律 [1,3,4,6,8,9,10]（七方面，5.4 @2547-2553 表行序）；(f) cron 分工对账义务（SO-13 (丁)）已履行，结论落块头 ⑥ 段 @6758-6769；SCH-001 侧不回填、不改写（0.22 承诺一），重复计息风险由 MJ-26 (vi) 承载；(g) 四条 envelope 各 4 族（合计 16，批前 209 → 批后 **225**；metric 一律＝延迟分位数 P99／可用性目标（SLO）／性能：资源占用／可修改性：典型变更的实现成本（触达单元数），M3 关系词全过、无裸数值）、applicability 36 项（12／12／12，每条 3／3／3，批前 377 → 批后 **413**）、source_pointers 40 项（批前 840 → 批后 **880**）、compatibility 3 关系（批前 129 → 批后 **132**）、aggregation_semantics 一律 **itemwise**（配置项各自独立求值，不以 Σ 聚合；5.2.5 @2499 的 Σ 明文只覆盖步骤卡片延迟项，本批四条均不登记该项，判读入 MJ-26 (v)）、四条一律**省略** cost_profile.latency_budget_delta（kind_profile_CFG.optional @377-380 明列选填；CFG-003 的运行时开关求值界形按 optional.reason 但书登于 envelope P99 项，不双写，0.9 唯一真相）；(h) typical_reversibility 本批 bounded 3（CFG-001／003／004）＋costly 1（CFG-002，依 @2506『行为级变更 = 决策，按影响级别记 ADR + 批准』→ 已批准的行为级变更回退须再走批准路径）→ 批后 costly 38→**39**／bounded 35→**38**／free 7 未变；(i) 留空不得被读作『该项无外部文献支撑／无形式化关联』（unknown ≠ false，0.18.6 M15）。"
     affected: "CFG-001…CFG-004 全部四条（source_pointers 无 row_id 维度、覆盖宣称不可机器判定）；其中 CFG-001 另受 formal_anchor 与 references 双空列表影响，CFG-002 另受 typical_reversibility 取 costly（四条中唯一）与 Z4 条件硬计息影响，CFG-003 另受书目 48 分类轴不同轴（support_claim 不宣称支撑二分法）、Z6 首建 carrier 与 RLP-006 镜像差异三面影响，CFG-004 另受快照采集面未给（九槽中『检测手段』『阈值与趋势窗口参数』两槽无据可填）与 [CH-C(2)] 的 M4 谓词扫描陷阱（已以方括号包裹处置，@7128／@7131）影响；四条同受 expiry 载体形态未给、母本 @2507＋@3585 vs @3616 级别差异、方括号双语义、DPS／GRD 未入库致 compatibility 不登记四面影响；profiles.yaml 的 kind_profile_CFG.table_rows @371／entry_id_range @372 两占位符本批填实；predicate_vocabulary.yaml 待追加 VG-05（在册词 76 未变）"
     route: "人工裁决（① expiry 的载体形态（注册表列 vs ADR 附项 vs 代码注解）、审查期长度或到期日计算基准，以及 Z 谓词快照的采集时点／存放位置／粒度／保留期是否在母本侧补明文（涉母本改动 → 高影响，走 R2/ADR；补明文后 CFG-003／CFG-004 的 anti_patterns 方可给出可执行检测手段并落 9.2.2 @3594-3595 九槽，本批不预支该后果，不填任何数值以守 0.4）；② 是否为 RLP-006 补登 Z6 formal_anchor 镜像（其 @6128／@6205 已明文借用 Z6 判据形态而 @6211-6212 未计息）——属**已发布条目改写**，按 0.22 承诺一＋MJ-5 归 s5h／人工裁决，本批不改不回填；③ 5.2.6 @2505 五槽与 @2506 示例集是否补列 cron 表达式与定时器周期（＝G-SCH-1 route ③ 的对账口，本批已履行 SO-13 (丁) 对账并将结论落块头 ⑥ 段 @6758-6769；涉母本改动 → 高影响）；④ 母本内部级别差异（@2507『到期未清理 → P2』＋9.2.1 @3585 P2 列『僵尸开关（Z6）』 vs 9.2.3 @3616『Z6 违例 → P0（行为级开关）；其余 P2』）是否归一，以及在 @3587『不许运行时即兴改级（升级走注册表变更 = 高影响决策）』约束下以何种载体归一——本批据实分列 P0/P1/P2，不择一改写；⑤ applicability／detection_predicate 内方括号兼承『非谓词面』与『待勘察占位』两义而 M4 不区分，是否引入区分记号（涉 project.py @208 outside_brackets 与既有条目改写 → 高影响）；⑥ 9.2.5 @3640（DPS 面）与 5.4 @2552（GRD 面）两接收方 kind 入库后，CFG 侧 compatibility 是否回填镜像（本批不回填，MJ-5）；⑦ 书目 48 的分类轴（longevity／dynamism 四类）与母本 @2506 二分法（是否触及 Z 谓词）不同轴，是否需在母本 5.7 @2754 登记面补注该轴差（涉母本改动 → 高影响；本批 support_claim 已明文不宣称支撑二分法），G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1／G-RLP-1／G-SCH-1 同型 route）：裁决为可 → 相应字段补实或母本更正并撤销该项；裁决为否或澄清前 → 保持现登记形态（clause_id 无 row_id、CFG-001 formal_anchor 与三条 references 空列表、级别据实分列不归一、数值一律不填、快照检测手段留待母本补明文、RLP-006 不改写、DPS／GRD 面不回填）。本批不自行裁决、不本地扩张解释面。登记为 SO-14（入库期义务，consumer M6）。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-CFG-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-INLINE-MARK-01）"
+      basis: "@2505–@2508 已加 [CFG-01]…[CFG-04]，@2507 续写 expiry 载体与审查期基准、@2508 续写 Z 谓词快照采集时点；profiles 声明 5.2.6（4 行）；CFG-001…004 各补 row_id 5.2.6-CFG-01…04 且 version+1；META 可逐行核验。"
+      evidence:
+        - "ADR草案-行内标记方案-五项gap.md（ADR-INLINE-MARK-01 §2）"
+        - "母本 5.2.6 @2505–@2508 [CFG-01]…[CFG-04]＋@2507 expiry／@2508 Z 快照续写"
+        - "registry/profiles.yaml kind_profile_CFG.table_rows＝5.2.6（4 行）；CFG-001…004 row_id 5.2.6-CFG-01…04／version 1.1.0"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-QAT-1
     type: 源形态与登记面缺口（6.2.5 系四属性行内顿号清单十五项 → 无 row_id／无项级维度；6.2.1 七族中可伸缩性／合规／可观测性三族在 6.2.5 无任何战术 → Q6 目标-手段闭合缺口；卡片参数化无数值据与封闭词汇；G-ENV-1『四族』表述与实测七族差异；方括号在 applicability／detection_predicate 内兼承两义而机器判据不区分〔沿 G-CFG-1 (5)〕；接收方 VFM／GRD／DPS 三 kind 未入库；6.5 Q4-Q6 公式侧六词未登记为谓词）
@@ -11193,7 +11288,18 @@ gaps:
     impact: "与 G-CFG-1／G-SCH-1 同型（骨架源为行内清单而非表格 → 无 row_id），但强度最高（项数 15 ＞ 4 ＞ 3，且本批一次建成 QAT kind 全部条目、首建 Q 系列计息、并出全库首例 irreversible）：(a) 6.2.5 非表格 → 无 row_id → `profiles.yaml` 的 `kind_profile_QAT.table_rows`（@402 占位符）无法给出逐表行数，本批填实为『四属性行内清单 15 项，非表格源，逐表行数不适用』形态、`entry_id_range`（@403）填 QAT-001…QAT-015；META 记 info「table_rows 未给逐表行数 → 覆盖宣称不可机器判定」，`meta.kind_coverage` 的『QAT 全覆盖（6.2.5 四属性行内清单全部 15 项战术）』为人工清点结论而非机器可判（与 RLP／SCH／CFG 三批同弱，弱于前八批的 row_id 可反查）；(b) 全部计数（口径＝批前 84 条 vs 批后 99 条，2026-10-10 以 `yaml.safe_load` 实测）：entries 84→**99**；constraints_imposed 504→**624**（hard 385→**460**／soft 85→**115**／conditional 34→**49**；本批 120 项＝15×8，hard 75／soft 30／conditional 15；交叉表源＝6.4 方面 6 全体八行 @2862-2869）；envelope 225→**285**（本批 60＝15×4；metric distinct **19 未变**、本批用其中 13 种、零新增）；applicability 413→**548**（本批 135＝15×9，problem_space／current_space／delivery_space 各 3）；source_pointers 880→**1000**（本批 120＝15×8，**全 clause_id、无 row_id**）；compatibility 132→**136**（本批 4：tension 14→**16**／requires 16→**18**／composable 97 未变／hard_conflict 5 未变）；formal_anchor 245→**278**（本批 **33** 项＝Q6 implements 15／Q5 triggers 15／Q4 triggers 2／**Y5 consumed_by 1**；role 分布 implements 15／triggers 17／consumed_by 1；Y5 批前全库计数为零 → 本批首次入账）；anti_patterns 210→**270**（本批 60＝15×4；signal_level P0 80→**97**／P1 99→**127**／P2 31→**46**，本批内部 P0 17／P1 28／P2 15 且**分布非一律**）；references 项总数 **83（批前＝批后，本批零新增）**、空列表条目 32→**47**；aggregation_semantics 本批一律 **itemwise** → 批后 itemwise 90／additive 9；(c) typical_reversibility 本批 costly 9／bounded 3／free 2／**irreversible 1（QAT-013，全库首例）** → 批后 costly 39→**48**／bounded 38→**41**／free 7→**9**／irreversible 0→**1**；irreversible 系 ENUM 内既有取值而非本批新造，但 WV-QAT-E3-01 的豁免面记载须显式说明 QAT-013 的不可逆性出处（6.2.1 @2785『敏感数据访问路径合规率』度量面＋4.5 Y5 @2289 级别列『硬（出处：监管条文，不可降级）』），本批不预支豁免后果；(d) cost_profile.latency_budget_delta 十五条**一律填实**（kind_profile_QAT 的 required_extra／optional／not_applicable／entry_level_exemptions 四表全空 @407-410 → 通用必填 26 项含本字段全部适用），与 CFG 批『一律省略』（该批 optional 明列本字段 @378-380）成对照；母本未给任何数值 → 只登参数化界形与构成项，无据面交 SO-15；(e) 留空不得被读作『该项无外部文献支撑／无形式化关联』（unknown ≠ false，0.18.6 M15）：本批十五条 references 一律 []，其据为 6.7 书目登记面中文献 56 逐字『（书目 12《Software Architecture in Practice》第 4 版的战术目录章节支撑 6.2.5，不重复著录。）』系**尾注而非独立著录行**（无 ISBN／无 trust_grade／无 compile_usage 槽）→ 无 reference 项可构造，而书目 12（@1875）的 compile_usage 明文归『质量属性驱动的风格选择元方法（1.2.4）』→ 行级面不下探（块头 @7266-7271）；(f) 本批**不触发母本改动**（母本内 QAT 字样仅 @400 枚举行与 @592 两处命中、无 `QAT-数字` 形式引用）→ 母本 4427 行／围栏 216 不变。"
     affected: "QAT-001…QAT-015 全部十五条（source_pointers 无 row_id 维度、覆盖宣称不可机器判定；无数值据 → envelope 与 latency_budget_delta 只登界形与构成项）；其中 QAT-013 另受全库首例 irreversible 与 E3 豁免面须显式记载影响，QAT-014 另受 Y5 唯一计息（全库首例）与 @2785 两项指标（攻击面清单闭合率／敏感数据访问路径合规率）唯一生产面影响，QAT-015 另受『限流』无在册对侧（只留行内注不造关系）与 RLP-006 镜像不回填影响，QAT-007 另受 @2830『恢复（主动冗余/被动冗余/ spare）』半角斜杠后空格系母本既有形态（name 去括注后该形态转入 narrative）影响，QAT-002／QAT-004 另受 Q4 triggers 计息与 @2834『多副本 → 一致性负担』『缓存 → 新鲜度条款』两处 tension 登记影响，QAT-011 另受 CFG-001 requires（@2831 三联动面中唯一有在册对侧者）影响；十五条同受三族无战术致 Q6 恒不成立、卡片两字段无封闭词汇、方括号双语义、VFM／GRD／DPS 三 kind 未入库致 compatibility 不登记四面影响；profiles.yaml 的 kind_profile_QAT.table_rows @402／entry_id_range @403 两占位符本批填实；predicate_vocabulary.yaml 待追加 VG-06（在册名 76 未变）"
     route: "人工裁决（① 6.2.1 七族中可伸缩性／合规／可观测性三族是否在母本 6.2.5 侧补战术行（涉母本改动 → 高影响，走 R2/ADR；补行前三族的高优先级目标一律走 CH-B 登记缺口，本批不本地发明战术，@2827 禁令）；② 质量影响卡片的参数化公式与 `failure_modes`／`observability_requires` 封闭词汇是否在母本侧补明文（涉母本改动 → 高影响；补明文前本批只登界形与构成项、不填任何数值以守 0.4 与 @2789，无据面由 SO-15 承载）；③ G-ENV-1 statement『只含四族』与实测七族的差异是否更正——属**已发布登记改写**，按 0.22 承诺一交人工裁决，本批不改写、只登记差异并复用 19 种既有 metric 形态；④ 是否为 CFG-001／RLP-006 补登 QAT-011／QAT-015 侧的 requires 镜像（方向不对称显式登记链第五、第六例；链口径与全库单向 requires 普查口径两轴并立，见 statement (8) 与 MJ-27 (viii)）——属已发布条目改写＋ENUM_RELATION 扩充，归 s5h／人工裁决，本批不改不回填；⑤ @2832『限流』是否经 R2 补入 5.2.3 七条清单，或改指其他在册面（本批明确不充当、不造关系，需裁决确认此边界）；⑥ 6.5 Q4-Q6 公式侧六词（`consumed`／`mapped`／`recorded_in`／`approved_waiver`／`observability_requires`／`tactic_registry`）是否补注册为 `predicate_vocabulary.yaml` 谓词——1.5 谓词表扩充属高影响 → ADR＋批准；本批以 VG-06 承载、归 s5g，不本地扩词（VG-04 (i)／VG-05 (i) 同型判读）；⑦ VFM／GRD／DPS 三 kind 入库后，QAT 侧 compatibility 是否回填镜像（本批不回填，MJ-5），G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1／G-RLP-1／G-SCH-1／G-CFG-1 同型 route）：裁决为可 → 相应字段补实或母本更正并撤销该项；裁决为否或澄清前 → 保持现登记形态（clause_id 无 row_id、十五条 references 空列表、数值一律不填、三族不发明战术、限流面不造关系、RLP-006 不改写、VFM／GRD／DPS 面不回填）。本批不自行裁决、不本地扩张解释面。登记为 SO-15（入库期义务，consumer M6）。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-QAT-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-INLINE-MARK-01 路 B）"
+      basis: "15 项战术已加 [Q-01]…[Q-15] 并可逐条引用（QAT-001…015 各补 row_id 6.2.5-Q-01…15、version 1.0.0→1.1.0，profiles 声明 6.2.5（15 行））；可伸缩性／合规／可观测性三族经裁定不设常备战术，按 CH-B 登记显式缺口（README §4.24），不补 6.2.5 行。"
+      evidence:
+        - "ADR草案-行内标记方案-五项gap.md（ADR-INLINE-MARK-01 §7 路 B）"
+        - "母本 6.2.5 @2829–@2832 [Q-01]…[Q-15]"
+        - "registry/profiles.yaml kind_profile_QAT.table_rows＝6.2.5（15 行）；QAT-001…015 row_id 6.2.5-Q-01…15／version 1.1.0"
+        - "registry/README.md §4.24（三族显式缺口 CH-B 操作口径）"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-VFM-1
     type: 源形态与登记面缺口（8.2.1 @3317 系单行内六类顿号清单 → 无 row_id／无项级维度；同行的计划矩阵五元组形态在六类粒度下无承载条目；8.5 九机器层谓词与 T 系列公式侧八词未登记为谓词；G 系列性质 ID 全库未入账致适应度函数面无 property_id 可指；profiles 期望的验证效能类三指标在 6.2.1 七族内无在册形态且 @442 note 附门槛 2 条件；方括号在 applicability／detection_predicate 内兼承两义〔沿 G-CFG-1 (5)〕；接收方 GRD kind 未入库且 Waiver 评审的对侧系台账非条目 → compatibility 五面只留注；8.4 @3406 系全库首例普遍施加行而 0.17.2 @360 未限定 target_aspect 取值域）
@@ -11201,7 +11307,18 @@ gaps:
     impact: "与前四批（RLP／SCH／CFG／QAT）同型（骨架源为行内清单而非表格 → 无 row_id），但本批系**方面八首次入账**、并使 T 系列性质全库计息由零起建：(a) 8.2.1 非表格 → 无 row_id → `profiles.yaml` 的 `kind_profile_VFM.seed_source.table_rows`（@429 占位符）无法给出逐表行数，本批填实为『单行内六类顿号清单，非表格源，逐表行数不适用』形态、`entry_id_range`（@430）填 VFM-001…VFM-006；META 记 info「table_rows 未给逐表行数 → 覆盖宣称不可机器判定」，`meta.kind_coverage` 的『VFM 全覆盖（8.2.1 手段映射注册表全部 6 类）』为人工清点结论而非机器可判（与 RLP／SCH／CFG／QAT 四批同弱，弱于前八批的 row_id 可反查）。(b) 全部计数（口径＝批前 99 条 vs 批后 105 条，2026-10-16 以 `yaml.safe_load` 实测）：entries 99→**105**；constraints_imposed 624→**654**（本批 30＝6×5；级别 hard **18**／soft **12**／conditional **0**；target_aspect 分布 {0: 6, 7: 6, 1: 6, 9: 6, 10: 6}——**本表无复合取值行**，与 6.4 @2864『软（校验失败升硬）』不同型，无需 MJ-4 同型判读；交叉表源＝8.4『施加约束』表方面 8 全体五行 @3406-3410，六条逐字相同，级别映射 hard 3〔全部方面 @3406／方面 7 @3407／方面 10 @3410〕＋soft 2〔方面 1 @3408／方面 9 @3409〕）；envelope 285→**308**（本批 23 项，逐条 4／4／3／5／3／4 **非一律**；metric distinct **19 未变**、本批用其中 11 种、零新增）；applicability 548→**602**（本批 54＝6×9，problem_space／current_space／delivery_space 各 3）；source_pointers 1000→**1073**（本批 73，全 clause_id、零 row_id 零 bib_id）；compatibility 136→**139**（requires 18→**21**，composable 97／tension 16／hard_conflict 5 未变；空列表块 33→**37**）；formal_anchor 278→**293**（本批 **15** 项，**全部为 T 系列且系该系列全库首次入账**：T1 0→**6**／T2 0→**1**／T3 0→**2**／T4 0→**1**／T5 0→**1**／T6 0→**1**／T7 0→**1**／T8 0→**1**／T9 0→**1**；role 一律 **implements**——ENUM_ROLE 三值中验证手段对其所闭合的性质为实现方，consumed_by 方向相反、triggers 用于『触发义务产生』而非『义务闭合』）；anti_patterns 270→**294**（本批 24＝6×4；signal_level P0 97→**101**／P1 127→**139**／P2 46→**54**，本批内部 P0 **4**／P1 **12**／P2 **8** 且逐条分布非一律：VFM-001 P0 1／P1 2／P2 1、VFM-002 P0 2／P1 2／P2 0、VFM-003 P0 0／P1 2／P2 2、VFM-004 P0 0／P1 2／P2 2、VFM-005 P0 1／P1 1／P2 2、VFM-006 P0 0／P1 3／P2 1）；references 项总数 83→**90**（本批 7：书目 13／61／60／62／63／65／64）、非空块 52→**56**、空列表块 47→**49**（VFM-003／VFM-005）。(c) **P0 四项的母本明文据**（定级依 9.2.1 @3583／@3584／@3585 与 MJ-4；级别归属只在行内注一处，@3594-3595；不改级，@3587）：VFM-001-AP1 ← T1 @3431『硬性质无悬置 —— 硬』；VFM-002-AP1 ← @3351 T-F1 逐字双禁『叙事性结论（口头、聊天记录、无工件报告）**不得触发阻塞，也不得解除阻塞**』；VFM-002-AP3 ← T3 @3434-3435『证据保全 —— 硬』＋@3359『七要素齐备方可入库』；VFM-005-AP1 ← T8 @3442-3443『人类评审通道不可删减 —— 硬』＋@3366『不可自动化删减项』。(d) typical_reversibility 本批 free **1**（VFM-001）／bounded **3**（VFM-002／003／006）／costly **2**（VFM-004／005）→ 批后 costly 48→**50**／bounded 41→**44**／free 9→**10**／irreversible 1 未变。(e) cost_profile.latency_budget_delta 全库 95→**96** 行（仅 VFM-006）；aggregation_semantics 六条一律 **itemwise** → 批后 itemwise 90→**96**／additive 9 未变（母本未给验证手段间的合成语义：@3317 的计划矩阵是 `{性质/目标 → 验证手段 → 自动化级别 → 触发点 → 证据形态}` 的**映射**而非叠加，@3313 逐字『每条性质 → 至少一个验证手段』是**存在量词**（∃）而非求和（Σ）；5.2.5 @2499 的 Σ 明文只覆盖『流程各步骤卡片 latency_budget_delta』→ 不本地造法，MJ-19 同型，判读入 MJ-28 (iii)）。(f) **E3 豁免面**＝硬性质 7 项 **13** 实例（T1 6／T2 1／T3 2／T4 1／T6 1／T8 1／T9 1；级别据 @3431／@3436 行内注明文『硬』、@3439『硬（分级按 X4）』〔X4 @2014 作『软（微服务风格下升硬）』〕、T2／T3／T8／T9 无行内注按母本性质行形态判硬），软／条件 2 项 **2** 实例（T5 @3437 系 P2/P1 信号级形态而非硬性质、T7 @3440 无级别注）**明文排除**于 WV-VFM-E3-01 的 scope；本批不预支豁免后果。(g) **0.12 可信度分列**：census_trust_marks 全库 83 处／52 条 → **90 处／56 条**，VFM 侧 **7 处**（VFM-001 1／002 1／003 0／004 4／005 0／006 1），标注词一律 `[已核验]` → 与 QAT 批『VFM 侧 0 处』**不同型**，成因＝本批 references **非空**（7 项 trust_grade 皆带方括号标注，其中书目 63 为长形态 `[已核验（2026-09-15 以本地实书版权页为准更正副题；原著录 \"System Resiliency in Complexity\" 系笔误，见附录一第 15 行）]`，逐字继承不改写；书目 65 的 compile_usage 为 **case_study**，系本批唯一非 metadata_extraction 项）。(h) 占位符普查：census_placeholders 全库批前 990 处／99 条 → 批后 **1092 处／105 条**，VFM 侧 **102 处**（逐条 17／15／17／19／16／18）→ 均为**事实占位**（待实例勘察填实），非结构缺失，与 M2 的 has_path 判定不同轴。(i) M4 面 scanned 按**项**计（非空 detection_predicate 项数＋applicability 三空间列表项数之和，逐条一律 13＝4＋9）：全库 623→818→**896**（本批 6×13＝78）；块内 snake_case 占位实测四式（`[snake_case]`／`[a-z0-9_]+`／`[A-Z]{2,}`／`[A-Z][A-Za-z0-9]*`）在 VFM 块（@8648-9384，737 行／120275 字）内均 **0** 处 → 累计候选仍 **31 词**不增。(j) 留空不得被读作『该项无外部文献支撑／无形式化关联』（unknown ≠ false，0.18.6 M15）：VFM-003／VFM-005 的 `references: []` 系 8.7 @3557-3563 行级书目登记表内**无对应行**（该表为**行级**登记面，每行带 ISBN＋trust_grade＋compile_usage＋明文指向的子节，符合 CSL-005 @2297-2298 的行级登记条件；与 QAT 批 6.7 对应面系尾注、无 ISBN／trust_grade／compile_usage 槽 → 一律 [] 的成因**不同**，两批差别在母本登记面形态而非宽严），非本批宽严所致。(k) 本批**不触发母本改动**（母本 **4427 行／围栏 216** 逐字未改；VFM 字样在母本仅 @401／@3478／@3534 三处命中、**无 `VFM-数字` 形式引用**）→ 本文件围栏 **0**（批前＝批后）。"
     affected: "VFM-001…VFM-006 全部六条（source_pointers 无 row_id 维度、覆盖宣称不可机器判定；无数值据 → envelope 只登界形与单调方向）；其中 VFM-001 另受 G 系列性质 ID 未入账（适应度函数面无 property_id 可指，只登 T1）、书目 13 首次入册（批前 carrier STY-023 载其 1.2.4 面，与本条 8.2.4 面**不同轴** → 非重复）与 CFG-001 requires 三面影响，VFM-002 另受 8.2.5／8.2.6 两节降入（T2／T9 唯一计息面＋T3 两实例之一）与九机器层谓词未登记影响，VFM-003 另受 references 空列表（8.7 无行级对应行）与不登 Z3／Z8（@3317『状态机性质 Z3/Z8 类』的『类』系性质**类举例**而非成对绑定，若登则该两条性质的计息会被单一手段独占、与 T1 的『至少一个手段』存在量词冲突，判读入 MJ-28 (iv)）影响，VFM-004 另受 8.2.2／8.2.3 两节降入（T4／T5／T6／T7 四项集中承载）、四行书目（60／62／63／65）与 CTR-009／CTR-010 双 requires 影响，VFM-005 另受 references 空列表与 T8 唯一计息（@3442 量词域逐字『∀ rp ∈ 8.2.7五类（按部署裁剪后集合）』）影响，VFM-006 另受 GRD kind 未入库致『与方面 9 共享信号源』面无 peer 可定、以及六条中唯一填实 latency_budget_delta 影响；六条同受计划矩阵无承载条目、验证效能类三指标无在册形态、@442 note 门槛 2 条件、方括号双语义、target_aspect: 0 首例编码五面影响；profiles.yaml 的 kind_profile_VFM.seed_source.table_rows @429／entry_id_range @430 两占位符本批填实；predicate_vocabulary.yaml 待追加 VG-07（在册名 76 未变）"
     route: "人工裁决（① 8.2.1 @3317 的计划矩阵五元组是否在母本侧另立承载面（表格化以提供 row_id，或明列矩阵为独立注册表 kind）——涉母本改动 → 高影响，走 R2/ADR；本批不本地增设第七条（粒度已裁决，MJ-9 不扩张）；② 8.5 @3417-3425 九机器层谓词与 T 系列公式侧八词是否补注册为 `predicate_vocabulary.yaml` 谓词——1.5 谓词表扩充属高影响 → ADR＋批准；本批以 VG-07 承载、归 s5g，不本地扩词（VG-04 (i)／VG-05 (i) 同型判读）；③ 6.2.1 @2781-2787 七族是否补『验证效能类』三指标（检出能力／覆盖／误报率）的在册 metric 形态，使 `kind_profile_VFM.narrative.note`（profiles.yaml @442）的期望面与 M3 词汇封闭相容——涉 profiles.yaml 与母本双侧改动 → 高影响；本批改以被守护的质量属性族为映射轴、零新增 metric 名；④ @442 note 后半『若 8.2 未提供可参数化界…不得升 seed』的判读边界是否需在剖面侧补明文（区分『参数化界形』与『数值区间』两义）——本批依 MJ-28 (v) 认定界形已满足门槛 2 而六条已升 seed，若裁决为否 → 六条须按 C-ST 回落 draft（涉已发布条目改写与 profiles.yaml 改写 → 高影响）；⑤ 9.2.2 @3594-3595 的 G 系列九槽注册形态何时入库（GRD kind），以及入库后 VFM-001 的适应度函数面与 VFM-006 的方面 9 共享信号源面是否回填 compatibility 镜像（本批不回填，MJ-5）；⑥ @3372 第五评审点『例外/Waiver 评审』的对侧系台账而非条目 → M9 的 peer_entry 判据是否需为『条目 ↔ 台账』关系扩 ENUM_RELATION 或另立承载面（涉 project.py @831 与既有条目改写 → 高影响）；⑦ 0.17.2 @360 是否补 target_aspect 的取值域明文（含 0 = 『全部方面（1–10）』的编码约定），使 8.4 @3406 与方面 7／9／10 三批同类行（7.4 @3090／@3099-3101、9.4 @3679、10.4 @3984-3985）有母本据可依——本批以 2026-10-11 用户裁决为据编码 0，不自行造法；⑧ @3330 金字塔失真信号的两个定性判据（端到端层占比越限、单元层覆盖率与端到端通过率背离）是否补界值与趋势窗口参数，以及 @3334-3338 五项行为注入（回放／乱序重复丢失注入／补偿路径／超时断路／混沌注入）的准入条件是否补明文（涉母本改动 → 高影响；补明文前本批一律不填数值以守 0.4 与 @2789，无据面由 SO-16 承载）；⑨ 8.7 @3557-3563 是否补 VFM-003（模型检查）与 VFM-005（人工评审）的行级书目登记行——本批明确**不以不承载该主张的文献充当出处**（0.17.7 门槛 6），需裁决确认此边界；⑩ T5／T7 的级别面（T5 系 P2/P1 信号级形态、T7 无级别注）是否在母本侧补行内注，以及补注后 WV-VFM-E3-01 的排除面是否随之收缩——本批据实分列并明文排除，不预支该后果，G-STY-5／G-CSL-1／G-CRD-1／G-DEC-1／G-CTR-1／G-STP-1／G-DFL-1／G-RLP-1／G-SCH-1／G-CFG-1／G-QAT-1 同型 route）：裁决为可 → 相应字段补实或母本更正并撤销该项；裁决为否或澄清前 → 保持现登记形态（clause_id 无 row_id、VFM-003／005 references 空列表、数值一律不填、计划矩阵不增设条目、G 系列与 GRD 面不回填、target_aspect: 0 沿用同一编码、六条 seed 资格不因 ④ 预支而回撤）。本批不自行裁决、不本地扩张解释面。登记为 SO-16（入库期义务，consumer M6）。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-VFM-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（2026-11-04 批准 ADR-INLINE-MARK-01）"
+      basis: "@3317 六类已加 [T-01]…[T-06]；profiles 声明 8.2.1（6 行）；VFM-001…006 各补 row_id 8.2.1-T-01…06 且 version+1；META 可逐行核验。@3317 同行的计划矩阵五元组仍无承载条目，该面仍由 SO-16 承接，不在本 closure 内声明已解。"
+      evidence:
+        - "ADR草案-行内标记方案-五项gap.md（ADR-INLINE-MARK-01 §2）"
+        - "母本 8.2.1 @3317 [T-01]…[T-06]"
+        - "registry/profiles.yaml kind_profile_VFM.table_rows＝8.2.1（6 行）；VFM-001…006 row_id 8.2.1-T-01…06／version 1.1.0"
+        - "计划矩阵五元组仍无承载条目，继续由 SO-16 承接"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-GRD-1
     type: 源形态与分工缺口（9.2.3 九信号源未收；与 DPS 9.2.5 观测面重叠）
@@ -12390,7 +12507,11 @@ survey_obligations:
     gap_ref: G-STY-4
     consumer: "1.5 V1；0.14 守护分级；9.2.1 信号汇聚"
     trigger_rule: "M15；0.14『不许运行时即兴改级』（升级走注册表变更）"
-    status: open
+    evidence:
+      - "ADR-INLINE-MARK-01：1.5 @1467 行内登记三族边界规则"
+      - "母本 @1467；母本零插行、行数 4427 不变"
+      - "G-STY-4 closed（同一 closure）"
+    status: closed
 
   - obligation_id: SO-3
     kind: 入库期
@@ -12414,7 +12535,11 @@ survey_obligations:
     gap_ref: G-ENV-1
     consumer: "0.17.8 M3（bound_expr 参数化 + source 过出处门槛）；6.2 质量属性卡片"
     trigger_rule: "M3；R2"
-    status: open
+    evidence:
+      - "ADR-G-STY-ENV-01 决策二：映射表落 registry/README.md §4.23"
+      - "6.2.1 封闭词汇未扩、predicate_vocabulary.yaml 零改动"
+      - "G-ENV-1 closed（同一 closure）"
+    status: closed
 
   - obligation_id: SO-6
     kind: 决策期（汇总义务）
@@ -12470,7 +12595,11 @@ survey_obligations:
     gap_ref: G-RLP-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）；0.17.8 M4（detection_predicate 词汇封闭，本批 10 个方括号 snake_case 占位词不得充谓词，归 SO-4／s5g R2）；META 覆盖宣称的可机器判定性（5.2.3 无 row_id → kind_profile_RLP.table_rows 不可逐表反查）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）；M4＋R2（发现词汇缺失 → 提议候选，不得本地造词）；M15（unknown → 候选保留 ∧ 勘察义务登记）"
-    status: open
+    evidence:
+      - "ADR-INLINE-MARK-01：母本 5.2.3 @2477 [R-01]…[R-07]"
+      - "RLP-001…007 row_id 5.2.3-R-01…07／version 1.1.0；profiles 5.2.3（7 行）"
+      - "G-RLP-1 closed（同一 closure）"
+    status: closed
 
   - obligation_id: SO-13
     kind: 入库期
@@ -12478,7 +12607,11 @@ survey_obligations:
     gap_ref: G-SCH-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处；SCH-001／SCH-003 为空列表 → 严格式平凡为真，不得读作无外部文献支撑）；0.17.8 M4（detection_predicate 词汇封闭；本批 7 个调用词一律在册、snake_case 占位 0 处、累计候选仍 31 词不增，『退出计划』『到期时刻』等未登记概念不得本地造词，归 SO-4／s5g R2 与 G-SCH-1.route ④）；META 覆盖宣称的可机器判定性（5.2.4 无 row_id → kind_profile_SCH.table_rows 不可逐表反查）与 cron／CFG 分工对账口（CFG 批入库时须与 SCH-001 对账，避免定时器周期双重计息）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）；M4＋R2（发现词汇缺失 → 提议候选，不得本地造词）；M15（unknown → 候选保留 ∧ 勘察义务登记）"
-    status: open
+    evidence:
+      - "ADR-INLINE-MARK-01：母本 5.2.4 @2483 [SCH-01]…[SCH-03]＋@2572 ／time_semantics"
+      - "SCH-001…003 row_id 5.2.4-SCH-01…03／version 1.1.0；profiles 5.2.4（3 行）"
+      - "G-SCH-1 closed（同一 closure）"
+    status: closed
 
   - obligation_id: SO-14
     kind: 入库期
@@ -12486,7 +12619,11 @@ survey_obligations:
     gap_ref: G-CFG-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处；CFG-001／CFG-002／CFG-004 为空列表 → 严格式平凡为真，不得读作无外部文献支撑；书目 48 的登记面只覆盖开关生命周期一面且分类轴不同轴）；0.17.8 M4（detection_predicate 与 applicability 的词汇封闭；本批 5 个调用词一律在册、未登记 0，expiry／cleanup_filed／ADR 三词不得本地造词，归 SO-4／s5g R2 与 G-CFG-1.route ⑤、VG-05）；META 覆盖宣称的可机器判定性（5.2.6 无 row_id → kind_profile_CFG.table_rows @371 记『不适用』、entry_id_range @372 的裁决指针落 registry/README §4.8）与 cron／CFG 分工对账未闭合面（是否补列 cron／定时器周期，及 SCH-001 的 cron 周期与 CFG『生命周期』槽是否重复计息）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）；M4＋R2（发现词汇缺失 → 提议候选，不得本地造词）；M15（unknown → 候选保留 ∧ 勘察义务登记）"
-    status: open
+    evidence:
+      - "ADR-INLINE-MARK-01：母本 5.2.6 @2505–@2508 [CFG-01]…[CFG-04]＋expiry／Z 快照续写"
+      - "CFG-001…004 row_id 5.2.6-CFG-01…04／version 1.1.0；profiles 5.2.6（4 行）"
+      - "G-CFG-1 closed（同一 closure）"
+    status: closed
 
   - obligation_id: SO-15
     kind: 入库期
@@ -12494,7 +12631,11 @@ survey_obligations:
     gap_ref: G-QAT-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处；本批十五条一律空列表 → 严格式平凡为真，不得读作无外部文献支撑；6.7 文献 56 系尾注非独立著录行、书目 12 @1875 的 compile_usage 归 1.2.4 面故行级面不下探）；0.17.8 M4（detection_predicate 与 applicability 的词汇封闭；本批 5 个调用词一律在册、未登记 0，6.5 公式侧六词与关系词 satisfied 不得本地造词，归 SO-4／s5g R2 与 VG-06）；0.4 禁假精确＋6.2.1 量化纪律 @2789（无据不填数值区间；envelope 与 latency_budget_delta 只登界形与构成项）；META 覆盖宣称的可机器判定性（6.2.5 无 row_id → kind_profile_QAT.table_rows @402 记不适用、entry_id_range @403 的裁决指针落 registry/README §4.9）；0.18.2 S1／S4（母本 @592）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）；M4＋R2（发现词汇缺失 → 提议候选，不得本地造词）；M15（unknown → 候选保留 ∧ 勘察义务登记）；0.4（禁假精确 → 无据不填数值区间）"
-    status: open
+    evidence:
+      - "母本 6.2.5 @2829–@2832 [Q-01]…[Q-15]"
+      - "QAT-001…015 row_id 6.2.5-Q-01…15／version 1.1.0；profiles 6.2.5（15 行）"
+      - "README §4.24 三族 CH-B；G-QAT-1 closed（同一 closure）"
+    status: closed
 
   - obligation_id: SO-16
     kind: 入库期
@@ -12502,7 +12643,11 @@ survey_obligations:
     gap_ref: G-VFM-1
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处；VFM-003／VFM-005 为空列表 → 严格式平凡为真，不得读作无外部文献支撑；8.7 @3557-3563 系**行级**书目登记表〔每行带 ISBN＋trust_grade＋compile_usage＋明文指向的子节〕符合 CSL-005 @2297-2298 的行级登记条件，与 QAT 批 6.7 尾注面〔无 ISBN／trust_grade／compile_usage 槽〕成因不同）；0.17.8 M4（detection_predicate 与 applicability 的词汇封闭；本批 **11** 个调用词一律在册、未登记 **0**，8.5 九机器层谓词与 T 系列公式侧八词不得本地造词，归 SO-4／s5g R2 与 VG-07）；0.17.8 M3（metric 词汇封闭；验证效能类三指标在 6.2.1 七族内无在册形态 → 本批零新增、改以被守护质量属性族为轴，扩表前禁止本地新增 metric 名）；0.17.8 M9（peer_entry 须在案；GRD kind 未入库、G 系列性质全库未入账、waivers 系台账非条目 → compatibility 五面只留注，是否扩 ENUM_RELATION 待裁决）；0.4 禁假精确＋6.2.1 量化纪律 @2789（无据不填数值区间；envelope 只登界形与单调方向、latency_budget_delta 只登构成项与批内相对序）；META 覆盖宣称的可机器判定性（8.2.1 无 row_id → kind_profile_VFM.table_rows @429 记不适用、entry_id_range @430 的裁决指针落 registry/README §4.10；meta.kind_coverage 的『VFM 全覆盖（8.2.1 手段映射注册表全部 6 类）』为人工清点结论而非机器可判，与 RLP／SCH／CFG／QAT 四批同弱）；0.18.2 S1／S4（S1 候选装配 @529-535：applicability 求值与 unknown ≠ false → 候选保留；S4 包络校验 @553-559：消费 envelope.bound_expr，其数值面待本项勘察）与 0.18.4 各方面实例化映射 @593『验证手段（8）：S3 主导（CI/测试能力过滤）；T1 悬置禁令』（@592 系同表『质量战术（6）』行、不适用本 kind；profiles.yaml @433 selection_profile.variant 即 @593 逐字转录）；0.18.6 M15（unknown ≠ false → 空列表与留空一律登记勘察义务，不得读作否定）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）；M4＋R2（发现词汇缺失 → 提议候选，不得本地造词）；M3（扩表前禁止本地新增 metric 名）；M9（peer_entry 全部存在方可登关系，E3 同型）；M15（unknown → 候选保留 ∧ 勘察义务登记）；0.4（禁假精确 → 无据不填数值区间）；0.22 承诺一（已发布登记不改写、差异只登记）；0.10 第一条 @235／9.2.2 @3600（Waiver 批准是人的裁决 → 本项不因 WV-VFM-E3-01 获批准而闭合、亦不因其 pending 而暂停）"
-    status: open
+    evidence:
+      - "ADR-INLINE-MARK-01：母本 8.2.1 @3317 [T-01]…[T-06]"
+      - "VFM-001…006 row_id 8.2.1-T-01…06／version 1.1.0；profiles 8.2.1（6 行）"
+      - "计划矩阵五元组仍无承载条目，本项继续承接；G-VFM-1 仅在 row_id 面 closed"
+    status: closed
 
   - obligation_id: SO-17
     kind: 入库期
