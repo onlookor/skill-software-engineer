@@ -11044,7 +11044,16 @@ gaps:
     impact: "本批只登记 1.4 表的通用行（施→6 守护规则、施→10 可观测/投影）与母本明文的两行风格实例；其余风格的 constraints_imposed 实例化措辞为人工判断（provenance.origin=hybrid），行内注 G-STY-2，判读规则见 MJ-4。"
     affected: "STY-005、STY-006、STY-011、STY-013、STY-017、STY-018、STY-019 等的 constraints_imposed"
     route: "R2 提议：1.4 表补风格实例行，或明示『实例化措辞由条目承载、表只定方面级 obligation』"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-STY-2
+      date: "2026-11-04"
+      ruled_by: "人类责任方（用户裁定方案 B）"
+      basis: "1.4 表为方面级 obligation 表；风格实例措辞的权威面已由 STY 条目的 constraints_imposed／compatibility 承载。用户 2026-11-04 裁定方案 B：本项实为文档指向问题，非母本缺实例；裁定声明落 registry/README.md §4.22。"
+      evidence:
+        - "registry/README.md §4.22（方案 B 裁定与 A/B 对比）"
+        - "母本 1.4（方面级 obligation）与 STY 条目实例措辞现状；母本零改动"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-ENV-1
     type: 封闭词汇映射（6.2.1 指标族不覆盖母本包络用语）
@@ -11084,7 +11093,17 @@ gaps:
     impact: "OWN-001/OWN-002/OWN-004 的 references: []（M6 对空集平凡为真；禁止以不承载该主张的文献充当出处）；书目 41 的登记面不得扩张至其余三行。三条的其余字段以 4.2.1 表行为骨架源，不受影响。"
     affected: "OWN-001、OWN-002、OWN-004"
     route: "勘察补书目并按 0.12 定 compile_usage → 母本参考文献表扩充（高影响，走 R2/ADR）"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-OWN-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（用户批准 G-OWN-1 扩母本方向）"
+      basis: "4.2.1 三行本已在表内，缺的是行内出处文本而非行；按 ADR-G-OWN-CSL-01 在 @2166／@2167 补『行级出处：书目 35』、@2169 补『行级出处：书目 39』，零插行，母本 4427→4427 行不变。"
+      evidence:
+        - "ADR草案-G-OWN-CSL-行内出处.md（ADR-G-OWN-CSL-01）"
+        - "母本 4.2.1 @2166／@2167／@2169 行内出处文本"
+        - "git diff --numstat：母本 8 增／8 删（含本次 4.2.3 五行）"
+      preserved: "statement／impact／route 原文逐字保留（0.22）；impact 中『书目 41 不得扩张至其余三行』仍成立"
 
   - gap_id: G-CSL-1
     type: 参考资料源缺失（4.2.3 行级书目登记面仅覆盖两行；表级面不下探）
@@ -11092,7 +11111,17 @@ gaps:
     impact: "CSL-001/CSL-002/CSL-003 的 references: []（0.17.8 M6 严格式 ∀ reference ∈ E 对空集平凡为真；0.17.7 门槛 6 要求文献载明所支撑主张，禁止以不承载该主张的文献充当出处）。**表级面不下探纪律**：书目 35 的表级谱系面不得充当任何一行的行级出处，故 4.2.3 五行一律不引 35——CSL-004 亦只引其行级面 39（narrative 与 source_pointers 行内注均已留痕），避免表级登记面被读作行级论证；此纪律与 G-STY-5『不擅自扩张书目 2 的解释面』同型。三条的其余字段以 4.2.3 表行为骨架源（4.3/4.4/4.5/5.5 为交叉表源），不受影响；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）。"
     affected: "CSL-001、CSL-002、CSL-003（references 空列表）；CSL-004（表级面 35 依纪律不予引用，只留行级面 39）；CSL-005 不受影响（书目 36 为行级面）"
     route: "人工裁决（书目 35 的表级谱系面可否充当 4.2.3 行级出处，G-STY-5 同型 route）：裁决为可 → 五行统一补 35 并撤销本项；裁决为否或澄清前 → 保持留空，另勘察补行级书目并按 0.12 定 compile_usage → 母本参考文献表扩充（高影响，走 R2/ADR）。本批不自行裁决、不本地扩张解释面。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-CSL-1
+      date: "2026-11-04"
+      ruled_by: "人类责任方（用户裁定：允许书目 35 行级引用，G-CSL-1 扩母本方向已批）"
+      basis: "4.2.3 五行本已在表内，缺的是行内出处文本；按 ADR-G-OWN-CSL-01 在 @2186／@2187／@2188 补『出处：书目 35』、@2189 补书目 39、@2190 补书目 36，零插行。书目 35 的表级面不得下探纪律保留于表级；本次为经批准的行级引用，不构成表级面扩张。"
+      evidence:
+        - "ADR草案-G-OWN-CSL-行内出处.md（ADR-G-OWN-CSL-01）"
+        - "母本 4.2.3 @2186–@2190 行内出处文本"
+        - "git diff --numstat：母本 8 增／8 删（含本次 4.2.1 三行）"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-CRD-1
     type: 参考资料源缺失（5.2.2 行级书目登记面仅覆盖 Saga 两行；表级面不下探）
@@ -12505,4 +12534,37 @@ survey_obligations:
     gap_ref: G-PRJ-2
     consumer: "0.17.2 @333（内容变更 version 递增）；0.17.2 @342（delivery_space 为能力前提谓词）；0.13 @271（批准后执行）；M15／M2 复核"
     trigger_rule: "0.13 完整 ADR＋人类批准；0.22 承诺一（既有记录不改写、变更以追加登记）；执行后 --check／--project 归零"
+    status: closed
+
+  - obligation_id: SO-21
+    kind: 入库期
+    obligation: "补勘 1.4 施加表未逐风格给出的风格实例措辞（SOA／Serverless／边缘计算／管道-过滤器等行的施加面）；或由人类裁定『实例化措辞由条目承载、表只定方面级 obligation』。G-STY-2 原文与 route 保留不改（0.22）。"
+    gap_ref: G-STY-2
+    consumer: "0.13 @271（母本 1.4 表结构或语义澄清须 R2／ADR＋人类批准）；M15（unknown → 候选保留 ∧ 义务登记）"
+    trigger_rule: "R2／ADR＋人类批准；裁定后按 0.12 定出处与 compile_usage，重跑 --check／--project"
+    evidence:
+      - "人类 2026-11-04 裁定方案 B：1.4 只定方面级 obligation，实例措辞权威面在 STY 条目"
+      - "registry/README.md §4.22（裁定声明与 A/B 对比）；母本零改动"
+    status: closed
+
+  - obligation_id: SO-22
+    kind: 入库期
+    obligation: "补勘 4.2.1 其余三行（单一所有者／所有者+授权读副本／共享写治理例外）的行级书目登记面：现仅书目 41 覆盖『数据产品』行；须补书目并按 0.12 定 compile_usage，或经人类裁定维持留空。G-OWN-1 原文保留（0.22）。"
+    gap_ref: G-OWN-1
+    consumer: "0.17.8 M6（references 的 compile_usage／trust_grade；空集不得读作无支撑）；0.12 出处门槛"
+    trigger_rule: "0.12『扩充』语义裁决＋高影响批准（母本参考文献表扩充，走 R2／ADR）；M6 复跑"
+    evidence:
+      - "ADR-G-OWN-CSL-01：行内补写、零插行"
+      - "母本 4.2.1 @2166／@2167（书目 35）、@2169（书目 39）；母本行数 4427 不变"
+    status: closed
+
+  - obligation_id: SO-23
+    kind: 入库期
+    obligation: "人工裁决 4.2.3 行级出处面：书目 35（DDIA 第 2 版）的表级谱系面可否充当 4.2.3 行级出处（G-STY-5 同型）；裁决为可则 4.2.3 五行统一补 35 并撤销 G-CSL-1，为否则补行级书目或维持留空。G-CSL-1 原文保留（0.22）。"
+    gap_ref: G-CSL-1
+    consumer: "0.12（表级／行级登记面）；0.17.8 M6；0.13 @271（若扩母本）"
+    trigger_rule: "人类裁决（0.10 第一条）＋0.12；扩母本须 R2／ADR"
+    evidence:
+      - "ADR-G-OWN-CSL-01：行内补写、零插行"
+      - "母本 4.2.3 @2186／@2187／@2188（书目 35）、@2189（书目 39）、@2190（书目 36）"
     status: closed
