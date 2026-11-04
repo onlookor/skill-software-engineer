@@ -1194,3 +1194,16 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **围栏**：`registry/README.md` **2**（偶数）／`todo.md` **0**／本批追加段 **0**（全文件 2 处属前序未提交段）／`profiles.yaml` **0**／`method_registry.yaml` **0**／母本 **216**／单行本 **36**。
 - **边界**：母本、单行本、`predicate_vocabulary.yaml`、`registry/profiles.yaml` 零改动；**不 commit、不 push。**
 
+
+## 2026-11-04：PRJ 交付空间谓词槽纠正执行（ADR-PRJ-2-01 §8 落地）——22 项空间／类型纠正＋3 项补登，母本零改动
+
+- **批准与执行**：人类批准 `ADR草案-PRJ交付空间-谓词槽纠正.md`（ADR-PRJ-2-01）§8 执行清单（0.13 @271 完整 ADR＋批准；Agent 不自批，0.10 @235）。本轮只改 `method_registry.yaml` 条目与台账，**母本零改动**（0.17.2 @342 原已是 `delivery_space: [谓词]`），不触发 `@行号` 锚点位移。
+- **22 项处置**：14 项由 `delivery_space` 迁入 `current_space`（陈述式现状谓词：投影规则已登记 11、批准角色注册表已声明 1、材料性判定谓词已登记 1、FVR 接线状态可观测 1）；8 项留 `delivery_space` 改写为 `∃` 能力前提谓词（工具链／采集面／索引面／台账面／判定面）。逐条文本与 ADR §3 表一致，无临场简化。
+- **补登 3 项**：PRJ-007 `∃ 批准材料投影面`（@3877 第三列＋@3883）；PRJ-009 `∃ R2 材料性判定投影面`（7.2.4 @3054-3057）；PRJ-010 `∃ 验证计划投影面`（@3880 第三列＋@3939／@4009）。三条改写后各留 1 项交付前提，满足 @342。
+- **版本**：PRJ-001…PRJ-011 `version` 1.0.0→**1.1.0**（0.17.2 @333 内容变更递增）；`status` 仍 `seed`，`provenance`／`source_pointers`／`envelope`／`constraints_imposed`／`compatibility`／`references` 未动。
+- **台账**：新增 `G-PRJ-2`（`delivery_space` 类型与空间归属误用，closed）；`SO-18` `gap_ref` `G-PRJ-1`→`G-PRJ-2` 并置 `closed`（obligation 原文逐字保留，0.22）；新增 `SO-20`（执行义务，已执行 closed）。`G-PRJ-1` 原文保留、仍 open（历史记录：曾把类型错误误判为数据缺口）。
+- **新口径实测**：方括号总数 **1483 ＝ 事实 1 ＋ 槽 1482**，与 ADR §6 估算一致（22 项一对一替换＋3 项新增，均以方括号谓词槽入账）。按字段：problem 173／current 221（+14）／delivery 180（−11）／detection 764／cost 127／bound 17／narrative 1。PRJ applicability `待勘察` 残留 **0**、`delivery_space` 问句残留 **0**（11 项全部以 `∃` 开头）；剩余 11 处 `是否` 均为问题名或「问题」取值，非问句占位。
+- **自检（`--check`／`--project` 实跑）**：**1114** 条记录｜硬失败 **0**｜软警告 **0**｜entries **130**／seed **130**／`meta.entry_count` **130**｜指针 **2130**／miss **0**。`profiles.yaml`、`predicate_vocabulary.yaml` 未动：新文本无 ASCII 调用式，M4 未登记 0，无需扩词。
+- **投影四件（同一次 `--project`）**：`STY.md` **1946**／`勘察义务清单.md` **130**／`索引.md` **302**／`自检报告.md` **350**；sha256 前 12 位 `5433b7e5566f`／`fcb767a5660b`／`8128989f3080`／`e529841f995b`（STY／勘察／索引／自检）。
+- **登记落点**：`registry/README.md` 新增 **§4.18**（§4.17 遗留句仅追加「已批准并执行」指向）；本 changlog 末尾追加（历史零改写）。
+- **边界**：母本、单行本、`profiles.yaml`、`predicate_vocabulary.yaml` 零改动；本轮**不 commit、不 push**，改动与冻结快照一并待人类确认后提交。
