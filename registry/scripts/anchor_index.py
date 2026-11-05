@@ -119,6 +119,7 @@ class Doc:
         self.exists = self.path.is_file()
         self.lines = read(self.path).split('\n') if self.exists else []
         self.headings = []          # (line, level, clause)
+        self.all_heads = []         # (line, level, 逐字标题)：含非数字标题（表标识取用）
         self.titles = []            # (line, 逐字标题)：所有 Markdown 标题（`#sec-` 的匹配集）
         self.clause_dups = []
         self.fence_lines = set()    # 代码围栏内行号（规范 R5：围栏内不视为锚点）
@@ -141,6 +142,7 @@ class Doc:
                 tm = re.match(r'^#{1,6}\s+(.*\S)\s*$', ln)
                 if tm:
                     self.titles.append((i, tm.group(1)))
+                    self.all_heads.append((i, ln.index(' '), tm.group(1)))
             self.clause_dups = {k: v for k, v in seen.items() if len(v) > 1}
 
     def clause_at(self, line: int):
@@ -643,8 +645,135 @@ def scan(docs: dict, reg, row_ids: set) -> dict:
     return rows
 
 
+# ── 表标识与行键推导（规范 §3.1）────────────────────────────────
+CODE_ID_RE = re.compile(r'^([A-Za-z][A-Za-z0-9\-]+)$')
+SEC_SPLIT_RE = re.compile(r'[：:，,。；（(→|/]')
+
+
+def _head_before(heads, line, max_level):
+    best = None
+    for (ln, lvl, txt) in heads:
+        if ln >= line:
+            break
+        if lvl <= max_level:
+            best = (ln, lvl, txt)
+    return best
+
+
+def _head_token(txt):
+    return re.split(r'[.．、：:（(\s]', txt)[0].strip()
+
+
+def table_blocks(doc):
+    """返回表块 [{clause,start,header,rows[(line,cells)]}]；表头与分隔行不入 rows（规范 §3.1）。"""
+    out, lines = [], doc.lines
+    i = 1
+    while i <= len(lines):
+        s = lines[i - 1]
+        if (i not in doc.fence_lines and s.lstrip().startswith('|') and i < len(lines)
+                and re.match(r'^\s*\|[ :\-|]+\|\s*$', lines[i])):
+            cl = doc.clause_at(i)
+            hdr = [c.strip() for c in s.strip().strip('|').split('|')]
+            rows, j = [], i + 2
+            while j <= len(lines) and lines[j - 1].lstrip().startswith('|'):
+                if j not in doc.fence_lines:
+                    cells = [c.strip() for c in lines[j - 1].strip().strip('|').split('|')]
+                    if any(cells) and not set(''.join(cells)) <= set('-: '):
+                        rows.append((j, cells))
+                j += 1
+            if cl:
+                out.append(dict(clause=cl[2], start=i, header=hdr, rows=rows))
+            i = j
+            continue
+        i += 1
+    return out
+
+
+def table_ids(doc, blocks, unresolved):
+    """语义表标识：分节码（SM-xx）→ 表头首列 → 同条款冲突时追加前置小节短标签。"""
+    ids = []
+    for b in blocks:
+        h = _head_before(doc.all_heads, b['start'], 5)
+        tok = _head_token(h[2]) if h and h[1] >= 4 else ''
+        base = tok if CODE_ID_RE.match(tok or '') else ''
+        if not base and b['header']:
+            first = norm_cell(b['header'][0])
+            if re.sub(r'[\W_]', '', first, flags=re.UNICODE):
+                base = first
+            else:
+                h2 = _head_before(doc.all_heads, b['start'], 2)
+                base = norm_cell(re.sub(r'^附录[一二三四五六七八九十]+[：:]', '', h2[2])) if h2 else ''
+        ids.append(base)
+    base_cnt = Counter((b['clause'], ids[i]) for i, b in enumerate(blocks))
+    for idx, b in enumerate(blocks):
+        if ids[idx] and base_cnt[(b['clause'], ids[idx])] > 1:
+            h3 = _head_before(doc.all_heads, b['start'], 3)
+            suf = _head_token(h3[2]) if h3 else ''
+            ids[idx] = f'{ids[idx]}-{norm_cell(suf)}' if suf else ''
+    final_cnt = Counter((b['clause'], ids[i]) for i, b in enumerate(blocks))
+    for idx, b in enumerate(blocks):
+        if not ids[idx] or final_cnt[(b['clause'], ids[idx])] > 1:
+            unresolved.append((b['clause'], b['start'], b['header'][0] if b['header'] else ''))
+    return ids
+
+
+def derive_row_keys(docs):
+    """按规范 §3.1 推导 `#row-<表标识>-<行名>[-<次级键>]`；返回 (行键表, 未解表标识, 受影响条款)。"""
+    out, unresolved, affected = [], [], set()
+    for rel in sorted({p for p, _ in TARGETS.values()}):
+        d = docs.get(rel)
+        if not d or not d.exists:
+            continue
+        blocks = table_blocks(d)
+        ids = table_ids(d, blocks, unresolved)
+        by_clause = defaultdict(Counter)
+        for b in blocks:
+            for _, r in b['rows']:
+                by_clause[b['clause']][norm_cell(r[0])] += 1
+        for b, tid in zip(blocks, ids):
+            if any(by_clause[b['clause']][norm_cell(r[0])] > 1 for _, r in b['rows']):
+                affected.add((rel, b['clause']))
+            cnt = Counter(norm_cell(r[0]) for _, r in b['rows'])
+            for line, cells in b['rows']:
+                name = norm_cell(cells[0])
+                sec = ''
+                if cnt[name] > 1 and len(cells) > 1:
+                    sec = norm_cell(SEC_SPLIT_RE.split(cells[1])[0])[:12]
+                key = f'#row-{tid}-{name}' + (f'-{sec}' if sec else '')
+                if cnt[name] > 1:
+                    conflict = '同表首列重名→次级键'
+                elif by_clause[b['clause']][name] > 1:
+                    conflict = '跨表重名→表标识消歧'
+                else:
+                    conflict = ''
+                out.append(dict(doc=rel, clause=b['clause'], table_id=tid, table_line=b['start'],
+                                header=b['header'][0] if b['header'] else '', line=line,
+                                row_name=name, secondary=sec, key=key,
+                                conflict=conflict))
+    return out, unresolved, affected
+
+
+def classify_mixed(rows):
+    """返回 (活跃侧跨目标串, 仅冻结侧致歧义串, 后者在活跃侧出现次数)。"""
+    live_rows = [r for r in rows if r['file'] in LIVE and r['form'] in ('legacy', 'prefix')]
+    all_kinds, live_kinds = defaultdict(set), defaultdict(set)
+    for r in rows:
+        k = r['target_kind']
+        if k and k != 'unknown':
+            all_kinds[r['token']].add(k)
+    for r in live_rows:
+        k = r['target_kind']
+        if k and k != 'unknown':
+            live_kinds[r['token']].add(k)
+    mixed_live = {t: v for t, v in live_kinds.items() if len(v) > 1}
+    frozen_only = {t: v for t, v in all_kinds.items()
+                   if len(v) > 1 and len(live_kinds.get(t, set())) <= 1}
+    occ = sum(1 for r in live_rows if r['token'] in frozen_only)
+    return mixed_live, frozen_only, occ
+
+
 # ── 断言 F-1～F-8 ───────────────────────────────────────────────
-def assertions(rows, docs, reg, mode) -> list[dict]:
+def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids) -> list[dict]:
     out = []
     live_rows = [r for r in rows if r['file'] in LIVE and r['form'] in ('legacy', 'prefix')]
     live_all = [r for r in rows if r['file'] in LIVE]
@@ -683,35 +812,24 @@ def assertions(rows, docs, reg, mode) -> list[dict]:
                              f' || soft_suspect={len(drift_soft)}'))
     # F-4 跨目标类歧义串（忽略 unknown，unknown 归 F-2/F-3）
     # 口径按规范 §8：冻结文件只做快照复算，不计入 F-1～F-6 的失败计数。
-    tok_kinds = defaultdict(set)
-    for r in live_rows:
-        if r['target_kind'] and r['target_kind'] != 'unknown':
-            tok_kinds[r['token']].add(r['target_kind'])
-    mixed = {k: v for k, v in tok_kinds.items() if len(v) > 1}
+    mixed, frozen_only, frozen_occ = classify_mixed(rows)
     out.append(dict(id='F-4', desc='同一锚点串不跨目标类',
                     status='fail' if mixed else 'pass', count=len(mixed),
                     examples=' | '.join(f'{k}:{"/".join(sorted(v))}' for k, v in list(mixed.items())[:10])))
-    # F-5 子锚唯一性：同一文档同一条款内，表行首列必须唯一（文档级，非锚点级）
-    dup_rows = defaultdict(Counter)
-    tgt_docs = {p for p, _ in TARGETS.values()}
-    for rel, d in docs.items():
-        if rel not in tgt_docs or not d.exists:
-            continue
-        for i, ln in enumerate(d.lines, 1):
-            s = ln.strip()
-            if not s.startswith('|'):
-                continue
-            first = s.strip('|').split('|')[0].strip()
-            if not first or set(first) <= set('-: '):
-                continue
-            cl = d.clause_at(i)
-            if cl:
-                dup_rows[(rel, cl[2])][norm_cell(first)] += 1
-    dups = sum(v - 1 for c in dup_rows.values() for v in c.values() if v > 1)
-    out.append(dict(id='F-5', desc='行键式 row 子锚在同条款内唯一',
-                    status='fail' if dups else 'pass', count=dups,
-                    examples=' | '.join(f'{c}:{k}' for c, cnt in dup_rows.items() for k, v in cnt.items() if v > 1)
-                    [:400]))
+    # INFO-1：仅因冻结文件才成 mixed 的串，info 级，不计入 F-4 分母、不计失败
+    out.append(dict(id='INFO-1', desc='frozen_only_mixed（仅冻结侧致歧义；info，不计入 F-4 分母）',
+                    status='info', count=len(frozen_only),
+                    examples=f'live_occurrences={frozen_occ} | ' +
+                             ' | '.join(f'{k}:{"/".join(sorted(v))}' for k, v in
+                                        list(frozen_only.items())[:10])))
+    # F-5 行键唯一性：表标识＋（必要时）次级键，同条款内必须唯一（规范 §3.1）
+    dup_keys = Counter((r['doc'], r['clause'], r['key']) for r in rowkeys)
+    dups = sum(v - 1 for v in dup_keys.values() if v > 1)
+    out.append(dict(id='F-5', desc='行键式 row 子锚在同条款内唯一（表标识＋次级键）',
+                    status='fail' if (dups or unresolved_ids) else 'pass',
+                    count=dups + len(unresolved_ids),
+                    examples=' | '.join(f'{c}/{k}×{v}' for (d_, c, k), v in dup_keys.items() if v > 1)[:300] +
+                             (f' || unresolved_table_id={unresolved_ids}' if unresolved_ids else '')))
     # F-6 区间反向（短式已按首位补全；仍反向者记失败）
     bad = [f"{r['file']}:{r['line']} {r['token']}" for r in live_rows if r['range_note'] == 'reversed']
     raw_rev = len(bad)
@@ -759,7 +877,8 @@ def main(argv=None) -> int:
     reg, row_ids = load_registry()
 
     rows, label_rows = split_labels(scan(docs, reg, row_ids))
-    assert_rows = assertions(rows, docs, reg, args.target_mode)
+    rowkey_rows, unresolved_ids, affected = derive_row_keys(docs)
+    assert_rows = assertions(rows, docs, reg, args.target_mode, rowkey_rows, unresolved_ids)
     targets_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'form', 'sub_kind', 'sub_value',
                                        'target_file', 'target_kind', 'assign_basis', 'in_yaml_value',
                                        'in_comment', 'in_code_span')} for r in rows]
@@ -784,6 +903,15 @@ def main(argv=None) -> int:
         (out / 'label_refs.csv').write_text(
             'file,line,col,token,label,label_class,exempt_reason\n', encoding='utf-8')
 
+    # 行键映射（仅受影响条款：同条款内出现重名者）
+    affected_keys = [r for r in rowkey_rows if (r['doc'], r['clause']) in affected]
+    if affected_keys:
+        write_csv(out / 'row_keys.csv', affected_keys)
+    else:
+        (out / 'row_keys.csv').write_text(
+            'doc,clause,table_id,table_line,header,line,row_name,secondary,key,conflict\n',
+            encoding='utf-8')
+
     # 索引：语义键 → 现行行 + 指纹
     index = {}
     for r in rows:
@@ -807,9 +935,15 @@ def main(argv=None) -> int:
                             status='pass' if h1 == h2 else 'fail', count=0 if h1 == h2 else 1,
                             examples=f'hash={h1[:16]}'))
 
+    mixed_live, frozen_only, frozen_occ = classify_mixed(rows)
     summary = {
         'target_mode': args.target_mode,
         'total_rows': len(rows),
+        'f4_mixed_live_tokens': len(mixed_live),
+        'frozen_only_mixed_tokens': len(frozen_only),
+        'frozen_only_mixed_live_occurrences': frozen_occ,
+        'row_keys_affected_total': len(affected_keys),
+        'row_keys_unresolved_table_ids': len(unresolved_ids),
         'by_form': dict(Counter(r['form'] for r in rows)),
         'by_file': dict(Counter(r['file'] for r in rows)),
         'by_target_kind': dict(Counter(r['target_kind'] or 'none' for r in rows)),
