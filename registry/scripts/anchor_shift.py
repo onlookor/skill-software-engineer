@@ -20,6 +20,10 @@
   python3 registry/scripts/anchor_shift.py --root <root> --insert-at 100 \
       --insert-line '（演练插入行）' --apply --report /tmp/report.csv \
       --review-report /tmp/review.csv
+  多插入点（一次位移跑完，插入点均按原始行号计）:
+  python3 registry/scripts/anchor_shift.py --root <root> \
+      --insert-at 404 --insert-line '<行 A>' \
+      --insert-at 3622 --insert-line '<行 B>' --apply ...
 退出码: 0=无例外且被复核端点内容一致; 1=存在例外或内容不一致; 2=参数/环境错误。
 needs_review 不计例外，由 --review-report 与 summary 显式输出。
 """
@@ -58,20 +62,27 @@ def parse_token(tok: str):
     return m.groupdict()
 
 
-def shift_value(v: int, at: int, count: int) -> int:
-    return v + count if v >= at else v
+def shift_delta(v: int, points, count: int) -> int:
+    """单个行号端点的总位移：落在各插入点之后的插入行数之和（按原始行号判）。"""
+    return count * sum(1 for at, _ in points if v >= at)
 
 
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument('--root', required=True, help='演练副本根目录（含 registry/scripts）')
-    ap.add_argument('--insert-at', type=int, required=True, help='插入点（1-based，新的行占用该行号）')
-    ap.add_argument('--insert-line', required=True, help='要插入的整行文本')
+    ap.add_argument('--insert-at', type=int, action='append', required=True,
+                    help='插入点（1-based，新的行占用该行号）；可重复，均按原始行号计，与 --insert-line 一一对应')
+    ap.add_argument('--insert-line', action='append', required=True,
+                    help='要插入的整行文本；可重复')
     ap.add_argument('--count', type=int, default=1)
     ap.add_argument('--apply', action='store_true')
     ap.add_argument('--report', default='')
     ap.add_argument('--review-report', default='')
     args = ap.parse_args()
+    if len(args.insert_at) != len(args.insert_line):
+        print('--insert-at 与 --insert-line 数量必须一致', file=sys.stderr)
+        return 2
+    points = sorted(zip(args.insert_at, args.insert_line))
 
     root = Path(args.root).resolve()
     mod = load_detector(root)
@@ -81,9 +92,10 @@ def main() -> int:
         return 2
 
     before_lines = mother.read_text(encoding='utf-8').split('\n')
-    if not (1 <= args.insert_at <= len(before_lines) + 1):
-        print('插入点越界', file=sys.stderr)
-        return 2
+    for at, _ in points:
+        if not (1 <= at <= len(before_lines) + 1):
+            print(f'插入点越界: {at}', file=sys.stderr)
+            return 2
 
     outdir = Path(tempfile.mkdtemp(prefix='anchor-shift-'))
     subprocess.run([sys.executable, str(root / 'registry/scripts/anchor_index.py'),
@@ -145,13 +157,14 @@ def main() -> int:
         a, b = int(parsed['a']), int(parsed['b']) if parsed['b'] else None
         # 规范 §10.2 第 1／3 条：插入点落在区间内部（起 < P ≤ 止）时不得自动扩展。
         # 保留原 token 不动，交给人工裁定；禁止把 `@96-102` 静默改成 `@96-103`。
-        if b is not None and a < args.insert_at <= b:
+        inside = [at for at, _ in points if b is not None and a < at <= b]
+        if inside:
             review.append(dict(file=r['file'], line=int(r['line']), col=int(r['col']),
                                token=r['token'], reason='span_inside_insert',
                                start=a, end=b))
             continue
-        new_a = shift_value(a, args.insert_at, args.count)
-        new_b = shift_value(b, args.insert_at, args.count) if b is not None else None
+        new_a = a + shift_delta(a, points, args.count)
+        new_b = b + shift_delta(b, points, args.count) if b is not None else None
         if new_a == a and new_b == b:
             continue
         new_tok = '@' + (parsed['p'] + ':' if parsed['p'] else '') + str(new_a)
@@ -170,7 +183,7 @@ def main() -> int:
         edits.append(dict(file=r['file'], line=int(r['line']), col=int(r['col']),
                           token=r['token'], new_token=new_tok,
                           a=a, b=b, new_a=new_a, new_b=new_b, prefixed=prefixed,
-                          span_inside=(b is not None and a < args.insert_at <= b)))
+                          span_inside=False))
 
     # 逐出现位置改写：同一文件内按 (行, 列) 降序，避免列号漂移
     by_file: dict[str, list] = {}
@@ -193,13 +206,12 @@ def main() -> int:
         if args.apply:
             path.write_text('\n'.join(lines), encoding='utf-8')
 
-    # 插入行（apply 时才写；内容复核用内存版前后文）
+    # 插入行（按原始行号降序依次插入，保证插入点互不影响）
     after_lines = list(before_lines)
+    for at, text in sorted(points, reverse=True):
+        after_lines = after_lines[:at - 1] + [text] + after_lines[at - 1:]
     if args.apply:
-        after_lines = before_lines[:args.insert_at - 1] + [args.insert_line] + before_lines[args.insert_at - 1:]
         mother.write_text('\n'.join(after_lines), encoding='utf-8')
-    else:
-        after_lines = before_lines[:args.insert_at - 1] + [args.insert_line] + before_lines[args.insert_at - 1:]
 
     # 落点内容复核：插入前 a 行文本 vs 插入后新 a' 行文本（区间两端各查）
     # 规范 §10.2 第 2 条：落点为空行时只记录位置，不得输出「内容一致」。
@@ -260,7 +272,7 @@ def main() -> int:
     inside = sum(1 for e in edits if e['span_inside'] and e.get('applied'))
     prefixed = sum(1 for e in edits if e.get('applied') and e.get('prefixed'))
     blank = sum(1 for e in edits if e.get('applied') and e.get('blank_landing'))
-    summary = dict(insert_at=args.insert_at, count=args.count, applied=bool(args.apply),
+    summary = dict(insert_at=[at for at, _ in points], count=args.count, applied=bool(args.apply),
                    anchors_changed=applied, range_anchors=ranges,
                    endpoints_shifted=applied + sum(1 for e in edits
                                                     if e.get('applied') and e['b'] is not None
