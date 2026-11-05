@@ -706,7 +706,7 @@ def check_m3(rep: Report, e: dict, eid: str, idx: Index):
     for i, it in enumerate(env):
         expr = str(it.get('bound_expr') or '')
         if not (any(ch in REL_OPS for ch in expr) or any(w in expr for w in REL_WORDS)):
-            bad.append(f'[{i}] bound_expr 未参数化（无关系算子/界词形）：{expr[:48]}…')
+            bad.append(f'[{i}] bound_expr 未参数化（无关系算子/界词形）：{_trunc(expr, 48)}')
         m = CONCRETE_NUM_RE.search(expr)
         if m:
             bad.append(f'[{i}] bound_expr 含无出处具体数值 {m.group(0)!r}（0.17.7 门槛 2 假精确）')
@@ -767,7 +767,7 @@ def check_m5(rep: Report, e: dict, eid: str):
             if any(k in sent for k in ('必须', '不得', '禁止', '只能', '应当')):
                 if 'clue:' in sent or carriers:
                     continue
-                warns.append(f'{f}: {sent.strip()[:40]}…')
+                warns.append(f'{f}: {_trunc(sent.strip(), 40)}')
     if warns:
         rep.add('M5', eid, 'soft', False, '决策性叙事无机器层承载者且无 clue 标记：' + '；'.join(warns[:4]))
     else:
@@ -847,7 +847,7 @@ def check_cenv(rep: Report, e: dict, eid: str, mat: dict):
     exempt = [ex for ex in m.get('exemptions', [])
               if ex.get('field') == 'envelope' and ex.get('check') == 'C-ENV' and scope_covers(ex.get('scope', ''), eid)]
     if exempt:
-        rep.skip('C-ENV', eid, f"剖面豁免（scope「{exempt[0].get('scope')}」）：{exempt[0].get('reason', '')[:60]}…")
+        rep.skip('C-ENV', eid, f"剖面豁免（scope「{exempt[0].get('scope')}」）：{_trunc(exempt[0].get('reason', ''), 60)}")
         return
     env = e.get('envelope') or []
     if row_clauses & {'1.2.1', '1.2.2', '1.2.3'}:
@@ -931,7 +931,7 @@ def check_meta(rep: Report, reg_doc: dict, entries: list, idx: Index, mat: dict,
         rows_decl = str((p.get('seed_source') or {}).get('table_rows') or '')
         decl = {t: int(n2) for t, n2 in re.findall(r'(\d+\.\d+\.\d+)（(\d+)\s*行）', rows_decl)}
         if not decl:
-            rep.add('META', p['entry_id'], 'info', None, f'table_rows 未给逐表行数（{rows_decl[:40]}）→ 覆盖宣称不可机器判定')
+            rep.add('META', p['entry_id'], 'info', None, f'table_rows 未给逐表行数（{_trunc(rows_decl, 40)}）→ 覆盖宣称不可机器判定')
             continue
         actual = {}
         rownames = {}
@@ -1372,15 +1372,38 @@ def write_text(name: str, text: str) -> Path:
     return path
 
 
+_ANCHOR_HEAD_RE = re.compile(r'@(?=[0-9mrpvcd!])')
+
+
+def _cut(text, limit: int) -> tuple:
+    """按 limit 截断；切点若落在 @ 锚点 token 内，延到该 token 末尾（不得切断锚点）。"""
+    s = str(text or '')
+    if len(s) <= limit:
+        return s, False
+    cut = limit
+    for m in _ANCHOR_HEAD_RE.finditer(s):
+        end = m.start() + 1
+        while end < len(s) and (s[end].isalnum() or s[end] in ':._-#~'):
+            end += 1
+        if m.start() < cut < end:
+            cut = end
+    return s[:cut], True
+
+
+def _trunc(text, limit: int) -> str:
+    out, more = _cut(text, limit)
+    return out + ('…' if more else '')
+
+
 def _first_sentence(text, limit: int = 90) -> str:
     s = re.split(r'[。；]', str(text or '').replace('\n', ' ').strip(), maxsplit=1)[0]
-    return s[:limit] + ('…' if len(s) > limit else '')
+    return _trunc(s, limit)
 
 
 def _clip(text, limit: int = 70) -> str:
     """空白归一后按长度截断（不切句：保留方括号/成对符号的完整性）。"""
     s = ' '.join(str(text or '').split())
-    return s[:limit] + ('…' if len(s) > limit else '')
+    return _trunc(s, limit)
 
 
 def _flat(v, limit: int = 100) -> str:
