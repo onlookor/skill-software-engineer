@@ -1,0 +1,28 @@
+file,line,原文行号,实际位置,漂移,改用后的锚,说明
+registry/method_registry.yaml,11708,1084,census_placeholders（GAP_SO_WHITELIST，1163）,1084→1163,@d:registry/scripts/project.py#fn-census_placeholders,正文所指为函数 census_placeholders，非该行常量
+registry/method_registry.yaml,11743,1084,census_placeholders（GAP_SO_WHITELIST，1163）,1084→1163,@d:registry/scripts/project.py#fn-census_placeholders,正文所指为函数 census_placeholders，非该行常量
+registry/method_registry.yaml,11813,1084,census_placeholders（GAP_SO_WHITELIST，1163）,1084→1163,@d:registry/scripts/project.py#fn-census_placeholders,正文所指为函数 census_placeholders，非该行常量
+registry/method_registry.yaml,12420,57,ENUM_*（ENUM_*，55）,57→55,@d:registry/scripts/project.py#key-ENUM_REVERSIBILITY、@d:registry/scripts/project.py#key-ENUM_ORIGIN、@d:registry/scripts/project.py#key-ENUM_RELATION、@d:registry/scripts/project.py#key-ENUM_LEVEL,原写 @57-62；实际 REV 55／ORIGIN 56／RELATION 57／LEVEL 58（SIGNAL 59／AGG 62 不在四键内）
+registry/method_registry.yaml,12422,57,ENUM_*（ENUM_*，55）,57→55,@d:registry/scripts/project.py#key-ENUM_REVERSIBILITY、@d:registry/scripts/project.py#key-ENUM_ORIGIN、@d:registry/scripts/project.py#key-ENUM_RELATION、@d:registry/scripts/project.py#key-ENUM_LEVEL,原写 @57-62；实际 REV 55／ORIGIN 56／RELATION 57／LEVEL 58（SIGNAL 59／AGG 62 不在四键内）
+registry/method_registry.yaml,12441,1135,build_vocab（PLACEHOLDER_FIELD_ORDER，1251）,1135→1251,@d:registry/scripts/project.py#fn-build_vocab,正文所指为函数 build_vocab，非该行常量
+registry/method_registry.yaml,9023,220,PRED_CALL_RE（常量（模块级），221）,220→221,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,9286,220,PRED_CALL_RE（常量（模块级），221）,220→221,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12122,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12144,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12232,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12427,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12427,92,CONCRETE_NUM_RE（常量（模块级），92）,同（行号本已正确）,@d:registry/scripts/project.py#key-CONCRETE_NUM_RE,模块级常量，行号删除
+registry/method_registry.yaml,12428,92,CONCRETE_NUM_RE（常量（模块级），92）,同（行号本已正确）,@d:registry/scripts/project.py#key-CONCRETE_NUM_RE,模块级常量，行号删除
+registry/method_registry.yaml,12428,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12435,92,CONCRETE_NUM_RE（常量（模块级），92）,同（行号本已正确）,@d:registry/scripts/project.py#key-CONCRETE_NUM_RE,模块级常量，行号删除
+registry/method_registry.yaml,12435,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12441,60,ENUM_ROLE（常量（模块级），60）,同（行号本已正确）,@d:registry/scripts/project.py#key-ENUM_ROLE,模块级常量，行号删除
+registry/method_registry.yaml,12442,60,ENUM_ROLE（常量（模块级），60）,同（行号本已正确）,@d:registry/scripts/project.py#key-ENUM_ROLE,模块级常量，行号删除
+registry/method_registry.yaml,12442,92,CONCRETE_NUM_RE（常量（模块级），92）,同（行号本已正确）,@d:registry/scripts/project.py#key-CONCRETE_NUM_RE,模块级常量，行号删除
+registry/method_registry.yaml,12442,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12448,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12449,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12462,9139,无（非文档名）,—,HEAD,HEAD 为修订单标签，9139 实为 bound_expr，与 note 不符
+registry/method_registry.yaml,12618,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12630,221,PRED_CALL_RE（常量（模块级），221）,同（行号本已正确）,@d:registry/scripts/project.py#key-PRED_CALL_RE,模块级常量，行号删除
+registry/method_registry.yaml,12642,1049,SO_KEYS（函数 check_ledgers 内局部常量，1049）,同（行号本已正确）,@d:registry/scripts/project.py#fn-check_ledgers,函数内局部常量，锚所属函数

@@ -16,6 +16,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import csv
 import hashlib
 import json
@@ -197,9 +198,11 @@ DESC_LABELS = {'Read'}          # 动作词+行号，属描述型标签
 LABEL_CLASSES = ('formula_label', 'field_label')
 
 # 新式文档/剖面锚：@d:<路径>#<sub>、@p:<KIND>#<sub>
-DOC_ANCHOR_RE = re.compile(r'@(?P<prefix>[dp]):(?P<loc>[^\s#，。；|）]+)')
+DOC_ANCHOR_RE = re.compile(r'@(?P<prefix>[dp]):(?P<loc>[^\s#，。；|）（：、／]+)')
 # 规范 §2 新增两式（2026-11-05 裁定）：key- 点路径（下标必须保留）／sec- 逐字标题
 SUB_KEY_RE = re.compile(r'#key-(?P<path>[A-Za-z0-9_.\[\]-]+)')
+SUB_FN_RE = re.compile(r'#fn-(?P<name>[A-Za-z_][A-Za-z0-9_]*)')
+PY_SUFFIXES = ('.py',)
 
 
 def _split_dotted(path: str):
@@ -277,6 +280,40 @@ def key_path_valid(path: Path, dotted: str) -> bool:
                 cur = cur[val]
         return True
     return False
+
+
+def _py_tree(path: Path):
+    if not path.is_file():
+        return None
+    try:
+        return ast.parse(read(path))
+    except Exception:
+        return None
+
+
+def fn_symbol_valid(path: Path, name: str) -> bool:
+    """脚本锚 `#fn-`：AST 校验该函数在该文件内存在且唯一。"""
+    tree = _py_tree(path)
+    if tree is None:
+        return False
+    hits = [n for n in ast.walk(tree)
+            if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)) and n.name == name]
+    return len(hits) == 1
+
+
+def key_symbol_valid(path: Path, name: str) -> bool:
+    """脚本内 `#key-`：AST 校验模块级符号（顶层赋值／常量）存在且唯一。"""
+    tree = _py_tree(path)
+    if tree is None:
+        return False
+    hits = 0
+    for n in tree.body:
+        if isinstance(n, ast.Assign) and any(
+                isinstance(t, ast.Name) and t.id == name for t in n.targets):
+            hits += 1
+        elif isinstance(n, ast.AnnAssign) and isinstance(n.target, ast.Name) and n.target.id == name:
+            hits += 1
+    return hits == 1
 
 
 _PROF_CACHE = None
@@ -542,10 +579,22 @@ def scan(docs: dict, reg, row_ids: set) -> dict:
                         end = m.end() + km.end()
                         if prefix == 'p':
                             resolvable = 'key_path' if profile_field_valid(loc, sub_value) else 'none'
+                        elif tgt_rel.endswith(PY_SUFFIXES):
+                            resolvable = 'key_symbol' if key_symbol_valid(ROOT / tgt_rel, sub_value) else 'none'
                         else:
                             resolvable = 'key_path' if key_path_valid(ROOT / tgt_rel, sub_value) else 'none'
                     else:
                         end = m.end() + 5
+                        resolvable = 'none'
+                elif rest.startswith('#fn-'):
+                    sub_kind = 'fn'
+                    fm = SUB_FN_RE.match(rest)
+                    if fm and tgt_rel.endswith(PY_SUFFIXES):
+                        sub_value = fm.group('name')
+                        end = m.end() + fm.end()
+                        resolvable = 'fn_symbol' if fn_symbol_valid(ROOT / tgt_rel, sub_value) else 'none'
+                    else:
+                        end = m.end() + 4
                         resolvable = 'none'
                 elif rest.startswith('#sec-'):
                     sub_kind = 'sec'
