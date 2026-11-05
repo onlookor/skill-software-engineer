@@ -1,0 +1,72 @@
+cls,file,line,col,old,target,symbol,new,decision,reason
+doc_ref,registry/method_registry.yaml,6359,43,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,6747,56,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,8701,66,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,8745,14,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,8963,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,9050,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,9275,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,9376,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,9891,12,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/method_registry.yaml,11252,845,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,11272,727,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,11306,4403,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,11309,869,project.py @831,registry/scripts/project.py,check_m9,@d:registry/scripts/project.py#check_m9,propose,函数名
+doc_ref,registry/method_registry.yaml,11461,474,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11497,1063,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11532,1569,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11568,1507,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11603,2083,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11638,4631,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11673,3003,project.py @726,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+doc_ref,registry/method_registry.yaml,11699,1028,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11708,4463,project.py @1084,registry/scripts/project.py,,,疑,registry/scripts/project.py:1084 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,11734,1414,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11743,5289,project.py @727,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+doc_ref,registry/method_registry.yaml,11743,6597,project.py @1084,registry/scripts/project.py,,,疑,registry/scripts/project.py:1084 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,11743,7288,project.py @727,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+doc_ref,registry/method_registry.yaml,11769,1752,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11778,892,project.py @1028,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,11813,1052,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,11813,1397,project.py @1028,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,11813,12098,project.py @1084,registry/scripts/project.py,,,疑,registry/scripts/project.py:1084 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,12160,407,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12166,2444,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12175,541,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12175,2874,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12182,1125,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12188,4259,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12188,4718,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,12197,3821,project.py @1640,registry/scripts/project.py,_entry_card,@d:registry/scripts/project.py#_entry_card,propose,函数名
+doc_ref,registry/method_registry.yaml,12204,1848,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12210,3272,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12219,1614,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12219,4099,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12219,6378,project.py @1021,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,12232,2999,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12241,3958,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12241,6169,project.py @1021,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,12378,599,project.py @1032,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,12378,890,project.py @1473,registry/scripts/project.py,render_survey,@d:registry/scripts/project.py#render_survey,propose,函数名
+doc_ref,registry/method_registry.yaml,12420,4838,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12420,6687,project.py @57,registry/scripts/project.py,,,疑,registry/scripts/project.py:57 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,12420,7470,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12422,772,project.py @57,registry/scripts/project.py,,,疑,registry/scripts/project.py:57 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,12427,3340,project.py @225,registry/scripts/project.py,predicate_names,@d:registry/scripts/project.py#predicate_names,propose,函数名
+doc_ref,registry/method_registry.yaml,12434,3070,project.py @726,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+doc_ref,registry/method_registry.yaml,12441,2191,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12441,5393,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12441,6289,project.py @1135,registry/scripts/project.py,,,疑,registry/scripts/project.py:1135 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,12456,719,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12462,1213,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12463,1492,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12606,1816,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12618,3308,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,12642,2947,project.py @831,registry/scripts/project.py,check_m9,@d:registry/scripts/project.py#check_m9,propose,函数名
+doc_ref,registry/method_registry.yaml,12642,3302,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12642,6168,project.py @1640,registry/scripts/project.py,_entry_card,@d:registry/scripts/project.py#_entry_card,propose,函数名
+doc_ref,registry/predicate_vocabulary.yaml,139,164,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/profiles.yaml,535,121,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/profiles.yaml,600,122,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/profiles.yaml,666,132,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/profiles.yaml,700,12,project.py @1069,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名

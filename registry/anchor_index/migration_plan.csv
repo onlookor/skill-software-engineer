@@ -1,0 +1,348 @@
+cls,file,line,col,old,target,symbol,new,decision,reason
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,14,164,README @260,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,33,73,README @259,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,34,83,R2 @381,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,39,130,R2 @381,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,44,83,R2 @381,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,70,118,project.py @847,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,106,101,README @259,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,119,35,README @260,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,61,3,GRD @471,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,62,3,PRJ @502,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,63,3,GOV @533,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,65,8,note @558,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,170,60,changelog @248,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,186,25,note @558,,,,exempt,冻结文件（0.22 不重写）
+doc_ref,registry/README.md,173,1110,todo.md @111,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/README.md,177,395,changlog @1009,软件工程元框架成文法-changlog.md,2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,propose,标题逐字且文件内唯一
+doc_ref,registry/README.md,203,1816,changlog @1031,软件工程元框架成文法-changlog.md,2026-10-10：QAT 批入库（s5e-7）——质量战术 **15** 条（母本 6.2.5 四属性行内顿号清单 **@2829-2832**，**四属性行内清单序**、`provenance` 不含 `row_id`）入库为 `seed`、台账增量七件、`WV-QAT-E3-01` 按防扩宽条款 (ii) **第十二次**单独申请（`pending`，待人类裁决），母本零改动（全文 `QAT` 仅 @400 与 @592 两处、无 `QAT-数字` 形态已发布引用）、注册表达 **99** 条 seed；kind 指称冲突经用户裁决定为 QAT（原指令称「s5e-7 RLP 批」而 RLP 已于 s5e-4 入库并批准），零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-10-10：QAT 批入库（s5e-7）——质量战术 **15** 条（母本 6.2.5 四属性行内顿号清单 **@2829-2832**，**四属性行内清单序**、`provenance` 不含 `row_id`）入库为 `seed`、台账增量七件、`WV-QAT-E3-01` 按防扩宽条款 (ii) **第十二次**单独申请（`pending`，待人类裁决），母本零改动（全文 `QAT` 仅 @400 与 @592 两处、无 `QAT-数字` 形态已发布引用）、注册表达 **99** 条 seed；kind 指称冲突经用户裁决定为 QAT（原指令称「s5e-7 RLP 批」而 RLP 已于 s5e-4 入库并批准），零新增规范命题,propose,标题逐字且文件内唯一
+doc_ref,registry/README.md,224,2196,changlog @1057,软件工程元框架成文法-changlog.md,2026-10-17：VFM 批入库（s5e-8）——验证手段 **6** 条（母本 8.2.1 @3317 手段映射注册表六类，**单行内六类顿号清单序**、`provenance` 不含 `row_id`）入库为 `seed`、台账增量七件、`WV-VFM-E3-01` 按防扩宽条款 (ii) **第十三次**单独申请（`pending`，待人类裁决），母本零改动（**4427**／围栏 **216** 不变）、注册表达 **105** 条 seed；`--check` **907｜硬失败 0｜软警告 0｜占位符 1092**、投影四件 **3629→3891**，零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-10-17：VFM 批入库（s5e-8）——验证手段 **6** 条（母本 8.2.1 @3317 手段映射注册表六类，**单行内六类顿号清单序**、`provenance` 不含 `row_id`）入库为 `seed`、台账增量七件、`WV-VFM-E3-01` 按防扩宽条款 (ii) **第十三次**单独申请（`pending`，待人类裁决），母本零改动（**4427**／围栏 **216** 不变）、注册表达 **105** 条 seed；`--check` **907｜硬失败 0｜软警告 0｜占位符 1092**、投影四件 **3629→3891**，零新增规范命题,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,6359,43,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,6747,56,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+field_path,registry/method_registry.yaml,6844,201,kind_profile_CFG.optional @378,registry/profiles.yaml,optional,@p:CFG#optional,propose,字段路径（相对剖面根）
+doc_ref,registry/method_registry.yaml,7271,20,profiles.yaml @412,registry/profiles.yaml,profiles[11].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[11].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,7287,37,profiles.yaml @407,registry/profiles.yaml,profiles[11].selection_profile,@d:registry/profiles.yaml#key-profiles[11].selection_profile,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,7357,145,profiles.yaml @407,registry/profiles.yaml,profiles[11].selection_profile,@d:registry/profiles.yaml#key-profiles[11].selection_profile,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,8701,66,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,8726,78,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,8730,22,profiles.yaml @378,registry/profiles.yaml,profiles[10].required_extra,@d:registry/profiles.yaml#key-profiles[10].required_extra,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,8745,14,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,8763,63,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,8852,251,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,8954,230,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,8963,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+other,registry/method_registry.yaml,9023,240,PRED_CALL_RE @220,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形；token 行号 220 与定义行 221 不吻合
+doc_ref,registry/method_registry.yaml,9041,270,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,9050,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,9148,373,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,9266,435,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,9275,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+other,registry/method_registry.yaml,9286,468,PRED_CALL_RE @220,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形；token 行号 220 与定义行 221 不吻合
+doc_ref,registry/method_registry.yaml,9353,136,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,9369,152,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,9376,64,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,9376,292,profiles.yaml @445,registry/profiles.yaml,profiles[12].narrative,@d:registry/profiles.yaml#key-profiles[12].narrative,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,9891,12,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/method_registry.yaml,11252,845,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+field_path,registry/method_registry.yaml,11270,2254,kind_profile_CFG.optional @377,registry/profiles.yaml,optional,@p:CFG#optional,propose,字段路径（相对剖面根）
+field_path,registry/method_registry.yaml,11271,466,kind_profile_CFG.table_rows @371,registry/profiles.yaml,seed_source.table_rows,@p:CFG#seed_source.table_rows,propose,字段路径（相对剖面根；按 seed_source 补全）
+doc_ref,registry/method_registry.yaml,11272,727,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,11287,1567,README @173,registry/README.md,4.8 CFG 批（行内加粗清单序入库，母本零改动）,@d:registry/README.md#sec-4.8 CFG 批（行内加粗清单序入库，母本零改动）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,11287,1579,todo @125,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,11287,1589,changlog @1009,软件工程元框架成文法-changlog.md,2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,propose,标题逐字且文件内唯一
+field_path,registry/method_registry.yaml,11289,600,kind_profile_QAT.table_rows @402,registry/profiles.yaml,seed_source.table_rows,@p:QAT#seed_source.table_rows,propose,字段路径（相对剖面根；按 seed_source 补全）
+doc_ref,registry/method_registry.yaml,11306,1964,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11306,4403,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,11306,4824,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+field_path,registry/method_registry.yaml,11308,810,kind_profile_VFM.seed_source.table_rows @429,registry/profiles.yaml,seed_source.table_rows,@p:VFM#seed_source.table_rows,propose,字段路径（相对剖面根）
+doc_ref,registry/method_registry.yaml,11309,377,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11309,869,project.py @831,registry/scripts/project.py,check_m9,@d:registry/scripts/project.py#check_m9,propose,函数名
+doc_ref,registry/method_registry.yaml,11461,474,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11497,1063,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11532,1569,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11568,1507,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11603,2083,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11638,4631,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11673,3003,project.py @726,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+doc_ref,registry/method_registry.yaml,11699,1028,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11708,4463,project.py @1084,registry/scripts/project.py,,,疑,registry/scripts/project.py:1084 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,11734,1414,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11734,1637,profiles.yaml @382,registry/profiles.yaml,profiles[10].optional[0].provenance,@d:registry/profiles.yaml#key-profiles[10].optional[0].provenance,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+field_path,registry/method_registry.yaml,11743,2779,kind_profile_CFG.optional @378,registry/profiles.yaml,optional,@p:CFG#optional,propose,字段路径（相对剖面根）
+doc_ref,registry/method_registry.yaml,11743,5289,project.py @727,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+doc_ref,registry/method_registry.yaml,11743,6597,project.py @1084,registry/scripts/project.py,,,疑,registry/scripts/project.py:1084 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,11743,7288,project.py @727,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+doc_ref,registry/method_registry.yaml,11769,1752,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,11769,1873,profiles.yaml @410,registry/profiles.yaml,profiles[11].optional,@d:registry/profiles.yaml#key-profiles[11].optional,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11778,722,README.md @173,registry/README.md,4.8 CFG 批（行内加粗清单序入库，母本零改动）,@d:registry/README.md#sec-4.8 CFG 批（行内加粗清单序入库，母本零改动）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,11778,737,todo.md @125,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,11778,754,changlog @1009,软件工程元框架成文法-changlog.md,2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,11778,892,project.py @1028,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,11778,3215,profiles.yaml @410,registry/profiles.yaml,profiles[11].optional,@d:registry/profiles.yaml#key-profiles[11].optional,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11778,8156,profiles.yaml @387,registry/profiles.yaml,profiles[10].narrative,@d:registry/profiles.yaml#key-profiles[10].narrative,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11804,2528,profiles.yaml @440,registry/profiles.yaml,profiles[12].optional[0].provenance,@d:registry/profiles.yaml#key-profiles[12].optional[0].provenance,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11813,1052,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,11813,1397,project.py @1028,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,11813,4959,profiles.yaml @440,registry/profiles.yaml,profiles[12].optional[0].provenance,@d:registry/profiles.yaml#key-profiles[12].optional[0].provenance,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11813,5539,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11813,6272,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,11813,12098,project.py @1084,registry/scripts/project.py,,,疑,registry/scripts/project.py:1084 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,11813,12520,profiles.yaml @415,registry/profiles.yaml,profiles[11].narrative,@d:registry/profiles.yaml#key-profiles[11].narrative,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+other,registry/method_registry.yaml,12122,1585,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+doc_ref,registry/method_registry.yaml,12131,3709,changlog @839,软件工程元框架成文法-changlog.md,2026-09-28：STP 批入库（s5e-2）——存储拓扑 4 条（母本 4.2.2 四行，单表表序）入库为 seed、台账增量七件、`WV-STP-E3-01` 按防扩宽条款 (ii) 单独申请（`pending`，待人类裁决），母本零改动（全文 `STP` 仅两处、无 `STP-数字` 形态已发布引用），注册表达 **65** 条 seed，零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-09-28：STP 批入库（s5e-2）——存储拓扑 4 条（母本 4.2.2 四行，单表表序）入库为 seed、台账增量七件、`WV-STP-E3-01` 按防扩宽条款 (ii) 单独申请（`pending`，待人类裁决），母本零改动（全文 `STP` 仅两处、无 `STP-数字` 形态已发布引用），注册表达 **65** 条 seed，零新增规范命题,propose,标题逐字且文件内唯一
+other,registry/method_registry.yaml,12144,456,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+doc_ref,registry/method_registry.yaml,12153,4595,changlog @839,软件工程元框架成文法-changlog.md,2026-09-28：STP 批入库（s5e-2）——存储拓扑 4 条（母本 4.2.2 四行，单表表序）入库为 seed、台账增量七件、`WV-STP-E3-01` 按防扩宽条款 (ii) 单独申请（`pending`，待人类裁决），母本零改动（全文 `STP` 仅两处、无 `STP-数字` 形态已发布引用），注册表达 **65** 条 seed，零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-09-28：STP 批入库（s5e-2）——存储拓扑 4 条（母本 4.2.2 四行，单表表序）入库为 seed、台账增量七件、`WV-STP-E3-01` 按防扩宽条款 (ii) 单独申请（`pending`，待人类裁决），母本零改动（全文 `STP` 仅两处、无 `STP-数字` 形态已发布引用），注册表达 **65** 条 seed，零新增规范命题,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12160,407,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12166,2444,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12175,541,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12175,2874,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12175,4765,todo.md @119,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12175,5488,todo.md @119,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12182,1125,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12188,917,predicate_vocabulary.yaml @137,registry/predicate_vocabulary.yaml,vocabulary_gaps[4],@d:registry/predicate_vocabulary.yaml#key-vocabulary_gaps[4],propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+field_path,registry/method_registry.yaml,12188,3486,kind_profile_CFG.optional @378,registry/profiles.yaml,optional,@p:CFG#optional,propose,字段路径（相对剖面根）
+doc_ref,registry/method_registry.yaml,12188,4259,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12188,4718,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/method_registry.yaml,12195,739,todo.md @111,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12197,3821,project.py @1640,registry/scripts/project.py,_entry_card,@d:registry/scripts/project.py#_entry_card,propose,函数名
+doc_ref,registry/method_registry.yaml,12204,1848,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12210,3272,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12211,2187,profiles.yaml @410,registry/profiles.yaml,profiles[11].optional,@d:registry/profiles.yaml#key-profiles[11].optional,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12217,829,todo.md @127,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12217,844,changlog @1039,软件工程元框架成文法-changlog.md,2026-10-10：QAT 批入库（s5e-7）——质量战术 **15** 条（母本 6.2.5 四属性行内顿号清单 **@2829-2832**，**四属性行内清单序**、`provenance` 不含 `row_id`）入库为 `seed`、台账增量七件、`WV-QAT-E3-01` 按防扩宽条款 (ii) **第十二次**单独申请（`pending`，待人类裁决），母本零改动（全文 `QAT` 仅 @400 与 @592 两处、无 `QAT-数字` 形态已发布引用）、注册表达 **99** 条 seed；kind 指称冲突经用户裁决定为 QAT（原指令称「s5e-7 RLP 批」而 RLP 已于 s5e-4 入库并批准），零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-10-10：QAT 批入库（s5e-7）——质量战术 **15** 条（母本 6.2.5 四属性行内顿号清单 **@2829-2832**，**四属性行内清单序**、`provenance` 不含 `row_id`）入库为 `seed`、台账增量七件、`WV-QAT-E3-01` 按防扩宽条款 (ii) **第十二次**单独申请（`pending`，待人类裁决），母本零改动（全文 `QAT` 仅 @400 与 @592 两处、无 `QAT-数字` 形态已发布引用）、注册表达 **99** 条 seed；kind 指称冲突经用户裁决定为 QAT（原指令称「s5e-7 RLP 批」而 RLP 已于 s5e-4 入库并批准），零新增规范命题,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12219,1614,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12219,4099,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12219,6378,project.py @1021,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+other,registry/method_registry.yaml,12232,1983,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+doc_ref,registry/method_registry.yaml,12232,2649,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12232,2999,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12233,2734,profiles.yaml @440,registry/profiles.yaml,profiles[12].optional[0].provenance,@d:registry/profiles.yaml#key-profiles[12].optional[0].provenance,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12233,4045,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12241,3958,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12241,6169,project.py @1021,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,12242,2035,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12378,599,project.py @1032,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+doc_ref,registry/method_registry.yaml,12378,890,project.py @1473,registry/scripts/project.py,render_survey,@d:registry/scripts/project.py#render_survey,propose,函数名
+other,registry/method_registry.yaml,12406,2907,Conway @1883,软件工程元框架成文法.md,@1883,@m:1883,propose,指向 母本 1883 行（Conway 书目）；R2 允许 @m:<行号>，保留原标识仅补目标前缀
+other,registry/method_registry.yaml,12414,326,gRPC @2031,软件工程元框架成文法.md,@2031,@m:2031,propose,指向 母本 2031 行（CTR-gRPC 示例）；R2 允许 @m:<行号>，保留原标识仅补目标前缀
+other,registry/method_registry.yaml,12414,345,CTR.compatibility.policy @2049,软件工程元框架成文法.md,@2049,@m:2049,propose,指向 母本 2049 行（3.6 示例 CTR.compatibility.policy）；R2 允许 @m:<行号>，保留原标识仅补目标前缀
+other,registry/method_registry.yaml,12414,381,CTR.lifecycle_state @2064,软件工程元框架成文法.md,@2064,@m:2064,propose,指向 母本 2064 行（3.6 示例 CTR.lifecycle_state）；R2 允许 @m:<行号>，保留原标识仅补目标前缀
+doc_ref,registry/method_registry.yaml,12420,1080,profiles.yaml @221,registry/profiles.yaml,profiles[4].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[4].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12420,4838,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+doc_ref,registry/method_registry.yaml,12420,6687,project.py @57,registry/scripts/project.py,,,疑,registry/scripts/project.py:57 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,12420,7470,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+other,registry/method_registry.yaml,12421,904,narrative.note @221,registry/profiles.yaml,kind_profile_STP.narrative.note,@p:STP#narrative.note,propose,上下文明确为 profiles.yaml kind_profile_STP 的 narrative.note；按裁定 ② 的 @p:<kind>#<字段>
+doc_ref,registry/method_registry.yaml,12422,772,project.py @57,registry/scripts/project.py,,,疑,registry/scripts/project.py:57 为模块级（无函数可指）
+doc_ref,registry/method_registry.yaml,12427,3340,project.py @225,registry/scripts/project.py,predicate_names,@d:registry/scripts/project.py#predicate_names,propose,函数名
+other,registry/method_registry.yaml,12427,3403,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+other,registry/method_registry.yaml,12427,6652,CONCRETE_NUM_RE @92,registry/scripts/project.py,CONCRETE_NUM_RE,,疑,project.py 模块级常量 CONCRETE_NUM_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+other,registry/method_registry.yaml,12428,847,CQRS @4280,软件工程元框架成文法.md,@4280,@m:4280,propose,指向 母本 4280 行（CQRS 行）；R2 允许 @m:<行号>，保留原标识仅补目标前缀
+other,registry/method_registry.yaml,12428,1113,CONCRETE_NUM_RE @92,registry/scripts/project.py,CONCRETE_NUM_RE,,疑,project.py 模块级常量 CONCRETE_NUM_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+other,registry/method_registry.yaml,12428,1155,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+field_path,registry/method_registry.yaml,12428,1212,kind_profile_DFL @250,registry/profiles.yaml,kind_profile_DFL,@p:DFL,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+other,registry/method_registry.yaml,12428,1359,narrative.note @274,registry/profiles.yaml,kind_profile_DFL.narrative.note,@p:DFL#narrative.note,propose,上下文明确为 profiles.yaml kind_profile_DFL 的 narrative.note；按裁定 ② 的 @p:<kind>#<字段>
+field_path,registry/method_registry.yaml,12428,1379,kind_profile_STP @211,registry/profiles.yaml,kind_profile_STP,@p:STP,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+doc_ref,registry/method_registry.yaml,12434,3070,project.py @726,registry/scripts/project.py,check_m4,@d:registry/scripts/project.py#check_m4,propose,函数名
+other,registry/method_registry.yaml,12435,820,CONCRETE_NUM_RE @92,registry/scripts/project.py,CONCRETE_NUM_RE,,疑,project.py 模块级常量 CONCRETE_NUM_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+other,registry/method_registry.yaml,12435,880,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+field_path,registry/method_registry.yaml,12435,1066,kind_profile_DFL @250,registry/profiles.yaml,kind_profile_DFL,@p:DFL,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+field_path,registry/method_registry.yaml,12435,1092,kind_profile_STP @197,registry/profiles.yaml,kind_profile_STP,@p:STP,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+doc_ref,registry/method_registry.yaml,12441,2191,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+field_path,registry/method_registry.yaml,12441,3812,kind_profile_SCH.narrative.note @355,registry/profiles.yaml,narrative.note,@p:SCH#narrative.note,propose,字段路径（相对剖面根）
+other,registry/method_registry.yaml,12441,4273,ENUM_ROLE @60,registry/scripts/project.py,ENUM_ROLE,,疑,project.py 模块级常量 ENUM_ROLE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+doc_ref,registry/method_registry.yaml,12441,5393,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+field_path,registry/method_registry.yaml,12441,5927,kind_profile_SCH.narrative.note @355,registry/profiles.yaml,narrative.note,@p:SCH#narrative.note,propose,字段路径（相对剖面根）
+doc_ref,registry/method_registry.yaml,12441,6289,project.py @1135,registry/scripts/project.py,,,疑,registry/scripts/project.py:1135 为模块级（无函数可指）
+other,registry/method_registry.yaml,12442,853,ENUM_ROLE @60,registry/scripts/project.py,ENUM_ROLE,,疑,project.py 模块级常量 ENUM_ROLE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+other,registry/method_registry.yaml,12442,867,CONCRETE_NUM_RE @92,registry/scripts/project.py,CONCRETE_NUM_RE,,疑,project.py 模块级常量 CONCRETE_NUM_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+other,registry/method_registry.yaml,12442,927,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+field_path,registry/method_registry.yaml,12442,1159,kind_profile_SCH @330,registry/profiles.yaml,kind_profile_SCH,@p:SCH,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+other,registry/method_registry.yaml,12442,1222,seed_source.clause_id @344,registry/profiles.yaml,kind_profile_SCH.seed_source.clause_id,@p:SCH#seed_source.clause_id,propose,上下文明确为 profiles.yaml kind_profile_SCH 的 seed_source.clause_id；按裁定 ② 的 @p:<kind>#<字段>
+other,registry/method_registry.yaml,12442,1290,narrative.note @355,registry/profiles.yaml,kind_profile_SCH.narrative.note,@p:SCH#narrative.note,propose,上下文明确为 profiles.yaml kind_profile_SCH 的 narrative.note；按裁定 ② 的 @p:<kind>#<字段>
+field_path,registry/method_registry.yaml,12442,1310,kind_profile_RLP @308,registry/profiles.yaml,kind_profile_RLP,@p:RLP,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+doc_ref,registry/method_registry.yaml,12448,2656,profiles.yaml @378,registry/profiles.yaml,profiles[10].required_extra,@d:registry/profiles.yaml#key-profiles[10].required_extra,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+other,registry/method_registry.yaml,12448,4680,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+other,registry/method_registry.yaml,12449,1038,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+field_path,registry/method_registry.yaml,12449,1290,kind_profile_CFG @357,registry/profiles.yaml,kind_profile_CFG,@p:CFG,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+other,registry/method_registry.yaml,12449,1460,narrative.note @384,registry/profiles.yaml,kind_profile_CFG.narrative.note,@p:CFG#narrative.note,propose,上下文明确为 profiles.yaml kind_profile_CFG 的 narrative.note；按裁定 ② 的 @p:<kind>#<字段>
+doc_ref,registry/method_registry.yaml,12450,1228,predicate_vocabulary.yaml @137,registry/predicate_vocabulary.yaml,vocabulary_gaps[4],@d:registry/predicate_vocabulary.yaml#key-vocabulary_gaps[4],propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12455,972,README.md @173,registry/README.md,4.8 CFG 批（行内加粗清单序入库，母本零改动）,@d:registry/README.md#sec-4.8 CFG 批（行内加粗清单序入库，母本零改动）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12455,987,todo.md @125,todo.md,3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,@d:todo.md#sec-3.8 方法注册表种子数据整理（独立工作项，原 3.4(3) 升格）,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12455,1004,changlog @1009,软件工程元框架成文法-changlog.md,2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,@d:软件工程元框架成文法-changlog.md#sec-2026-10-09：批准 Waiver `WV-CFG-E3-01`（评审点五人类裁决，申请登记 2026-10-08／裁决 2026-10-09，**跨 1 日**）——CFG 批 E3 seed 期限期豁免生效（`status: active`），十一项 Waiver 全部 `active`、防扩宽条款 (ii) 的单独申请纪律经**十一次**履行，注册表 **84** 条 seed 的数据面与豁免面全部对齐，零新增规范命题,propose,标题逐字且文件内唯一
+doc_ref,registry/method_registry.yaml,12456,719,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+field_path,registry/method_registry.yaml,12457,913,kind_profile_QAT @387,registry/profiles.yaml,kind_profile_QAT,@p:QAT,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+doc_ref,registry/method_registry.yaml,12462,1213,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12462,2612,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12462,4698,profiles.yaml @435,registry/profiles.yaml,profiles[12].selection_profile.variant,@d:registry/profiles.yaml#key-profiles[12].selection_profile.variant,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12462,5041,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+other,registry/method_registry.yaml,12462,7917,HEAD @9139,registry/method_registry.yaml,HEAD@9139,,疑,HEAD 是修订标签而非文档名；9139 行为 bound_expr，与所述 note 不符
+doc_ref,registry/method_registry.yaml,12462,11746,profiles.yaml @433,registry/profiles.yaml,profiles[12].seed_source.entry_id_range,@d:registry/profiles.yaml#key-profiles[12].seed_source.entry_id_range,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12463,1492,project.py @170,registry/scripts/project.py,has_path,@d:registry/scripts/project.py#has_path,propose,函数名
+field_path,registry/method_registry.yaml,12463,2035,kind_profile_VFM @415,registry/profiles.yaml,kind_profile_VFM,@p:VFM,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+field_path,registry/method_registry.yaml,12464,2176,kind_profile_VFM @429,registry/profiles.yaml,kind_profile_VFM,@p:VFM,propose,裸 kind：正文以块范围定位整个剖面（字段另列），无单一字段可指
+doc_ref,registry/method_registry.yaml,12606,1816,project.py @651,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+field_path,registry/method_registry.yaml,12618,234,kind_profile_CFG.table_rows @371,registry/profiles.yaml,seed_source.table_rows,@p:CFG#seed_source.table_rows,propose,字段路径（相对剖面根；按 seed_source 补全）
+doc_ref,registry/method_registry.yaml,12618,2280,predicate_vocabulary.yaml @137,registry/predicate_vocabulary.yaml,vocabulary_gaps[4],@d:registry/predicate_vocabulary.yaml#key-vocabulary_gaps[4],propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12618,3308,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+other,registry/method_registry.yaml,12618,3898,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+field_path,registry/method_registry.yaml,12620,339,kind_profile_CFG.table_rows @371,registry/profiles.yaml,seed_source.table_rows,@p:CFG#seed_source.table_rows,propose,字段路径（相对剖面根；按 seed_source 补全）
+field_path,registry/method_registry.yaml,12630,251,kind_profile_QAT.table_rows @402,registry/profiles.yaml,seed_source.table_rows,@p:QAT#seed_source.table_rows,propose,字段路径（相对剖面根；按 seed_source 补全）
+other,registry/method_registry.yaml,12630,3248,PRED_CALL_RE @221,registry/scripts/project.py,PRED_CALL_RE,,疑,project.py 模块级常量 PRED_CALL_RE；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+field_path,registry/method_registry.yaml,12632,415,kind_profile_QAT.table_rows @402,registry/profiles.yaml,seed_source.table_rows,@p:QAT#seed_source.table_rows,propose,字段路径（相对剖面根；按 seed_source 补全）
+field_path,registry/method_registry.yaml,12642,309,kind_profile_VFM.seed_source.table_rows @429,registry/profiles.yaml,seed_source.table_rows,@p:VFM#seed_source.table_rows,propose,字段路径（相对剖面根）
+doc_ref,registry/method_registry.yaml,12642,1931,profiles.yaml @442,registry/profiles.yaml,profiles[12].entry_level_exemptions,@d:registry/profiles.yaml#key-profiles[12].entry_level_exemptions,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/method_registry.yaml,12642,2947,project.py @831,registry/scripts/project.py,check_m9,@d:registry/scripts/project.py#check_m9,propose,函数名
+doc_ref,registry/method_registry.yaml,12642,3302,project.py @638,registry/scripts/project.py,check_schema,@d:registry/scripts/project.py#check_schema,propose,函数名
+doc_ref,registry/method_registry.yaml,12642,6168,project.py @1640,registry/scripts/project.py,_entry_card,@d:registry/scripts/project.py#_entry_card,propose,函数名
+other,registry/method_registry.yaml,12642,6421,SO_KEYS @1049,registry/scripts/project.py,SO_KEYS,,疑,project.py 模块级常量 SO_KEYS；规范 §5 只定义函数名与条款引文锚，未定义 .py 常量子锚 → 需人工定形
+field_path,registry/method_registry.yaml,12644,732,kind_profile_VFM.table_rows @429,registry/profiles.yaml,seed_source.table_rows,@p:VFM#seed_source.table_rows,propose,字段路径（相对剖面根；按 seed_source 补全）
+doc_ref,registry/method_registry.yaml,12644,1114,profiles.yaml @433,registry/profiles.yaml,profiles[12].seed_source.entry_id_range,@d:registry/profiles.yaml#key-profiles[12].seed_source.entry_id_range,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/predicate_vocabulary.yaml,139,164,project.py @208,registry/scripts/project.py,outside_brackets,@d:registry/scripts/project.py#outside_brackets,propose,函数名
+doc_ref,registry/predicate_vocabulary.yaml,143,951,method_registry.yaml @9987,registry/method_registry.yaml,entries[111].applicability.delivery_space,@d:registry/method_registry.yaml#key-entries[111].applicability.delivery_space,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/predicate_vocabulary.yaml,143,1826,method_registry.yaml @9987,registry/method_registry.yaml,entries[111].applicability.delivery_space,@d:registry/method_registry.yaml#key-entries[111].applicability.delivery_space,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/profiles.yaml,535,121,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/profiles.yaml,600,122,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/profiles.yaml,666,132,project.py @847,registry/scripts/project.py,check_cenv,@d:registry/scripts/project.py#check_cenv,propose,函数名
+doc_ref,registry/profiles.yaml,698,12,profiles.yaml @477,registry/profiles.yaml,profiles[14].status,@d:registry/profiles.yaml#key-profiles[14].status,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/profiles.yaml,699,12,profiles.yaml @539,registry/profiles.yaml,profiles[14].narrative,@d:registry/profiles.yaml#key-profiles[14].narrative,propose,结构化点路径（字段序列取旧符号，下标按行就近补全并校验唯一）
+doc_ref,registry/profiles.yaml,700,12,project.py @1069,registry/scripts/project.py,check_ledgers,@d:registry/scripts/project.py#check_ledgers,propose,函数名
+field_path,registry/projections/STY.md,1265,206,kind_profile_CFG.optional @378,,,,exempt,代码跨度内
+doc_ref,registry/projections/STY.md,1565,268,profiles.yaml @442,,,,exempt,代码跨度内
+doc_ref,registry/projections/STY.md,1585,233,profiles.yaml @435,,,,exempt,代码跨度内
+doc_ref,registry/projections/STY.md,1600,273,profiles.yaml @435,,,,exempt,代码跨度内
+doc_ref,registry/projections/STY.md,1616,376,profiles.yaml @435,,,,exempt,代码跨度内
+doc_ref,registry/projections/STY.md,1632,438,profiles.yaml @435,,,,exempt,代码跨度内
+frozen_key_at,todo.md,91,894,project.py @170,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,107,151,heading @2171,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,107,465,heading @385,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,109,1778,changelog @839,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,180,heading @2194,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2415,has_approved_exception @31,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2442,dataset @46,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2454,owner @47,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2464,access_path @48,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2480,data_flow @51,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2494,data_lineage @52,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2511,delivery_semantics @64,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2534,idempotency @65,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2550,time_semantics @69,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2569,declared @97,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,111,2582,registered @98,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,113,3133,changelog @839,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,115,202,heading @2475,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,115,6689,Z4 @2583,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,115,7436,heading @2234,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,117,2366,changlog @839,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,117,5713,heading @2481,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,119,163,heading @2481,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,119,2650,Y1 @2280,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,119,2671,Y8 @2294,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,119,5822,heading @2234,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,121,3157,changlog @928,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,121,3281,changlog @963,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,121,6231,judgment @7498,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,123,1992,Z6 @2588,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,123,2006,Z4 @2583,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,123,4378,implements @7099,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,123,4410,consumed_by @7198,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,125,418,yaml @7909,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,125,431,README @173,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,125,2002,implements @7100,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,125,2029,consumed_by @7199,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,125,2154,consumed_by @6991,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,125,3615,changlog @979,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,127,1682,changlog @1039,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,127,6311,note @9170,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,127,6938,changlog @1016,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,127,8566,vs @4009,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,127,9130,changlog @1023,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,129,273,changlog @1039,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,129,399,yaml @7909,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,129,412,README @173,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,129,6411,changlog @1030,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,129,6547,changlog @1019,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,2374,impact @9537,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,2387,affected @9538,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,2432,open @9540,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,2495,note @9960,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,2660,judgment @10444,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,2676,basis @10445,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,2689,provenance @10447,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,131,5907,docstring @114,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,133,5542,changlog @1057,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,133,5893,changlog @1073,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,139,705,heading @3629,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,143,83,changlog @1021,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,145,708,README @260,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,145,777,note @558,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,todo.md,149,606,T9 @3417,,,,exempt,冻结文件（0.22 不重写）
+doc_ref,参考资料缺口核对报告.md,9,23,changlog @212,软件工程元框架成文法-changlog.md,2026-09-15：本地资源核对批次（书目缺口核对引发，依据 AGENTS.MD 更新版本规则 + 编译规范 4.1 替代确认义务）,@d:软件工程元框架成文法-changlog.md#sec-2026-09-15：本地资源核对批次（书目缺口核对引发，依据 AGENTS.MD 更新版本规则 + 编译规范 4.1 替代确认义务）,propose,标题逐字且文件内唯一
+doc_ref,参考资料缺口核对报告.md,17,27,changlog @223,软件工程元框架成文法-changlog.md,2026-09-15（续）：resources 全量复扫——首轮漏检反转（同日自更正，依 0.23.6 登记）,@d:软件工程元框架成文法-changlog.md#sec-2026-09-15（续）：resources 全量复扫——首轮漏检反转（同日自更正，依 0.23.6 登记）,propose,标题逐字且文件内唯一
+doc_ref,参考资料缺口核对报告.md,26,25,changlog @557,软件工程元框架成文法-changlog.md,2026-09-18：目录治理批次——git 纳管＋内嵌版本史清理＋README 导览＋3.8 前置资料复核（书目 22/33/48/51 修订，附录一追加第 19 行）,@d:软件工程元框架成文法-changlog.md#sec-2026-09-18：目录治理批次——git 纳管＋内嵌版本史清理＋README 导览＋3.8 前置资料复核（书目 22/33/48/51 修订，附录一追加第 19 行）,propose,标题逐字且文件内唯一
+doc_ref,参考资料缺口核对报告.md,34,28,changlog @616,软件工程元框架成文法-changlog.md,2026-09-20（续）：todo 3.8 四批入库启动前强制核查——书目本地在库核对＋在线复核；发现书目 45 为幻觉文献，经用户裁决替换为真实著录（附录一追加第 21 行，零新增规范命题）,@d:软件工程元框架成文法-changlog.md#sec-2026-09-20（续）：todo 3.8 四批入库启动前强制核查——书目本地在库核对＋在线复核；发现书目 45 为幻觉文献，经用户裁决替换为真实著录（附录一追加第 21 行，零新增规范命题）,propose,标题逐字且文件内唯一
+doc_ref,参考资料缺口核对报告.md,73,57,changlog @212,软件工程元框架成文法-changlog.md,2026-09-15：本地资源核对批次（书目缺口核对引发，依据 AGENTS.MD 更新版本规则 + 编译规范 4.1 替代确认义务）,@d:软件工程元框架成文法-changlog.md#sec-2026-09-15：本地资源核对批次（书目缺口核对引发，依据 AGENTS.MD 更新版本规则 + 编译规范 4.1 替代确认义务）,propose,标题逐字且文件内唯一
+frozen_key_at,软件工程元框架成文法-changlog.md,592,38,E3 @4009,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,605,242,A @646,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,637,437,S1 @623,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,637,453,S5 @626,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,637,474,S5 @627,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,638,206,project.py @1032,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,641,71,project.py @1473,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,698,99,X1 @2009,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,698,108,Z1 @2575,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,698,139,Z1 @2575,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,698,161,Z4 @2583,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,698,194,Z5 @2586,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,729,403,Conway @1883,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,732,128,W5 @1715,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,732,193,W6 @1720,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,831,132,heading @2171,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,831,533,heading @385,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,865,162,heading @2194,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,110,has_approved_exception @31,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,137,dataset @46,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,149,owner @47,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,159,access_path @48,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,175,data_flow @51,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,189,data_lineage @52,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,206,delivery_semantics @64,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,229,idempotency @65,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,245,time_semantics @69,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,264,declared @97,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,868,277,registered @98,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,889,93,changelog @839,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,900,40,heading @2475,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,905,157,project.py @726,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,452,X1 @2009,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,461,Y1 @2279,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,475,Z1 @2575,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,489,Z2 @2577,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,503,Z3 @2579,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,517,Z4 @2583,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,536,Z5 @2586,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,907,556,Z7 @2590,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,909,497,AP3 @6303,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,909,617,Y6 @2290,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,910,349,heading @2234,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,915,152,meta @32,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,919,1038,todo @115,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,935,523,judgment @7068,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,937,924,heading @2481,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,972,674,changelog @963,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,977,721,judgment @7498,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1015,953,README @173,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1035,950,note @9170,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1038,401,vs @4009,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1043,404,yaml @7909,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1080,526,T5 @3437,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1080,540,T7 @3440,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1125,400,GRD @475,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1125,414,PRJ @506,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1125,428,GOV @537,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1125,480,note @558,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1126,85,PRJ @404,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1128,46,GRD @495,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1128,55,PRJ @522,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1128,68,GOV @554,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1128,417,G2 @568,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,软件工程元框架成文法-changlog.md,1129,95,note @558,,,,exempt,冻结文件（0.22 不重写）
