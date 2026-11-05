@@ -1083,6 +1083,7 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
 # 「曾把类型错误误判为数据缺口」的历史记录，不补 SO、不关闭；关闭须新 ADR 授权。
 GAP_SO_WHITELIST = {
     'G-PRJ-1': 'ADR-PRJ-2-01 §5.2 指定历史留痕：G-PRJ-1 原文保留、不补 SO、不关闭。',
+    'SO-1': 'G-STY-1 closure（2026-11-04，ADR-G-STY-ENV-01）明写「SO-1 保持 open」：属有意保留，不随 gap 关闭而视作坏引用。',
 }
 
 
@@ -1104,7 +1105,8 @@ def check_gap_so_integrity(rep, reg_doc):
             if t not in gaps:
                 bad_ref.append((oid, t))
                 continue
-            if s.get('status') == 'open' and gaps[t].get('status') == 'closed':
+            if (s.get('status') == 'open' and gaps[t].get('status') == 'closed'
+                    and oid not in GAP_SO_WHITELIST):   # 白名单键可为 SO（closure 明写保持 open）
                 rep.fail('GAP-SO', oid, f'open SO 指向已 closed gap {t}', level='info')
             if s.get('status') == 'open':
                 covered.setdefault(t, []).append(oid)
