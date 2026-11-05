@@ -188,7 +188,10 @@ def has_path(obj, dotted: str) -> bool:
     return cur is not None
 
 
-EXCLUDE_DOCS = {'锚点与引用规范.md', '提案-锚点改版-语义锚点.md'}  # 规范/提案自身是语法示例，不计入引用统计
+EXCLUDE_DOCS = {
+    '锚点与引用规范.md', '提案-锚点改版-语义锚点.md',          # 语法示例，不计入引用统计
+    'registry/anchor_index/插行位移演练报告.md',                # 演练报告含锚点示例（2026-11-05）
+}
 
 # `标识@行` 五类分账（2026-11-05 裁定，见规范 §10.1）
 DOC_KEYS = {'README', 'README.md', 'profiles.yaml', 'project.py', 'method_registry.yaml',
