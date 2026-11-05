@@ -7,12 +7,21 @@
   - 逐出现位置（文件／行／列）改写，禁止按串批量替换；
   - 冻结文件（0.22 as-of）、代码跨度、规范/提案自身不计改。
 
+规范 §10.2（2026-11-05 插行位移裁定）：
+  1. 区间锚若 起 < P ≤ 止（插入点在区间内部），不进自动位移结果，标 needs_review，
+     由人工判定「扩展／重锚／降 D3」——禁止静默扩成 `@96-103`；
+  2. 空行锚（落点为空行）判为不合规：只记录位置，不得输出「内容一致」；
+  3. 插入行被已有区间覆盖与第 1 条同一处理；
+  4. 位移后与别类同串时允许补 `@m:` 前缀（消歧不改语义），逐处登记 prefixed。
+
 工具同时完成「插入 → 位移 → 落点内容复核」，因为内容复核必须持有插入前的原文。
 
 用法:
   python3 registry/scripts/anchor_shift.py --root <root> --insert-at 100 \
-      --insert-line '（演练插入行）' --apply --report /tmp/report.csv
-退出码: 0=全部端点落点内容一致且无例外; 1=存在例外或内容不一致; 2=参数/环境错误。
+      --insert-line '（演练插入行）' --apply --report /tmp/report.csv \
+      --review-report /tmp/review.csv
+退出码: 0=无例外且被复核端点内容一致; 1=存在例外或内容不一致; 2=参数/环境错误。
+needs_review 不计例外，由 --review-report 与 summary 显式输出。
 """
 from __future__ import annotations
 
@@ -61,6 +70,7 @@ def main() -> int:
     ap.add_argument('--count', type=int, default=1)
     ap.add_argument('--apply', action='store_true')
     ap.add_argument('--report', default='')
+    ap.add_argument('--review-report', default='')
     args = ap.parse_args()
 
     root = Path(args.root).resolve()
@@ -85,6 +95,7 @@ def main() -> int:
     mother_rel = '软件工程元框架成文法.md'
 
     edits, skipped = [], Counter()
+    review = []   # §10.2 需人工裁定的条目：区间内部插入、空行落点
     # 同一行内被另一锚点的字面 token 完整包住的「锚」不是独立引用
     # （典型：`@d:...md#sec-<标题>` 的标题文本里嵌着 `@2830`），不得独立位移。
     by_line: dict[tuple, list] = {}
@@ -132,6 +143,13 @@ def main() -> int:
             skipped['非行号形态'] += 1
             continue
         a, b = int(parsed['a']), int(parsed['b']) if parsed['b'] else None
+        # 规范 §10.2 第 1／3 条：插入点落在区间内部（起 < P ≤ 止）时不得自动扩展。
+        # 保留原 token 不动，交给人工裁定；禁止把 `@96-102` 静默改成 `@96-103`。
+        if b is not None and a < args.insert_at <= b:
+            review.append(dict(file=r['file'], line=int(r['line']), col=int(r['col']),
+                               token=r['token'], reason='span_inside_insert',
+                               start=a, end=b))
+            continue
         new_a = shift_value(a, args.insert_at, args.count)
         new_b = shift_value(b, args.insert_at, args.count) if b is not None else None
         if new_a == a and new_b == b:
@@ -141,8 +159,10 @@ def main() -> int:
             new_tok += parsed['sep'] + str(new_b)
         if parsed['sub']:
             new_tok += parsed['sub']
-        # 撞串保护：裸锚位移后若与既有（非母本）目标串同形，补显式 @m: 前缀，
+        # 撞串保护（规范 §10.2 第 4 条：允许补目标前缀，属消歧不改语义）：
+        # 裸锚位移后若与既有（非母本）目标串同形，补显式 `@m:` 前缀，
         # 否则会新造 F-4 跨目标串（例：母本 @333→@334 撞上 profiles 的 @334）。
+        # 代价：F-1 由 8,911 变 8,907＝“裸锚转显式锚”，不是计数丢失。
         prefixed = False
         if not parsed['p'] and token_kind.get(new_tok, {'mother'}) - {'mother'}:
             new_tok = '@m:' + new_tok[1:]
@@ -182,6 +202,7 @@ def main() -> int:
         after_lines = before_lines[:args.insert_at - 1] + [args.insert_line] + before_lines[args.insert_at - 1:]
 
     # 落点内容复核：插入前 a 行文本 vs 插入后新 a' 行文本（区间两端各查）
+    # 规范 §10.2 第 2 条：落点为空行时只记录位置，不得输出「内容一致」。
     for e in edits:
         if not e.get('applied'):
             continue
@@ -194,11 +215,19 @@ def main() -> int:
                 exceptions.append(f'{e["file"]}:{e["line"]} 端点{endpoint} 原行号 {old} 越界')
                 continue
             txt_before = before_lines[old - 1]
+            if not txt_before.strip():
+                # 空行锚：判不合规，不参与一致性断言，只登记位置待清理
+                e[f'text_{endpoint}'] = ''
+                e['blank_landing'] = True
+                if not any(x['file'] == e['file'] and x['line'] == e['line']
+                           and x['col'] == e['col'] for x in review):
+                    review.append(dict(file=e['file'], line=e['line'], col=e['col'],
+                                       token=e['token'], reason='blank_landing',
+                                       start=e['a'], end=e['b']))
+                continue
             txt_after = after_lines[new - 1] if 1 <= new <= len(after_lines) else ''
             ok = txt_before == txt_after
             e[f'text_{endpoint}'] = ok
-            if endpoint == 'start':
-                e['blank_landing'] = not txt_before.strip()
             if not ok:
                 exceptions.append(f'{e["file"]}:{e["line"]} 端点{endpoint} '
                                   f'{old}->{new} 落点内容不一致')
@@ -212,6 +241,7 @@ def main() -> int:
                                 applied=e.get('applied', False),
                                 prefixed=e.get('prefixed', False),
                                 blank_landing=e.get('blank_landing', ''),
+                                review_reason='blank_landing' if e.get('blank_landing') else '',
                                 text_start_ok=e.get('text_start', ''),
                                 text_end_ok=e.get('text_end', '')))
     if args.report:
@@ -220,6 +250,11 @@ def main() -> int:
                                ['file', 'line', 'col', 'token', 'new_token'])
             w.writeheader()
             w.writerows(report_rows)
+    if args.review_report:
+        with open(args.review_report, 'w', encoding='utf-8', newline='') as f:
+            w = csv.DictWriter(f, fieldnames=['file', 'line', 'col', 'token', 'reason', 'start', 'end'])
+            w.writeheader()
+            w.writerows(review)
 
     ranges = sum(1 for e in edits if e['b'] is not None and e.get('applied'))
     inside = sum(1 for e in edits if e['span_inside'] and e.get('applied'))
@@ -231,9 +266,17 @@ def main() -> int:
                                                     if e.get('applied') and e['b'] is not None
                                                     and e['new_b'] != e['b']),
                    span_inside_insert=inside, collision_prefixed=prefixed,
-                   blank_landing=blank, skipped=dict(skipped),
+                   blank_landing=blank,
+                   needs_review=len(review),
+                   needs_review_span=sum(1 for x in review if x['reason'] == 'span_inside_insert'),
+                   needs_review_blank=sum(1 for x in review if x['reason'] == 'blank_landing'),
+                   review=[f'{x["file"]}:{x["line"]}:{x["col"]} {x["token"]} {x["reason"]}'
+                           for x in review],
+                   skipped=dict(skipped),
                    exceptions=len(exceptions))
     print(json.dumps(summary, ensure_ascii=False, indent=2))
+    for x in review:
+        print(f'REVIEW {x["file"]}:{x["line"]}:{x["col"]} {x["token"]} {x["reason"]}', file=sys.stderr)
     for x in exceptions:
         print('EXCEPTION', x, file=sys.stderr)
     return 1 if exceptions else 0
