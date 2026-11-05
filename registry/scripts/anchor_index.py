@@ -682,8 +682,9 @@ def assertions(rows, docs, reg, mode) -> list[dict]:
                     examples=' | '.join(f"{r['file']}:{r['line']} {r['token']} {r['drift']}({r['drift_delta']})" for r in drift_hard[:10]) +
                              f' || soft_suspect={len(drift_soft)}'))
     # F-4 跨目标类歧义串（忽略 unknown，unknown 归 F-2/F-3）
+    # 口径按规范 §8：冻结文件只做快照复算，不计入 F-1～F-6 的失败计数。
     tok_kinds = defaultdict(set)
-    for r in live_rows + frozen_rows:
+    for r in live_rows:
         if r['target_kind'] and r['target_kind'] != 'unknown':
             tok_kinds[r['token']].add(r['target_kind'])
     mixed = {k: v for k, v in tok_kinds.items() if len(v) > 1}
