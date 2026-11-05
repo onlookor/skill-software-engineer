@@ -204,6 +204,15 @@ def bracket_spans(s: str) -> list[str]:
 
 TRUST_PREFIX_RE = re.compile(r'^\[(已核验|存疑|未核验|待核验)')
 
+# 锚点 token 内的数组下标（如 `#key-profiles[11].selection_profile`）是定位语法，
+# 不是占位符方括号；普查前先剔除，避免把定位下标误计为槽。
+ANCHOR_KEY_TOKEN_RE = re.compile(
+    r'@(?:d|p):[^\s#，。；|）（：、／]+#(?:key-|field-)[^\s，。；|）（：、／]+')
+
+
+def strip_anchor_subscripts(s: str) -> str:
+    return ANCHOR_KEY_TOKEN_RE.sub(lambda m: re.sub(r'\[\d+\]', '', m.group(0)), s)
+
 
 def outside_brackets(s: str) -> str:
     """剔除方括号内文本（占位符内容不参与谓词名提取）。"""
@@ -1190,7 +1199,7 @@ def census_placeholders(entries: list) -> dict:
         walk_strings(e, '', strs)
         items = []
         for path, s in strs:
-            for span in bracket_spans(s):
+            for span in bracket_spans(strip_anchor_subscripts(s)):
                 if TRUST_PREFIX_RE.match(span):
                     continue
                 items.append((path, span[1:-1].strip()))
