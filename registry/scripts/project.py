@@ -70,6 +70,10 @@ ENTRY_FIELDS = {
     'anti_patterns', 'signals', 'formal_anchor', 'references', 'narrative',
 }
 APPLICABILITY_FIELDS = {'problem_space', 'current_space', 'delivery_space'}
+# ── applicability 项级事实槽（ADR-R2-APPL-01；母本 0.17.2 `applicability_item`）──
+APPLICABILITY_SPACES = ('problem_space', 'current_space', 'delivery_space')
+APPLICABILITY_ITEM_FIELDS = {'expr', 'form', 'answered_by', 'slot_name', 'value', 'source'}
+APPLICABILITY_ITEM_FORMS = {'predicate', 'question', 'slot'}
 SOURCE_REF_FIELDS = {'source_type', 'value', 'verified'}
 PROVENANCE_FIELDS = {'origin', 'source_pointers'}
 VERSION_FIELDS = {'major', 'minor', 'patch'}
@@ -239,6 +243,13 @@ PRED_CALL_RE = re.compile(r'([A-Za-z_][A-Za-z0-9_]*)\s*\(')
 
 def predicate_names(s: str) -> list[str]:
     return PRED_CALL_RE.findall(outside_brackets(s))
+
+
+def expr_of(item) -> str:
+    """applicability 项取值：对象态取 expr；裸字符串即 expr（母本 0.17.2 存量兼容）。"""
+    if isinstance(item, dict):
+        return str(item.get('expr') or '')
+    return str(item or '')
 
 
 def walk_strings(obj, path: str, out: list):
@@ -852,7 +863,7 @@ def check_m4(rep: Report, e: dict, eid: str, vocab: set):
     for sp in ('problem_space', 'current_space', 'delivery_space'):
         for j, cond in enumerate((e.get('applicability') or {}).get(sp) or []):
             scanned += 1
-            for name in predicate_names(str(cond)):
+            for name in predicate_names(expr_of(cond)):
                 if name not in vocab:
                     unknown.append(f'applicability.{sp}[{j}]: {name}')
     if unknown:
@@ -860,6 +871,111 @@ def check_m4(rep: Report, e: dict, eid: str, vocab: set):
                         + ' → 走 R2 提议并登记 vocabulary_gaps')
     else:
         rep.ok('M4', eid, 'hard', f'{scanned} 处谓词表达式全部落在登记词汇内（词汇量 {len(vocab)}）')
+
+
+# ── R2-APPL-01：applicability 项级事实槽（A1 结构／A2 角色／A3 槽／A4 形态提示）──
+
+QUESTION_MARKERS = re.compile(r'[？?]|是否|该不该|是什么|哪些|如何|为什么|须回答|必须由.{0,40}回答')
+
+
+def _r2_questionish(expr: str) -> bool:
+    """形态启发式（仅 A4 提示用，不参与任何硬判据）。"""
+    return bool(QUESTION_MARKERS.search(expr or ''))
+
+
+def _r2_answered_by_ok(ans: str, idx: Index, all_ids: set) -> bool:
+    v = ans[3:] if ans.startswith('@m:') else ans
+    return v in all_ids or bool(resolve_pointer('clause_id', v, idx)[0])
+
+
+def check_r2_applicability(rep: Report, entries: list, idx: Index, mode: str):
+    """R2-APPL-01（ADR-R2-APPL-01）：项级事实槽。
+    mode ∈ info|hard|off：info 期 A1–A3 降为 info 记录（不阻断）；A4 恒 info。
+    受管面（首期）：非 SRC 条目的 problem_space[0] 须对象态；其余项保持裸字符串兼容（≡predicate）。"""
+    check = 'R2-APPL'
+    if mode == 'off':
+        rep.skip(check, '全库 applicability', 'R2_APPL=off，检查未启用')
+        return
+    level = 'hard' if mode == 'hard' else 'info'
+    all_ids = {str(e.get('entry_id')) for e in entries}
+    a1, a2, a3 = [], [], []
+    hq, hp = [], []
+    dist = {'string': 0, 'predicate': 0, 'question': 0, 'slot': 0}
+    managed = 0
+    for e in entries:
+        eid = str(e.get('entry_id'))
+        app = e.get('applicability')
+        if not isinstance(app, dict):
+            continue
+        is_src = e.get('kind') == 'SRC'
+        for sp in APPLICABILITY_SPACES:
+            for i, item in enumerate(app.get(sp) or []):
+                where = f'{eid}.applicability.{sp}[{i}]'
+                is_managed = (not is_src and sp == 'problem_space' and i == 0)
+                if is_managed:
+                    managed += 1
+                    if not isinstance(item, dict):
+                        a1.append(f'{where}: 首期受管项须对象态（裸字符串仅非受管项兼容）')
+                if isinstance(item, str):
+                    dist['string'] += 1
+                    if _r2_questionish(item):
+                        hq.append(where)
+                    continue
+                if not isinstance(item, dict):
+                    a1.append(f'{where}: 项应为字符串或对象，实为 {type(item).__name__}')
+                    continue
+                extra = set(item) - APPLICABILITY_ITEM_FIELDS
+                if extra:
+                    a1.append(f'{where}: 含未知键 {sorted(extra)}')
+                form = item.get('form')
+                if form not in APPLICABILITY_ITEM_FORMS:
+                    a1.append(f'{where}: form={form!r} ∉ {sorted(APPLICABILITY_ITEM_FORMS)}')
+                    continue
+                dist[form] += 1
+                expr = str(item.get('expr') or '').strip()
+                if not expr:
+                    a1.append(f'{where}: expr 为空')
+                if form == 'question':
+                    if sp != 'problem_space':
+                        a2.append(f'{where}: question 仅准 problem_space')
+                    ans = str(item.get('answered_by') or '').strip()
+                    if not ans:
+                        a2.append(f'{where}: question 缺 answered_by')
+                    elif not _r2_answered_by_ok(ans, idx, all_ids):
+                        a2.append(f'{where}: answered_by={ans!r} 不可解析')
+                    if not _r2_questionish(expr):
+                        hp.append(where)
+                elif form == 'predicate':
+                    if _r2_questionish(expr):
+                        hq.append(where)
+                elif form == 'slot':
+                    sn = str(item.get('slot_name') or '').strip()
+                    if not re.fullmatch(r'[a-z][a-z0-9_]*', sn):
+                        a3.append(f'{where}: slot_name={sn!r} 不合规')
+                    if item.get('value') is not None:
+                        src = item.get('source')
+                        if not isinstance(src, dict) or set(src) - SOURCE_REF_FIELDS:
+                            a3.append(f'{where}: 给 value 须同给合规 source（0.4 条件 3）')
+                        elif not resolve_pointer(str(src.get('source_type')), src.get('value'), idx)[0]:
+                            a3.append(f'{where}: source 不可解析')
+
+    def _emit(label, items, ok_reason):
+        if items:
+            rep.fail(check, label,
+                     f'{len(items)} 处：' + '；'.join(items[:8]) + (' …' if len(items) > 8 else ''),
+                     level=level)
+        else:
+            rep.ok(check, label, level, ok_reason)
+
+    _emit('A1 结构', a1, f'对象项结构合规；首期受管项 {managed} 个')
+    _emit('A2 角色', a2, 'question 项角色与 answered_by 全部合规')
+    _emit('A3 槽', a3, 'slot 项字段与 source 全部合规')
+    rep.add(check, 'A4 形态提示', 'info', True,
+            f'提示 {len(hq) + len(hp)} 条：H1 predicate 疑为 question {len(hq)}｜H2 question 无疑问标记 {len(hp)}'
+            + (('｜样例 ' + '；'.join((hq + hp)[:6])) if (hq or hp) else ''))
+    rep.add(check, '形态分布', 'info', True,
+            f'applicability 项 {sum(dist.values())}｜裸字符串(≡predicate) {dist["string"]}｜predicate {dist["predicate"]}'
+            f'｜question {dist["question"]}｜slot {dist["slot"]}｜受管项 {managed}')
 
 
 def check_m5(rep: Report, e: dict, eid: str):
@@ -1736,6 +1852,12 @@ def render_self_check(ctx: dict) -> str:
     if led:
         L += ['### 台账完整性检查（LEDGER，信息性）', '']
         L += [f'- {r.scope}：{r.reason}' for r in led] + ['']
+    r2 = rep.of('R2-APPL')
+    if r2:
+        mode = (ctx['profiles_doc'].get('check_switches') or {}).get('R2_APPL', 'info')
+        L += ['### applicability 事实槽（R2-APPL-01，ADR-R2-APPL-01）', '',
+              f'- 开关 R2_APPL={mode}（info=观察期只记 info；hard=硬判据；off=停用）']
+        L += [f'- {r.scope}：{r.reason}' for r in r2] + ['']
     return '\n'.join(L)
 
 
@@ -1941,6 +2063,8 @@ def run_checks():
     check_cst(rep, entries, mat, prof_status)
     check_ledgers(rep, reg_doc, vocab_doc, profiles_doc)
     check_gap_so_integrity(rep, reg_doc)
+    r2_mode = str((profiles_doc.get('check_switches') or {}).get('R2_APPL', 'info')).lower()
+    check_r2_applicability(rep, entries, idx, r2_mode)
     ctx = {
         'rep': rep, 'idx': idx, 'reg_doc': reg_doc, 'profiles_doc': profiles_doc,
         'vocab_doc': vocab_doc, 'entries': entries, 'mat': mat, 'prof_status': prof_status,

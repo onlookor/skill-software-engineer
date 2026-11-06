@@ -21,7 +21,7 @@
 
 | 事实 | 值 |
 |---|---|
-| 谓词载体 | 各 `x.5` 形式化锚点节的**代码块**（如 `1.5` @1464–1473、`3.5` @1998–2006、`4.5` @2265–2276、`5.5`、`8.5` @3418–3428、`9.5` @3694–3704） |
+| 谓词载体 | 各 `x.5` 形式化锚点节的**代码块**（如 `1.5` @1469–1473、`3.5` @2003–2006、`4.5` @2270–2276、`5.5`、`8.5` @3423–3428、`9.5` @3699–3704） |
 | 行结构 | `name(arg1, arg2, …)  // 中文注释`，每行一名；无表头、无列 |
 | 「列语义」 | **不存在**。若有人按「名称／语义／出处」三列理解，那是 `registry/predicate_vocabulary.yaml` 的投影形态，非母本形态 |
 | 权威关系 | 母本 `x.5`＝权威；`predicate_vocabulary.yaml`＝数据侧投影（母本第 21 行自述「非权威」） |
@@ -40,9 +40,9 @@
 
 | 名 | 处置 | 母本出处方案 | 说明 |
 |---|---|---|---|
-| `cross_boundary_density` | 进表 | `9.2.3` @3627–3628「DSM 通道一：跨边界调用密度」；**出处可挂，定义必须新写**（散文只给指标名，未给分母／口径／窗口参数） | 定义写在谓词行注释：`跨边界边数 / 内部边数` 按窗口聚合；`9.2.1` P2 的阈值与趋势判据消费它 |
-| `baseline` | 进表 | `9.2.1` @3609 P2「相对基线漂移」；`0.17.7` 假精确门槛 | 定义：基线＝**登记值**（注册表或版本向量快照），不是运行时估计值；无登记值 → M15 勘察义务，不得默认 0 |
-| `monotonic_trend` | **复合，不进表** | `9.5` @3696 `signal(..., trend_window_verdict)`＋`G7` @3732「threshold ∧ trend_window 双判据」 | 表达为：连续 N 窗口 `trend_window_verdict` 同向；`N` 为窗口参数，不另立名。**「连续 N 窗口」是 G7 已有的判定形态，不是新语义** |
+| `cross_boundary_density` | 进表 | `9.2.3` @m:9.2.3「DSM 通道一：跨边界调用密度」；**出处可挂，定义必须新写**（散文只给指标名，未给分母／口径／窗口参数） | 定义写在谓词行注释：`跨边界边数 / 内部边数` 按窗口聚合；`9.2.1` P2 的阈值与趋势判据消费它 |
+| `baseline` | 进表 | `9.2.1` @3614 P2「相对基线漂移」；`0.17.7` 假精确门槛 | 定义：基线＝**登记值**（注册表或版本向量快照），不是运行时估计值；无登记值 → M15 勘察义务，不得默认 0 |
+| `monotonic_trend` | **复合，不进表** | `9.5` @3701 `signal(..., trend_window_verdict)`＋`G7` @3737「threshold ∧ trend_window 双判据」 | 表达为：连续 N 窗口 `trend_window_verdict` 同向；`N` 为窗口参数，不另立名。**「连续 N 窗口」是 G7 已有的判定形态，不是新语义** |
 | `cycle_scale` | **排除** | 无。`5.2.1` 只给「形成环／顺序语义缺失」，`1.5` 的 `cycle(forbidden_dependency)` 是**依赖环**，不是交互环规模 | 强行立名＝本地造义（违 0.4 条件 3）。残余：`SRC-001-S2` 的「环规模单调上升」暂不可判定，仅以散文＋`G7` 趋势面部分覆盖；`VG-09` 保留该残余 |
 
 ### 2.2 F2 结构与契约族（4）
@@ -52,9 +52,9 @@
 | 名 | 处置 | 母本出处方案 | 说明 |
 |---|---|---|---|
 | `cycle` | **进表（改名 `interaction_cycle`）** | `5.2.1`「形成环」散文；`5.5` `interaction_flow` 已有 | **撞名**：`1.5` V1 已用 `cycle(forbidden_dependency)`。裸 `cycle` 进表会造成同名异义（0.22 编号不复用原则的同型风险）。改名 `interaction_cycle(graph)`，注释明示与 V1 的 `cycle` 不同指 |
-| `execution_order` | 进表 | `5.2.1` @2199 附近「顺序/幂等/重复投递成为必答题」；`5.5` 有 `delivery_semantics` 面 | 定义：两交互间的偏序 `before(e1,e2)`；「未登记」由 `registered` 侧判定，不在本名内建 |
-| `conforms_to` | **复合，不进表** | `3.5` X1 @2011：`∀ interaction(u1,u2): ∃C covers(C,u1,u2)` | 正是 X1 的**否定**：`connects(u1,u2,·) ∧ ¬∃C covers(C,u1,u2)`。再加一个 `conforms_to` 会与 X1 造第二真源 |
-| `lower_layer_coverage` | **复合，不进表** | `8.5` `test_suite(S, layer, target_set)`＋`covers_check(property_id, …)`；`T5` @3439 散文 | 表达为 `∀p: hard(p) ∧ ¬∃S: test_suite(layer=lower, target ∋ p)`。T5 已用该形态，不另立名 |
+| `execution_order` | 进表 | `5.2.1` @2204 附近「顺序/幂等/重复投递成为必答题」；`5.5` 有 `delivery_semantics` 面 | 定义：两交互间的偏序 `before(e1,e2)`；「未登记」由 `registered` 侧判定，不在本名内建 |
+| `conforms_to` | **复合，不进表** | `3.5` X1 @2016：`∀ interaction(u1,u2): ∃C covers(C,u1,u2)` | 正是 X1 的**否定**：`connects(u1,u2,·) ∧ ¬∃C covers(C,u1,u2)`。再加一个 `conforms_to` 会与 X1 造第二真源 |
+| `lower_layer_coverage` | **复合，不进表** | `8.5` `test_suite(S, layer, target_set)`＋`covers_check(property_id, …)`；`T5` @3444 散文 | 表达为 `∀p: hard(p) ∧ ¬∃S: test_suite(layer=lower, target ∋ p)`。T5 已用该形态，不另立名 |
 
 ### 2.3 F3 授权与追溯族（3）
 
@@ -62,9 +62,9 @@
 
 | 名 | 处置 | 母本出处方案 | 说明 |
 |---|---|---|---|
-| `auth_bypass` | **复合，不进表** | `4.5` Y2 @2283：`access_path(D,c,…,C) ∧ registered(C) ∧ provider(C)=owner(D)` | 正是 Y2 的**否定**：`access_path ∧ (¬registered(C) ∨ provider≠owner)`。已有两名足够，新增即重复真源 |
+| `auth_bypass` | **复合，不进表** | `4.5` Y2 @2288：`access_path(D,c,…,C) ∧ registered(C) ∧ provider(C)=owner(D)` | 正是 Y2 的**否定**：`access_path ∧ (¬registered(C) ∨ provider≠owner)`。已有两名足够，新增即重复真源 |
 | `traceable_to_fact` | 进表 | `0.3` 出处义务＋`0.4` 条件 3；`10.2.3` 血缘 | 定义：`decision.d` 的 `source_pointers` 非空且逐条可反查（与 `project.py` 的指针 miss 判定同口径） |
-| `falsification_metric` | 进表 | `0.5` 保守假设 ADR 必含「可推翻指标」；`9.5` G8 @3733 | 定义：ADR 字段级谓词，`falsification_metric(adr, metric, threshold, window)`；`0.5` 只给义务，未给谓词名，故须新行承载 |
+| `falsification_metric` | 进表 | `0.5` 保守假设 ADR 必含「可推翻指标」；`9.5` G8 @3738 | 定义：ADR 字段级谓词，`falsification_metric(adr, metric, threshold, window)`；`0.5` 只给义务，未给谓词名，故须新行承载 |
 
 ### 2.4 F4 记录与闭环族（4）
 
@@ -75,7 +75,7 @@
 | `baseline_change_record` | **复合，不进表** | `9.5` `drift(D_approved, …, remediation_route)`；`baseline` 由 F1 新行提供 | 表达为 `baseline(m) ∧ drift ∧ ¬route_registered`。`drift` 已含「偏离必有闭环」（G6），不另立记录名 |
 | `remediation_or_waiver_record` | **复合，不进表** | `9.5` `waiver(w, scope, deadline, …)`＋`debt_item(d, repayment_action, …)` | 表达为 `waiver(w, scope) ∨ debt_item(d, …)`。两名已在 9.5，新增即第三真源 |
 | `supplement_evidence_record` | 进表 | `0.3` 出处登记；`0.17.7` M15 勘察义务 | 定义：`supplement_evidence_record(d)`＝补证工件已入库且指针可查；**与 `traceable_to_fact` 不同**：前者是**动作完成**，后者是**状态**，不可合并 |
-| `metric_hit` | **复合，不进表** | `9.5` `canary_gate(strategy, metric, threshold, window)`；G4 @3726、G8 @3733 | 表达为 `canary_gate` 的 `threshold ∧ window` 判定产物；G4 已规定「非人工叙事」，不另立名 |
+| `metric_hit` | **复合，不进表** | `9.5` `canary_gate(strategy, metric, threshold, window)`；G4 @3731、G8 @3738 | 表达为 `canary_gate` 的 `threshold ∧ window` 判定产物；G4 已规定「非人工叙事」，不另立名 |
 
 ### 2.5 F5 验证证据族（2）
 
@@ -84,7 +84,7 @@
 | 名 | 处置 | 母本出处方案 | 说明 |
 |---|---|---|---|
 | `assertion_fact_mismatch` | 进表 | `8.5` `evidence_artifact(E, seven_fields)`＋`verdict_of(E)`；`8.2.5` 触发 | 定义：`evidence_artifact(E) ∧ ¬matches(E, registered_fact)`；`matches` 不另立，作为本谓词内建比较（注释写清比较对象） |
-| `consecutive_failure` | **复合，不进表** | `8.5` `test_suite`／`injection_case`＋`verdict_of(E)=fail`；`T9` @3446 | 表达为：同一 `case` 连续 N 周期 `verdict_of=fail`；`N` 为窗口参数。已有两名足够 |
+| `consecutive_failure` | **复合，不进表** | `8.5` `test_suite`／`injection_case`＋`verdict_of(E)=fail`；`T9` @3451 | 表达为：同一 `case` 连续 N 周期 `verdict_of=fail`；`N` 为窗口参数。已有两名足够 |
 
 ### 2.6 计数
 
@@ -102,7 +102,7 @@
 
 ### 3.1 实际位置与现有行结构
 
-候选载体：`9.5` @3694–3704 代码块（方面 9 的机器层谓词，信号面最近）：
+候选载体：`9.5` @3699–3704 代码块（方面 9 的机器层谓词，信号面最近）：
 
 ```
 3694 ```
@@ -122,7 +122,7 @@
 | # | 草案行 | 定义要点（注释全文见 §2 各表） |
 |---|---|---|
 | 1 | `# ── SRC 信号判据（VG-09 扩容；ADR-VG09-01）──` | 块内分节注释 |
-| 2 | `cross_boundary_density(scope, window)` | 跨边界边数/内部边数，窗口聚合；引 9.2.3 @3627 |
+| 2 | `cross_boundary_density(scope, window)` | 跨边界边数/内部边数，窗口聚合；引 @m:9.2.3 |
 | 3 | `baseline(metric, scope)` | 登记值快照；无登记 → M15；引 9.2.1 P2 |
 | 4 | `interaction_cycle(graph)` | 交互有向环；**与 1.5 `cycle` 不同指**；引 5.2.1 |
 | 5 | `execution_order(e1, e2)` | 交互偏序；「未登记」由 `covers`/`registered` 侧判 |
@@ -268,7 +268,7 @@
 
 ## 9 参考与本轮状态
 
-- 母本：`9.5` @3694–3704、`9.2.3` @3627–3628、`9.2.1` @3609–3623、`1.5` @1464–1484、`3.5` @1998–2020、`4.5` @2265–2287、`5.2.1` @2199 邻域、`8.5` @3418–3447、`0.3`／`0.4`／`0.5`／`0.17.7`／`0.17.8`、`10.2.3`。
+- 母本：`9.5` @3699–3704、`9.2.3` @m:9.2.3、`9.2.1` @3614–3623、`1.5` @1469–1484、`3.5` @2003–2020、`4.5` @2270–2287、`5.2.1` @2204 邻域、`8.5` @3423–3447、`0.3`／`0.4`／`0.5`／`0.17.7`／`0.17.8`、`10.2.3`。
 - 注册表：`VG-09`、`G-SRC-1`、`predicate_vocabulary.yaml`（在册名 76，批后 84，见 §10）。
 - 入库：本 ADR 由 draft 转 approved 后，与执行结果同一笔提交（文件范围与哈希见 `软件工程元框架成文法-changlog.md` 本批次记录）。
 
