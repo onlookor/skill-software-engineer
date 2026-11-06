@@ -1272,3 +1272,16 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **文档**：`registry/README.md` 新增 **§4.25**（SRC kind 登记与 9.2.3 接线）；ADR §2.1 加插行注记（3613–3621 → 3614–3622，不改写原表）。
 - **不变量**：entries／seed **130**；`--check` **1,124** 条记录／硬通过 **916**／硬失败 **0**／软警告 **0**；指针 **2,180**／miss **0**；占位符 **1,483＝事实 1＋槽 1,482**；四件投影同源重生成。
 - **停点**：`SRC-001…008` 八条条目**未写入** `method_registry.yaml`，编号未发布；编号一经落册不可复用／不可重排（0.22）。等待用户确认 8 条的 id／名称／源方面／消费方式／子信号清单后一次性发布。
+
+## 2026-11-06：0.17.2 增 `signals` 字段＋SRC-001…008 发布（ADR-SRC-02，方案 A／写法 I）
+
+- **0.13 ADR**：`ADR草案-SRC-signals字段-方案A.md`（ADR-SRC-02），人类批准后执行；否决方案 B（语义挪用＋消费方式退成自由文本＝又造一处机器读不到的真源）。
+- **母本**：0.17.2 `registry_entry` 块内插入 `signals` 定义 **1 行**（第 364 行 `]` 后、`formal_anchor` 前，块内写法 I）；母本 **4,429→4,430** 行，`git diff --numstat` **1/0**。
+- **位移与清债（同批）**：动锚 **6,839**、区间锚 **993**、端点 **7,832**、例外 **0**、撞串补前缀 **0**、`prefix_unresolved=0`；插行引入的 7 条 `needs_review` 全部清零（1 条 `@322-381`→`@m:0.17.2`，6 条空行锚→文字引用），不留债。F-2～F-8 pass；F-1 为现状度量（8,814）。
+- **M2 增量**：S-1～S-9（S-1～S-8 hard、S-9 info）；`signals.detection_predicate` 不走 M4，只做非空校验且禁方括号占位。
+- **剖面**：`signals` 进 `common_required`；17 个非 SRC kind 逐条 `not_applicable`（reason＋provenance.origin=compiled）；`kind_profile_SRC` 走 `required_extra` 必填。
+- **条目**：`SRC-001…SRC-008`（status seed，14 子信号逐条进 `signals`，5 条 `severity_condition`，SRC-006 的 `re_review` 带 `gate: R2`）；entries／meta **130→138**；kind **17→18**；`ST-SRC-01` 新增（scope＝138 条 seed）。
+- **台账**：新增 `G-SRC-1`（SRC 谓词词汇未登记，open，逐条登记走 R2）；`G-GRD-1`／`SO-17` 关闭（closure／evidence；statement／impact／route 逐字保留，既有 note 不改写）。
+- **不变量**：`--check` **1,199** 条记录／硬通过 **965**／硬失败 **0**／软警告 **0**；指针 **2,244**／miss **0**；占位符 **1,483＝事实 1＋槽 1,482（不变，本批无方括号虚增）**；`needs_review` **0**。
+- **投影四件（同一次 `--project`）**：`STY.md` **2,012**／`勘察义务清单.md` **133**／`索引.md` **316**／`自检报告.md` **361**；sha256 前 12 位 `68327ab9b54e`／`738d09dd5352`／`3acb1eaba746`／`09e8741faf67`。
+- **文档**：`registry/README.md` 新增 §4.26（§4.25 行号口径订正为 405／3624／3615–3622／3623）。
