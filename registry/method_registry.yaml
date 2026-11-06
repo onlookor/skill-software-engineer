@@ -11736,7 +11736,7 @@ gaps:
 
   - gap_id: G-SRC-1
     type: 谓词词汇缺口（signals.detection_predicate 的谓词未登记）
-    statement: "0.17.2 新增 signals 后，8 条 SRC 的 detection_predicate 需要可执行谓词；母本 9.2.3 只给自然语言信号描述（如「僵尸开关（expiry 超期）」「错误预算燃尽率」「金字塔失真」），未给谓词名。registry/predicate_vocabulary.yaml 实测未登记本批所需谓词——已知至少 expiry（VG-05）、pyramid_distortion／distortion（VG-07）、burn_rate（VG-06 Q7 面）四名在册面缺失，另有本批新引用的 unregistered_interaction／metric_hit 等尚无登记出处。本批不本地造词、不以调用式伪装已登记。"
+    statement: "0.17.2 新增 signals 后，8 条 SRC 的 detection_predicate 需要可执行谓词；母本 9.2.3 只给自然语言信号描述（如「僵尸开关（expiry 超期）」「错误预算燃尽率」「金字塔失真」），未给谓词名。registry/predicate_vocabulary.yaml 实测未登记本批所需谓词——已知至少 expiry（VG-05）、pyramid_distortion／distortion（VG-07）、burn_rate（VG-06 Q7 面）四名在册面缺失，另有本批新引用的 unregistered_interaction／metric_hit 等尚无登记出处。本批不本地造词、不以调用式伪装已登记。2026-11-06 清点（追加，上句原文不改写）：14 条 detection_predicate＋5 条 severity_condition.when_predicate 共 19 串；完全已登记 0／既有 VG 覆盖 3（VG-05 两条：SRC-004-S1 的 expiry／cleanup_filed 与其 when 的 Z6；VG-06 一条：SRC-005-S1 的 burn_rate，但 VG-06 只覆盖 burn_rate／error_budget 词名、不覆盖「连续窗口越阈／趋势同向」，按覆盖不足计）／全新未登记 16（涉 17 名）。16 串未登记判据（涉 17 名）与所属串的完整清单、以及覆盖不足的逐条判读，登记于 VG-09（只登记、不定义）。"
     impact: "本批 M4 不扫 signals（只做 S-4 非空校验），故 signals.detection_predicate 是未机器封闭的文本，不得被读作「可执行谓词」。为防错分账，本批 detection_predicate／when_predicate 一律禁方括号：带「待勘察：」会误生成 M15 勘察义务，不带会虚增槽数；故占位符口径维持 1,483（事实 1＋槽 1,482）。不影响 M2 必填与 seed 资格（S-1～S-9 全过）。"
     affected: "SRC-001…SRC-008 的 signals[].detection_predicate 与 signals[].severity_condition.when_predicate；predicate_vocabulary.yaml；M4 检查面（现不覆盖 signals）"
     route: "逐条把谓词登记进 predicate_vocabulary.yaml（走 R2 提议；该文件为非权威投影，权威在母本 x.5／0.17.8／0.18.6 等）→ 登记完成后另开 ADR，把 M4 扩到 signals[].detection_predicate 并重跑 M4。登记前保持 open；不得以调用式（如 expiry(flag)）冒充已登记谓词，也不得以方括号占位替代登记。"

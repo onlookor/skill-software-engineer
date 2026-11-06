@@ -459,6 +459,14 @@
 8. **投影四件（同一次 `--project`）**：`STY.md` **2,012** 行／`勘察义务清单.md` **133**／`索引.md` **316**／`自检报告.md` **361**；sha256 前 12 位 `68327ab9b54e`／`738d09dd5352`／`3acb1eaba746`／`09e8741faf67`。
 9. **口径**：`signals` 的可执行性**不宣称**——`G-SRC-1` 未关闭前，`detection_predicate` 只是非空文本（M4 不覆盖）。`severity` 与 `consumption` 无交叉校验（母本无对应表，不本地加规则）。
 
+### 4.27 G-SRC-1 推进：SRC 判据清点与 VG-09 登记（2026-11-06）
+
+1. **清点**：8 条 SRC／14 子信号的判据共 **19 串**（14 条 `detection_predicate`＋5 条 `severity_condition.when_predicate`）——完全已登记 **0**；既有 VG 覆盖 **3**（VG-05 两条：SRC-004-S1 的 expiry／cleanup_filed 及其 when 的 Z6；VG-06 一条：SRC-005-S1 的 burn_rate，仅词名、阈值与窗口不覆盖，按覆盖不足计）；全新未登记 **16 串（17 名）**。
+2. **登记**：新增 `VG-09`（只登记、不定义；`vocabulary_gaps` **8→9**，在册名 **76 不变**）。17 名逐条列于条目 `missing_need`，不本地造词、不写调用式。
+3. **口径**：本批**不得**用方括号占位（S-4 明禁），故以「散文＋不调用」替代；`G-SRC-1` statement 追加清点结论（原文不改写），impact／route 不变。
+4. **待批（未自行越过）**：把 17 名逐条登记进词汇表属谓词表扩充（高影响，R2＋ADR＋批准）；登记后另开 ADR 扩 M4 至 `signals` 亦须批准。
+5. **不变量**：entries **138**；`--check` **1,199**／硬失败 **0**／软警告 **0**；指针 **2,244**／miss **0**；占位符 **1,483＝1＋1,482**；`needs_review` **0**；母本 **0 行**。
+
 ## 5. 状态纪律与自检清单
 
 生命周期见 0.17.5。`draft→seed` = bootstrap 期专用迁移，条件 **M2–M6 全过**（低影响：简记 ＋ provenance 登记，简记见 `method_registry.yaml: status_transitions`）。`project.py` 执行：
