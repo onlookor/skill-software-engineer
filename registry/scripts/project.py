@@ -1173,10 +1173,31 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
     n_closed = len(pcr.get('closed_in_entries') or [])
 
     vg = len(vocab_doc.get('vocabulary_gaps') or [])
+    _vnames = set()
+    for _k in ('predicates', 'formula_words', 'clause_defined_predicates'):
+        for _it in vocab_doc.get(_k) or []:
+            if isinstance(_it, dict) and _it.get('name'):
+                _vnames.add(_it['name'])
+    _law_pred = set(re.findall(r'^([a-z][a-z0-9_]*)\s*\(', read_text(LAW_PATH), re.M))
     for g in vocab_doc.get('vocabulary_gaps') or []:
         miss = [k for k in ('id', 'missing_need', 'workaround', 'route') if not g.get(k)]
         if miss:
             rep.fail('LEDGER', str(g.get('id')), f'词汇缺口缺要素 {miss}', level='info')
+        # 复合式消解映射：结构化字段（机器可读；名不得重登、基词须在母本或词汇表）
+        for c in g.get('resolution_2026_11_06', {}).get('resolved_by_composition') or []:
+            bad = [k for k in ('name', 'expr', 'base_predicates', 'source') if not c.get(k)]
+            if bad:
+                rep.fail('LEDGER', f"{g.get('id')}:{c.get('name', '?')}", f'复合式映射缺要素 {bad}')
+                continue
+            if c['name'] in _vnames:
+                rep.fail('LEDGER', f"{g.get('id')}:{c['name']}", '复合式名已单独登记（重复真源）')
+                continue
+            absent = [b for b in c['base_predicates'] if b not in _law_pred and b not in _vnames]
+            if absent:
+                rep.fail('LEDGER', f"{g.get('id')}:{c['name']}", f'复合式基谓词不在母本/词汇表 {absent}', level='info')
+            else:
+                rep.add('LEDGER', f"{g.get('id')}:{c['name']}", 'info', True,
+                        f"复合式映射齐备（基词 {c['base_predicates']}）")
     kpg = len(profiles_doc.get('gaps') or [])
     for g in profiles_doc.get('gaps') or []:
         miss = [k for k in ('gap_id', 'type', 'statement', 'impact', 'route', 'status') if not g.get(k)]
