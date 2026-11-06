@@ -1,12 +1,13 @@
-# E3 Waiver 内容草案（PRJ／GOV／GRD 三份）
+# E3 Waiver 内容草案（PRJ／GOV／GRD 三份；附 SRC 第四份草案 §6）
 
 | 项 | 值 |
 |---|---|
-| 状态 | **draft（仅内容草案；未获批准、未写入 `method_registry.yaml`）** |
+| 状态 | **§1–§3：approved（2026-11-06 人类批准，已落 `waivers` 段）；§6 `WV-SRC-E3-01`：draft／pending（未落册、未获批准）** |
 | 日期 | 2026-11-06 |
 | 性质 | 9.2.2 五要素的备材；批准与否由人类裁决（0.10 第一条） |
 | 依据 | E3（母本 10.5，FVR 全覆盖 —— 硬）；0.17.6(2) 制度性豁免通道；G1（P0 即时阻塞 —— 硬）；G5（豁免不静默展期 —— 硬）；`WV-STY-E3-01` 已裁定的边界结论（制度性豁免 ≠ 裁量豁免，`external_cause: false` 不构成驳回理由）；防扩宽条款 (ii)「各 kind 各自单独申请」 |
-| 未动项 | `method_registry.yaml` 的 `waivers` 段零改动；`G-GOV-1`／`SO-19` 零改动；母本零改动；条目零改动 |
+| 未动项 | `G-GOV-1`／`SO-19` 已于本批随三份落册按各自闭合条件关闭（closure 记于 `method_registry.yaml`）；母本零改动；条目零改动；`WV-SRC-E3-01` 未写入 `waivers` 段 |
+| 文件命名 | 文件名保留 `PRJ-GOV-GRD` 不重命名（避免已引用的路径失效）；新增的第 4 份以 §6 承载，并在 §0 与本节标注，命名差异由本条说明吸收 |
 
 ## 0. 三份的一行转述版（供拍板）
 
@@ -15,6 +16,7 @@
 | `WV-PRJ-E3-01` | 仅覆盖 PRJ-001…PRJ-011（11 条 seed）`formal_anchor` 引用的 **E1 implements 11 个实例**；不含其它 kind、不含 active 条目、不含 E1 以外的性质。 | 编译器首次成功运行且 E1 已建 FVR 条目、接线完成、`first_full_run` 留证时闭合（事件型，无日历期限）。 |
 | `WV-GOV-E3-01` | 仅覆盖 GOV-001…GOV-006（6 条 seed）引用的 **5 项 8 实例**（R7 implements 3／R1 1／R2 implements 1＋triggers 1／R6 1／R8 1）；不含其它 kind、不含 active 条目。 | 同上事件型：R1／R2／R6／R7／R8 五项各建 FVR 条目并接线、首次全量运行留证时闭合。 |
 | `WV-GRD-E3-01` | 仅覆盖 GRD-001…GRD-003（3 条 seed）引用的 **G1／G5／G7 各 1 个 implements 实例**（共 3 实例）；**不含** SRC 侧 G1 `triggers` 3 实例（见 §4）。 | 同上事件型：G1／G5／G7 三项建 FVR 条目并接线、首次全量运行留证时闭合。 |
+| **`WV-SRC-E3-01`（草案，待批）** | 仅覆盖 SRC-002／003／004（3 条 seed）的 **G1 `triggers` 各 1 实例（共 3）**；不含 GRD 侧 G1 `implements` 1 实例（归 `WV-GRD-E3-01`）。 | 事件型：G1 建 FVR 条目＋接线＋`first_full_run` 留证＋逐条 seed→active。 |
 
 > 三份均 `independent_effect: true`（各自独立生效、独立闭合、互不援引）；均**不**使对应条目的 `seed` 资格以本豁免为前提（C-ST 只查硬检查，E3 属 FVR 接线面，与 `draft→seed` 条件不同轴）。
 
@@ -135,6 +137,8 @@ approval:
 - **SRC 批的 G1 `triggers` 3 实例（SRC-002／003／004）无任何在册 Waiver 覆盖**：14 份在册 Waiver 均不含 SRC；本草案按用户指定只覆盖 PRJ／GOV／GRD 三 kind，故 SRC 3 实例仍悬空。两条出路，须用户选一：
   1. 另起第 4 份 `WV-SRC-E3-01`（scope＝G1 triggers 3 实例，其余同本文件模板）；
   2. 明确裁定「SRC 只触发 G1、不独立计息，G1 的 FVR 条目由 `WV-GRD-E3-01` 首建后一并覆盖」，并在 `WV-GRD-E3-01.scope` 显式登记该 3 实例的**引用面**（不等于扩宽豁免面）。
+
+> **2026-11-06 用户裁定：选选项 1**（另起第 4 份 `WV-SRC-E3-01`，不并入 `WV-GRD-E3-01`）。内容草案见 §6，状态仍为 **pending**（未落册、未获批准）。
 - 三份均未解决「E3 的守护规则条目未建立、级别未定」——该项按既有先例不预设。
 
 ## 5. 落盘与批准口径（批准后才做）
@@ -142,4 +146,47 @@ approval:
 1. 仅在 `registry/method_registry.yaml` 的 `waivers` 段末尾追加三条（顺序 PRJ → GOV → GRD，编号不复用）。
 2. `approval.status` 先写 `pending`；人类裁决后补 `approved_by`／`approved_date`／`ruling` 三键，不得预置空键。
 3. 同日批准可只记日历日，不写时点（0.4 禁假精确）。
-4. `G-GOV-1`／`SO-19` 的关闭**不在本批**：须待三条落盘后再单独处置，且不限本笔。
+4. `G-GOV-1`／`SO-19` 的关闭**不在本批**：须待三条落盘后再单独处置，且不限本笔。（按本批执行结果：三条已落册并批准，`G-GOV-1`／`SO-19` 已按各自闭合条件关闭，见 `method_registry.yaml`。）
+
+## 6. `WV-SRC-E3-01`（第四份；草案，待批）
+
+> 依据 2026-11-06 用户裁定（选项 1）：另起独立第 4 份，不并入 `WV-GRD-E3-01`。**本份未写入 `waivers` 段，`approval.status: pending`。**
+
+```yaml
+waiver_id: WV-SRC-E3-01
+rule: 'E3（母本 10.5 形式化锚点表 E3 行）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬'
+violation_fact: >-
+  SRC 批 8 条（SRC-001…SRC-008）经 ST-SRC-01 迁移为 seed；其中 SRC-002（契约漂移，SRC-002-S1 P0）、
+  SRC-003（schema 漂移／所有权违例流量，SRC-003-S1 P1／S2 P0）、SRC-004（僵尸开关／隐式时序假设再现，S1／S2 均 P2）
+  三条的 formal_anchor 为 G1 triggers（各 1，共 3）——信号命中即触发 G1『P0 即时阻塞 —— 硬』的判定面。
+  FVR 侧无 G1 条目与接线 → E3 三支未满足。合法性出处：0.17.6(2)＋防扩宽条款 (ii)。
+  说明：G1 的 implements 1 实例（GRD-001）已由 WV-GRD-E3-01 承担；本项仅承接同性质的 triggers 3 实例，
+  两者针对同一 FVR 条目（G1）的不同引用面，闭合时一并接线。
+scope: >-
+  精确范围：status=seed 的 SRC-002／SRC-003／SRC-004 三条的 formal_anchor 所引用的性质实例，
+  共 1 项 3 实例——G1『P0 即时阻塞 —— 硬』triggers 3（SRC-002／003／004 各 1；以 YAML 解析逐条统计 property_id×role）。
+  **与 WV-GRD-E3-01 的边界**：本项不含 G1 implements 1 实例（GRD-001，归 WV-GRD-E3-01）；
+  WV-GRD-E3-01 的 scope 亦已写明不含本项 3 实例——两份 scope 按 role（triggers vs implements）与条目互不重叠。
+  不含 active 条目；不含其它 kind；不含 G 系列以外性质；不含 SRC 的 signals 内容本身（signals 属数据面，不属 E3 的 FVR 接线面）。
+deadline:
+  type: event
+  lrm: 编译器首次成功运行（0.17.6(2) 指定的 LRM）
+  calendar_date: null
+  note: 不虚构日历期限（0.4）；到期未闭合 → 自动升 P0＋CH-C(2)；延续＝新 Waiver，不许静默展期（G5）。
+closing_condition: >-
+  编译器首次成功运行 ∧ G1 已建 FVR 条目 ∧ 接线完成 ∧ first_full_run 留证 ∧ 逐条 seed→active。
+  注：G1 的 FVR 条目与 WV-GRD-E3-01 共用同一目标；两份可先后闭合，但任一份不得以「他项已闭合」为自身闭合理由。
+independent_effect: true
+basis_clauses: 'E3（母本 10.5）；0.17.6(2)；9.2.2 五要素；G1『P0 即时阻塞 —— 硬』；G5『豁免不静默展期 —— 硬』'
+approval:
+  category: 批准注册表类目 + 8.2.7 评审点五（例外评审）
+  external_cause: false
+  status: pending
+  note: 本轮只备内容、不写台账；批准后才追加 approved_by／approved_date／ruling 三键（不预置空键）。
+```
+
+### 6.1 与在册三份的关系
+
+- 三份已批准落册（`WV-PRJ-E3-01` 第 15 次、`WV-GOV-E3-01` 第 16 次、`WV-GRD-E3-01` 第 17 次单独申请）；本项为第 **18** 次（拟）。
+- 防扩宽条款 (ii) 要求逐 kind 单独申请，本项是该条之下最后一个 kind（SRC）的申请；SRC 其余 5 条（SRC-001／005／006／007／008）无 `formal_anchor`，不产生 E3 计息实例。
+
