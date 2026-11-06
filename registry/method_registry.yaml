@@ -12794,6 +12794,31 @@ waivers:
     anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合；(ii) 后续剩余 kind（**1** 个：SRC）仍须单独申请，不自动沿用本项或前十六项；(iii) E3 以外的编译规范性质不受本项影响。"
     status: active             # SM-WV：pending → active（本项登记即批准、同日生效，2026-11-06 人类裁决）；闭合条件见 closing_condition；GRD 三条的 seed 资格不以本 Waiver 为前提
 
+  - waiver_id: WV-SRC-E3-01
+    rule: "E3（母本 10.5『形式化锚点』表 E3 行）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"   # 本条不写裸行号锚（同 WV-PRJ-E3-01 口径）
+    violation_fact: "SRC 批 8 条（SRC-001…SRC-008）经 ST-SRC-01 迁移为 seed；其中 SRC-002（契约漂移，SRC-002-S1 P0）、SRC-003（schema 漂移／所有权违例流量，SRC-003-S1 P1／S2 P0）、SRC-004（僵尸开关／隐式时序假设再现，S1／S2 均 P2）三条的 formal_anchor 为 G1 triggers（各 1，共 3）——信号命中即触发 G1『P0 即时阻塞 —— 硬』的判定面。FVR 侧无 G1 条目与接线 → E3 三支未满足。合法性出处：0.17.6(2)＋防扩宽条款 (ii)。G1 的 implements 1 实例（GRD-001）已由 WV-GRD-E3-01 承担；本项仅承接同性质的 triggers 3 实例。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 SRC-002／SRC-003／SRC-004 三条的 formal_anchor 所引用的性质实例，共 **1 项 3 实例**——G1『P0 即时阻塞 —— 硬』triggers 3（SRC-002／003／004 各 1；以 YAML 解析逐条统计 property_id×role）。**与 WV-GRD-E3-01 的边界**：本项不含 G1 implements 1 实例（GRD-001，归 WV-GRD-E3-01）；WV-GRD-E3-01 的 scope 亦已写明不含本项 3 实例——两份 scope 按 role（triggers vs implements）与条目互不重叠。不含 active 条目；不含其它 kind；不含 G 系列以外性质；不含 SRC 的 signals 内容本身（signals 属数据面，不属 E3 的 FVR 接线面）。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期（G5）。"
+    remediation_plan: "闭合路径：(1) project.py 自检全过 → (2) 编译器对 seed 条目执行重验证，差异按 0.17.6(3) 三分类处置 → (3) 为 G1 建 FVR 条目并接线、首次全量运行留证 → (4) 逐条 seed→active。本 Waiver 在 (3) 完成时闭合。"
+    closing_condition: "编译器首次成功运行 ∧ G1 已建 FVR 条目 ∧ 接线完成 ∧ first_full_run 留证 ∧ 逐条 seed→active。注：G1 的 FVR 条目与 WV-GRD-E3-01 共用同一目标；两份可先后闭合，但任一份不得以『他项已闭合』为自身闭合理由。"
+    risk_quantification: "触及面：3 实例。利息形态：P0 级信号（SRC-002-S1 契约漂移／SRC-003-S2 所有权违例流量）的即时阻塞判定由机器检出退化为人工核验，延迟＝一个决策周期；漏检后果——G1 漏检＝P0 信号触发后无整改或已批准豁免仍部署进入实现。缓解：(i) SRC 三条的 signals 判读带母本指针与 severity_condition，可逐信号复核；(ii) project.py 静态自检覆盖可机器判定面；(iii) 0.17.5 ADR 附注『依据种子条目，待重验证』。"
+    independent_effect: true
+    basis_clauses: "E3（母本 10.5）；0.17.6(2)；9.2.2 五要素；G1『P0 即时阻塞 —— 硬』；G5『豁免不静默展期 —— 硬』"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经前十六项复用的边界结论；G1 的『内部原因 P0 不可豁免』只约束裁量豁免，本项属 0.17.6(2) 明文的制度性豁免，边界表述沿用，不新增先例。"
+      status: approved        # 登记即申请与批准同日（2026-11-06）；三键于人类裁决后落盘
+      approved_by: "人类裁决（用户本人，2026-11-06）：用户在会话中明确『批准第 4 份 Waiver』并要求把 WV-SRC-E3-01 正式落进 waivers 段（指令明列 waiver_id 与 17→18），指称无歧义；未给具体时刻 → 只记日历日（0.4）。"
+      approved_date: 2026-11-06
+      ruling: "**批准**（2026-11-06 人类裁决）。本项系防扩宽条款 (ii) 之下的**第十八次（末次）单独申请**，五要素齐备，G1 triggers 三实例的漏检后果与缓解面已随呈；scope 与前十七项互不重叠（与 WV-GRD-E3-01 按 role 双向排除），不扩用既有 17 份。"
+    anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合；(ii) 本项为 18 个 kind 中**最后一个** kind 的申请，此后无剩余 kind 待申请；任何新增 kind／新增性质引用仍须各自单独申请，不自动沿用本项或前十七项；(iii) E3 以外的编译规范性质不受本项影响。"
+    status: active             # SM-WV：pending → active（本项登记即批准、同日生效，2026-11-06 人类裁决）；闭合条件见 closing_condition；SRC 三条的 seed 资格不以本 Waiver 为前提
+
 # ---------------------------------------------------------------------------
 # 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
 #     禁止留默认值假充来源。此处集中登记判读规则，条目行内只引 MJ 编号。）
