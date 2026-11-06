@@ -11732,7 +11732,21 @@ gaps:
     impact: "三 kind 进入编译期时 E3 面暂无豁免可依；不影响 project.py --check（E3 不在其检查矩阵，是编译规范侧约束）。条目 seed 资格不因缺豁免而回退。"
     affected: "GRD-001…GRD-003、PRJ-001…PRJ-011、GOV-001…GOV-006"
     route: "人类裁决（0.10 第一条）＋ 9.2.2 五要素；批准后另立 WV-GRD-E3-01／WV-PRJ-E3-01／WV-GOV-E3-01 → 登记 SO-19。批准前保持待申请状态，不得以 pending 伪装已批准。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-GOV-1
+      date: '2026-11-06'
+      ruled_by: 人类责任方（2026-11-06 批准三份 E3 Waiver）
+      basis: >-
+        route 所列三份 Waiver 已逐 kind 单独申请并经人类批准并落盘：WV-PRJ-E3-01（1 项 11 实例）、
+        WV-GOV-E3-01（5 项 8 实例）、WV-GRD-E3-01（3 项 3 实例）；三份 scope 逐条按 kind 与性质实例限定、
+        互不重叠，且未扩用既有 14 份中任何一份的 scope（防扩宽条款 (ii) 已满足）。
+        statement 所列前置（逐 kind 另单申请＋人类批准＋不预支批准）全部履行，无剩余面。
+      evidence:
+        - "registry/method_registry.yaml waivers 段 WV-PRJ-E3-01／WV-GOV-E3-01／WV-GRD-E3-01（status: active；approval.status: approved；approved_date 2026-11-06）"
+        - E3-Waiver草案-PRJ-GOV-GRD-2026-11-06.md（三份内容草案与边界，§0／§1–§3）
+        - SO-19 同步关闭
+      preserved: statement／impact／affected／route 原文逐字保留（0.22 承诺一）
 
   - gap_id: G-SRC-1
     type: 谓词词汇缺口（signals.detection_predicate 的谓词未登记）
@@ -12705,6 +12719,80 @@ waivers:
       ruling: "**批准**（2026-11-03 人类裁决）。本项系防扩宽条款 (ii) 之下的**第十四次单独申请**，五要素齐备（rule／violation_fact／scope／deadline／remediation_plan），且 risk_quantification 的三支硬性质（G3／G4／Z6）的漏检后果与缓解面已随呈。**scope 与前十三项互不重叠**（按 kind 与 property 双向切分：G3／G4 批前全库 0 实例 → 本项首建；Z6 批前 2 实例由 WV-CFG-E3-01 承担，本项只覆盖新增的第 3 实例）→ 按 WV-STY-E3-01 已裁定并经十三项复用的同一边界结论准予豁免：0.17.6(2) 系母本明文设立的制度性豁免通道，9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免，故本项 external_cause=false 不构成障碍。**批准范围仅及 scope 明列的硬 3 项 7 实例**——G3 策略注册完整性：implements **5**（@9496／@9578／@9660／@9746／@9838，DPS-001…DPS-005 各 1）；G4 放量判据形式化：implements **1**（@9661 DPS-003）；Z6 行为级开关治理闭合：implements **1**（@9747 DPS-004）；**不扩张为一般先例**（条款 (i)），其余 **3** kind（GRD／PRJ／GOV）的 seed 期 E3 豁免仍须各自单独申请（条款 (ii)）。**排除面**：本批无软／条件性质实例（三性质均硬），亦无空列表；不覆盖 CFG 侧 2 个 Z6 实例、不覆盖前十三批、不覆盖 E3 以外的编译规范性质。**接线面词缺口 → 故 remediation_plan (3) 在词汇补齐前对三项均不可行，本 Waiver 于该步完成时闭合**：G3 阻于 deploy_strategy、G4 阻于 canary_gate／gate_verdict、Z6 阻于 cleanup_filed（属 VG-05 已登面）；上述缺口按实测归 **VG-08**（本批新增，9.5 @3700-3702 四词＋公式侧 gate_verdict），其实际追加归 s5g（完整 ADR＋批准），本项不本地扩词、不预支其结论。**五项不预设**：(1) E3 的守护规则条目仍未建立、级别未定；(2) VG-08 的词表与词数由 s5g 核定，本项不授权本地扩词；(3) 同批跨策略镜像 8 行与跨 kind 单侧 1 行的镜像回填归 s5h；(4) 全库单向 requires 普查归 s5h，链口径与普查口径不得互代（MJ-27 (viii)）；(5) ENUM_RELATION 无 required_by 是否补词归 s5h。**deadline 为事件型**→ 不虚构日历日期；超期按 9.2.2 自动升 P0＋CH-C(2)，延续＝新 Waiver。**累计口径**：十四项 Waiver 合计覆盖 **110** 条 seed（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8＋CTR 12＋STP 4＋DFL 5＋RLP 7＋SCH 3＋CFG 4＋QAT 15＋VFM 6＋**DPS 5**），独立生效、独立闭合、互不援引。**批准后记录数变化（复跑实测）**：--check 自检记录因本项 status 直接写 approved（非 pending）而不产生 LEDGER 的 pending info 行；硬失败与软警告预期为 0，终值以 M3 第 6 步复跑为准。"
     anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项而松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（其余 **3** 个 kind：GRD/PRJ/GOV）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前十三项；(iii) E3 的硬性质刚性不降低——超期处置仍按 9.2.2 自动升 P0 + CH-C(2)，延续＝新 Waiver，不许静默展期。本项与前十三项累计覆盖 **110** 条 seed 条目（STY 24＋OWN 4＋CSL 5＋CRD 8＋DEC 8＋CTR 12＋STP 4＋DFL 5＋RLP 7＋SCH 3＋CFG 4＋QAT 15＋VFM 6＋DPS 5），十四项**独立生效、独立闭合、互不援引**；同名性质在不同批次的引用面各自计息，不合并豁免——**Z6 系跨批共享性质**（批前全库 2 实例由 WV-CFG-E3-01 承担，本项只覆盖第 3 实例），**G3／G4 系本项首建**（批前 0 实例），其 FVR 条目须为本项新建、不与任何既有批次共享接线（Z6 的 FVR 条目可与 CFG 侧共享接线形态，但豁免面不合并）。**本项亦不预设五个未决事项的结果**：(1) E3 的守护规则条目仍未建立、级别未定；(2) **VG-08**（9.5 @3700-3702 四词＋公式侧 gate_verdict）的 R2 登记仍须走完整 ADR＋批准、归 s5g——本项不授权任何批次本地扩词，词表与词数由该批次核定（本 Waiver 落盘时在册名仍 76、vocabulary_gaps 由 5 增 6、累计未登记候选相应增加）；登记若触及相关 detection_predicate 的判据形态，则其 signal_level 改级属守护规则改级，按 0.14＋@3600，本项不预支该后果；(3) 同批跨策略镜像 8 行与跨 kind 单侧 1 行（DPS-004 → CFG-003 requires，CFG-003 侧按 MJ-5 不回填）的镜像回填归 s5h；(4) 全库单向 requires 普查归 s5h——**链口径与普查口径不得互代**（MJ-27 (viii)）；(5) ENUM_RELATION 无 required_by 是否补词归 s5h。本项 rule 按实测登记为『E3（母本 @4024）』。**另两项不预设**：(甲) G3 的 compatible 分支所依赖的风格判定（@3646『策略与风格自洽性由 G3 检查』）不因本项批准而闭合；(乙) ST-DPS-01 所载 DPS-005『跨策略义务』的语义判读（2026-11-03 用户裁决维持现状）系批内判读，本项不据以扩张任何性质绑定。"
     status: active             # SM-WV：pending → active（本项登记即批准、同日生效，2026-11-03 人类裁决）；闭合条件见 remediation_plan (3)；DPS 五条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查）
+  - waiver_id: WV-PRJ-E3-01
+    rule: "E3（母本 10.5『形式化锚点』表 E3 行）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"   # 与既有十四项同义；本条不写裸行号锚（避免新增会随插入漂移的行号真源，定位改用条款号 10.5）
+    violation_fact: "PRJ 批 11 条（PRJ-001…PRJ-011，覆盖 1.4／2.4／4.4／5.4／8.4／9.4 六个评审入口与 8.2.7 的五个评审点）经 ST-PRJ-01 迁移为 seed（人工种子通道，0.17.6(1)）；其 formal_anchor 一律为 E1 implements（11 条各 1）。project.py 只做注册表静态自检（M2/M3/M4/M6/M9＋C 系列），不是 FVR 运行器，也不产生 first_full_run 证据 → 『引用 seed 条目的性质』不满足 E3 的 existence ∧ wired ∧ first_full_run has evidence。合法性出处：0.17.6(2)（母本明文设立 seed 期豁免通道），并须符合防扩宽条款 (ii) 的逐 kind 单独申请。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 PRJ-001…PRJ-011 十一条的 formal_anchor 所引用的性质实例，共 **1 项 11 实例**——E1『表达无缺口 —— 硬』implements 11（11 条各 1；以 YAML 解析逐条统计 property_id×role，非凭记忆）。不含 active 条目；不含其它 17 个 kind（各由其自身 Waiver 或另批申请承担）；不含 E1 以外的性质（E2 同源生成／E3 本体／E4 版本一致／E5 均不在本 Waiver 范围）；不含 PRJ 的 applicability／anti_patterns 所引方向性事实。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径：(1) project.py 自检全过（本批 --check 硬失败 0／软警告 0；记录数与占位符数由投影复跑定稿 → 本项不硬写该二数以免计数双源）→ (2) 编译器对 seed 条目执行『人工条目 vs 编译条目』重验证，差异按 0.17.6(3) 三分类处置 → (3) 为 E1 建 FVR 条目并接线、首次全量运行留证 → (4) 逐条 seed→active。本 Waiver 在 (3) 完成时闭合。"
+    closing_condition: "编译器首次成功运行 ∧ E1 已建 FVR 条目 ∧ 接线完成 ∧ first_full_run 留证 ∧ 逐条 seed→active（diff 为空＝低影响简记；diff 非空按 0.17.6(3) 三分类定级）。"
+    risk_quantification: "触及面：11 实例。利息形态：E1『表达无缺口』的检出时机从编译期自动检出退化为评审期人工核验，延迟＝一个决策周期；漏检后果＝评审点引用的谓词子集无 view_instance 覆盖（表达缺口）进入实现。缓解：(i) 0.17.5 强制 ADR 附注『依据种子条目，待重验证』；(ii) PRJ 的 anti_patterns 判读带母本指针，可逐条人工复核；(iii) project.py 的 M／M2–M9／C 系列静态检查覆盖可机器判定面。"
+    independent_effect: true
+    basis_clauses: "E3（母本 10.5）；0.17.6(2)；9.2.2 五要素；G1『P0 即时阻塞 —— 硬』；G5『豁免不静默展期 —— 硬』"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经前十三项复用的边界结论（0.17.6(2) 属母本明文设立的制度性豁免通道；9.2.2 G2 的 external_cause 前置只约束对 P0 违例的裁量豁免），本项不另启同一争点；按防扩宽条款 (i) 仅援引该结论适用于母本明文通道场合，不将制度性豁免扩大为裁量豁免。"
+      status: approved        # 登记即申请与批准同日（2026-11-06）；批准是人的裁决，Agent 与工具不自行批准——0.10 第一条 / 1.1 纪律二 / 9.2.2；三键于人类裁决后落盘，不预置空键
+      approved_by: "人类裁决（用户本人，2026-11-06）：用户在会话中明确『三份 E3 Waiver 草案批准』并点名 WV-PRJ-E3-01／WV-GOV-E3-01／WV-GRD-E3-01 及其合入方式——指令明列编号，指称无歧义；未给具体时刻 → 只记日历日，不写近似值（0.4 禁假精确）。"
+      approved_date: 2026-11-06
+      ruling: "**批准**（2026-11-06 人类裁决）。本项系防扩宽条款 (ii) 之下的**第十五次单独申请**，五要素齐备（rule／violation_fact／scope／deadline／remediation_plan），risk_quantification 的单支硬性质（E1）漏检后果与缓解面已随呈；scope 与前十四项互不重叠（按 kind 与性质实例逐条限定），不扩用既有 14 份。"
+    anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合，不由评审点五裁量新设；(ii) 后续各 kind 批次（其余 **3** 个 kind：GOV／GRD／SRC）的 seed 期 E3 豁免仍须各自单独申请（同通道，五要素齐备＋批准），不自动沿用本项或前十四项；(iii) E3 以外的编译规范性质不受本项影响。"
+    status: active             # SM-WV：pending → active（本项登记即批准、同日生效，2026-11-06 人类裁决）；闭合条件见 closing_condition；PRJ 十一条的 seed 资格不以本 Waiver 为前提（C-ST 只查硬检查）
+
+  - waiver_id: WV-GOV-E3-01
+    rule: "E3（母本 10.5『形式化锚点』表 E3 行）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"   # 本条不写裸行号锚（同 WV-PRJ-E3-01 口径）
+    violation_fact: "GOV 批 6 条（GOV-001…GOV-006：完整 ADR／接受约束 ADR／张力承认 ADR／保守假设 ADR／权衡承认 ADR／重审提议）经 ST-GOV-01 迁移为 seed；其 formal_anchor 引用 R 系列五项硬性质（R1／R2／R6／R7／R8），其中 GOV-001 同引 R1 与 R7、GOV-004 引 R2 triggers、GOV-006 同引 R2 implements 与 R8。上述性质均无 FVR 条目与接线 → E3 三支一律未满足。合法性出处同前（0.17.6(2)＋防扩宽条款 (ii)）。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 GOV-001…GOV-006 六条的 formal_anchor 所引用的性质实例，共 **5 项 8 实例**——R7『公理 A2 逐决策执行 —— 硬』implements 3（GOV-001／002／005）；R1『批准闭环、执行者不可自批 —— 硬』implements 1（GOV-001）；R2『重审门槛三条件 —— 硬』implements 1（GOV-006）＋triggers 1（GOV-004）；R6『临时决策不得硬化传播 —— 硬』implements 1（GOV-003）；R8『重审后的下游血缘逐一目检 —— 硬』implements 1（GOV-006）；以 YAML 解析逐条统计 property_id×role。不含 active 条目；不含其它 kind（含 PRJ／GRD 侧同系列性质的不同实例，各自单独申请）；不含 R 系列以外性质。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期。"
+    remediation_plan: "闭合路径：(1) project.py 自检全过 → (2) 编译器对 seed 条目执行重验证，差异按 0.17.6(3) 三分类处置 → (3) 为 R1／R2／R6／R7／R8 建 FVR 条目并接线、首次全量运行留证 → (4) 逐条 seed→active。本 Waiver 在 (3) 完成时闭合。"
+    closing_condition: "编译器首次成功运行 ∧ R1／R2／R6／R7／R8 五项各建 FVR 条目 ∧ 接线完成 ∧ first_full_run 留证 ∧ 逐条 seed→active。"
+    risk_quantification: "触及面：8 实例。利息形态：治理性质（批准闭环、重审门槛、临时决策软化传播、证据溯源、重审影响传播）由机器检出退化为人工核验，延迟＝一个决策周期；漏检后果分性质——R1 漏检＝执行者自批进入台账；R2 漏检＝未过三条件的重审被受理；R6 漏检＝临时决策被当硬约束传播；R7 漏检＝无出处证据进入决策；R8 漏检＝重审后下游血缘失检。缓解：(i) 0.17.5 ADR 附注；(ii) GOV 的 anti_patterns／signals 判读带母本指针；(iii) project.py 的 M 系列与 C-ST／C-ID 静态检查覆盖可机器判定面。"
+    independent_effect: true
+    basis_clauses: "E3（母本 10.5）；0.17.6(2)；9.2.2 五要素；G1『P0 即时阻塞 —— 硬』；G5『豁免不静默展期 —— 硬』"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经前十四项复用的边界结论；本项不另启同一争点。"
+      status: approved        # 登记即申请与批准同日（2026-11-06）；三键于人类裁决后落盘
+      approved_by: "人类裁决（用户本人，2026-11-06）：用户在会话中明确『三份 E3 Waiver 草案批准』并点名三个编号——指令明列编号，指称无歧义；未给具体时刻 → 只记日历日（0.4）。"
+      approved_date: 2026-11-06
+      ruling: "**批准**（2026-11-06 人类裁决）。本项系防扩宽条款 (ii) 之下的**第十六次单独申请**，五要素齐备，五支硬性质（R1／R2／R6／R7／R8）的漏检后果与缓解面已随呈；scope 与前十五项互不重叠（按 kind 与性质实例逐条限定）。"
+    anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合；(ii) 后续各 kind 批次（其余 **2** 个 kind：GRD／SRC）仍须各自单独申请，不自动沿用本项或前十五项；(iii) E3 以外的编译规范性质不受本项影响。"
+    status: active             # SM-WV：pending → active（本项登记即批准、同日生效，2026-11-06 人类裁决）；闭合条件见 closing_condition；GOV 六条的 seed 资格不以本 Waiver 为前提
+
+  - waiver_id: WV-GRD-E3-01
+    rule: "E3（母本 10.5『形式化锚点』表 E3 行）：∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence —— FVR 全覆盖，硬"   # 本条不写裸行号锚（同 WV-PRJ-E3-01 口径）
+    violation_fact: "GRD 批 3 条（GRD-001 P0 阻塞级／GRD-002 P1 限期级／GRD-003 P2 监测级）经 ST-GRD-01 迁移为 seed；其 formal_anchor 为 G1／G5／G7 各 1 个 implements，而 G 系列在 FVR 侧尚无条目与接线（本批系 G1／G5／G7 首次计息面）→ E3 三支一律未满足。前置：G-GRD-1 已于 2026-11-06 closed；G1／G5 的级别由母本 9.5 明文标注『P0 即时阻塞 —— 硬』『豁免不静默展期 —— 硬』，无待裁空间。合法性出处同上（0.17.6(2)＋防扩宽条款 (ii)）。"
+    scope: "精确范围：method_registry.yaml 中 status=seed 的 GRD-001…GRD-003 三条的 formal_anchor 所引用的性质实例，共 **3 项 3 实例**——G1『P0 即时阻塞 —— 硬』implements 1（GRD-001）；G5『豁免不静默展期 —— 硬』implements 1（GRD-002）；G7『P2 双判据告警治理 —— 硬』implements 1（GRD-003）；以 YAML 解析逐条统计 property_id×role。不含 active 条目；**不含 SRC-002／003／004 的 G1 triggers 3 实例**（该 3 实例另立 WV-SRC-E3-01，见 E3-Waiver草案-PRJ-GOV-GRD-2026-11-06.md §6；本项与彼项边界互不重叠）；不含 G 系列以外性质。"
+    deadline:
+      type: event
+      lrm: "编译器首次成功运行（0.17.6(2) 指定的 LRM）"
+      calendar_date: null
+      note: "母本以事件定 LRM，未给日历期限；不虚构日期（0.4 禁假精确）。超期处置按 9.2.2：到期未闭合 → 自动升 P0 + CH-C(2) 升级裁决；延续申请 = 新 Waiver（重走五要素 + 批准），不允许静默展期；G5 对『静默展期』的禁止同样适用于本项自身。"
+    remediation_plan: "闭合路径：(1) project.py 自检全过 → (2) 编译器对 seed 条目执行重验证，差异按 0.17.6(3) 三分类处置 → (3) 为 G1／G5／G7 建 FVR 条目并接线、首次全量运行留证 → (4) 逐条 seed→active。本 Waiver 在 (3) 完成时闭合。"
+    closing_condition: "编译器首次成功运行 ∧ G1／G5／G7 三项各建 FVR 条目 ∧ 接线完成 ∧ first_full_run 留证 ∧ 逐条 seed→active。"
+    risk_quantification: "触及面：3 实例。利息形态：守护规则三级的机器判定（P0 阻塞、豁免到期自动升级、P2 双判据告警）退化为人工核验；漏检后果——G1 漏检＝P0 无整改/无批准豁免即部署进入实现；G5 漏检＝到期豁免被静默展期（9.2.2 明令禁止的侵蚀形态）；G7 漏检＝单点越阈被当作告警。缓解：(i) GRD 的 anti_patterns／signals 判读带母本指针；(ii) project.py 静态自检覆盖可机器判定面；(iii) 0.17.5 ADR 附注。"
+    independent_effect: true
+    basis_clauses: "E3（母本 10.5）；0.17.6(2)；9.2.2 五要素；G1『P0 即时阻塞 —— 硬』；G5『豁免不静默展期 —— 硬』；G7『P2 双判据告警治理 —— 硬』"
+    approval:
+      category: "批准注册表类目 + 8.2.7 评审点五（例外评审）"
+      external_cause: false
+      boundary_note: "沿用 WV-STY-E3-01 已裁定并经前十五项复用的边界结论；G1 的『内部原因 P0 不可豁免』只约束裁量豁免，本项属 0.17.6(2) 明文的制度性豁免，边界表述沿用，不新增先例。"
+      status: approved        # 登记即申请与批准同日（2026-11-06）；三键于人类裁决后落盘
+      approved_by: "人类裁决（用户本人，2026-11-06）：用户在会话中明确『三份 E3 Waiver 草案批准』并点名三个编号——指令明列编号，指称无歧义；未给具体时刻 → 只记日历日（0.4）。"
+      approved_date: 2026-11-06
+      ruling: "**批准**（2026-11-06 人类裁决）。本项系防扩宽条款 (ii) 之下的**第十七次单独申请**，五要素齐备，三支硬性质（G1／G5／G7）的漏检后果与缓解面已随呈；scope 与前十六项互不重叠，且显式排除 SRC 侧 G1 triggers 三实例（另立 WV-SRC-E3-01，待批）。"
+    anti_widening: "沿用 WV-STY-E3-01 防扩宽条款全部三项，不因本项松动：(i) 制度性豁免仅限母本明文设立 Waiver 通道的场合；(ii) 后续剩余 kind（**1** 个：SRC）仍须单独申请，不自动沿用本项或前十六项；(iii) E3 以外的编译规范性质不受本项影响。"
+    status: active             # SM-WV：pending → active（本项登记即批准、同日生效，2026-11-06 人类裁决）；闭合条件见 closing_condition；GRD 三条的 seed 资格不以本 Waiver 为前提
 
 # ---------------------------------------------------------------------------
 # 四、人工判断登记（0.17.6(1) 第四层数据源：显式 provenance={origin: manual}，
@@ -13118,7 +13206,11 @@ survey_obligations:
     gap_ref: G-GOV-1
     consumer: "9.2.2 Waiver 五要素；0.10 第一条（批准权属人类）；编译规范 E3 面"
     trigger_rule: "0.10 第一条 @m:235；9.2.2 @3591-3602；0.22 承诺一（不改写既有 Waiver）"
-    status: open
+    status: closed
+    evidence:
+      - "人类 2026-11-06 批准 WV-PRJ-E3-01／WV-GOV-E3-01／WV-GRD-E3-01 三份 E3 Waiver 并落盘（waivers 段，status: active）"
+      - 三份 scope 逐 kind 限定且互不重叠，未扩用既有 14 份的 scope；G-GOV-1 同一 closure
+    note: 2026-11-06：三 kind 逐 kind 另单申请与人类批准已完成，本义务闭合；SRC 侧 G1 triggers 3 实例另立 WV-SRC-E3-01（草案，待批），不在本义务范围。
 
   - obligation_id: SO-20
     kind: 入库期
