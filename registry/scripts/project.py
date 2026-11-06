@@ -4,7 +4,7 @@
 project.py —— 方法注册表自检 + 同源投影（registry/scripts/）
 
 性质：工具，不含规范命题（README §1）。所有判据的权威出处：
-  · 条目 schema 与闭集值       母本 0.17.2（@322-381）
+  · 条目 schema 与闭集值       母本 0.17.2（@m:0.17.2）
   · kind 封闭枚举              母本 0.17.3
   · M 系列检查式               母本 0.17.8；M10–M15 见 0.18.6
   · 检查矩阵与 seed 资格公式   registry/README.md §5
@@ -67,7 +67,7 @@ ANCHOR_SERIES = tuple('VWXYZQR TGEM'.replace(' ', ''))  # V/W/X/Y/Z/Q/R/T/G/E/M
 ENTRY_FIELDS = {
     'entry_id', 'kind', 'name', 'version', 'status', 'provenance', 'typical_reversibility',
     'applicability', 'envelope', 'cost_profile', 'compatibility', 'constraints_imposed',
-    'anti_patterns', 'formal_anchor', 'references', 'narrative',
+    'anti_patterns', 'signals', 'formal_anchor', 'references', 'narrative',
 }
 APPLICABILITY_FIELDS = {'problem_space', 'current_space', 'delivery_space'}
 SOURCE_REF_FIELDS = {'source_type', 'value', 'verified'}
@@ -81,6 +81,13 @@ COST_PROFILE_FIELDS = {
 COMPAT_ITEM_FIELDS = {'peer_entry', 'relation', 'evidence'}
 CONSTRAINT_ITEM_FIELDS = {'target_aspect', 'constraint', 'level'}
 ANTI_PATTERN_ITEM_FIELDS = {'pattern_id', 'description', 'detection_predicate', 'signal_level'}
+# ── signals（ADR-SRC-02；0.17.2 增补字段）──
+SIGNAL_ITEM_FIELDS = {'signal_id', 'name', 'detection_predicate', 'severity', 'severity_condition', 'consumption'}
+SIGNAL_COND_FIELDS = {'when_predicate', 'raise_to'}
+SIGNAL_CONSUMPTION_FIELDS = {'action', 'gate', 'note'}
+ENUM_SIGNAL_ACTION = {'block', 'remediate', 'monitor_trend', 're_review', 'aggregate'}
+ENUM_SIGNAL_GATE = {'R2'}
+SEVERITY_RANK = {'P2': 0, 'P1': 1, 'P0': 2}
 ANCHOR_ITEM_FIELDS = {'property_id', 'role'}
 REFERENCE_ITEM_FIELDS = {'bib_id', 'support_claim', 'compile_usage', 'trust_grade'}
 NARRATIVE_FIELDS = {'benefit_cost_analysis', 'typical_scenarios', 'common_misuse'}
@@ -681,9 +688,104 @@ def check_schema(rep: Report, e: dict, eid: str):
         rep.fail('M2', where, f'narrative 含 0.17.2 之外字段：{sorted(set(nar) - NARRATIVE_FIELDS)}')
 
 
+def check_signals(rep: Report, e: dict, eid: str):
+    """S-1～S-9：signals 面（ADR-SRC-02 增量；0.17.2 `signals` 条）。
+
+    S-1～S-8 hard，S-9 info。本面与 M4 解耦：detection_predicate 只做非空与
+    「禁方括号」形状校验，谓词可执行性由 G-SRC-1 承接（不在本批扩 M4）。
+    """
+    sigs = e.get('signals')
+    if sigs is None:
+        return
+    if not isinstance(sigs, list):
+        rep.fail('M2', f'{eid} signals', f'signals 应为数组，实为 {type(sigs).__name__}（S-1）')
+        return
+    if not sigs:
+        rep.fail('M2', f'{eid} signals', 'signals 为空数组（S-1：SRC 必填；非 SRC 应由剖面 N-A 表达）')
+        return
+
+    issues = {k: [] for k in ('S-1', 'S-2', 'S-3', 'S-4', 'S-5', 'S-6', 'S-7', 'S-8')}
+    info_notes = []
+    for i, it in enumerate(sigs):
+        w = f'signals[{i}]'
+        if not isinstance(it, dict):
+            issues['S-1'].append(f'{w} 非对象')
+            continue
+        extra = set(it) - SIGNAL_ITEM_FIELDS
+        if extra:
+            issues['S-1'].append(f'{w} 含字段 {sorted(extra)}')
+        missing = [k for k in ('signal_id', 'name', 'detection_predicate', 'severity', 'severity_condition', 'consumption')
+                   if k not in it]
+        if missing:
+            issues['S-2'].append(f'{w} 缺键 {missing}')
+        for k in ('signal_id', 'name', 'detection_predicate', 'severity', 'consumption'):
+            if k in it and not str(it.get(k) or '').strip():
+                issues['S-2'].append(f'{w}.{k} 为空')
+        sid = str(it.get('signal_id') or '')
+        if sid != f'{eid}-S{i + 1}':
+            issues['S-3'].append(f'{w}.signal_id={sid!r} 应为 {eid}-S{i + 1}')
+        name = str(it.get('name') or '')
+        if not name.strip():
+            issues['S-4'].append(f'{w}.name 为空')
+        pred = str(it.get('detection_predicate') or '')
+        if not pred.strip():
+            issues['S-4'].append(f'{w}.detection_predicate 为空')
+        if '[' in pred or ']' in pred:
+            issues['S-4'].append(f'{w}.detection_predicate 含方括号占位（本批禁；谓词缺口走 G-SRC-1）')
+        sev = it.get('severity')
+        if sev not in ENUM_SIGNAL:
+            issues['S-5'].append(f'{w}.severity={sev!r} ∉ {sorted(ENUM_SIGNAL)}')
+        cond = it.get('severity_condition')
+        if cond is not None:
+            if not isinstance(cond, dict) or set(cond) != SIGNAL_COND_FIELDS:
+                issues['S-6'].append(f'{w}.severity_condition 应为 null 或恰好 {sorted(SIGNAL_COND_FIELDS)}')
+            else:
+                wp = str(cond.get('when_predicate') or '')
+                if not wp.strip() or '[' in wp or ']' in wp:
+                    issues['S-6'].append(f'{w}.severity_condition.when_predicate 为空或含方括号')
+                rt = cond.get('raise_to')
+                if rt not in ENUM_SIGNAL:
+                    issues['S-6'].append(f'{w}.severity_condition.raise_to={rt!r} ∉ {sorted(ENUM_SIGNAL)}')
+                elif sev in SEVERITY_RANK and SEVERITY_RANK[rt] <= SEVERITY_RANK[sev]:
+                    issues['S-6'].append(f'{w}.severity_condition.raise_to={rt!r} 未严格高于 severity={sev!r}')
+            if sev == 'P0':
+                issues['S-6'].append(f'{w} severity=P0 时 severity_condition 必须为 null')
+        cons = it.get('consumption')
+        if not isinstance(cons, list) or not cons:
+            issues['S-7'].append(f'{w}.consumption 应为非空数组')
+            cons = []
+        for j, c in enumerate(cons):
+            cw = f'{w}.consumption[{j}]'
+            if not isinstance(c, dict):
+                issues['S-7'].append(f'{cw} 非对象')
+                continue
+            e2 = set(c) - SIGNAL_CONSUMPTION_FIELDS
+            if e2:
+                issues['S-7'].append(f'{cw} 含字段 {sorted(e2)}')
+            act = c.get('action')
+            if act not in ENUM_SIGNAL_ACTION:
+                issues['S-7'].append(f'{cw}.action={act!r} ∉ {sorted(ENUM_SIGNAL_ACTION)}')
+            if 'gate' in c:
+                if act != 're_review' or c.get('gate') not in ENUM_SIGNAL_GATE:
+                    issues['S-8'].append(f'{cw}.gate 仅 re_review 可带且须为 R2（实为 action={act!r}, gate={c.get("gate")!r}）')
+            elif act == 're_review':
+                issues['S-8'].append(f'{cw} action=re_review 缺 gate: R2')
+            if 'note' not in c or not str(c.get('note') or '').strip():
+                info_notes.append(f'{cw} note 缺失（S-9 info）')
+
+    for rule, msgs in issues.items():
+        if msgs:
+            rep.fail('M2', f'{eid} signals', f'{rule}：' + '；'.join(msgs))
+    if not any(issues.values()):
+        rep.ok('M2', f'{eid} signals', 'hard', f'S-1～S-8 全过（{len(sigs)} 个子信号）')
+    if info_notes:
+        rep.add('M2', f'{eid} signals', 'info', True, 'S-9：' + '；'.join(info_notes))
+
+
 def check_m2(rep: Report, e: dict, eid: str, mat: dict, prof_status: dict):
     """M2 = ∀E(status ≠ draft): fields_complete(E, kind_profile(E.kind))（0.17.8）。"""
     check_schema(rep, e, eid)
+    check_signals(rep, e, eid)
     kind = e.get('kind')
     if e.get('status') == 'draft':
         rep.skip('M2', eid, 'status=draft，M2 量词 ∀E(status≠draft) 不适用（仍执行 schema 面校验）')
