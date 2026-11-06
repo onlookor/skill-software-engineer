@@ -101,7 +101,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions:
@@ -141,7 +141,7 @@ profiles:
         provenance: manual
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -173,7 +173,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -208,7 +208,7 @@ profiles:
         provenance: manual
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -238,7 +238,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -269,7 +269,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -299,7 +299,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -331,7 +331,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -361,7 +361,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -392,7 +392,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -425,7 +425,7 @@ profiles:
         provenance: manual
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -457,7 +457,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -491,7 +491,7 @@ profiles:
         provenance: manual
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -522,7 +522,7 @@ profiles:
     optional: []
     not_applicable:
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     entry_level_exemptions: []
@@ -587,7 +587,7 @@ profiles:
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     undecided_fields: []
@@ -656,7 +656,7 @@ profiles:
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     undecided_fields: []
@@ -726,7 +726,7 @@ profiles:
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
       - field: signals
-        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。"
+        reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     undecided_fields: []
