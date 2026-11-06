@@ -22,13 +22,13 @@
 | 字段 | 处置 | `reason` 要点 |
 |---|---|---|
 | `envelope` | `not_applicable` | SRC 是漂移/腐化信号源登记，不以质量属性为选择判据（母本 9.2.3 表；第 381 行判据） |
-| `cost_profile.consistency_impact` | `not_applicable` | 信号源不被「选择」，无一致性影响面 |
-| `cost_profile.ops_cost` | `not_applicable` | 同上；消费成本在 GRD 侧卡片，不在 SRC 条目 |
-| `cost_profile.latency_budget_delta` | `not_applicable` | 信号源不引入延迟预算 |
-| `cost_profile.throughput_impact` | `not_applicable` | 同上 |
-| `cost_profile.data_volume_delta` | `not_applicable` | 同上 |
-| `cost_profile.failure_mode` | `not_applicable` | 同上 |
-| `cost_profile.reversibility` | `not_applicable` | 同上 |
+| `cost_profile.latency_budget_delta` | `not_applicable` | 信号源不被「选择」，无延迟预算影响面 |
+| `cost_profile.failure_modes` | `not_applicable` | 信号源不是可选方法，无失败模式卡片 |
+| `cost_profile.consistency_impact` | `not_applicable` | 信号源不改变一致性级别 |
+| `cost_profile.observability_requires` | `not_applicable` | 观测能力在 GRD／9.2.5 侧登记，不在 SRC 条目 |
+| `cost_profile.ops_cost` | `not_applicable` | 同上；消费成本在 GRD 侧卡片 |
+| `cost_profile.skill_prerequisites` | `not_applicable` | 信号源不要求新技能前提 |
+| `cost_profile.aggregation_semantics` | `not_applicable` | 信号源无跨条目聚合语义 |
 | `compatibility` | **必填** | 信号源与既有 G 规则／DPS 指标的兼容关系须逐条写 |
 | `constraints_imposed` | **必填** | 信号越阈后施加的处置（P0／P1／P2）是真实约束 |
 | `applicability` | **必填** | 信号的适用条件（源方面活跃、观测能力就绪）须可求值 |
