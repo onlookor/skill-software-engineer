@@ -318,7 +318,7 @@ profiles:
     seed_source:
       clause_id: "5.2.3"
       table_rows: "5.2.3（7 行）；5.2.3 系行内加粗清单（非表格、无行标识），覆盖宣称『5.2.3 清单全部 7 项』由 row_id 机器反查（G-RLP-1 closed，ADR-INLINE-MARK-01）"
-      entry_id_range: "RLP-001…RLP-007（分块序＝5.2.3 @2477 清单序：幂等=001、收件箱（inbox）=002、发件箱（outbox）=003、重试 + 指数退避 + 抖动=004、超时预算=005、断路器=006、舱壁=007；非表源无行序可依，取清单序，CRD-001…008 分块序判读同型，裁决见 README §4.6）"
+      entry_id_range: "RLP-001…RLP-007（分块序＝5.2.3 @2478 清单序：幂等=001、收件箱（inbox）=002、发件箱（outbox）=003、重试 + 指数退避 + 抖动=004、超时预算=005、断路器=006、舱壁=007；非表源无行序可依，取清单序，CRD-001…008 分块序判读同型，裁决见 README §4.6）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S4 卡片聚合最重（Z7 联动）"
@@ -345,7 +345,7 @@ profiles:
     seed_source:
       clause_id: "5.2.4"
       table_rows: "5.2.4（3 行）；5.2.4 系单段落三分号子命题（非表格、非行内清单、无行标识），覆盖宣称『5.2.4 单段落全部 3 个分号子命题』由 row_id 机器反查（G-SCH-1 closed，ADR-INLINE-MARK-01）"
-      entry_id_range: "SCH-001…SCH-003（分块序＝5.2.4 @2483 分号列举序：定时器/截止期/cron 的登记=001、事件时间 vs 处理时间的显式选择=002、调度冲突与资源竞争的归属声明=003；name 取子命题引导词原形，半角斜杠与拉丁缩写 vs 一律不改写为顿号或中文『对比』，判读见 MJ-25 (i)；非表源无行序可依，取分号序，RLP-001…007 分块序判读同型，裁决见 README §4.7）"
+      entry_id_range: "SCH-001…SCH-003（分块序＝5.2.4 @2484 分号列举序：定时器/截止期/cron 的登记=001、事件时间 vs 处理时间的显式选择=002、调度冲突与资源竞争的归属声明=003；name 取子命题引导词原形，半角斜杠与拉丁缩写 vs 一律不改写为顿号或中文『对比』，判读见 MJ-25 (i)；非表源无行序可依，取分号序，RLP-001…007 分块序判读同型，裁决见 README §4.7）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics"
@@ -370,8 +370,8 @@ profiles:
         - {source_type: clause_id, value: "5.2.6", verified: true}
     seed_source:
       clause_id: "5.2.6"
-      table_rows: "5.2.6（4 行）；5.2.6 系准决策通道引言（@2503）＋行内加粗清单四项（@2505-2508），非表格、无行标识，覆盖宣称『5.2.6 行内加粗清单全部 4 项』由 row_id 机器反查（G-CFG-1 closed，ADR-INLINE-MARK-01）"
-      entry_id_range: "CFG-001…CFG-004（分块序＝5.2.6 @2505-2508 行内加粗清单列举序：配置 schema 注册=001、决策/参数判别谓词=002、开关生命周期=003、与 0.10 权力条款的联动=004；name 一律取加粗引导词逐字并去粗体标记——CFG-002 原形即含半角斜杠『决策/参数判别谓词』、CFG-004 原形即含条款号『与 0.10 权力条款的联动』→ 按 MJ-21 (iii) 原形登记，不改写为『权力条款联动』（与 RLP-004 同理），判读见 MJ-26 (i)；非表源无行序可依，取清单序，SCH-001…003／RLP-001…007 分块序判读同型，裁决见 README §4.8）"
+      table_rows: "5.2.6（4 行）；5.2.6 系准决策通道引言（@2504）＋行内加粗清单四项（@2506-2509），非表格、无行标识，覆盖宣称『5.2.6 行内加粗清单全部 4 项』由 row_id 机器反查（G-CFG-1 closed，ADR-INLINE-MARK-01）"
+      entry_id_range: "CFG-001…CFG-004（分块序＝5.2.6 @2506-2509 行内加粗清单列举序：配置 schema 注册=001、决策/参数判别谓词=002、开关生命周期=003、与 0.10 权力条款的联动=004；name 一律取加粗引导词逐字并去粗体标记——CFG-002 原形即含半角斜杠『决策/参数判别谓词』、CFG-004 原形即含条款号『与 0.10 权力条款的联动』→ 按 MJ-21 (iii) 原形登记，不改写为『权力条款联动』（与 RLP-004 同理），判读见 MJ-26 (i)；非表源无行序可依，取清单序，SCH-001…003／RLP-001…007 分块序判读同型，裁决见 README §4.8）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S5 先验权重消费风格默认；flag 谓词入白板（5.5）"
@@ -401,8 +401,8 @@ profiles:
         - {source_type: clause_id, value: "6.5", verified: true}
     seed_source:
       clause_id: "6.2.5"
-      table_rows: "6.2.5（15 行）；6.2.5 系四属性行内顿号清单（heading @2825、引言 @2827、四行清单 @2829-2832、卡片与 Q6 义务 @2834），非表格、无行标识，覆盖宣称『6.2.5 四属性行内清单全部 15 项战术』由 row_id 机器反查（G-QAT-1 closed，ADR-INLINE-MARK-01 路 B）"
-      entry_id_range: "QAT-001…QAT-015（分块序＝6.2.5 @2829-2832 四属性行的属性先后序 × 行内顿号列举序：性能=001-005〔引入并发／维持多副本／增加资源／减少开销／限制排队〕、可用性=006-008〔故障检测／恢复／故障预防〕、可修改性=009-012〔语义内聚／限制依赖／参数化配置／抽象中介〕、安全=013-015〔抵抗攻击／检测攻击／从攻击恢复〕；name 取各项战术词逐字并去括注——括注内容降入 narrative 与 compatibility／formal_anchor，故 QAT-007 name 作『恢复』而非『恢复（主动冗余/被动冗余/ spare）』；母本原形三处不改写＝@2830 半角斜杠后空格（被动冗余/ spare）、@2830 与 @2832 的半角斜杠不改顿号、@2832『限流/熔断联动 5.2.3』无顿号，判读见 MJ-27 (i)；粒度经用户裁决＝15 条战术（2026-10-09 裁决，非按 6.2.1 七族或按卡片面拆分）；非表源无行序可依，取行内清单列举序，CFG-001…004／SCH-001…003／RLP-001…007 分块序判读同型，裁决见 README §4.9）"
+      table_rows: "6.2.5（15 行）；6.2.5 系四属性行内顿号清单（heading @2826、引言 @2828、四行清单 @2830-2833、卡片与 Q6 义务 @2835），非表格、无行标识，覆盖宣称『6.2.5 四属性行内清单全部 15 项战术』由 row_id 机器反查（G-QAT-1 closed，ADR-INLINE-MARK-01 路 B）"
+      entry_id_range: "QAT-001…QAT-015（分块序＝6.2.5 @2830-2833 四属性行的属性先后序 × 行内顿号列举序：性能=001-005〔引入并发／维持多副本／增加资源／减少开销／限制排队〕、可用性=006-008〔故障检测／恢复／故障预防〕、可修改性=009-012〔语义内聚／限制依赖／参数化配置／抽象中介〕、安全=013-015〔抵抗攻击／检测攻击／从攻击恢复〕；name 取各项战术词逐字并去括注——括注内容降入 narrative 与 compatibility／formal_anchor，故 QAT-007 name 作『恢复』而非『恢复（主动冗余/被动冗余/ spare）』；母本原形三处不改写＝@2831 半角斜杠后空格（被动冗余/ spare）、@2831 与 @2833 的半角斜杠不改顿号、@2833『限流/熔断联动 5.2.3』无顿号，判读见 MJ-27 (i)；粒度经用户裁决＝15 条战术（2026-10-09 裁决，非按 6.2.1 七族或按卡片面拆分）；非表源无行序可依，取行内清单列举序，CFG-001…004／SCH-001…003／RLP-001…007 分块序判读同型，裁决见 README §4.9）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S1 候选 = QAT 条目按目标属性过滤；S4 = 战术卡片 vs 剩余预算"
@@ -428,8 +428,8 @@ profiles:
         - {source_type: clause_id, value: "8.2", verified: true}
     seed_source:
       clause_id: "8.2"
-      table_rows: "8.2.1（6 行）；8.2.1 系验证计划生成引言（@3311-3315）＋单行内六类顿号清单（@3317），非表格、无行标识（第五种源形态：加粗只落引导词『手段映射注册表』不到项级），覆盖宣称『8.2.1 手段映射注册表全部 6 类』由 row_id 机器反查（G-VFM-1 closed，ADR-INLINE-MARK-01）"
-      entry_id_range: "VFM-001…VFM-006（分块序＝8.2.1 @3317 单行内六类顿号列举序：静态分析=001、可执行检查程序=002、模型检查=003、测试=004、人工评审=005、生产监测=006；name 取六类词逐字并去括注与粗体标记——括注内容降入 narrative 与 compatibility／formal_anchor，故 VFM-004 name 作『测试』而非『测试（单元/集成/契约/行为注入/端到端）』、VFM-005 去 @3317 的粗体作『人工评审』；母本原形不改写＝@3317 三处括注内半角斜杠（结构性性质 V1/W4/X1 类、状态机性质 Z3/Z8 类、单元/集成/契约/行为注入/端到端）一律不改顿号，判读见 MJ-28 (i)；**粒度经用户裁决＝6 条**（2026-10-11 裁决，非按 8.2 子节拆、亦不按『测试』五个括注子项拆——不拆三根据：8.2.2 @3321-3328 系四层职责分配面、@3330 金字塔失真信号需单一承载、T4-T7 @3436-3441 的执行域拆则违 0.9 唯一真相）；8.2 其余子节按承载面**降入**六条（8.2.2 @3319＋8.2.3 @3332→VFM-004；8.2.4 @3340→VFM-001；8.2.5 @3347＋8.2.6 @3357→VFM-002〔8.2.6 另由 VFM-005 承载评审记录面，实测 source_pointers 内 8.2.6 出现 2 次〕；8.2.7 @3364→VFM-005；VFM-003 与 VFM-006 各承 @3317 括注与 8.3 @3378／8.4 @3399 的明文边）；@3317 的计划矩阵五元组（性质/目标 → 验证手段 → 自动化级别 → 触发点 → 证据形态）在六类清单内**无承载条目** → 缺口登记 G-VFM-1、**不增第七条**（MJ-9 不扩张／0.17.1 零新增规范命题）；非表源无行序可依，取清单列举序，CFG-001…004／SCH-001…003／RLP-001…007／QAT-001…015 四批分块序判读同型，裁决见 README §4.10）"
+      table_rows: "8.2.1（6 行）；8.2.1 系验证计划生成引言（@3312-3316）＋单行内六类顿号清单（@3318），非表格、无行标识（第五种源形态：加粗只落引导词『手段映射注册表』不到项级），覆盖宣称『8.2.1 手段映射注册表全部 6 类』由 row_id 机器反查（G-VFM-1 closed，ADR-INLINE-MARK-01）"
+      entry_id_range: "VFM-001…VFM-006（分块序＝8.2.1 @3318 单行内六类顿号列举序：静态分析=001、可执行检查程序=002、模型检查=003、测试=004、人工评审=005、生产监测=006；name 取六类词逐字并去括注与粗体标记——括注内容降入 narrative 与 compatibility／formal_anchor，故 VFM-004 name 作『测试』而非『测试（单元/集成/契约/行为注入/端到端）』、VFM-005 去 @3318 的粗体作『人工评审』；母本原形不改写＝@3318 三处括注内半角斜杠（结构性性质 V1/W4/X1 类、状态机性质 Z3/Z8 类、单元/集成/契约/行为注入/端到端）一律不改顿号，判读见 MJ-28 (i)；**粒度经用户裁决＝6 条**（2026-10-11 裁决，非按 8.2 子节拆、亦不按『测试』五个括注子项拆——不拆三根据：8.2.2 @3322-3329 系四层职责分配面、@3331 金字塔失真信号需单一承载、T4-T7 @3437-3442 的执行域拆则违 0.9 唯一真相）；8.2 其余子节按承载面**降入**六条（8.2.2 @3320＋8.2.3 @3333→VFM-004；8.2.4 @3341→VFM-001；8.2.5 @3348＋8.2.6 @3358→VFM-002〔8.2.6 另由 VFM-005 承载评审记录面，实测 source_pointers 内 8.2.6 出现 2 次〕；8.2.7 @3365→VFM-005；VFM-003 与 VFM-006 各承 @3318 括注与 8.3 @3379／8.4 @3400 的明文边）；@3318 的计划矩阵五元组（性质/目标 → 验证手段 → 自动化级别 → 触发点 → 证据形态）在六类清单内**无承载条目** → 缺口登记 G-VFM-1、**不增第七条**（MJ-9 不扩张／0.17.1 零新增规范命题）；非表源无行序可依，取清单列举序，CFG-001…004／SCH-001…003／RLP-001…007／QAT-001…015 四批分块序判读同型，裁决见 README §4.10）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S3 主导（CI/测试能力过滤）；T1 悬置禁令 = S1 空集时 FM-3 不得以「降级性质」逃逸"
@@ -459,7 +459,7 @@ profiles:
     seed_source:
       clause_id: "9.2.5"
       table_rows: "9.2.5（5 行：滚动发布／蓝绿发布／金丝雀发布／功能开关驱动发布／回滚规程）"
-      entry_id_range: "DPS-001…DPS-005（表行序 @3637-3641，MJ-13 (iv) 同型；回滚规程 @3641 按表行序取 DPS-005）"
+      entry_id_range: "DPS-001…DPS-005（表行序 @3639-3643，MJ-13 (iv) 同型；回滚规程 @3643 按表行序取 DPS-005）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "S3 主导（on-call/观测能力）；G3 注册完整性在 S6 检验"
@@ -486,7 +486,7 @@ profiles:
     seed_source:
       clause_id: "9.2"
       table_rows: "9.2.1（3 行：P0 阻塞级／P1 限期级／P2 监测级）"
-      entry_id_range: "GRD-001…GRD-003（表行序 @3583-3585；9.2.3 九信号源暂不收——部署类信号与 DPS 9.2.5 重叠，须先分工，登记为后续待办）"
+      entry_id_range: "GRD-001…GRD-003（表行序 @3584-3586；9.2.3 九信号源暂不收——部署类信号与 DPS 9.2.5 重叠，须先分工，登记为后续待办）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "[缺口：0.18.4 未登记方面 9 守护规则模板的规程变体——GRD 由方面 9 消费而非 0.18 选型规程（0.17.4 消费者二）]"
@@ -553,7 +553,7 @@ profiles:
     seed_source:
       clause_id: "10.2.2"
       table_rows: "10.2.2 义务表（11 行：1.4／2.4／4.4／5.4／8.4／9.4 ＋ 8.2.7 评审点一–五）"
-      entry_id_range: "PRJ-001…PRJ-011（义务表行序 @3871-3881；C4／arc42 16 行实例表母本明文「实例级，非规范」→ 不作种子）"
+      entry_id_range: "PRJ-001…PRJ-011（义务表行序 @3873-3883；C4／arc42 16 行实例表母本明文「实例级，非规范」→ 不作种子）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "[缺口：0.18.4 未登记方面 10 的规程变体]"
@@ -668,6 +668,72 @@ profiles:
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     narrative:
       note: "治理模板（ADR 亚型、简记格式）不改变系统质量属性包络，但「不改变」需母本明文方可作 N-A 判定，否则为默认值假充（0.17.6 第四层禁令）→ gaps KP-G3。2026-11-03 裁决注：R2-KP-G3-01 已在 0.17.2 @381 末句落地，status 由 draft 转 seed；种子面只取 0.5 六行，7.2.3 简记格式不单列条目、作为 note 内格式约束；原文保留为历史。"
+
+  # ── 方面 9 · 信号源 ──
+  - entry_id: kind_profile_SRC
+    describes_kind: SRC
+    name: 漂移／腐化信号源 · kind 剖面
+    version: {major: 1, minor: 0, patch: 0}
+    status: seed             # 2026-11-06：R2-SRC-01 获批（0.17.2 第 381 行末句同行追加）；条目编号待发布
+    provenance:
+      origin: manual
+      source_pointers:
+        - {source_type: clause_id, value: "0.17.2", verified: true}
+        - {source_type: clause_id, value: "0.17.3", verified: true}
+        - {source_type: clause_id, value: "0.17.4", verified: true}
+        - {source_type: clause_id, value: "9.2.3", verified: true}
+    seed_source:
+      clause_id: "9.2.3"
+      table_rows: "9.2.3 表 8 行非部署信号（第 3613–3620 行）；第 3621 行部署信号（3 指标）归 DPS"
+      entry_id_range: "待发布（8 条；编号在写入前单独批准，不预占）"
+    selection_profile:
+      source: {source_type: clause_id, value: "0.18.4", verified: true}
+      variant: "[缺口：0.18.4 未登记信号源 kind 的规程变体——SRC 不参与 0.18 选型（0.18.2 S1 排除），由方面 9 消费]"
+    required_extra: []
+    optional: []
+    not_applicable:
+      - field: envelope
+        reason: "R2 澄清（0.17.2 第 381 行末句；R2-KP-G3-01／R2-SRC-01）：SRC 漂移／腐化信号源不以质量属性为选择判据，0.8 包络义务按本剖面登记为 not_applicable；显式豁免而非省略。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.latency_budget_delta
+        reason: "R2 澄清（0.17.2 第 381 行末句）：cost_profile 随 envelope 一并 N-A；信号源不被选择，无延迟预算影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.failure_modes
+        reason: "R2 澄清（0.17.2 第 381 行末句）：cost_profile 随 envelope 一并 N-A；信号源不是可选方法，无失败模式卡片。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.consistency_impact
+        reason: "R2 澄清（0.17.2 第 381 行末句）：cost_profile 随 envelope 一并 N-A；信号源不改变一致性级别。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.observability_requires
+        reason: "R2 澄清（0.17.2 第 381 行末句）：cost_profile 随 envelope 一并 N-A；观测能力在 GRD／9.2.5 侧登记。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.ops_cost
+        reason: "R2 澄清（0.17.2 第 381 行末句）：cost_profile 随 envelope 一并 N-A；消费成本在 GRD 侧卡片。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.skill_prerequisites
+        reason: "R2 澄清（0.17.2 第 381 行末句）：cost_profile 随 envelope 一并 N-A；信号源不要求新技能前提。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.aggregation_semantics
+        reason: "R2 澄清（0.17.2 第 381 行末句）：cost_profile 随 envelope 一并 N-A；信号源无跨条目聚合语义。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+    undecided_fields: []
+    entry_level_exemptions:
+      - scope: "SRC 全批（8 条，编号待发布）"
+        field: envelope
+        check: C-ENV
+        reason: "SRC 信号源不改变质量属性包络；0.8 包络义务经 R2-SRC-01 澄清为 not_applicable；C-ENV 对非 1.2.x 源行且 envelope 为空的条目按本豁免显式放行（@d:registry/scripts/project.py#fn-check_cenv）。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+    narrative:
+      note: "9.2.3 表共 9 个数据行：8 行非部署信号立 SRC 条目（子信号在条目体内逐项枚举），第 3621 行部署信号（部署失败率／回滚率／变更前置时间 3 指标）归 DPS，不立 SRC。R2-SRC-01 已于 2026-11-06 获批并在 0.17.2 第 381 行末句同行追加；本剖面字段判据据此登记，条目编号待发布。"
 
 # ── 剖面级缺口（R2 澄清候选；不静默造规则）──
 gaps:
