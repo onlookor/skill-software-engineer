@@ -91,6 +91,15 @@ predicates:
   - {name: exclusion_record, arity: 3, source: {source_type: clause_id, value: "0.18.6", verified: true}}
   - {name: verdict_table, arity: 3, source: {source_type: clause_id, value: "0.18.6", verified: true}}
 
+  # ── 方面 9（9.5）SRC 判据扩容（2026-11-06，ADR-VG09-01 D1-A/D2-A；8 名）──
+  - {name: cross_boundary_density, arity: 2, source: {source_type: clause_id, value: "9.5", verified: true}, note: "cross_boundary_density(scope, window)；跨边界边数/内部边数按窗口聚合；出处 9.2.3 通道一"}
+  - {name: baseline, arity: 2, source: {source_type: clause_id, value: "9.5", verified: true}, note: "baseline(metric, scope)；基线=登记值快照，无登记值走 M15；出处 9.2.1 P2"}
+  - {name: interaction_cycle, arity: 1, source: {source_type: clause_id, value: "9.5", verified: true}, note: "interaction_cycle(graph)；交互有向环，与 1.5 cycle(forbidden_dependency) 不同指"}
+  - {name: execution_order, arity: 2, source: {source_type: clause_id, value: "9.5", verified: true}, note: "execution_order(e1, e2)；交互偏序，未登记由 covers/registered 侧判定"}
+  - {name: traceable_to_fact, arity: 1, source: {source_type: clause_id, value: "9.5", verified: true}, note: "traceable_to_fact(d)；source_pointers 非空且逐条可反查；出处 0.3／0.4"}
+  - {name: falsification_metric, arity: 4, source: {source_type: clause_id, value: "9.5", verified: true}, note: "falsification_metric(adr, metric, threshold, window)；保守假设 ADR 的可推翻指标"}
+  - {name: supplement_evidence_record, arity: 1, source: {source_type: clause_id, value: "9.5", verified: true}, note: "supplement_evidence_record(d)；补证工件入库且指针可查"}
+  - {name: assertion_fact_mismatch, arity: 1, source: {source_type: clause_id, value: "9.5", verified: true}, note: "assertion_fact_mismatch(E)；证据断言 vs 在册事实"}
 formula_words:
   # 编译规范 2.3「公式约定词内建语义表」——封闭集，非白板谓词，M4 校验豁免
   - {name: approved, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
@@ -150,7 +159,7 @@ vocabulary_gaps:
     affected: "method_registry.yaml VFM 批块头 @8708-8720 与 G-VFM-1 statement (3)／route ②（@9995／@9998）；VFM-001…VFM-006 的 formal_anchor（T1–T9 implements 共 15 项，以条款整体为锚）与 VFM-003／VFM-005 的 references 空列表面（8.7 无行级对应行，属另一缺口轴，不混）；在册名 **76** 本批未变（不本地造词，R2 前不得扩表）。"
     route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；归 s5g 落盘（本条目即 s5g 的登记面，2026-11-03；不扩 predicates 组、不改写各批块头与简记，0.22 承诺一）。**编号注（2026-11-03 更新）**：`mapped` 经用户裁决归 VG-06（母本出处 6.5 @2903 Q6；8.5／T1–T9 实测无此词），本条已移出该词 → 预告原记十七词现为十六词；G-VFM-1 的预告文本不改写，差异据实登记于 missing_need；VG-08 的 route 括注（本文件 @156）所记『条目仅 VG-01…VG-05』系落盘当时实测，本条目落盘后成历史陈述，不改写（0.22 承诺一）。"
   - id: VG-08
-    missing_need: "部署策略族与发布判据谓词（9.2.5／9.5 行为所需，本批实测全部不在册）：(i) `deploy_strategy`（9.5 @3700 逐字「deploy_strategy(scope, strategy, params, rollback_procedure)」——G3 @3713「∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)」的量词域谓词）；(ii) `canary_gate`（9.5 @3701 逐字「canary_gate(strategy, metric, threshold, window)」——G4 @3714-3715 的判据谓词，公式侧写作 `gate_verdict(metric, threshold, window)`，`gate_verdict` 亦不在册）；(iii) `evolution_path`（9.5 @3702）与 (iv) `strangler_sequence`（9.5 @3703）——二者属 9.2.6 演化面、非本批接线缺口，据实一并登记以免二次扩表（与 VG-06／VG-07 的『整节机器层谓词一次登记』同型）；(v) 公式侧 `gate_verdict`（G4 @3714）。**不得以实参槽名充当谓词**：`rollback_procedure`／`strategy`／`params`／`metric`／`threshold`／`window` 系上述谓词的实参槽名（同 VG-04 (i) 对 compat_policy、VG-05 (i) 对 expiry 的判读）→ 本批一律不写调用式。9.2.5 的 G3／G4 与 9.5 的四谓词均为母本明文机器层形态，但在册名实测 **76**＝predicates 59＋formula_words 7＋clause_defined_predicates 10，五词**全部 MISSING**。"
+    missing_need: "部署策略族与发布判据谓词（9.2.5／9.5 行为所需，本批实测全部不在册）：(i) `deploy_strategy`（9.5 @3700 逐字「deploy_strategy(scope, strategy, params, rollback_procedure)」——G3 @3725「∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)」的量词域谓词）；(ii) `canary_gate`（9.5 @3701 逐字「canary_gate(strategy, metric, threshold, window)」——G4 @3726-3727 的判据谓词，公式侧写作 `gate_verdict(metric, threshold, window)`，`gate_verdict` 亦不在册）；(iii) `evolution_path`（9.5 @3702）与 (iv) `strangler_sequence`（9.5 @3703）——二者属 9.2.6 演化面、非本批接线缺口，据实一并登记以免二次扩表（与 VG-06／VG-07 的『整节机器层谓词一次登记』同型）；(v) 公式侧 `gate_verdict`（G4 @3726）。**不得以实参槽名充当谓词**：`rollback_procedure`／`strategy`／`params`／`metric`／`threshold`／`window` 系上述谓词的实参槽名（同 VG-04 (i) 对 compat_policy、VG-05 (i) 对 expiry 的判读）→ 本批一律不写调用式。9.2.5 的 G3／G4 与 9.5 的四谓词均为母本明文机器层形态，但在册名实测 **76**＝predicates 59＋formula_words 7＋clause_defined_predicates 10，五词**全部 MISSING**。"
     workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务登记，禁沉默排除），**绝不写调用式**（写 `deploy_strategy(·)` 即 M4 硬失败，RLP 批 4 处先例）；DPS 五条的 formal_anchor 只取性质编号（G3／G4／Z6），不据 9.5 谓词面补绑或造词（0.17.1 零新增规范命题）；接线面阻断按 WV-DPS-E3-01 remediation_plan (a) 分性质登记（G3 阻于 deploy_strategy；G4 阻于 canary_gate／gate_verdict；Z6 阻于 cleanup_filed，后者属 VG-05 已登面）。判读登记 method_registry.yaml manual_judgments MJ-29 与 ST-DPS-01.note。"
     affected: "method_registry.yaml DPS-001…DPS-005 五条的 anti_patterns[].detection_predicate 与 applicability 三空间：本批 M4 扫描面**零命中**上述五词（调用词全部取自已登记名，UNREG 集为空 → 无硬失败、无改写落点）；实际影响面在 **formal_anchor 接线**（G3 5 实例／G4 1 实例，均因 9.5 谓词未在册而不可接线），并延及未来 GRD 批（9.2.6 的 evolution_path／strangler_sequence）。在册名 **76** 本批未变（不本地造词，R2 前不得扩表）。"
     route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；归 s5g，与 VG-06（QAT 批六词）／VG-07（VFM 批十七词）同批处置。**编号注**：VG-06／VG-07 已在各自批次简记与块头以『登记』口吻预告但**未落盘**于本文件（实测本文件条目仅 VG-01…VG-05）→ 本条为避免编号撞车取 VG-08，不改写既有预告、不代其落盘（0.22 承诺一）。"
@@ -159,3 +168,21 @@ vocabulary_gaps:
     workaround: "保持自然语言散文判据，**不写调用式**（写 `baseline(·)`／`metric_hit(adr)` 即 M4 硬失败，RLP 批 4 处先例），也**不以实参槽名或字段名充谓词**（同 VG-04 (i)／VG-05 (i)／VG-06 (v) 判读）。与 VG-05…VG-08 的关键差异：**本批不得用方括号占位**——signals 的 S-4 明禁 `[`／`]`，且方括号会虚增槽数（占位符口径 1,483）并可能误触发 M15 事实口径；故本批口径为『散文＋不调用』。判读与影响面登记 gaps `G-SRC-1`（statement 已追加清点结论）；本批无新增勘察项，不新立 SO。"
     affected: "method_registry.yaml SRC-001…SRC-008 的 14 条 `signals[].detection_predicate` 与 5 条 `signals[].severity_condition.when_predicate`（合计 19 串，未登记面 16 串）；predicate_vocabulary.yaml 本文件的在册名 **76**（predicates 59＋formula_words 7＋clause_defined_predicates 10）本批**未变**（不本地造词，R2 前不得扩表）；M4 覆盖面前提——M4 现不扫 `signals`，登记后须另开 ADR 才能扩扫。"
     route: "R2 提议候选（成文法谓词未登记；补齐属母本 x.5／9.5 谓词表扩充 = 高影响，走 ADR + 批准）。登记前保持 open；不得以调用式冒充已登记，也不得以方括号占位替代登记。逐条登记完成后另开 ADR，把 M4 扩到 `signals[].detection_predicate` 并重跑 M4。**编号注**：VG-09 此前经 2026-11-03 用户裁决被明确**不用于** QAT 七词扩写（未落盘、未占用编号），本条为该编号的首次实际登记；VG-01…VG-09 连续，不改写 VG-06 route 的裁决注（0.22 承诺一）。"
+    resolution_2026_11_06:
+      adr: "ADR-VG09-01（2026-11-06 approved；D1-A／D2-A／D3-A／D4-A／D5-A／D6-A／D7-A）"
+      predicate_rows_added: 8
+      renamed:
+        - {from: cycle, to: interaction_cycle, reason: "与 1.5 V1 的 cycle(forbidden_dependency) 同名异义；改名避免撞名（0.22 不复用原则的同型风险控制）"}
+      resolved_by_composition:
+        - {name: monotonic_trend, expr: "连续 N 窗口 signal(..., trend_window_verdict) 同向", base_predicates: [signal], source: {source_type: clause_id, value: "9.5", verified: true}}
+        - {name: conforms_to, expr: "connects(u1,u2,·) ∧ ¬∃C covers(C,u1,u2)", base_predicates: [connects, covers], source: {source_type: clause_id, value: "3.5", verified: true}}
+        - {name: lower_layer_coverage, expr: "∀p: hard(p) ∧ ¬∃S: test_suite(layer=lower, target ∋ p)", base_predicates: [test_suite, covers_check], source: {source_type: clause_id, value: "8.5", verified: true}}
+        - {name: auth_bypass, expr: "access_path ∧ (¬registered(C) ∨ provider≠owner)", base_predicates: [access_path, registered, provider, owner], source: {source_type: clause_id, value: "4.5", verified: true}}
+        - {name: baseline_change_record, expr: "baseline(m, scope) ∧ drift ∧ ¬route_registered", base_predicates: [baseline, drift], source: {source_type: clause_id, value: "9.5", verified: true}}
+        - {name: remediation_or_waiver_record, expr: "waiver(w, scope) ∨ debt_item(d, …)", base_predicates: [waiver, debt_item], source: {source_type: clause_id, value: "9.5", verified: true}}
+        - {name: metric_hit, expr: "canary_gate.threshold ∧ window 判定命中", base_predicates: [canary_gate], source: {source_type: clause_id, value: "9.5", verified: true}}
+        - {name: consecutive_failure, expr: "同一 case 连续 N 周期 verdict_of=fail", base_predicates: [test_suite, injection_case, verdict_of], source: {source_type: clause_id, value: "8.5", verified: true}}
+      residual:
+        - {name: cycle_scale, reason: "度量定义不足＋母本无承载位置：5.2.1 只定义成环、不定义环规模；1.5 cycle 指依赖环", route: "R2；需新增 5.2.1 条款文字后另案"}
+      vocabulary_gaps_count: 9
+      registered_names: "76→84（+8）"

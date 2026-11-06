@@ -1287,3 +1287,4 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **文档**：`registry/README.md` 新增 §4.26（§4.25 行号口径订正为 405／3624／3615–3622／3623）。
 - **补记 `11dc8f4`**：17 条 `not_applicable` 的 `reason` 补入规范依据说明；判定结果不变，不升条目 `version`；本条属《锚点与引用规范》§10.1 第 4 条排除区内的语义说明，按文本注记处理。
 - **G-SRC-1 清点与 VG-09**：19 串判据（14 `detection_predicate`＋5 `when_predicate`）→ 完全已登记 0／既有 VG 覆盖 3（VG-05 两条、VG-06 一条且覆盖不足）／未登记 16 串（17 名）；新增 `VG-09`（只登记、不定义，`vocabulary_gaps` 8→9，在册名 76 不变）；`G-SRC-1` statement 追加清点结论（原文不改写）；母本 0 行。
+- **谓词表一次性扩容（ADR-VG09-01，approved）**：`9.5` 插 12 行（8 谓词＋4 注释），母本 4,430→4,442；`cycle`→`interaction_cycle`；复合 8 名以结构化映射消解（`VG-09.resolved_by_composition`），`cycle_scale` 明确排除为残余；`vocabulary_gaps` 保持 9、在册名 76→84；机械位移 579 动锚／53 区间／5 review 同批清零。

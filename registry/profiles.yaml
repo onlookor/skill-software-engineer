@@ -616,7 +616,7 @@ profiles:
     seed_source:
       clause_id: "10.2.2"
       table_rows: "10.2.2 义务表（11 行：1.4／2.4／4.4／5.4／8.4／9.4 ＋ 8.2.7 评审点一–五）"
-      entry_id_range: "PRJ-001…PRJ-011（义务表行序 @3874-3884；C4／arc42 16 行实例表母本明文「实例级，非规范」→ 不作种子）"
+      entry_id_range: "PRJ-001…PRJ-011（义务表行序 @3886-3896；C4／arc42 16 行实例表母本明文「实例级，非规范」→ 不作种子）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
       variant: "[缺口：0.18.4 未登记方面 10 的规程变体]"
