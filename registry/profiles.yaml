@@ -684,7 +684,7 @@ profiles:
         - {source_type: clause_id, value: "9.2.3", verified: true}
     seed_source:
       clause_id: "9.2.3"
-      table_rows: "9.2.3 表 8 行非部署信号（第 3613–3620 行）；第 3621 行部署信号（3 指标）归 DPS"
+      table_rows: "9.2.3 表 8 行非部署信号（插行后第 3614–3621 行）；第 3622 行部署信号（3 指标）归 DPS"
       entry_id_range: "待发布（8 条；编号在写入前单独批准，不预占）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}

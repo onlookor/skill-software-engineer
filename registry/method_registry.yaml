@@ -11327,6 +11327,7 @@ gaps:
     affected: "GRD kind 的覆盖宣称；DPS-003／DPS-005 的信号源面"
     route: "人工裁决（信号源归属 GRD、DPS 或另立 kind；分工前保持不收）→ 登记 SO-17；分工后如新增条目，走 0.17.5 draft→seed 与 M3 重跑。"
     status: open
+    note: "2026-11-06 阶段 4 登记（不改写上文）：方案③已获批并落盘——0.17.3 枚举新增 SRC 行，`kind_profile_SRC` 剖面已登记（N-A：envelope＋7 个 cost_profile.*；C-ENV 全批豁免）。四数对齐结论：9 个表数据行＝8 行非部署（插行后 3614–3621，各立一条 SRC，编号待发布）＋1 行部署（插行后 3622，行内含部署失败率／回滚率／变更前置时间 3 指标，归 DPS，不立 SRC）；冻结快照「其余六项」据此订正为 8 项。本缺口保持 open 至 8 条 SRC 编号发布并入册。"
 
   - gap_id: G-PRJ-1
     type: 勘察义务缺口（PRJ-001…PRJ-011 的 delivery_space 全条待勘察）
@@ -12656,6 +12657,7 @@ survey_obligations:
     consumer: "9.2.1 信号汇聚；9.2.5 部署策略观测面；0.14 守护分级"
     trigger_rule: "0.9 唯一真相；M9（peer 关系须在案）；M15（未知归属 → 不本地收编）"
     status: open
+    note: "2026-11-06 阶段 4：归属已裁（方案③）——8 条非部署信号由 SRC 承载（编号待发布），部署三项归 DPS；本义务保持 open 至 8 条 SRC 编号发布并入册。"
 
   - obligation_id: SO-18
     kind: 入库期

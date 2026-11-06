@@ -1943,4 +1943,4 @@
 - **数据来源层**（yaml 行内注释）：provenance: 交叉表源；typical_reversibility: 人工判断；narrative: 人工判断；statement: 骨架源/人工判断；impact: 交叉表源；note: 交叉表源；status: 人工判断；judgment: 人工判断
 
 ---
-生成于 2026-11-06T18:39:11｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`82613625699f`；`profiles.yaml`→`baed5a6cb6d4`；`predicate_vocabulary.yaml`→`72c3060e2bf3`
+生成于 2026-11-06T18:48:55｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`fe0c46518f4a`；`profiles.yaml`→`348274dc2bf2`；`predicate_vocabulary.yaml`→`72c3060e2bf3`
