@@ -3,11 +3,11 @@
 | 项 | 值 |
 |---|---|
 | 提案编号 | R2-SRC-01（草案） |
-| 状态 | 草案；待人类责任方批准；本轮**不执行**剖面登记、不改 `profiles.yaml` |
-| 日期 | 2026-11-05 |
+| 状态 | **已批准并落盘**（2026-11-06）：母本第 381 行**同行追加**澄清句，零插行；落盘记录见 §9 |
+| 日期 | 2026-11-05（草案）；2026-11-06（批准与落盘） |
 | 触发 | `ADR草案-SRC-9.2.3九信号源-方案③.md` §2.8（R1.4 裁定）；母本 9.2.3；0.17.2 剖面机制 |
 | 关联 | `R2-KP-G3-01`／`ADR-KP-G3-01`（先例）；`registry/profiles.yaml`；`registry/README.md` §4.17／§4.18；`project.py`（M2／`C-ENV`／`C-ST`／`META`） |
-| 拟改 | 新增 `kind_profile_SRC` 剖面（`profiles.yaml`）；不改母本 |
+| 拟改 | 母本第 381 行**同行追加**一句（零插行，见 §9）；另新增 `kind_profile_SRC` 剖面（`profiles.yaml`，第四步执行） |
 | 本轮不改 | `profiles.yaml`／`method_registry.yaml`／`predicate_vocabulary.yaml`／四件投影；不发布 `SRC-001…` 编号 |
 | 批准 | 0.13、0.5、0.10；Agent 不得自批 |
 
@@ -74,3 +74,17 @@
 - 母本：0 行改动。
 - `profiles.yaml`／`method_registry.yaml`／`predicate_vocabulary.yaml`／四件投影：0 改动。
 - 仅新增本文件；ADR 草案更新；规范新增 §10.3；冻结快照追加 1 行订正注记。
+
+## 9. 落盘记录（2026-11-06）
+
+| 项 | 内容 |
+|---|---|
+| 批准 | 用户（2026-11-05 批「R2-SRC-01」，2026-11-06 执行） |
+| 母本形态 | 第 381 行**同行追加**一句，**零插行**：`上述 not_applicable 判据同样适用于 9.2.3 漂移／腐化信号源（kind SRC）：其 envelope 与 cost_profile 登记为 not_applicable（逐项附 reason），compatibility／constraints_imposed／applicability 仍必填。` |
+| 行数断言 | `split_lines` 4428→**4428**；代码围栏 216→**216**；`git diff --numstat`＝**1 1**；sha256 前 12 位 `74f46007eb8b`→`eca8a10908dd` |
+| `--check` 前 | 条目 **130**；记录 **1123**；硬失败 **0**；软警告 **0**；指针 **2165**（miss 0）；占位符 **1483**（事实 1＋槽 1482） |
+| `--check` 后 | 条目 **130**；记录 **1123**；硬失败 **0**；软警告 **0**；指针 **2165**（miss 0）；占位符 **1483**（事实 1＋槽 1482） |
+| 四件投影 | 重生成；diff **仅生成时间戳**，源哈希不变（`84afba013620`／`b31adcb5aacc`／`1f990b772c83`） |
+| 未执行 | `profiles.yaml` 的 `kind_profile_SRC` 登记留给第四步；`SRC-001…008` 编号未发布 |
+
+> §6／§8 的「本轮未改动清单」为**批准前 as-of 陈述**，历史文字不改；实际落盘以本节为准。
