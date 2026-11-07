@@ -189,13 +189,14 @@
 
 ### STY-012｜MVC 及变体（MVP/MVVM）
 
-- **状态** seed（seed 资格：成立）｜**版本** 1.0.0｜**可逆性** bounded｜**origin** hybrid
+- **状态** seed（seed 资格：成立）｜**版本** 1.1.0｜**可逆性** bounded｜**origin** hybrid
 - **源行**：1.2.1-MVC 及变体（MVP/MVVM）
 - **envelope** 可修改性：典型变更的实现成本（触达单元数）：`表现层替换 → touched_units = |表现层单元|，且 touched_units(领域) = 0（表现-领域-交互三分 + 单向数据流）；领域逻辑渗入控制器/视图时该上界失效（见 STY-012-AP1）`
 - **成本**：ops_cost＝无独立运维面；成本落在表现层构建与前端交付管道｜聚合语义=itemwise
 - **反模式** 1 项（P1×1）：STY-012-AP1 领域逻辑渗入控制器/视图
 - **施加约束** 3 项：方面 2←风格收窄分解策略可行集：表现/领域/交互为三类分解单元，领域规则不得以表…；方面 6←本条目 envelope = 质量目标可达性上界（V4 消费）；方面 10←机器层：1.5 拓扑谓词集
 - **formal_anchor**：V1(implements)、V4(consumed_by)、V5(implements)
+- **参考文献**：bib 81 [已核验（在线在位：2026-11-07 全文抓取；标题、日期、目录与正文一致；Presentation Model 节覆盖「表现状态外置为可测试模型」、MVP／Passive View 节在正文；作者自述 draft form，仅作模式谱系与结构区分）]·metadata_extraction
 - **叙事（收益-成本）**：收益：表现层可替换（触达面收敛到表现单元，领域零触达），交互式界面与领域逻辑的变更率差异被结构吸收
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；applicability: 骨架源；envelope: 骨架源；cost_profile: 骨架源/人工判断；anti_patterns: 骨架源；formal_anchor: 人工判断
 
@@ -2011,4 +2012,4 @@
 - **数据来源层**（yaml 行内注释）：narrative: 人工判断；statement: 骨架源/人工判断；impact: 交叉表源；note: 交叉表源；status: 人工判断；judgment: 人工判断
 
 ---
-生成于 2026-11-07T18:20:42｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`a10c87e7e549`；`profiles.yaml`→`85bed41b5006`；`predicate_vocabulary.yaml`→`d6524d6a6861`
+生成于 2026-11-07T18:41:00｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`617d7ee620ab`；`profiles.yaml`→`85bed41b5006`；`predicate_vocabulary.yaml`→`d6524d6a6861`

@@ -1416,3 +1416,16 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **两处台账更正**：`G-CTR-1.affected` 原记 `CTR-012 references 空列表`（实含书目 33）；`G-DFL-1.affected` 原记 `DFL-002 不受影响`（实有 bib43 非决策级行级文字）与 `DFL-005 references 空列表`（实含书目 40，D-DFL-1 已批）；两处均改并留更正句，`G-DFL-1.statement` 追加更正段（原文不删）。
 - **证据不足未闭合行**：**0**；附注：`CRD-007` 的 ② 依赖人类裁定句而非书目自述粒度边界（若只按书目证据判更接近 ③），已在 `closure.preserved` 留痕。
 - **不变量**：entries **138／138 seed**；自检记录 **1,214**；硬失败 **0**、软警告 **0**；母本零改动（锚点比对不执行）。只 commit 不 push。
+
+## 2026-11-07（续 9）：`G-STY-3` 关闭（书目 81 行级覆盖）＋ADR-STY-3-01 落地
+
+- **ADR**：`ADR-STY-3-01` 由 draft 转 **approved**（人类责任方 2026-11-07）；文件名改为 `ADR-STY-3-01-approved-20261107-MVC行级外部出处补登记.md`；新增 §3.5「跨方面增补文献置文献序列末位」例外条款、§10.1 三项裁决、§10.2 全文核验记录、§10.3 落地清单；版本口径定为 `1.1.0`。`adr/INDEX.md` 状态改 approved，统计 16 份／approved 15／draft 1（`ADR-SRC-01`）。
+- **核验（落地前置，已通过）**：`https://martinfowler.com/eaaDev/uiArchs.html` 全文抓取（2026-11-07，67,986 字节）；逐字确认 MVC 导言（表现与领域分离＋观察者事件同步）、Presentation Model／MVVM 节（表现状态外置为可测试模型）、MVP／Passive View 节（`they form a Passive View, manipulated by the presenter.`）。作者自述 draft form，故该书目仅作模式谱系与结构区分；MVC／MVP 书级权威由本地 PoEAA 第 14 章承担。引文与来源已写入 ADR §10.2 与 `STY-012.references.trust_grade`。
+- **母本（甲案，3 处）**：@11 结构句行内补「2026-11-07 跨方面增补 81 于 10.8」；@1867 说明句「现编号 28–80」改「28–81」并注明 81 见 10.8；§10.7 末新增 `### 10.8 增补参考文献（跨方面）`＋空行＋书目 81。**书目 81 实际行号＝@4231**（10.8 标题 @4229、空行 @4230）。母本 **4,447 → 4,451 行**（净 +4：标题＋空行＋书目共 3 行，另加书目行与 `---` 之间的必需分隔空行 1 行；若省去该空行，`81.` 列表行会被 `---` 解析为 setext 标题，故保留）。
+- **锚点位移实测**：以改动前快照（`/tmp/anchor_index_gtsty3/targets.csv`）与改动后快照（`/tmp/anchor_index_after/targets.csv`）逐条比对——目标行 ≥ @4229 的锚共 **28 处（去重 11 token：legacy `@4231`／`@4277`／`@4278`／`@4280`／`@4283`／`@4297`／`@4298`／`@4300`／`@4303`／`@4348` ＋ `@m:4300`）整体 +4**；跨插入点区间锚 **0**（区间锚 1,289 条，无一跨越 @4229）；新增锚 1 条（`@m:4231`，registry）。**实测与 ADR 预估（32 处／14 token、+3）的差异来源＝插入行数由 3 变 4**（必需分隔空行），受影响锚的集合本身以实测为准。
+- **条目 `STY-012`**：`version 1.0.0 → 1.1.0`；`source_class: mother-row → external`；`source_pointers` 增 `bib_id: 81`；`references` 由 `[]` 改为书目 81（`compile_usage=metadata_extraction`，`trust_grade` 含核验来源与限制）；条目字段语义未改。
+- **台账闭合**：`G-STY-3` **closed**（`ADR-GAP-01` ①，basis＝书目 81 行级覆盖 1.2.1-MVC 及变体行；evidence 含 ADR §3／§3.5／§10.2、书目 81 @m:4231、PoEAA 第 14 章、五条书目排除检索）；`SO-3` **closed**（范围 G-STY-3＋G-STY-5 均闭合）。open gap **3 → 2**（`G-PRJ-1`、`G-SRC-1` 保留）；open SO **4 → 3**（`SO-1`、`SO-4`、`SO-6`）。
+- **投影**：四件重生成（`STY.md`／`索引.md`／`勘察义务清单.md`／`自检报告.md`）；`STY-012` 卡片新增参考文献行，`G-STY-3`／SO-3 转 closed；指针反查 2,265 → **2,267**。
+- **自检**：**1,213 条记录｜硬失败 0｜软警告 0**（较上批 1,214 少 1：G-STY-3／SO-3 转 closed 减 2 行、新增 bib 指针增 1 行）；聚合口径 **references（有引用的条目）65／external 34／mother-row 73／mother-clause 29／mother-definition 2／未分类 0**；seed 资格成立 138 条。
+- **机械抽印本**：总纲单行本抽印范围＝母本 26–1302，本次三处改动均在其外，**单行本零变更**（不重抽）。
+- **边界**：未改 `project.py`／`profiles.yaml`／`predicate_vocabulary.yaml`；未动 `G-PRJ-1`／`G-SRC-1`。只 commit 不 push。
