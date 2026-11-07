@@ -45,8 +45,9 @@
 | `ADR-README-01` | 子目录自检矩阵的授权边界与 README §5 公式拆解 | approved | 2026-11-07 | — | `registry/README.md` §5（迁入 `registry/CHECK-SPEC.md` C1）；`project.py` `check_m2`／`check_cenv`／`check_cst`／`SEED_CHECKS`；母本配套文件说明表 L21；`AGENTS.MD` L15 | `ADR-README-01-approved-20261107-子目录自检矩阵授权边界.md` |
 | `ADR-M5-01` | M5（`narrative_sync`）软硬冲突裁决 | approved | 2026-11-07 | — | 母本 0.17.8 L500 行内追加（同行）；总纲单行本 L475 同步；`CHECK-SPEC` C1 M5 行；`ST-STY-01.condition`；`project.py` `check_m5`／`SEED_CHECKS` | `ADR-M5-01-approved-20261107-M5软硬冲突裁决.md` |
 | `ADR-GAP-01` | 登记面下探与 gap 闭合规则（三态） | approved | 2026-11-07 | — | 0.12／0.17.7 门槛 6／0.17.8 M6；`ADR-STY-FIM-01` §5.5；gaps `G-CRD-1`／`G-DEC-1`／`G-CTR-1`／`G-STP-1`／`G-DFL-1`（均 closed）；SO-7～SO-11（均 closed） | `ADR-GAP-01-approved-20261107-登记面下探与gap闭合规则.md` |
+| `ADR-STY-3-01` | `G-STY-3`／STY-012 的 MVC 行级外部出处补登记 | draft | 2026-11-07（起草） | — | 母本 0.12 @11／@1867（编号 81、增补区 10.8）；书目 81；`method_registry.yaml` `STY-012`；gap `G-STY-3`；SO-3 | `ADR-STY-3-01-draft-20261107-MVC行级外部出处补登记.md` |
 
-**统计**：15 份；approved 14、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
+**统计**：16 份；approved 14、draft 2（`ADR-SRC-01`、`ADR-STY-3-01`）；无 rejected、无 superseded。
 
 ## 3. 状态存疑项（正文头部与执行证据不一致，已按证据裁定）
 
