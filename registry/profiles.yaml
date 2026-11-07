@@ -25,7 +25,7 @@ meta:
 # ── 检查开关（ADR-R2-APPL-01；回退手段）──
 # R2_APPL: info（首期观察，A1–A3 只记 info 不阻断）｜hard（升为硬判据，须另批）｜off（停用）
 check_switches:
-  R2_APPL: info
+  R2_APPL: hard
 
 # ── 通用必填（全 kind；来源逐条标注）──
 common_required:

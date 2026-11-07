@@ -876,11 +876,33 @@ def check_m4(rep: Report, e: dict, eid: str, vocab: set):
 # ── R2-APPL-01：applicability 项级事实槽（A1 结构／A2 角色／A3 槽／A4 形态提示）──
 
 QUESTION_MARKERS = re.compile(r'[？?]|是否|该不该|是什么|哪些|如何|为什么|须回答|必须由.{0,40}回答')
+# H1（predicate 疑为 question）收紧后的判据：仅 problem_space、剥离引文/括注/注脚、主句疑问式、完成态不提示
+H1_MARKERS = re.compile(r'须回答|需要判断|必须由.{0,40}回答|该不该|是否')
+H1_COMPLETION = re.compile(r'已勘察|已实测|已登记|已声明|已按|已定|已在册|已入|可查|可承载|可写|可判定|可推导')
 
 
 def _r2_questionish(expr: str) -> bool:
-    """形态启发式（仅 A4 提示用，不参与任何硬判据）。"""
+    """H2 用的宽口径标记（仅 A4 提示用，不参与任何硬判据）。"""
     return bool(QUESTION_MARKERS.search(expr or ''))
+
+
+def _r2_main_clause(expr: str) -> str:
+    """H1 判主句前剥离引文／括注（含嵌套）与 `——` 之后的注释段。"""
+    s = expr or ''
+    for _ in range(4):
+        t = re.sub(r'「[^」]*」|『[^』]*』|（[^）]*）|\([^)]*\)', '', s)
+        if t == s:
+            break
+        s = t
+    return s.split('——')[0]
+
+
+def _r2_h1_questionish(expr: str) -> bool:
+    """H1：主句为疑问式且无完成态收束语才提示（避免'含疑问词即报'）。"""
+    main = _r2_main_clause(expr)
+    if H1_COMPLETION.search(main):
+        return False
+    return bool(H1_MARKERS.search(main))
 
 
 def _r2_answered_by_ok(ans: str, idx: Index, all_ids: set) -> bool:
@@ -918,7 +940,7 @@ def check_r2_applicability(rep: Report, entries: list, idx: Index, mode: str):
                         a1.append(f'{where}: 首期受管项须对象态（裸字符串仅非受管项兼容）')
                 if isinstance(item, str):
                     dist['string'] += 1
-                    if _r2_questionish(item):
+                    if sp == 'problem_space' and _r2_h1_questionish(item):
                         hq.append(where)
                     continue
                 if not isinstance(item, dict):
@@ -946,7 +968,7 @@ def check_r2_applicability(rep: Report, entries: list, idx: Index, mode: str):
                     if not _r2_questionish(expr):
                         hp.append(where)
                 elif form == 'predicate':
-                    if _r2_questionish(expr):
+                    if sp == 'problem_space' and _r2_h1_questionish(expr):
                         hq.append(where)
                 elif form == 'slot':
                     sn = str(item.get('slot_name') or '').strip()
@@ -971,7 +993,7 @@ def check_r2_applicability(rep: Report, entries: list, idx: Index, mode: str):
     _emit('A2 角色', a2, 'question 项角色与 answered_by 全部合规')
     _emit('A3 槽', a3, 'slot 项字段与 source 全部合规')
     rep.add(check, 'A4 形态提示', 'info', True,
-            f'提示 {len(hq) + len(hp)} 条：H1 predicate 疑为 question {len(hq)}｜H2 question 无疑问标记 {len(hp)}'
+            f'提示 {len(hq) + len(hp)} 条：H1 predicate 疑为 question（仅 problem_space＋主句疑问式＋无完成态）{len(hq)}｜H2 question 无疑问标记 {len(hp)}'
             + (('｜样例 ' + '；'.join((hq + hp)[:6])) if (hq or hp) else ''))
     rep.add(check, '形态分布', 'info', True,
             f'applicability 项 {sum(dist.values())}｜裸字符串(≡predicate) {dist["string"]}｜predicate {dist["predicate"]}'
