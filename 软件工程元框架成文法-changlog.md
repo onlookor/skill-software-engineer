@@ -1482,3 +1482,22 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **抽样核对（5 条，母本原文签名 vs 词汇表登记）**：`contract`(@2004, 7)／`waiver`(@3710, 6)／`guard_rule`(@3708, 9)／`verdict_table`(@616, 4) 四处逐槽一致；`registry_entry`(@493) 母本字面为 5 固定槽＋`fields...`，词汇表记 `arity: 6`＋`variadic: true`，按 ⑤「最小固定槽 6＋变长标记」口径一致（末槽按 1 计入 arity）。无自行修正后再报。
 - **自检**：硬失败 **0**／软警告 **0**／1,213 条记录；指针反查 2,352→**2,388**（miss 0），`predicate_vocabulary.yaml` 177→**213**；条目引用面未变（新增名零调用）。四件投影按源哈希重生成。
 - **不变量**：母本零改动（仍 4,461 行／围栏 216）；entries 138／138 seed。只 commit 不 push。
+
+## 2026-11-07（续 15）：expiry／expiry_of 原文对照＋term 补录＋SO-4 评估
+
+- **一、`expiry` 与 `expiry_of`（只出证据，未合并／改名／加别名）**
+  - `expiry`：`5.5` 机器层块 @2574 原文 `flag(G, scope, level, expiry)` 的**第 4 槽名**；调用处 @2598 `Z6: ∀ flag(G,_,behavior,_): ∃ approved(ADR(G)) ∧ declared(expiry(G)) ∧ now ≤ expiry(G) ∨ cleanup_filed`，即对 `flag` 对象 G 做槽投影（`_` 通配第 4 槽）。
+  - `expiry_of`：@2579 独立定义行 `expiry_of(gate) // 开关到期时刻（term function；与 flag 第四槽 expiry 区分，防槽名充谓词）`（VG-05 扩容行，ADR-VGEX-01 D1）；母本无其它调用处。
+  - **判定：两个不同对象**。依据：(1) 角色不同——一为 4 元谓词 `flag` 的第 4 槽名，一为独立 term function 定义行；(2) 载体不同——`expiry(G)` 投影自 `flag` 对象，`expiry_of(gate)` 以 gate 为实参；(3) 母本 @2579 括注明写「与 flag 第四槽 expiry 区分，防槽名充谓词」，区分由原文自身声明；(4) 调用面不同——`expiry` 有 @2598 一处调用，`expiry_of` 零调用。二者所指业务量可能同为「开关到期时刻」，但按角色／载体与括注，不属同一函数的两种写法。词汇表维持 `expiry_of` 单条，不新增 `expiry`。
+- **二、term 补录**：`sla_bound`(@2593, arity 1, 5.5) 与 `band`(@2902, arity 1, 6.5) 入 `predicates`，`kind: term`（X5／Q2 公式使用，母本无独立定义行）。
+- **三、`consumed_by` 待裁**：入 `predicate_vocabulary.yaml` 新增 `pending_review` 名单（@503 M1「∀E consumed_by(S1)」为无签名关系短语；@2600 Z7「card consumed_by(aspect6)」元数不可判定），不计在册、不入三组、不合并；`DATA-SPEC.md` 新增 D3.6 记该名单口径。
+- **四、SO-4 评估：不可关闭**（未关闭，`status: open` 未改）
+  - VG-01：`status_after` closed、`residual: []`，四族中唯一闭合。
+  - VG-02：open，残余 2（`over_decomposed`、`responsibility_over_fragmented`），须母本新条款或外部阈值。
+  - VG-03：open，`deferred: node_role` ＋残余「转发／语义翻译／签名同构」。SO-4 义务原文明列「拓扑方位/节点角色」，故 `node_role` 构成 SO-4 的未闭合项，非仅 VG-03 内部事项。
+  - VG-04：open，残余 2（`schema`、`error_handling`）。
+  - 另 SO-4 完成条件含「补齐后按 MJ-4 复核 `signal_level`（STY-008-AP2／STY-009-AP1／STY-015-AP1 升 P0）」，在 VG-02/03/04 闭合前不可执行。
+  - 结论：残余／后置合计 6 项（2＋2＋2，含 `node_role`），不可关闭。
+- **在册数**：`predicates` 145→**147**（142 predicate／5 term／1 constant）、`formula_words` 7、`clause_defined_predicates` 53，合计 **205→207**；`pending_review` 1 条不计。
+- **自检**：硬失败 **0**／软警告 **0**／1,213 条记录；指针反查 2,388→**2,390**（miss 0），`predicate_vocabulary.yaml` 213→**215**；条目引用面未变。投影按源哈希重生成。
+- **不变量**：母本零改动（4,461 行／围栏 216）；只 commit 不 push。
