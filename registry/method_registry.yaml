@@ -8993,6 +8993,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3324 手段映射注册表六类列举序**第一项**「静态分析（结构性性质 V1/W4/X1 类）」逐字；判据形态（四类检查面 @3349-3352 的展开与级别归属）为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "8.2.1-T-01", verified: true}   # 行内标记（8.2.1-T-01）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3318 三方面输入反向生成＋@3320-3322 三输入＋@3324 手段映射注册表六类（本条骨架源）＋计划矩阵五元组形态
@@ -9087,6 +9088,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3324 手段映射注册表六类列举序**第二项**「可执行检查程序（白板谓词上的机器判定）」逐字；判据形态（8.2.5 三触发的展开与 8.2.6 七要素的入库门槛）为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "8.2.1-T-02", verified: true}   # 行内标记（8.2.1-T-02）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3318-3324 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源）＋计划矩阵五元组（自动化级别/触发点/证据形态三槽即本条的登记面）
@@ -9180,6 +9182,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3324 手段映射注册表六类列举序**第三项**「模型检查（状态机性质 Z3/Z8 类）」逐字；判据形态（适用域界定、被检模型与实现的同源要求、穷举 vs 抽样的分界）为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "8.2.1-T-03", verified: true}   # 行内标记（8.2.1-T-03）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3318-3324 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源）＋@3324 末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」＝本条对状态机硬性质的独占义务源
@@ -9276,6 +9279,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3324 手段映射注册表六类列举序**第四项**「测试（单元/集成/契约/行为注入/端到端）」逐字；**括注五子项不拆为独立条目**（2026-10-11 人工裁决，理由见块头粒度段：五项是同一手段的分层形态而非五类手段，拆分将使 T4/T6/T7 的量词域被切碎）；判据形态（四层职责归属、金字塔失真双判据、注入条件准入、抽样率登记）为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "8.2.1-T-04", verified: true}   # 行内标记（8.2.1-T-04）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3318-3324 反向生成三输入中两条即本条的输入面——@3321「2. **目标集**：方面 6 的六要素场景（响应度量 → 测试判据）」、@3322「3. **契约与流程集**：方面 3 的已发布契约（→ 契约测试）、方面 5 的流程与卡片 `failure_modes`（→ 注入用例）」；@3324 六类列举＝本条骨架源，末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」＝本条对动态判据族的基础义务
@@ -9404,6 +9408,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3324 手段映射注册表六类列举序**第五项**「**人工评审**（8.2.7，人类通道）」逐字；判据形态（五评审点义务集、批准与问责的结构需要、通道保留≠通道加重的裁剪纪律）为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "8.2.1-T-05", verified: true}   # 行内标记（8.2.1-T-05）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3318-3324 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源，第五项）＋@3324 末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」——本条是「须人类作实质判断」族性质的唯一合法 means，故该族硬性质的 T1 义务由本条独占承载
@@ -9499,6 +9504,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-VFM-01）
     provenance:
       origin: hybrid                   # 骨架=8.2.1 @3324 手段映射注册表六类列举序**第六项**「生产监测（与方面 9 共享信号源）」逐字；判据形态（观测面前提、双判据告警治理、放量与回滚判据的注册参数化、汇聚信号源登记）为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "8.2.1-T-06", verified: true}   # 行内标记（8.2.1-T-06）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @3318-3324 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源，第六项）＋@3324 括注逐字「生产监测（**与方面 9 共享信号源**）」＝本条与守护规则的信号共用面；@3324 触发点四形态中本条取「周期」与「回归触发条件命中」两形态（生产信号是连续流而非离散事件）
