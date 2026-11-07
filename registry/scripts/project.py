@@ -1295,6 +1295,22 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
         if miss:
             rep.fail('LEDGER', str(s.get('transition_id')), f'状态迁移简记缺要素 {miss}', level='hard')
             continue
+        if s.get('from') == 'seed' and s.get('to') == 'draft':
+            # ADR-LC-01 §3.6：撤回型迁移为高影响，须带重判批次与存量消费处置
+            errs = []
+            extra = ('seed_rejudication_ref', 'consumption_checked', 'affected_decisions', 'disposition')
+            lack = [k for k in extra if k not in s]
+            if lack:
+                errs.append(f'缺 seed→draft 专有字段 {lack}（DATA-SPEC D2.4）')
+            if '高' not in str(s.get('impact_level') or ''):
+                errs.append('impact_level 须为「高」（ADR-LC-01 §3.2）')
+            if s.get('consumption_checked') is not True:
+                errs.append('consumption_checked 须为 true（§3.6 存量消费查询）')
+            if s.get('disposition') not in ('revalidate', 'replace', 'retain-annotated'):
+                errs.append('disposition ∈ {revalidate, replace, retain-annotated}')
+            if errs:
+                rep.fail('LEDGER', str(s.get('transition_id')), '；'.join(errs), level='hard')
+                continue
         declared = set(s.get('scope') or [])
         # 时间切片：条目被后序「已登记」迁移从 to 迁走时，本条简记对该条目失效。
         # 以列表序为时序（status_transitions 只追加）；只豁免已登记的迁出，

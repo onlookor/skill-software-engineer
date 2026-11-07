@@ -131,7 +131,7 @@
 |---|---|---|---|
 | 1 | 母本 0.17.5 L451 | 待执行（下一批） | 零插行追加权限行（行内追加，行数 4,447 不变） |
 | 2 | `软件工程元框架成文法-changlog.md` | 待执行（随 1） | 0.17.5 修订记录（0.13 落迹） |
-| 3 | `registry/README.md` L516 | 待执行（随 1） | C-ST 行补「回落依据见 0.17.5 `seed→draft`」 |
+| 3 | `registry/CHECK-SPEC.md` C1 C-ST 行（原 README §5，随分权迁入） | 待执行（随 1） | C-ST 行补「回落依据见 0.17.5 `seed→draft`」 |
 | 4 | `method_registry.yaml` | 待执行（随首次实际回退） | 允许 `from: seed`／`to: draft` 简记，与 `seed_rejudication` 批次互链 |
 | 5 | `project.py` `check_ledgers`（L1286–L1322） | **已完成（本批）** | 时间切片＋迁入覆盖校验（§6.1） |
 | 6 | 投影 | 无需 | 本批无状态改写，不生成 `seed重判清单.md` |

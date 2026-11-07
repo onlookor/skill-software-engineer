@@ -362,7 +362,7 @@ S 系列在 `check_m2` 内执行；**无论 `status` 是否为 `draft` 都执行
 
 ## 14. 参考
 
-- [ADR草案-SRC-9.2.3九信号源-方案③.md](file:///home/wgz/projects/skills/software-engineering/ADR草案-SRC-9.2.3九信号源-方案③.md)
+- [ADR-SRC-01-draft-20261105-9.2.3九信号源方案③.md](file:///home/wgz/projects/skills/software-engineering/adr/ADR-SRC-01-draft-20261105-9.2.3九信号源方案③.md)
 - [母本 0.17.2／0.17.3／9.2.1／9.2.3](file:///home/wgz/projects/skills/software-engineering/软件工程元框架成文法.md)
 - [profiles.yaml](file:///home/wgz/projects/skills/software-engineering/registry/profiles.yaml)
 - [method_registry.yaml](file:///home/wgz/projects/skills/software-engineering/registry/method_registry.yaml)

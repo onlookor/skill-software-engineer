@@ -6,7 +6,7 @@
 | 状态 | **approved（2026-11-06 人类批准；批准确认见 §7）**；决策已按 §3 实施于台账与 `project.py`（先实施、后批准，见 §7.1） |
 | 日期 | 2026-11-04（起草）；2026-11-06（批准） |
 | 决策类目 | 台账登记规则（不改条目、不改母本；0.22 只追加） |
-| 关联 | `ADR草案-PRJ交付空间-谓词槽纠正.md`（ADR-PRJ-2-01）§5.2；`G-PRJ-1`；`G-PRJ-2`；`SO-18`；`SO-20`；`registry/scripts/project.py` `GAP_SO_WHITELIST` |
+| 关联 | `ADR-PRJ-2-01-approved-20261104-PRJ交付空间谓词槽纠正.md`（ADR-PRJ-2-01）§5.2；`G-PRJ-1`；`G-PRJ-2`；`SO-18`；`SO-20`；`registry/scripts/project.py` `GAP_SO_WHITELIST` |
 | 批准 | 人类责任方；Agent 仅备材料（0.10 @235） |
 
 ## 1. 决策

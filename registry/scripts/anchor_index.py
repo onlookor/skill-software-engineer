@@ -43,17 +43,17 @@ COMPILE = ROOT / '编译规范.md'
 FROZEN = [
     '软件工程元框架成文法-changlog.md',
     'todo.md',
-    'ADR草案-PRJ交付空间-谓词槽纠正.md',
-    'ADR草案-GRD-PRJ-GOV-剖面变更.md',
+    'adr/ADR-PRJ-2-01-approved-20261104-PRJ交付空间谓词槽纠正.md',
+    'adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md',
     'R2提案-KP-G3-包络义务适用范围.md',
-    'ADR草案-行内标记方案-五项gap.md',
-    'ADR草案-G-OWN-CSL-行内出处.md',
-    'ADR草案-G-STY-1-G-ENV-1-接地编译前置.md',
-    'ADR草案-G-PRJ-1-悬空保留.md',
+    'adr/ADR-INLINE-MARK-01-approved-20261104-五项行内标记方案.md',
+    'adr/ADR-G-OWN-CSL-01-approved-20261104-行内出处补写.md',
+    'adr/ADR-G-STY-ENV-01-approved-20261104-接地编译前置两闸.md',
+    'adr/ADR-G-PRJ-1-01-approved-20261106-有意保留悬空.md',
     # 已批准且已执行（2026-11-07 纳入）：执行后其锚点只做快照复算，不再参与活跃锚点约束（F-1～F-6）
-    'ADR草案-SRC-signals字段-方案A.md',      # ADR-SRC-02（approved；SRC-001…008 与 signals 已落地）
-    'ADR草案-谓词表一次性扩容-VG-09.md',      # ADR-VG09-01（approved；母本 9.5 与 vocabulary 已落地）
-    'ADR-R2-APPL-01-applicability事实槽.md',  # ADR-R2-APPL-01（approved；applicability 事实槽已落地）
+    'adr/ADR-SRC-02-approved-20261106-signals字段方案A.md',      # ADR-SRC-02（approved；SRC-001…008 与 signals 已落地）
+    'adr/ADR-VG09-01-approved-20261106-谓词表一次性扩容.md',      # ADR-VG09-01（approved；母本 9.5 与 vocabulary 已落地）
+    'adr/ADR-R2-APPL-01-approved-20261106-applicability事实槽.md',  # ADR-R2-APPL-01（approved；applicability 事实槽已落地）
 ]
 # 活跃集合（规范 F-1 的适用域）；不存在的文件自动跳过
 LIVE = [
@@ -61,7 +61,7 @@ LIVE = [
     'registry/predicate_vocabulary.yaml', 'registry/README.md',
     'registry/projections/STY.md', 'registry/projections/索引.md',
     'registry/projections/自检报告.md', 'registry/projections/勘察义务清单.md',
-    '悬置未决事项-冻结快照-2026-11-04.md', '参考资料缺口核对报告.md',
+    '参考资料缺口核对报告.md',
 ]
 
 TARGETS = {  # prefix -> (相对路径, kind)

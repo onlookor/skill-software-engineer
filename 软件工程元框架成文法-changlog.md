@@ -1354,3 +1354,46 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **代码引用同步**：`project.py` 注释中的 README §1／§2／§3／§4／§5／§6 指针改为 DATA-SPEC／CHECK-SPEC 对应节；**判据与行为零变更**。
 - **顺带校正**：`profiles.yaml` 的 kind 数由 README 旧值 17 校正为**实测 18**。
 - **不变量**：entries **138／138 seed**（条目状态未动）；硬失败 **0**；自检记录 **1,214**；母本 **4,447 行／216 围栏**。只 commit 不 push。
+
+## 2026-11-07（续 5）：ADR 收纳＋冻结快照清算＋M5 转 ADR
+
+### 一、ADR 收纳
+
+- **目录**：根级 `adr/`（与母本、`registry/` 平级）。依据：ADR 同时约束母本条款与注册表实现，属跨域治理记录；`registry/adr/` 会把 ADR 错误限定为注册表专属（ADR-M5-01 改母本条款、ADR-SRC-01 改 kind 表），`docs/adr/` 需引入本仓库不存在的 `docs/` 层级。
+- **命名规约**：`{ADR 编号}-{状态}-{YYYYMMDD}-{短标题}.md`；状态 token `draft`／`approved`／`rejected`／`superseded`。**保留原编号为主键，不重排全序**——重排会使已推送历史、changelog、台账 evidence 与各会话记录中的编号集体失效，违反 0.22 编号不复用。
+- **迁移**：13 份平铺 ADR 全部 `git mv` 入 `adr/` 并按上述规约重命名（旧名→新名对照见 `adr/INDEX.md` §4）。
+- **索引**：新建 `adr/INDEX.md`——编号、标题、状态、批准日期、被取代、影响的母本条款／注册表区段、文件名，共 14 条（含本批新增 ADR-M5-01）；另设「状态存疑项」表，按执行证据裁定 4 份 ADR 头部与台账不一致的状态。
+- **引用更新（活文档）**：`registry/DATA-SPEC.md` 2 处、`registry/method_registry.yaml` 16 处 evidence 字符串、`registry/scripts/anchor_index.py` `FROZEN` 9 条、`registry/anchor_index/migration_plan.csv` 8 行、ADR 互引 9 处、`锚点与引用规范.md` L4 的冻结清单表述（`ADR草案-*` → `adr/*.md` 中列入 FROZEN 者）。全部为同行替换，**无插行、无锚点位移**。
+- **顺带修复**：`method_registry.yaml` 3 处 `@d:registry/README.md#sec-4.8` 因 README 收缩而失配（F-2=3）；改为 `@d:registry/DATA-SPEC.md#sec-D4 编号与批次先例（数据面）`（附录 A 第 18 条映射，§4.3–4.8 → D4.4），复检 **F-2 归零**。
+- **as-of 残留（按 0.22 不改写，经 INDEX §4 解析）**：`成文法-changlog.md` 旧条目、`todo.md` L145、`R2提案-KP-G3` L207、`R2提案-SRC-01` L8、`registry/anchor_index/插行位移演练报告.md` 2 处、`adr/*.md` 内 FROZEN 文件的 as-of 引用。**活文档死链 0**。
+
+### 二、冻结快照清算（`悬置未决事项-冻结快照-2026-11-04.md`，删除）
+
+| # | 快照承载状态 | 去向 | 判定 |
+|---|---|---|---|
+| §1-1 | GRD 九信号源悬置（方案③待裁） | 方向由 ADR-SRC-01 §2／§7 裁定；`G-GRD-1` 由 ADR-SRC-02 执行后 closed | 已吸收 |
+| §1-2 | 归属三问（无 ownership／S1 排除） | `G-GRD-1` no-ownership 记法；ADR-SRC-01 §7；`CHECK-SPEC` C5.11 | 已吸收 |
+| §1-3 | E3 Waivers 待批、未落册 | 3 条 waiver 已入 `method_registry.yaml`（active，2026-11-06 approved）；`G-GOV-1`／SO-19 closed | 已吸收 |
+| §1-4 | 方案 c「问句式硬检查」 | ADR-R2-APPL-01（`applicability_item` 事实槽＋`R2_APPL` 硬；主句疑问式、剥离括注）；`project.py` `check_r2_applicability` | 已吸收 |
+| §1-5 | 未推送提交 3 个 | 已推送（`170f6db..f031faf`，0/0） | 已失效 |
+| §2 | `G-SRC-1` open | 仍在台账（open），未丢状态 | 已吸收 |
+| §2 | `G-PRJ-1` open | 仍在台账（open），另有 ADR-G-PRJ-1-01 | 已吸收 |
+| §2 | M4 扩扫 signals＋`cycle_scale` 补 5.2.1 | `predicate_vocabulary.yaml` VG-09 `resolution_2026_11_06` 登记后继路径（R2＋5.2.1 补条） | 已吸收 |
+| §3 | 解冻后先裁三件（行号锚点非权威／数字锚点重映射／G-SRC-1） | ①`锚点与引用规范` §10.3；②ADR-SRC-01 §3 实测；③台账 `G-SRC-1` | 已吸收 |
+| §4 | 挂账调整（第 4 项→R2 事实槽；`G-SRC-1`→M4 扩扫＋`cycle_scale`） | 同 §2 两行＋ADR-R2-APPL-01 | 已吸收 |
+| 附注 | 「8,321 处锚点位移」为方案③测算值、恢复时须重算 | 以 ADR-SRC-01 §3 实测与 `summary.json` 为准 | 已被取代 |
+
+**结论：全部资产已被吸收，删除快照。** 独有资产 0；无迁移动作（仅 `adr/ADR-SRC-01` 的 3 处引用改为指向 changelog 本批次）。`anchor_index.py` 的 `LIVE` 清单移除该文件；`插行位移演练报告` 中的 2 处按历史报告 as-of 保留。
+
+### 三、M5 转 ADR（`决策建议-M5-软硬冲突-2026-11-07.md` → `adr/ADR-M5-01-approved-20261107-M5软硬冲突裁决.md`）
+
+- **决策链**：冲突本体（0.17.5 L451「M2–M6 全过」vs 0.17.8 L507「M5 软」）→ 判 0.17.8 为级别权威（5 条依据＋最强反方论点回应）→ 被否方案（取硬，6 项后果）与选项 B/C → 采纳选项 A（最小澄清）与实施落点 → 零语义变更论证（5 条）→ 取软后保留风险（4 条）→ 边界。
+- **不并行两份**：原决策建议文件**删除**，内容全部并入 ADR，ADR §7 记明取代关系；旧名→新名入 `adr/INDEX.md` §4。全仓无其他文件引用该决策建议（死链 0）。
+- **回填引用（同行追加、零插行）**：母本 0.17.8 L500 的澄清句末补「（裁决见 ADR-M5-01）」；单行本 L475 同步。母本行数 **4,447／围栏 216 不变**，单行本 **1,285 行不变**，**锚点位移 0**。
+
+### 四、不变量与边界
+
+- entries **138／138 seed**（条目状态未动）；gaps 24、SO 24 不变；自检记录 **1,214**；硬失败 **0**、软警告 **0**。
+- `anchor_index`：`frozen_anchors` **2,752**、`total_rows` **12,198** 不变；F-2～F-8 pass；F-1 仍为现状度量 fail（8,542，属未完成的裸行号迁移，与本批无关）。
+- 母本与单行本零插行，改动仅 2 处同行追加。
+- 只 commit 不 push。

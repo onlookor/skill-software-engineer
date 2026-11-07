@@ -12,4 +12,5 @@
 - 后续工作记录在 todo.md 中。
 - 本目录已纳入 git 版本管理（仓库根＝本目录；兄弟目录 `resources` 不纳入仓库，见 .gitignore）。git 提交不替代 changlog 登记：批次变更的语义裁决仍以 changlog 文件为登记处，git 承载文件级演进史。
 - README.md 是目录导览：各文件的作用、使用方法、文件间依赖关系与接地编译流程。新使用者先读 README.md。
+- `adr/` 是 ADR 归档目录：容纳同时约束母本条款与 `registry/` 实现的架构决策记录，索引为 `adr/INDEX.md`（编号、状态、批准日期、取代关系、影响面、旧路径映射）。新增／改状态须同步索引；编号不复用（0.22）。
 - `registry/` 是方法注册表的机器层权威源目录（母本 0.17）：条目以其中 YAML 为权威，母本各方面 x.2 的方法空间表格是种子数据源视图而非决策权威（0.17.1）。`registry/projections/` 是由 `registry/scripts/project.py` 生成的人类可读投影，属生成物**不得手改**；任何变更改 YAML 源后重跑投影。数据侧规约见 `registry/DATA-SPEC.md`，自检与台账规约见 `registry/CHECK-SPEC.md`（`registry/README.md` 仅为目录导览，不承担规约）；目录布局与条目治理走母本 0.13，批次登记于母本 changlog。
