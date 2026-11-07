@@ -154,6 +154,9 @@ predicates:
   - {name: bound, arity: 1, kind: term, block: "6.5", line: 2901, source: {source_type: clause_id, value: "6.5", verified: true}, note: "term function：目标界值 bound(g)（Q1 公式使用 @2903；母本无独立定义行）"}
   - {name: sla_bound, arity: 1, kind: term, block: "5.5", line: 2593, source: {source_type: clause_id, value: "5.5", verified: true}, note: "term function：路径时限上界 sla_bound(path)（X5 公式使用 @2595；母本无独立定义行）"}
   - {name: band, arity: 1, kind: term, block: "6.5", line: 2902, source: {source_type: clause_id, value: "6.5", verified: true}, note: "term function：目标带宽 band(g)（Q2 公式使用 @2904；母本无独立定义行）"}
+  # ── VG-04 残余两词（2026-11-07；ADR-VG02VG04-01 D2：立 term 不立谓词，母本 0 改动）──
+  - {name: schema, arity: 1, kind: term, block: "3.5", line: 1929, source: {source_type: clause_id, value: "3.2.1", verified: true}, note: "term function：写入项 w 的契约 schema 声明（载体行 3.2.1 第 1929 行「schema + 语义条款」；block 取最近机器层块 3.5、与 contract 同块，母本无独立定义行；ADR-VG02VG04-01 §5）"}
+  - {name: error_handling, arity: 1, kind: term, block: "1.5", line: 1348, source: {source_type: clause_id, value: "1.2.1", verified: true}, note: "term function：管道 pipe 的全局错误处理声明（载体行 1.2.1 第 1348 行「管道内全局错误处理缺失」；block 取最近机器层块 1.5，母本无独立定义行；处置策略四值不硬化，ADR-VG02VG04-01 §6）"}
 
   # ── 机器层块补录·第二批（2026-11-07；块清单唯一权威＝DATA-SPEC D1.4）──
   # 3.5 契约与上下文映射层（7 名）
@@ -308,6 +311,16 @@ vocabulary_gaps:
         - {name: over_decomposed, reason: "母本无粒度判据与阈值；STY-016-AP2 等仍以方括号事实承载，须母本新条款或外部文献先给可判定阈值", route: "另开 ADR 补 1.2.x 条款"}
         - {name: responsibility_over_fragmented, reason: "同上；职责粒度判据无母本定义", route: "同上"}
       status_after: "open（残余 2 项，等母本新条款）"
+    resolution_2026_11_07_r2:
+      adr: "ADR-VG02VG04-01（2026-11-07 approved；R0 零母本改动路线）"
+      predicate_rows_added: 0
+      resolved_by_composition:
+        - {name: over_decomposed, expr: "cognitive_load(u) > capacity(team(u)) ∧ interface_cost(u) > cohesion_gain(u)", base_predicates: [cognitive_load, capacity, team, interface_cost, cohesion_gain], base_in: "母本 2.5 W3（行 1724）／W6（行 1729）（词汇表 clause_defined_predicates 已登记）"}
+      abandoned:
+        - {name: over_decomposed, reason: "裁决不立名：它是 W3 认知负荷超容量 ∧ W6 接口成本超内聚增益的复合缩写，立名将与 W3／W6 竞争权威并使阈值口径分叉（ADR-VG02VG04-01 §3.4）", handled_by: "STY-016-AP2 检测式改为复合式（母本 2.5 W3／W6），不是遗漏", route: "已裁决；不留残余"}
+        - {name: responsibility_over_fragmented, reason: "裁决不立名：母本无独立逐字、零消费者，且 W3（行 1638）保守默认值已覆盖『职责陈述数不超过注册表登记的保守上限』；真正缺的是该保守上限常量（注册表参数、非谓词），不预置数值（0.4 条件 3）", route: "已裁决；不留残余"}
+      residual: []
+      status_after: "closed（两词均裁决不立名：over_decomposed 由复合式承载、responsibility_over_fragmented 放弃立名；残余 0；本条取代上一 resolution 的 open 状态）"
   - id: VG-03
     missing_need: "依赖方向控制族的方向谓词：(i) 端口方向（六边形的核心 → 端口 ← 适配器，『核心不依赖任何外部技术』的可判定形态）；(ii) 环方向（同心圆/整洁架构『依赖只能指向内层』，layer_of 只给层归属、不给层间方向序）；(iii) 模块边界方向（单体内部边界、模块化单体的模块间禁止穿透）；(iv) 拓扑方位/节点角色（边缘计算的边缘节点 vs 中心，Broker/SOA 的中介角色）。1.5 已登记 dependency_rule 与 layer_of，但四者均无法以其现有元数据表达方向违例。"
     workaround: "以 2.5 depends_on(A, B, ·, ·) 表达依赖存在性 + 方括号事实占位符标注方向约束（M15 勘察义务）；相关 anti_patterns.signal_level 暂按 P1 登记，并在行内注明『词汇补齐后按 V1 同型升 P0』（method_registry.yaml: gaps G-STY-4、manual_judgments MJ-4）"
@@ -340,6 +353,15 @@ vocabulary_gaps:
         - {name: schema, reason: "schema 是契约工件名（3.2.1），非 x.5 谓词；以工件名充谓词属本地造词", route: "另开 ADR 补 3.5 条款"}
         - {name: error_handling, reason: "母本 3.5／1.2.1 无谓词载体（1.2.1 管道行仅自然语言反模式名）", route: "另开 ADR 补条款"}
       status_after: "open（残余 2 项）"
+    resolution_2026_11_07_r2:
+      adr: "ADR-VG02VG04-01（2026-11-07 approved；R0 零母本改动路线）"
+      predicate_rows_added: 0
+      term_rows_added: 2
+      added_as_term:
+        - {name: schema, arity: 1, block: "3.5", carrier: "母本 3.2.1 行 1929（契约形态表「schema + 语义条款」；block 取最近机器层块 3.5）", detection: "STY-011-AP1 → ¬declared(schema(w))"}
+        - {name: error_handling, arity: 1, block: "1.5", carrier: "母本 1.2.1 行 1348（「管道内全局错误处理缺失」；block 取最近机器层块 1.5）", detection: "STY-013-AP2 → ¬declared(error_handling(pipe))；处置策略四值不硬化"}
+      residual: []
+      status_after: "closed（两词以 term function 入表，0 新增谓词、0 母本改动；本条取代上一 resolution 的 open 状态）"
   - id: VG-05
     missing_need: "配置治理族谓词（5.2.6 四项与 5.5 Z6 公式所需，六面均无谓词形态）：(i) `expiry`（开关到期时刻——Z6 公式 @2600 逐字「Z6: ∀ flag(G,_,behavior,_): ∃ approved(ADR(G)) ∧ declared(expiry(G)) ∧ now ≤ expiry(G) ∨ cleanup_filed」的第二、三支用之，同时是 5.5 @2576 `flag(G, scope, level, expiry)` 的第四槽名；以实参槽名充当谓词属本地造词，同 VG-04 (i) 对 compat_policy 的判读）；(ii) `cleanup_filed`（清理已立案——Z6 第四支的裸谓词，不在 predicates／formula_words／clause_defined_predicates 三表任一）；(iii) `ADR`（行为级变更的决策记录工件——Z6 首支 `approved(ADR(G))` 的实参函数；母本 0.17.6／9.2.2 有 ADR 义务而无 ADR 谓词或工件名登记）；(iv) @2514 五个登记槽名（键／值域／作用域／级别／生命周期）的「已登记」判据形态——registered(...) 族在册，但母本未给配置项的实参类型与值域表示法，registered 的对象域无从判定；(v)「（变更前后 Z 谓词）快照比对」全无谓词形态——@2515／@2517／5.5 @2584 三处明文互指（@2584 括注逐字「**配置变更触发 = 变更前后 Z 谓词快照比对**，5.2.6」），但无比对函数、无快照工件名、无一致性判据，亦无采集时点／粒度／保留期；(vi) @2516 的「审查期／到期日／僵尸开关」三名无谓词形态——僵尸开关＝expiry 超期 ∧ ¬cleanup_filed 的复合判据，9.2.3 @3633 已把它当汇聚信号源用（逐字「僵尸开关（expiry 超期）…Z6 违例 → P0（行为级开关）；其余 P2」）而无词汇支撑。六面均属「声明存在性／时刻比较」判据；在册可直接使用者仅 flag（arity 4）／registered／declared／approved／now／has／interaction_flow／orchestrator／timeout_budget／quality_impact_card（5.5 @2568-2578 与三表实测，在册名合计 **76**＝predicates 59＋formula_words 7＋clause_defined_predicates 10），不足以表达 Z6 的完整判据。"
     workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务登记，禁沉默排除），**绝不写调用式**（写 `expiry(G)` 即 M4 硬失败，RLP 批 4 处先例）；方括号内 snake_case／中文占位词被 outside_brackets（@d:registry/scripts/project.py#fn-outside_brackets）剔除，不构成 M4 违例（先例 RLP-006 @6204 `[到期时刻](G)`）；判读登记 method_registry.yaml manual_judgments MJ-26 (viii)（方括号兼承「非谓词面」与「待勘察占位」两义而 M4 不区分，含 CH-C(2) 通道号的误读陷阱），缺口面登记 gaps G-CFG-1 statement (1)(2)(5) 与 route ①（expiry 载体形态、审查期长度或到期日计算基准、快照采集时点／存放位置／粒度／保留期是否在母本侧补明文，涉母本改动 → 高影响，走 R2/ADR），勘察义务登记 survey_obligations SO-14（存量开关到期日与存量规避面）"

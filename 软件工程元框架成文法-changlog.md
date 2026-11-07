@@ -1515,3 +1515,23 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **锚索引复算**：`total_rows` 12,494→**12,502**；`live_anchors` 8,795→**8,800**；`ranges` 1,825（不变）；`by_target_kind.mother` 9,269→**9,277**；`by_landing_form.blank` 515→**524**（+9，来自冻结 ADR／todo 旧锚对新母本的复算，非本次引入，冻结文件不改写）；`F-1` 仍为「现状度量 fail」（8,645→8,650）。活跃母本锚分母 7,173→**7,178**。
 - **投影**：四件（`STY.md`／`勘察义务清单.md`／`索引.md`／`自检报告.md`）按源哈希重生成。
 - **不变量**：entries 138／138 seed；gaps 24／SO 24；open gap 2（`G-PRJ-1`／`G-SRC-1`）、open SO 3（`SO-1`／`SO-4`／`SO-6`）。本批单独 commit；随后按用户指令把全部未推提交一并 push。
+
+## 2026-11-07（续 17）：VG-02／VG-04 残余四词收口（ADR-VG02VG04-01 落地）
+
+- **范围**：`VG-02` 两词裁决不立名、`VG-04` 两词以 `kind: term` 入表；3 条检测式改写；母本零改动。
+- **母本**：4,463 行／围栏 **216**，落地前后一致（**0 行改动**）。
+- **`VG-02`（残余 2 → 0）**
+  - `over_decomposed`：裁决不立名，由 `STY-016-AP2` 以母本 2.5 W3 ∧ W6 复合式承载——`∃ u: unit(u) ∧ cognitive_load(u) > capacity(team(u)) ∧ interface_cost(u) > cohesion_gain(u)`。第二支取 W6 而非 `independently_deployable`：后者仅为 `VG-01` 的复合别名、不在封闭词汇，直接写入会 M4 硬失败。裁定记于 `resolution_2026_11_07_r2.resolved_by_composition`。
+  - `responsibility_over_fragmented`：裁决不立名。母本无独立逐字、零消费者；W3（2.2.3 第 1638 行）保守默认值已覆盖「职责陈述数不超过注册表登记的保守上限」，真正缺的是该保守上限常量（注册表参数、非谓词），按 0.4 条件 3 不预置数值。裁定记于 `abandoned` 列表（`reason`／`route`），不是遗漏。
+  - `residual: []`、`status_after: closed`。
+- **`VG-04`（残余 2 → 0）**
+  - `schema`：`kind: term`，arity 1，`block: "3.5"`、`line: 1929`，`source: {clause_id: "3.2.1"}`；对象域为「写入项 w」的契约 schema 声明。`STY-011-AP1` 恢复 `¬declared(schema(w))`。
+  - `error_handling`：`kind: term`，arity 1，`block: "1.5"`、`line: 1348`，`source: {clause_id: "1.2.1"}`；只判「是否声明」，处置策略四值（重试／跳过／中止／死信）不硬化、仍留在方括号内。`STY-013-AP2` 恢复 `¬declared(error_handling(pipe))`。
+  - 两 term 均不写 `anchor` 字段（新增锚 **0**）。`residual: []`、`status_after: closed`。
+- **改写面**：`STY-016-AP2`（去 2 方括号）、`STY-011-AP1`（去 1）、`STY-013-AP2`（去 1），共 4 处方括号回归在册词；MJ-12 历史注保留并续收口注。
+- **词汇表**：`predicates` 148→**150**（141 predicate／**8** term／1 constant），`formula_words` 7、`clause_defined_predicates` 53，合计 **208→210**。
+- **`SO-4`**：未闭合项 **4→0**，`status: open` 维持（余 MJ-4 三条 P0 复核 `STY-008-AP2`／`STY-009-AP2`／`STY-015-AP1`）。
+- **自检**：`--check` 硬失败 **0**／软警告 **0**／1,213 条记录；占位符 **1,482→1,478**（事实 1＋槽 1,477；`STY-016-AP2` −2、`STY-011-AP1` −1、`STY-013-AP2` −1）；指针反查 2,391→**2,393**（miss 0；`predicate_vocabulary.yaml` 216→**218**）。
+- **锚索引复算**：`total_rows` **12,558**、`live_anchors` **8,800**、`frozen_anchors` **2,827**、`ranges` **1,833**，全部与落地前一致（母本 0 改动、无新增锚）；`F-1` 仍为「现状度量 fail」。
+- **治理**：ADR 转 approved 并改名 `ADR-VG02VG04-01-approved-20261107-…`；`adr/INDEX.md` 增行（18→**19** 份，approved 17→**18**）；`SO-4` `decision_basis` 追加 4→0 行。
+- **不变量**：entries 138／138 seed；gaps 24／SO 24；open gap 2（`G-PRJ-1`／`G-SRC-1`）、open SO 3（`SO-1`／`SO-4`／`SO-6`）。本批单独 commit，随后 push。

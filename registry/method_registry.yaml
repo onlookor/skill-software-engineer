@@ -856,10 +856,12 @@ entries:
     anti_patterns:                     # 骨架源：1.2.1「典型反模式」列（本行两项，不增补）
       - pattern_id: STY-011-AP1
         description: "黑板变成无结构的垃圾场（写入项无 schema 声明）"
-        detection_predicate: "∃ bb, w: [bb 为已声明黑板] ∧ [w 为对 bb 的写入项] ∧ [w 无 schema 声明]"
+        detection_predicate: "∃ bb, w: [bb 为已声明黑板] ∧ [w 为对 bb 的写入项] ∧ ¬declared(schema(w))"
         signal_level: P1               # 结构漂移限期整改（0.14 P1）：schema 缺失使「新增知识源 touched_units(既有)=0」的上界失效
         # M4 修正（MJ-12）：原书写 ¬declared(schema(w))。schema 在母本为契约工件名（3.2.1「schema + 语义条款」等），
         # 非 x.5 登记谓词名 → 本地造词，改方括号事实占位，缺口登记 VG-04。
+        # VG-04 收口（2026-11-07，ADR-VG02VG04-01 §5）：schema 以 term function 入表（载体 3.2.1 第 1929 行），
+        # 恢复 ¬declared(schema(w))；前两处方括号仍为待勘察事实。
       - pattern_id: STY-011-AP2
         description: "知识源间隐式协议（未经黑板 schema 声明的相互假设）"
         detection_predicate: "∃ ks1, ks2: [ks1, ks2 为知识源] ∧ [ks2 的触发条件或读取语义假设 ks1 的写入内容] ∧ ¬declared(该假设于黑板 schema) ∧ depends_on(ks2, ks1, data, ·)"
@@ -995,10 +997,12 @@ entries:
         signal_level: P1               # 人工判断：违反「无状态变换单元」的定义性约束；1.2.5 无本风格冲突行 → 不满足 MJ-4 的 P0 判据。若在 dependency_rule 登记「过滤器间禁止旁路数据依赖」，则构成 V1 违例直接来源，升 P0（登记义务见 gaps: G-STY-4）
       - pattern_id: STY-013-AP2
         description: "管道内全局错误处理缺失"
-        detection_predicate: "∃ pipe: [pipe 为已声明管道] ∧ [pipe 无全局错误处理声明] ∧ ∃ f: [f ∈ pipe] ∧ [f 的失败无处置路径（重试/跳过/中止/死信）]"
+        detection_predicate: "∃ pipe: [pipe 为已声明管道] ∧ ¬declared(error_handling(pipe)) ∧ ∃ f: [f ∈ pipe] ∧ [f 的失败无处置路径（重试/跳过/中止/死信）]"
         signal_level: P1               # 结构漂移限期整改（0.14 P1）：缺失处置路径直接影响可用性族指标（MTTR）
         # M4 修正（MJ-12）：原书写 ¬declared(error_handling(pipe))。error_handling 非 x.5 登记谓词名（母本 1.2.1
         # 管道-过滤器行仅以自然语言给出「管道内全局错误处理缺失」这一反模式名）→ 本地造词，改方括号事实占位，VG-04。
+        # VG-04 收口（2026-11-07，ADR-VG02VG04-01 §6）：error_handling 以 term function 入表（载体 1.2.1 第 1348 行），
+        # 恢复 ¬declared(error_handling(pipe))；处置策略四值不硬化，后两处方括号仍为待勘察事实。
     formal_anchor:
       - {property_id: V1, role: implements}     # 过滤器间依赖规则可经 dependency_rule 登记（条件性，见 STY-013-AP1 注）
       - {property_id: V4, role: consumed_by}
@@ -1251,8 +1255,8 @@ entries:
         signal_level: P1               # 人工判断（MJ-4）：使 envelope 的独立部署/独立伸缩两项上界失效 → 结构漂移限期整改；1.2.5 未将本反模式登记为冲突行、1.5 无「必须同步部署」谓词（VG-01 workaround：以 depends_on(·,·,deploy,·) 表达）→ 不满足 P0 判据
       - pattern_id: STY-016-AP2
         description: "纳米服务（拆分过细）"
-        detection_predicate: "∃ u: unit(u) ∧ [u 的职责粒度低于团队可独立运维的阈值] ∧ [u 的拆分未带来独立变更或独立伸缩收益]"
-        signal_level: P1               # 人工判断（MJ-4）：无 V 系列硬绑定与 1.2.5 冲突行 → 非 P0；方括号内两项为待勘察事实（VG-02：粒度谓词缺失 → 占位符 + M15 勘察义务，禁填无出处阈值）
+        detection_predicate: "∃ u: unit(u) ∧ cognitive_load(u) > capacity(team(u)) ∧ interface_cost(u) > cohesion_gain(u)"
+        signal_level: P1               # 人工判断（MJ-4）：无 V 系列硬绑定与 1.2.5 冲突行 → 非 P0；VG-02 收口（2026-11-07，ADR-VG02VG04-01 §3）：不立 over_decomposed，以母本 2.5 W3 认知负荷超容量 ∧ W6 接口成本超内聚增益复合承载；阈值不填无出处数字
     formal_anchor:
       - {property_id: V2, role: implements}     # connects(u1,u2,p) 与 allowed_protocols(S) 的自洽检查在本风格全面启用
       - {property_id: V3, role: triggers}       # 1.2.5「微服务 × 跨单元 2PC 作为默认一致性手段 → 冲突」进入冲突矩阵检查（peer = CSL-001 已于 CSL 批建条目，对侧登记 V3/consumed_by，双向回填见 compatibility 与 MJ-17）
@@ -13539,6 +13543,7 @@ survey_obligations:
       - "补齐后按 MJ-4 复核 signal_level（STY-008-AP2／STY-009-AP1／STY-015-AP1 明记『词汇补齐后升 P0』）"
       - "范围注：VG-05～VG-08 亦未登记，但不在本条 gap_ref 内；若同批扩充须一并裁决，避免反复小扩表"
       - "2026-11-07 ADR-VG03-NR-01 落地：node_role 入表（1.5 @1479）→ 本条未闭合项 6→4（余 VG-02 over_decomposed／responsibility_over_fragmented、VG-04 schema／error_handling，四项均须母本条款补写）；status 维持 open"
+      - "2026-11-07 ADR-VG02VG04-01 落地（R0 零母本改动）：VG-02 两词裁决不立名（over_decomposed 由 STY-016-AP2 以母本 2.5 W3∧W6 复合承载、responsibility_over_fragmented 放弃，后者真正缺的是注册保守上限常量即参数而非谓词）；VG-04 两词以 term function 入表（schema→3.2.1 第 1929 行、error_handling→1.2.1 第 1348 行），STY-011-AP1／STY-013-AP2 恢复 ¬declared(...) 写法、策略四值不硬化 → 未闭合项 4→0；status 维持 open（余 MJ-4 三条 P0 复核 STY-008-AP2／STY-009-AP2／STY-015-AP1）"
     status: open
 
   - obligation_id: SO-5
