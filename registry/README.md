@@ -505,18 +505,18 @@
 
 | 检查 | 内容 | 级别 |
 |---|---|---|
-| M2 | 按 kind 剖面必填字段在案（量词 `∀E(status ≠ draft)`） | 硬 |
+| M2 | 按 kind 剖面必填字段在案（量词 `∀E(status ≠ draft)`）；所属 kind 剖面 `status=draft` 时完备性不可判定 → M2 不成立（KP-G3；`profiles.yaml` 头注 4） | 硬 |
 | M3 | 每个 envelope 项 `bound_expr` 参数化 ∧ `source` 过 0.4 出处门槛（clause_id 反查母本可查） | 硬 |
 | M4 | `detection_predicate` 词汇封闭（第 3 节约定 1）＝可执行 | 硬 |
 | M5 | narrative_sync：决策性叙事已形式化或带 `clue:` 标记 | 软（P2） |
 | M6 | 每条 reference 声明 `compile_usage` + `trust_grade`；存疑级不得为 envelope/detection 唯一出处 | 硬 |
 | M9 | `compatibility.peer_entry` 全部存在于本注册表 | 硬 |
-| C-ENV | 0.8「每种方法条目必须声明包络」：源行属 1.2.1/1.2.2/1.2.3 的条目 envelope 非空（子维度四元方法条目豁免，理由见剖面 note） | 硬（阻断 seed） |
+| C-ENV | 0.8「每种方法条目必须声明质量属性包络」；0.17.2 @387 澄清「每种方法条目」指 0.17.3 全部 kind——kind 不以质量属性为选择判据时，可在剖面把 `envelope` 登记为 `not_applicable`（逐项附 `reason` 引本条），属显式豁免而非省略。故所有 kind 的条目 `envelope` 必须取值；空值须有显式登记（剖面 `not_applicable`，或 `entry_level_exemptions` 的 `field: envelope`／`check: C-ENV`／`scope`／`reason`）；无值且无登记 = 硬失败（禁默认放行） | 硬（阻断 seed） |
 | C-KP | 元注册条目（`kind_profile_*`）的完备性判据 = 物化后的 required_fields/optional_fields 两列表在案（不受 M2 按 kind 剖面判定，避免自指循环；已登记 `profiles.yaml: gaps/KP-G2`） | 硬 |
-| C-ST | 声明状态与自检资格一致：`status=seed` 必须全过硬检查；未过者必须为 `draft`。附加：条目所属 kind 的剖面若为 `draft`（`profiles.yaml`，适用性无据 → KP-G3），该条目**不得**声明 `seed` | 硬 |
+| C-ST | 声明状态与自检资格一致：`status=seed` 必须全过硬检查；未过者必须为 `draft`（剖面 `draft` 的情形已由 M2「完备性不可判定即不成立」承担，见上行）。本检查只判 seed 资格；`active`／`deprecated`／`retired` 的资格由 0.17.5／0.17.7 管辖，工具只记 info、不判失败 | 硬 |
 | C-ID | entry_id 唯一、格式 `{kind前缀}-{三位序号}`、kind ∈ 0.17.3 封闭枚举、无与母本既有引用冲突的重排。元条目例外：id 形态 `kind_profile_{KIND}`（0.17.8 谓词以 kind 为键） | 硬 |
 
-**seed 资格 = M2 ∧ M3 ∧ M4 ∧ M6 ∧ M9 ∧ C-ENV ∧ C-ST**（M5 为软，记警告不阻断）。
+**seed 资格 = M2 ∧ M3 ∧ M4 ∧ M6 ∧ M9 ∧ C-ENV ∧ C-ST ∧ C-ID**（M5 为软，记警告不阻断；C-ID 为注册表级身份前置，按全体条目判定，失败时仅阻断涉事 `entry_id`）。
 
 ## 6. 用法
 
