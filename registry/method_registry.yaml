@@ -1538,6 +1538,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-definition    # ADR-STY-FIM-01 §5.5：框架内生元方法，出处＝母本 1.2.4 自建定义行（FIM-1 F1–F5 全满足）
       source_pointers:
         - {source_type: row_id, value: "1.2.4-约束排除法", verified: true}
         - {source_type: clause_id, value: "1.2.4", verified: true}
@@ -1683,6 +1684,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-definition    # ADR-STY-FIM-01 §5.5：框架内生元方法，出处＝母本 1.2.4 自建定义行（FIM-1 F1–F5 全满足）
       source_pointers:
         - {source_type: row_id, value: "1.2.4-模式匹配", verified: true}
         - {source_type: clause_id, value: "1.2.4", verified: true}
@@ -11669,7 +11671,17 @@ gaps:
     impact: "两条 references: []；不擅自扩张书目 2 的解释面（M6 + 禁造规范）。母本 1.2.4 表本身即骨架源，故 applicability/cost_profile/compatibility/constraints 等字段不受影响；缺口只落在『无外部文献佐证』这一事实的显式登记。"
     affected: "STY-021、STY-024"
     route: "人工裁决（书目 2 的登记面是否涵盖 1.2.4 全表）→ R2 提议澄清；澄清前保持留空"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-STY-5
+      date: "2026-11-07"
+      ruled_by: "人类责任方（2026-11-07 批准 ADR-STY-FIM-01）"
+      basis: "书目 1／2／12／13／23 逐条排除，无行级提取面成立；按 ADR-STY-FIM-01 §5.5 将 STY-021／STY-024 的出处类别登记为 source_class: mother-definition（框架内生元方法，出处＝母本 1.2.4 自建定义行，FIM-1 F1–F5 全满足），references 维持 []。本缺口随数据关闭，不改母本。"
+      evidence:
+        - "ADR草案-框架内生元方法-STY-021-024.md（ADR-STY-FIM-01 §5.5、§7 决策 D）"
+        - "registry/method_registry.yaml STY-021／STY-024 provenance.source_class: mother-definition"
+        - "SO-3 保持 open（其范围另含 STY-012／G-STY-3；同 G-STY-1 关闭后 SO-1 保持 open 的先例）"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-OWN-1
     type: 参考资料源缺失（OWN 行级书目提取面仅覆盖数据产品行）
