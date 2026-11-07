@@ -3,23 +3,23 @@
 """
 project.py —— 方法注册表自检 + 同源投影（registry/scripts/）
 
-性质：工具，不含规范命题（README §1）。所有判据的权威出处：
+性质：工具，不含规范命题（DATA-SPEC D1.3）。所有判据的权威出处：
   · 条目 schema 与闭集值       母本 0.17.2（@m:0.17.2）
   · kind 封闭枚举              母本 0.17.3
   · M 系列检查式               母本 0.17.8；M10–M15 见 0.18.6
-  · 检查矩阵与 seed 资格公式   registry/README.md §5
+  · 检查矩阵与 seed 资格公式   registry/registry/CHECK-SPEC.md C1
   · 字段剖面物化公式           registry/profiles.yaml 头注 2（required = common − optional − N/A + extra）
   · 谓词词汇封闭               registry/predicate_vocabulary.yaml（数据侧投影，非权威）
-  · 事实占位符 / 勘察义务      README §3.3；母本 0.18.6 M15
+  · 事实占位符 / 勘察义务      DATA-SPEC D3.3；母本 0.18.6 M15
   · Waiver 五要素              母本 9.2.2
 
-用法（README §6）：
+用法（CHECK-SPEC C3.3）：
   cd registry
   python3 scripts/project.py --check      # 仅自检，写 projections/自检报告.md
   python3 scripts/project.py --project    # 自检 + 生成人类层投影（projections/）
 
 退出码：0 = 无硬检查失败；1 = 存在硬检查失败（含指针反查失败）。
-依赖：标准库 + pyyaml。生成物禁手改（README §1）。
+依赖：标准库 + pyyaml。生成物禁手改（DATA-SPEC D1.3）。
 """
 
 from __future__ import annotations
@@ -65,7 +65,7 @@ ENUM_AGG = {'itemwise', 'additive', 'grouped_max', 'weighted_avg'}
 ENUM_SOURCE_TYPE = {'clause_id', 'bib_id', 'row_id'}
 ANCHOR_SERIES = tuple('VWXYZQR TGEM'.replace(' ', ''))  # V/W/X/Y/Z/Q/R/T/G/E/M
 
-# ── 0.17.2 字段集（README §2：条目内不得出现 0.17.2 之外的字段）──
+# ── 0.17.2 字段集（DATA-SPEC D2：条目内不得出现 0.17.2 之外的字段）──
 ENTRY_FIELDS = {
     'entry_id', 'kind', 'name', 'version', 'status', 'provenance', 'typical_reversibility',
     'applicability', 'envelope', 'cost_profile', 'compatibility', 'constraints_imposed',
@@ -107,7 +107,7 @@ CONCRETE_NUM_RE = re.compile(r'\d+(?:\.\d+)?\s*(?:ms|毫秒|秒|s\b|分钟|小�
 # ── 四层数据源标签（0.17.6(1)；行内注释约定，见 method_registry.yaml 头注）──
 LAYER_LABELS = ('骨架源', '交叉表源', '参考资料源', '人工判断')
 
-# ── 子维度显示名（README §4 裁决表；条目归属由 row_id 前缀数据驱动推得）──
+# ── 子维度显示名（DATA-SPEC D4；条目归属由 row_id 前缀数据驱动推得）──
 SUBDIM_NAME = {
     '1.2.1': '子维度一：抽象/代码结构风格',
     '1.2.2': '子维度二：部署/运行单元风格',
@@ -117,7 +117,7 @@ SUBDIM_NAME = {
 
 # 条目级检查（渲染逐条矩阵用）
 ENTRY_CHECKS = ['C-ID', 'M2', 'M3', 'M4', 'M6', 'M9', 'C-ENV', 'C-ST']
-# seed 资格公式（README §5）：M2 ∧ M3 ∧ M4 ∧ M6 ∧ M9 ∧ C-ENV ∧ C-ST ∧ C-ID（M5 软，记警告不阻断）
+# seed 资格公式（CHECK-SPEC C1）：M2 ∧ M3 ∧ M4 ∧ M6 ∧ M9 ∧ C-ENV ∧ C-ST ∧ C-ID（M5 软，记警告不阻断）
 # C-ID 为注册表级身份前置（全体判定，失败时仅阻断涉事 entry_id）；其余为条目级判据。
 SEED_CHECKS = ['M2', 'M3', 'M4', 'M6', 'M9', 'C-ENV', 'C-ST', 'C-ID']
 
@@ -526,7 +526,7 @@ def check_kind_enum(rep: Report, idx: Index, profiles_doc: dict):
             rep.fail('C-KP', str(pid), '元条目 entry_id 重复')
         seen_ids.add(pid)
         if not re.fullmatch(r'kind_profile_[A-Z]{3}', str(pid)):
-            rep.fail('C-KP', str(pid), 'id 形态应为 kind_profile_{KIND}（README §5 C-ID 元条目例外）')
+            rep.fail('C-KP', str(pid), 'id 形态应为 kind_profile_{KIND}（CHECK-SPEC C1 C-ID 元条目例外）')
         if kind not in kinds_in_law:
             rep.fail('C-KP', str(pid), f'describes_kind={kind} ∉ 0.17.3 封闭枚举')
         if kind in seen_kinds:
@@ -564,11 +564,11 @@ def check_kind_enum(rep: Report, idx: Index, profiles_doc: dict):
 def _source_ref_ok(sr, rep: Report, where: str) -> bool:
     ok = True
     if not isinstance(sr, dict):
-        rep.fail('M2', where, f'源指针应为 source_ref 对象，实为 {type(sr).__name__}（README §2）')
+        rep.fail('M2', where, f'源指针应为 source_ref 对象，实为 {type(sr).__name__}（DATA-SPEC D2）')
         return False
     extra = set(sr) - SOURCE_REF_FIELDS
     if extra:
-        rep.fail('M2', where, f'source_ref 含 0.17.2 之外字段：{sorted(extra)}（README §2）')
+        rep.fail('M2', where, f'source_ref 含 0.17.2 之外字段：{sorted(extra)}（DATA-SPEC D2）')
         ok = False
     if sr.get('source_type') not in ENUM_SOURCE_TYPE:
         rep.fail('M2', where, f"source_type={sr.get('source_type')} ∉ {sorted(ENUM_SOURCE_TYPE)}（0.17.2）")
@@ -577,24 +577,24 @@ def _source_ref_ok(sr, rep: Report, where: str) -> bool:
         rep.fail('M2', where, 'source_ref.value 缺失')
         ok = False
     if not isinstance(sr.get('verified'), bool):
-        rep.fail('M2', where, f"verified 应为布尔（README §2 键名映射「核验状态」→ verified），实为 {sr.get('verified')!r}")
+        rep.fail('M2', where, f"verified 应为布尔（DATA-SPEC D2 键名映射「核验状态」→ verified），实为 {sr.get('verified')!r}")
         ok = False
     return ok
 
 
 def check_schema(rep: Report, e: dict, eid: str):
-    """M2 的 schema 面：字段集封闭 + 闭集值 + 结构形态（0.17.2 逐字采用，README §2）。"""
+    """M2 的 schema 面：字段集封闭 + 闭集值 + 结构形态（0.17.2 逐字采用，DATA-SPEC D2）。"""
     where = f'{eid} schema'
     extra = set(e) - ENTRY_FIELDS
     if extra:
-        rep.fail('M2', where, f'条目含 0.17.2 之外字段：{sorted(extra)}（README §2 禁令）')
+        rep.fail('M2', where, f'条目含 0.17.2 之外字段：{sorted(extra)}（DATA-SPEC D2 禁令）')
     if e.get('status') not in ENUM_STATUS:
         rep.fail('M2', where, f"status={e.get('status')!r} ∉ 0.17.5 枚举 {sorted(ENUM_STATUS)}")
     if e.get('typical_reversibility') not in ENUM_REVERSIBILITY:
         rep.fail('M2', where, f"typical_reversibility={e.get('typical_reversibility')!r} ∉ {sorted(ENUM_REVERSIBILITY)}")
     v = e.get('version')
     if not isinstance(v, dict) or set(v) != VERSION_FIELDS:
-        rep.fail('M2', where, f'version 应为 {{major, minor, patch}}（README §2），实为 {v!r}')
+        rep.fail('M2', where, f'version 应为 {{major, minor, patch}}（DATA-SPEC D2），实为 {v!r}')
     prov = e.get('provenance')
     if not isinstance(prov, dict):
         rep.fail('M2', where, f'provenance 应为对象，实为 {type(prov).__name__}')
@@ -858,8 +858,8 @@ def check_m3(rep: Report, e: dict, eid: str, idx: Index):
 
 def check_m4(rep: Report, e: dict, eid: str, vocab: set):
     """M4 = ∀ p ∈ E.anti_patterns: executable(p.detection_predicate)（0.17.8）；
-    可执行性的数据侧判据 = 词汇封闭（README §3.1 / 编译规范 2.3 谓词名注册）。
-    同时校验 applicability 三空间谓词（README §3.1）。"""
+    可执行性的数据侧判据 = 词汇封闭（DATA-SPEC D3.1 / 编译规范 2.3 谓词名注册）。
+    同时校验 applicability 三空间谓词（DATA-SPEC D3.1）。"""
     unknown = []
     scanned = 0
     for i, it in enumerate(e.get('anti_patterns') or []):
@@ -1135,7 +1135,7 @@ def check_cid(rep: Report, entries: list, idx: Index):
             rep.fail('C-ID', eid, f'entry_id 重复（另见 {seen[eid]}）')
         seen[eid] = kind
         if not re.fullmatch(r'[A-Z]{3}-\d{3}', eid):
-            rep.fail('C-ID', eid, '格式应为 {kind前缀}-{三位序号}（0.17.2 / README §5 C-ID）')
+            rep.fail('C-ID', eid, '格式应为 {kind前缀}-{三位序号}（0.17.2 / CHECK-SPEC C1 C-ID）')
         if kind not in idx.kinds:
             rep.fail('C-ID', eid, f'kind={kind} ∉ 0.17.3 封闭枚举')
         if eid.split('-')[0] != kind:
@@ -1151,7 +1151,7 @@ def check_cid(rep: Report, entries: list, idx: Index):
         if ref in seen:
             rep.add('C-ID', ref, 'info', True,
                     f'母本已发布引用 → 命中本注册表条目「{next(e["name"] for e in entries if e["entry_id"] == ref)}」；'
-                    f'母本出处 {[c[0] for c in ctxs]}（书写形态等价关系见 README §4 / MJ-1）')
+                    f'母本出处 {[c[0] for c in ctxs]}（书写形态等价关系见 DATA-SPEC D4.2／MJ-1）')
         elif rk in covered:
             unresolved_covered.append((ref, [c[0] for c in ctxs]))
         else:
@@ -1164,7 +1164,7 @@ def check_cid(rep: Report, entries: list, idx: Index):
                f'母本已发布引用 {len(idx.published)} 个；本批覆盖 kind 的引用全部命中，无编号断裂')
     if pending:
         rep.add('C-ID', '待后续批次', 'info', None,
-                '母本已发布引用属未建批次（须先解既有引用，README §4）：'
+                '母本已发布引用属未建批次（须先解既有引用，DATA-SPEC D4）：'
                 + '、'.join(f'{r}(@{",".join(map(str, l))})' for r, l in pending))
     return seen
 
@@ -1476,7 +1476,7 @@ PLACEHOLDER_FIELD_ORDER = [
 
 
 def placeholder_field(path: str) -> str:
-    """把字段路径归入可审计的槽类别（README §3.3 新口径）。"""
+    """把字段路径归入可审计的槽类别（DATA-SPEC D3.3 新口径）。"""
     if path.startswith('applicability.'):
         return 'applicability.' + path.split('.')[1].split('[')[0]
     if 'detection_predicate' in path:
@@ -1491,7 +1491,7 @@ def placeholder_field(path: str) -> str:
 
 
 def census_placeholders(entries: list) -> dict:
-    """方括号内容分账（README §3.3 新口径 / 母本 0.18.6 M15）。
+    """方括号内容分账（DATA-SPEC D3.3 新口径 / 母本 0.18.6 M15）。
 
     判定式（显式、可审计）：
       · 排除 0.12 可信度标注（[已核验]/[存疑]/[未核验]/[待核验]）——单独由
@@ -1604,7 +1604,7 @@ def build_vocab(rep: Report, vocab_doc: dict) -> set:
     vg = vocab_doc.get('vocabulary_gaps') or []
     rep.add('VCB', '词汇缺口', 'info', True,
             f'{len(vg)} 项待 R2 提议：{"、".join(str(g.get("id")) for g in vg)}'
-            '（缺口词不得进入封闭词汇，README §3.1）')
+            '（缺口词不得进入封闭词汇，DATA-SPEC D3.1）')
     return vocab
 
 
@@ -1615,7 +1615,7 @@ FIELD_RE = re.compile(r'^ {4}([a-z_]+):')
 
 def extract_layers(text: str) -> dict:
     """从 method_registry.yaml **原文**的行内注释提取四层数据源标签。
-    标签写在注释里而非机器字段（README §2：条目内不得出现 0.17.2 之外的字段），
+    标签写在注释里而非机器字段（DATA-SPEC D2：条目内不得出现 0.17.2 之外的字段），
     故本函数是宽松投影层：返回 {entry_id: {顶层字段: [标签…]}}，只用于投影展示，
     不参与任何硬检查判定。"""
     out: dict[str, dict] = {}
@@ -1658,7 +1658,7 @@ def entry_row_names(e: dict) -> list[str]:
 
 
 def seed_summary(rep: Report, entries: list, prof_status: dict) -> dict:
-    """逐条 seed 资格判定（README §5 公式），供报告与索引共用。
+    """逐条 seed 资格判定（CHECK-SPEC C1 公式），供报告与索引共用。
     返回 {eid: {'status','failed','verdict','detail'}}。"""
     out = {}
     for e in entries:
@@ -1685,7 +1685,7 @@ def seed_summary(rep: Report, entries: list, prof_status: dict) -> dict:
 GEN_NOTE = ('> 本文件由 `scripts/project.py` 自动生成（机器层→人类层同源投影，母本 0.9／编译规范 E2），**禁止手改**；'
             '修改 registry/ 任一源后重跑 `python3 scripts/project.py --project`。')
 
-SUBDIM_ORDER = ('1.2.3', '1.2.1', '1.2.2', '1.2.4')  # README §4 分块序裁决（MJ-1）
+SUBDIM_ORDER = ('1.2.3', '1.2.1', '1.2.2', '1.2.4')  # DATA-SPEC D4.2 分块序裁决（MJ-1）
 
 
 def src_hashes() -> dict:
@@ -1763,7 +1763,7 @@ def render_survey(ctx: dict) -> str:
     ttot = sum(len(v) for v in tm.values())
     doubt = sum(1 for v in tm.values() for _, g in v if g == '存疑')
     L = ['# 勘察义务清单', '', GEN_NOTE, '',
-         '双通道义务（README §3.3；母本 0.18.6 M15、0.12、0.20.2 FM-1）：', '',
+         '双通道义务（DATA-SPEC D3.3；母本 0.18.6 M15、0.12、0.20.2 FM-1）：', '',
          '- **决策期**（Part A）：每个事实占位符在选型时逐条求值 真/假/未知，记录入 selection_log；'
          '未知 → 候选保留 ∧ 登记勘察任务（M15），**禁沉默排除**；无出处阈值禁填（0.17.7 门槛 2）。',
          '- **入库期**（Part B）：台账 survey_obligations（SO）是义务本身的登记面。', '',
@@ -1827,13 +1827,13 @@ def render_self_check(ctx: dict) -> str:
              + '——各项独立生效、互不援引，scope 与闭合条件以台账原文为准'
              ) if e3w else 'E3 面台账 waivers 节暂无登记项'
     L = ['# 自检报告（注册表静态自检）', '', GEN_NOTE, '',
-         '判据出处：README §5 检查矩阵；条款权威见 project.py 头注。'
+         '判据出处：CHECK-SPEC C1 检查矩阵；条款权威见 project.py 头注。'
          f'本报告是**静态自检**，不是 FVR 运行器（{e3txt}）。', '',
          '## 汇总', '',
          f'- 硬检查：通过 **{n_hard_ok}** 项／失败 **{len(hard_f)}** 项；软警告 {len(soft_f)} 项',
          f'- 条目：{len(entries)} 条；占位符（新口径）：事实占位 **{n_fact}** 处／'
          f'未绑定槽 **{n_slot}** 处（原方括号总数 {n_total}；旧口径亦为 1480，'
-         f'见 README §4.16／§4.17，不回改）',
+         f'见 changelog 2026-11-04（原 README 批次 4.16／4.17），不回改）',
          '- seed 资格：' + ('、'.join(f'{k} {v} 条' for k, v in sorted(verdicts.items())) or '（无）'),
          f'- 指针反查：{ctx["ptr_total"]} 个，miss {ctx["ptr_miss"]} 个',
          f'- `provenance.source_class`：{next((r.reason for r in rep.rows if r.check == "M2" and r.scope == "source_class"), "未统计")}'
@@ -1841,7 +1841,7 @@ def render_self_check(ctx: dict) -> str:
     L += ['### 指针反查（PTR）分文件', '', '| 文件 | 指针数 | 命中 | miss |', '|---|---|---|---|']
     for name, (n, okn, misses) in ctx['per_file'].items():
         L.append(f'| {name} | {n} | {okn} | {len(misses)} |')
-    L += ['', '## 占位符口径（新，README §3.3）', '',
+    L += ['', '## 占位符口径（新，DATA-SPEC D3.3）', '',
           '判定式：方括号 `[...]` 表示谓词／参数槽（决策期求值）；仅内容以 `待勘察：` 开头、'
           '或整句以 `待勘察` 结尾者（值位未定）为**事实占位**；0.12 可信度标注单列，不计入任一类。'
           '**事实占位＋未绑定槽 ≡ 原方括号总数**。', '',
@@ -1888,7 +1888,7 @@ def render_self_check(ctx: dict) -> str:
     L += ['', f'**事实占位合计 {n_fact} 处；槽 {n_slot} 处；原方括号总数 {n_total} 处。**', '',
           '## 逐条矩阵', '',
           '图例：✓ 过 ｜ ✗ 败 ｜ – 不适用/跳过 ｜ · 无记录。'
-          'seed 资格 = M2∧M3∧M4∧M6∧M9∧C-ENV∧C-ST（README §5；M5 软警告不阻断；C-ID 全局面并入）。', '',
+          'seed 资格 = M2∧M3∧M4∧M6∧M9∧C-ENV∧C-ST（CHECK-SPEC C1；M5 软警告不阻断；C-ID 全局面并入）。', '',
           '| entry_id | status | C-ID | M2 | M3 | M4 | M5 | M6 | M9 | C-ENV | C-ST | seed 资格 |',
           '|---|---|---|---|---|---|---|---|---|---|---|---|']
     for e in entries:
@@ -2002,7 +2002,7 @@ def _entry_card(e: dict, ctx: dict) -> list:
 
 def render_entry_cards(ctx: dict) -> str:
     """STY.md：全部条目的人类层卡片视图，按 kind 入库序分块。
-    STY 块内保留四子维度分块（SUBDIM_ORDER，README §4 裁决 MJ-1）；其余 kind 各一块，
+    STY 块内保留四子维度分块（SUBDIM_ORDER，DATA-SPEC D4.2 裁决 MJ-1）；其余 kind 各一块，
     块标题的源表号取自 provenance.source_pointers 的 row_id 前缀（客观事实，非自撰名称）。
     机器层权威 = method_registry.yaml；本投影只作人类阅读面，不新增任何事实。"""
     entries, reg_doc, prof_status = ctx['entries'], ctx['reg_doc'], ctx['prof_status']
@@ -2014,9 +2014,9 @@ def render_entry_cards(ctx: dict) -> str:
          f'- 版本：registry_version {rv.get("major")}.{rv.get("minor")}.{rv.get("patch")}',
          f'- 条目：合计 {len(entries)} 条＝' + '＋'.join(f'{k} {n} 条' for k, n in census),
          f'- kind 覆盖：{meta.get("kind_coverage")}',
-         '- 文件名沿用 README §6 既定产物名 `STY.md`（该产物首块 kind 为 STY 时的历史命名）；'
+         '- 文件名沿用 CHECK-SPEC C3.3 既定产物名 `STY.md`（该产物首块 kind 为 STY 时的历史命名）；'
          '改文件名属规范面变更，须走 ADR＋人工批准，本投影不自行改名。',
-         '- 编号：STY 块内分块序为 README §4 裁决，锚定 STY-004（母本反例 18-A 既有引用一致，MJ-1）；母本零改动。',
+         '- 编号：STY 块内分块序为 DATA-SPEC D4.2 裁决，锚定 STY-004（母本反例 18-A 既有引用一致，MJ-1）；母本零改动。',
          '- 卡片仅为紧凑投影；字段全量与逐字措辞以 method_registry.yaml 为准。', '']
     by_kind: dict = {}
     for e in entries:
@@ -2052,7 +2052,7 @@ def render_index(ctx: dict) -> str:
     meta = reg_doc.get('meta') or {}
     rv = meta.get('registry_version') or {}
     L = ['# 方法注册表索引（投影）', '', GEN_NOTE, '',
-         '## 产物（README §6）', '',
+         '## 产物（CHECK-SPEC C3.3）', '',
          '| 文件 | 内容 |', '|---|---|',
          f'| [STY.md](STY.md) | 方法条目卡片（人类层投影）：{len(entries)} 条＝'
          + '＋'.join(f'{k} {n} 条' for k, n in _kind_census(entries))
@@ -2123,7 +2123,7 @@ def run_checks():
     law_text, compile_text = read_text(LAW_PATH), read_text(COMPILE_PATH)
     reg_text = read_text(REG_PATH)
     idx = Index(law_text, compile_text)
-    # PTR：三文件全部机器可读源指针反查权威源（防幻觉，README §5）
+    # PTR：三文件全部机器可读源指针反查权威源（防幻觉，CHECK-SPEC C1）
     per_file, ptr_total, ptr_miss = check_pointers(rep, idx, {
         REG_PATH.name: reg_doc, PROFILES_PATH.name: profiles_doc, VOCAB_PATH.name: vocab_doc})
     check_bib_sanity(rep, idx)
@@ -2162,7 +2162,7 @@ def run_checks():
 
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(
-        description='方法注册表自检 + 同源投影（registry/README §5/§6）')
+        description='方法注册表自检 + 同源投影（registry/CHECK-SPEC C1／C3）')
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument('--check', action='store_true', help='仅自检（写 projections/自检报告.md）')
     g.add_argument('--project', action='store_true', help='自检 + 生成全部人类层投影')
