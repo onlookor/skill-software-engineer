@@ -13490,7 +13490,7 @@ pending_conflict_rows:
 # ---------------------------------------------------------------------------
 survey_obligations:
   - obligation_id: SO-1
-    kind: 入库期
+    kind: 接地编译期              # ADR-G-STY-ENV-01 裁定：[]＝该部署尚未勘察，不在入库期补录；事实由接地编译期 S0/S1 填报（M15 兜底）
     obligation: "补录各风格条目的现状空间与交付空间适用条件事实（须过 0.4 出处门槛：现状勘察产物/既有 ADR/团队能力事实），回填 applicability.current_space / delivery_space 的空列表。"
     gap_ref: G-STY-1
     consumer: "0.18.2 S1（applicability 求值；unknown ≠ false → 候选保留）"
@@ -13532,6 +13532,12 @@ survey_obligations:
     gap_ref: "predicate_vocabulary.yaml: vocabulary_gaps VG-01/VG-02/VG-03/VG-04"
     consumer: "0.17.8 M4（detection_predicate 词汇封闭 = 可执行）；编译规范 2.3 谓词名注册"
     trigger_rule: "M4；R2（发现词汇缺失 → 提议候选，不得本地造词）"
+    decision_basis:               # 2026-11-07 核对：VG-01～04 四族仍全部 MISSING；不得另起一套
+      - "扩充沿用 ADR-VG09-01 口径：谓词表一次性扩充、按族登记、走 0.13 完整 ADR＋批准；不做逐条小登记、不另起编号体系（该 ADR 已建 5 族／17 名先例）"
+      - "拒绝槽名充谓词（VG-04 (i)／VG-05 (i)／ADR-VG09-01 §2 反模式二）：以实参槽名或字段名充当谓词属本地造词"
+      - "可复合者走 resolved_by_composition 结构化映射（ADR-VG09-01 D3-A），基词须已在母本或词汇表；不得以散文等价性代替"
+      - "补齐后按 MJ-4 复核 signal_level（STY-008-AP2／STY-009-AP1／STY-015-AP1 明记『词汇补齐后升 P0』）"
+      - "范围注：VG-05～VG-08 亦未登记，但不在本条 gap_ref 内；若同批扩充须一并裁决，避免反复小扩表"
     status: open
 
   - obligation_id: SO-5
@@ -13552,6 +13558,9 @@ survey_obligations:
     gap_ref: "README §3.3 事实占位符约定；VG-02"
     consumer: "0.18.2 S1/S4；0.18.6 M15；0.20.2 FM-1"
     trigger_rule: "M15（unknown → 候选保留 ∧ 勘察义务登记）"
+    evidence:
+      - "枚举面已由 project.py 承接：projections/勘察义务清单.md Part A 按字段类别给出槽分布（applicability 三空间／anti_patterns.detection_predicate／cost_profile／envelope.bound_expr），并单列事实占位与 0.12 可信度标注"
+      - "本义务为决策期常驻义务（选型时逐条求值并记入 selection_log），不因工具已生成枚举而关闭；status 保持 open 表示尚未在任何一次选型中履行"
     status: open
 
   - obligation_id: SO-7
