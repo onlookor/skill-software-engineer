@@ -5195,6 +5195,7 @@ entries:
       source_pointers:
         - {source_type: row_id, value: "4.2.4-事务性发件箱（outbox）", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
+        - {source_type: bib_id, value: "42", verified: true}         # external 必备指针（ADR-STY-FIM-01 §5.5(2)）：4.7 书目 42 行级登记面覆盖本行
         - {source_type: clause_id, value: "4.3", verified: true}
         - {source_type: clause_id, value: "4.4", verified: true}
         - {source_type: clause_id, value: "4.5", verified: true}
