@@ -493,7 +493,11 @@
 3. **FROZEN 口径**：`anchor_index.py` 的 `FROZEN` 由 **9 → 12** 项。新增三份**已批准且已执行**的 ADR：`ADR草案-SRC-signals字段-方案A.md`（ADR-SRC-02）、`ADR草案-谓词表一次性扩容-VG-09.md`（ADR-VG09-01）、`ADR-R2-APPL-01-applicability事实槽.md`（ADR-R2-APPL-01）。`ADR草案-G-PRJ-1-悬空保留.md` 已在清单内（approved＋已执行，不重复纳入）；`ADR草案-PRJ交付空间-谓词槽纠正.md` 虽已在清单内，但其文件头仍为「草案」且条目改写未获批准，**未按本批新增**，如实保留原状态。
 4. **为什么已执行 ADR 不再参与活跃锚点约束**：ADR 是**历史裁定记录**（0.22 历史只追加），执行完毕后其内部 `@` 引用只用于回放裁定过程，不应再作为「活跃文档之间锚点一致性」的约束源。纳入 `FROZEN` 后，它们只做快照复算；`--target-mode prefix` 下其 `key@行` 也不再计入活跃豁免统计。
 5. **F-1／INFO-1 前后**：`live_anchors` **8,933／8,933**（不变）；`frozen_anchors` **2,709 → 2,748**（＋39＝三份 ADR 的 37＋本批 changelog 证据引用的 2）；`frozen_only_mixed` **110 串／183 次 live** 均**不变**；`key_at_exempt_frozen` **143 → 148**（＋5）；F-1 **8,795／8,795**（不变）；F-2～F-8 **pass／pass**；`prefix_unresolved` **0／0**；`needs_review` **0／0**。**没有任何条目从「混合类」转为「冻结类」而改变 F-1 口径**——这三份 ADR 本就不在 `LIVE`，从未计入 F-1；`FROZEN` 只改变快照归属与 `key@` 豁免，不改变 `INFO-1` 的 `all_kinds` 统计基数。
-6. **D-STY-5 草案**：新增 `ADR草案-框架内生元方法-STY-021-024.md`（`status: draft`，未自批、未落台账）。其执行前置是把 0.17.2 provenance 枚举行的 `origin` 枚举扩为 `manual|compiled|hybrid|framework-internal`（母本行内 1 行＋`project.py` `ENUM_ORIGIN`），须另批；本批未动。
+6. **D-STY-5 草案**：新增 `ADR草案-框架内生元方法-STY-021-024.md`（`status: draft`，未自批、未落台账）。其执行前置是把 0.17.2 provenance 枚举行的 `origin` 枚举扩为 `manual|compiled|hybrid|framework-internal`（母本行内 1 行＋`project.py` `ENUM_ORIGIN`），须另批；本批未动。（**2026-11-07 后续**：该 ADR 已转 `approved`，人类同日改采 A′——不扩 `origin`，改增 `source_class`；见 §4.31。）
+
+### 4.31 provenance.source_class（2026-11-07）
+
+`provenance` 增可选键 `source_class`；值域、`manual` 两类现状的区分、与 `origin` 的分工及判定程序全部见 [`../ADR草案-框架内生元方法-STY-021-024.md`](../ADR草案-框架内生元方法-STY-021-024.md) §5.5（本 README 只做指引，不复述规则）。当前「未分类」条数见 `projections/自检报告.md` 汇总行。
 
 ## 5. 状态纪律与自检清单
 
