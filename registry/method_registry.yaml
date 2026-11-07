@@ -12029,6 +12029,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12064,6 +12065,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12099,6 +12101,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12135,6 +12138,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12172,6 +12176,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12208,6 +12213,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12245,6 +12251,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12281,6 +12288,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12317,6 +12325,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12353,6 +12362,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12389,6 +12399,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12425,6 +12436,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12461,6 +12473,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12497,6 +12510,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12533,6 +12547,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12569,6 +12584,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12605,6 +12621,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}
@@ -12641,6 +12658,7 @@ status_transitions:
     impact_level: "低（简记级；0.17.5『status 迁移权限』明列 draft→seed 为低影响）"
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.5／0.17.6 迁移条件条文；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.5", verified: true}
         - {source_type: clause_id, value: "0.17.6", verified: true}

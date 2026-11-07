@@ -86,6 +86,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -126,6 +127,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -161,6 +163,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -193,6 +196,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -227,6 +231,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -257,6 +262,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -288,6 +294,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -319,6 +326,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -350,6 +358,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -380,6 +389,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -411,6 +421,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -445,6 +456,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -477,6 +489,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -511,6 +524,7 @@ profiles:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -541,6 +555,7 @@ profiles:
     status: seed             # 2026-11-03：R2-KP-G3-01 闭合（0.17.2 @387 末句；原 draft 缘由见 note 历史句）
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -614,6 +629,7 @@ profiles:
     status: seed             # 2026-11-03：R2-KP-G3-01 闭合（0.17.2 @387 末句；原 draft 缘由见 note 历史句）
     provenance:
       origin: hybrid
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -683,6 +699,7 @@ profiles:
     status: seed             # 2026-11-03：R2-KP-G3-01 闭合（0.17.2 @387 末句；原 draft 缘由见 note 历史句）
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
@@ -753,6 +770,7 @@ profiles:
     status: seed             # 2026-11-06：R2-SRC-01 获批（0.17.2 末句同行追加）；2026-11-06 发布 SRC-001…SRC-008
     provenance:
       origin: manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：0.17.2／0.17.3＋kind 专属条款；出处为条款正文
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
