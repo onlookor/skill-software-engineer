@@ -30,11 +30,11 @@
 
 | 编号 | 标题 | 状态 | 批准日期 | 被取代 | 影响的母本条款／注册表区段 | 文件 |
 |---|---|---|---|---|---|---|
-| `ADR-INLINE-MARK-01` | T2 五项行内标记方案（VFM／CFG／SCH／RLP／STY-4） | approved | 2026-11-04 | — | 母本 1.5(@1467)／5.2.3(@2477)／5.2.4(@2483)／5.2.6(@2505-2508)／5.5(@2572)／8.2.1(@3320)；`project.py` row_id 解析与 META；gaps `G-VFM-1`／`G-CFG-1`／`G-SCH-1`／`G-RLP-1`／`G-STY-4` | `ADR-INLINE-MARK-01-approved-20261104-五项行内标记方案.md` |
+| `ADR-INLINE-MARK-01` | T2 五项行内标记方案（VFM／CFG／SCH／RLP／STY-4） | approved | 2026-11-04 | — | 母本 1.5(@1467)／5.2.3(@2479)／5.2.4(@2485)／5.2.6(@2507-2510)／5.5(@2574)／8.2.1(@3322)；`project.py` row_id 解析与 META；gaps `G-VFM-1`／`G-CFG-1`／`G-SCH-1`／`G-RLP-1`／`G-STY-4` | `ADR-INLINE-MARK-01-approved-20261104-五项行内标记方案.md` |
 | `ADR-STY-FIM-01` | 框架内生元方法与 `provenance.source_class` | approved | 2026-11-07 | — | 母本 0.12／0.13／0.17.2（@335 `source_class`、@462 `origin`）／0.17.6／0.22；`project.py` `ENUM_ORIGIN` 与 `source_class` 校验；条目 `STY-021`／`STY-024`；gaps `G-STY-5`／`G-GOV-2`；SO-3／SO-24 | `ADR-STY-FIM-01-approved-20261107-框架内生元方法与source_class.md` |
 | `ADR-VG09-01` | 母本谓词表一次性扩容（VG-09 十七名） | approved | 2026-11-06 | — | 母本 9.5 谓词表；`registry/predicate_vocabulary.yaml` `VOCAB`；gap `VG-09`（另记 `cycle_scale` 残余） | `ADR-VG09-01-approved-20261106-谓词表一次性扩容.md` |
-| `ADR-VGEX-01` | VG-01～VG-08 谓词表扩容（20 名入表） | approved | 2026-11-07 | — | 母本 5.5(@2577)／8.5(@3433)／9.5(@3709)；`registry/predicate_vocabulary.yaml` 20 名与 VG-01～08 resolution；`node_role` 后置 | `ADR-VGEX-01-approved-20261107-VG01-08谓词表扩容.md` |
-| `ADR-G-OWN-CSL-01` | G-OWN-1／G-CSL-1 行内出处补写（零插行母本改写） | approved | 2026-11-04 | — | 母本 4.2.1(@2164-2169)／4.2.3(@2184-2192)／4.7(@2429/@2430/@2433)；gaps `G-OWN-1`／`G-CSL-1` | `ADR-G-OWN-CSL-01-approved-20261104-行内出处补写.md` |
+| `ADR-VGEX-01` | VG-01～VG-08 谓词表扩容（20 名入表） | approved | 2026-11-07 | — | 母本 5.5(@2579)／8.5(@3435)／9.5(@3711)；`registry/predicate_vocabulary.yaml` 20 名与 VG-01～08 resolution；`node_role` 后置 | `ADR-VGEX-01-approved-20261107-VG01-08谓词表扩容.md` |
+| `ADR-G-OWN-CSL-01` | G-OWN-1／G-CSL-1 行内出处补写（零插行母本改写） | approved | 2026-11-04 | — | 母本 4.2.1(@2166-2171)／4.2.3(@2186-2194)／4.7(@2431/@2432/@2435)；gaps `G-OWN-1`／`G-CSL-1` | `ADR-G-OWN-CSL-01-approved-20261104-行内出处补写.md` |
 | `ADR-G-PRJ-1-01` | G-PRJ-1 有意保留悬空 | approved | 2026-11-06 | — | 台账 gap `G-PRJ-1`（保留理由与关闭条件）；`project.py` `GAP_SO_WHITELIST` | `ADR-G-PRJ-1-01-approved-20261106-有意保留悬空.md` |
 | `ADR-KP-G3-01` | GRD／PRJ／GOV 三 kind 剖面变更（KP-G3 的 R2 落地） | approved | 2026-11-03 | — | 母本 0.17.2 @387 末句；`registry/profiles.yaml` `GRD`／`PRJ`／`GOV` 三剖面；`project.py` C-ENV 读 `entry_level_exemptions`；gap `KP-G3` | `ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md` |
 | `ADR-G-STY-ENV-01` | 接地编译前两闸（G-STY-1 三空间条件／G-ENV-1 指标映射） | approved | 2026-11-04 | — | 母本 1.2.1–1.2.4／1.3／6.2.1；0.18.2 S1；0.18.6 M15；0.17.7 门槛 2；gaps `G-STY-1`／`G-ENV-1`；SO-1 | `ADR-G-STY-ENV-01-approved-20261104-接地编译前置两闸.md` |
@@ -46,9 +46,10 @@
 | `ADR-README-01` | 子目录自检矩阵的授权边界与 README §5 公式拆解 | approved | 2026-11-07 | — | `registry/README.md` §5（迁入 `registry/CHECK-SPEC.md` C1）；`project.py` `check_m2`／`check_cenv`／`check_cst`／`SEED_CHECKS`；母本配套文件说明表 L21；`AGENTS.MD` L15 | `ADR-README-01-approved-20261107-子目录自检矩阵授权边界.md` |
 | `ADR-M5-01` | M5（`narrative_sync`）软硬冲突裁决 | approved | 2026-11-07 | — | 母本 0.17.8 L500 行内追加（同行）；总纲单行本 L475 同步；`CHECK-SPEC` C1 M5 行；`ST-STY-01.condition`；`project.py` `check_m5`／`SEED_CHECKS` | `ADR-M5-01-approved-20261107-M5软硬冲突裁决.md` |
 | `ADR-GAP-01` | 登记面下探与 gap 闭合规则（三态） | approved | 2026-11-07 | — | 0.12／0.17.7 门槛 6／0.17.8 M6；`ADR-STY-FIM-01` §5.5；gaps `G-CRD-1`／`G-DEC-1`／`G-CTR-1`／`G-STP-1`／`G-DFL-1`（均 closed）；SO-7～SO-11（均 closed） | `ADR-GAP-01-approved-20261107-登记面下探与gap闭合规则.md` |
-| `ADR-STY-3-01` | `G-STY-3`／STY-012 的 MVC 行级外部出处补登记 | approved | 2026-11-07 | — | 母本 0.12 @11／@1867（编号 81、增补区 10.8）；书目 81；`method_registry.yaml` `STY-012`；gap `G-STY-3`；SO-3 | `ADR-STY-3-01-approved-20261107-MVC行级外部出处补登记.md` |
+| `ADR-STY-3-01` | `G-STY-3`／STY-012 的 MVC 行级外部出处补登记 | approved | 2026-11-07 | — | 母本 0.12 @11／@1869（编号 81、增补区 10.8）；书目 81；`method_registry.yaml` `STY-012`；gap `G-STY-3`；SO-3 | `ADR-STY-3-01-approved-20261107-MVC行级外部出处补登记.md` |
+| `ADR-VG03-NR-01` | 节点角色谓词单族扩容（`node_role`，1 名） | approved | 2026-11-07 | — | 母本 1.5 @1479（+2 行，4,461→4,463；闭合围栏 @1480）；`registry/predicate_vocabulary.yaml` `node_role`（arity 2）与 VG-03 resolution；`method_registry.yaml` `STY-019-AP1` 改写（1 方括号）／SO-4 未闭合项 6→4 | `ADR-VG03-NR-01-approved-20261107-节点角色谓词单族扩容.md` |
 
-**统计**：17 份；approved 16、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
+**统计**：18 份；approved 17、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
 
 ## 3. 状态存疑项（正文头部与执行证据不一致，已按证据裁定）
 
