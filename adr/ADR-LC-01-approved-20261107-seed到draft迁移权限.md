@@ -6,10 +6,10 @@
 | 状态 | **approved（2026-11-07）**；人类裁决，Agent 仅备材料（0.10 第一条） |
 | 日期 | 2026-11-07 |
 | 决策类目 | 母本修订（0.17.5「status 迁移权限」新增一行；0.13 完整 ADR） |
-| 关联 | 母本 0.17.5 L443–451、0.17.6(3)(4) L467–473、0.17.7 L477–486、0.17.8 L507、9.2.1 严重级别；`ADR-README-01` §6（方案甲）；`method_registry.yaml` `ST-STY-01` 的 `evidence`；`registry/README.md` L516；`project.py` `check_cst` L1243、`check_ledgers` L1286–L1323 |
+| 关联 | 母本 0.17.5 L443–451、0.17.6(3)(4) L467–473、0.17.7 L477–486、0.17.8 L507、9.2.1 严重级别；`ADR-README-01` §6（方案甲）；`method_registry.yaml` `ST-STY-01` 的 `evidence`；`registry/CHECK-SPEC.md` C1 C-ST 行（原 README §5 L516，2026-11-07 分权迁入）；`project.py` `check_cst` L1243、`check_ledgers` L1286–L1323 |
 | 批准 | 用户本人（2026-11-07 会话指示）；精确批准时刻未提供，不代填 |
-| 实施状态 | 类目批准已生效；**本批已落地** `check_ledgers` 的时间切片校验（§6.1）；母本 0.17.5 条文增补、changelog、README 注记与迁移记录 schema 留待下一批（本批母本只改 0.17.8 的 M5 澄清，不改 0.17.5 原文） |
-| 影响面 | 母本 1 行（下一批）＋changelog；`method_registry.yaml` 迁移记录面；README §5 C-ST 行；`project.py` 台账一致性检查；**不改**条目数据、不改现有 138 条状态 |
+| 实施状态 | 类目批准已生效；**本批已落地** `check_ledgers` 的时间切片校验（§6.1）；C-ST 回落依据已补记于 §2.5（§6 #3 闭合）；母本 0.17.5 条文增补与迁移记录 schema 留待下一批（本批母本只改 0.17.8 的 M5 澄清，不改 0.17.5 原文） |
+| 影响面 | 母本 1 行（下一批）＋changelog；`method_registry.yaml` 迁移记录面；`registry/CHECK-SPEC.md` C1 C-ST 行（原 README §5）；`project.py` 台账一致性检查；**不改**条目数据、不改现有 138 条状态 |
 
 ## 1. 问题
 
@@ -29,7 +29,7 @@
 | 位置 | 原文 | 含义 |
 |---|---|---|
 | `method_registry.yaml` `ST-STY-01.evidence`（L11958） | 「任一条硬检查未过 → 该条按 C-ST 回落 `status: draft`，本简记对其失效」 | 台账已把回落写成既有行为 |
-| `registry/README.md` L516（C-ST 行） | 「`status=seed` 必须全过硬检查；未过者必须为 `draft`」 | 子目录规约已把 draft 当作 seed 失败的唯一合法状态 |
+| `registry/CHECK-SPEC.md` C1 C-ST 行（原 README §5 L516，2026-11-07 分权迁入） | 「`status=seed` 必须全过硬检查；未过者必须为 `draft`」 | 子目录规约已把 draft 当作 seed 失败的唯一合法状态 |
 | `project.py` L1243（`check_cst` 失败文案） | 「声明 seed 但硬检查未过：… → 按 C-ST 回落 `status: draft`」 | 工具在诊断层已宣告该迁移 |
 
 三处都描述了一个**母本未授权的迁移**。这不只是文本瑕疵：只要真实发生一次重判失败，三处就会同时指向一个没有权限依据的动作。
@@ -53,7 +53,13 @@
 | 执行形态 | 类目批准由触发口径变更的那份 ADR（方案甲 §6.2）承担；逐条回退以 `seed_rejudication` 记录＋人类逐条裁定留痕；不为每条回退单开 ADR |
 | 生效时点 | ADR 状态为 `approved` 之日（2026-11-07） |
 | 本批落地 | `check_ledgers` 时间切片校验（§6.1，已完成并验证） |
-| 待落地 | 母本 0.17.5 条文增补、changelog、README C-ST 注记、`method_registry.yaml` 反向迁移记录 schema（下一批执行） |
+| 待落地 | 母本 0.17.5 条文增补、changelog、`method_registry.yaml` 反向迁移记录 schema（下一批执行） |
+
+### 2.5 C-ST 回落的依据与落点（2026-11-07 补记，§6 #3 闭合）
+
+`registry/CHECK-SPEC.md` C1 的 C-ST 行（原 `registry/README.md` §5 L516，2026-11-07 随分权迁入）把「`status=seed` 必须全过硬检查；未过者必须为 `draft`」写成了判定语义，但该行未写明「回落 `draft` 凭什么合法」。**回落依据＝母本 0.17.5 的 `seed→draft` 迁移权限**；该权限的级别与执行形态见本 ADR §3.2（高影响，批准注册表类目＋人类逐条裁定）。
+
+落点由此确定：C-ST 行不再是待增字的位置，**依据补记于本 ADR 正文（本节）**，C-ST 行文保持原语义、零插行。在 0.17.5 条文增补（§6 #1）落地前，C-ST 行的「必须为 `draft`」是**待生效的前向引用**，不表示权限已生效；§6 #1 落地后，C-ST 行可据本节加一行「回落依据见 0.17.5 `seed→draft`」，不再另立待执行项。
 
 ## 3. 决策建议
 
@@ -109,7 +115,7 @@
 ## 4. 不补的后果
 
 1. **每次重判失败都要临时开特批**：无统一条件、无统一记录、无统一影响级别，批次之间不可比。
-2. **母本与三处实现持续分叉**（§2.1）：台账 `evidence`、README C-ST、工具文案都在描述一个不存在的权限。
+2. **母本与三处实现持续分叉**（§2.1）：台账 `evidence`、`CHECK-SPEC.md` C1 C-ST 行（原 README §5）、工具文案都在描述一个不存在的权限。
 3. **审计缺口**：状态变更无法从 `status_transitions` 机器追溯；「合法撤回」与「手工改 YAML」在记录上不可区分。
 4. **行为扭曲**：操作者更可能选择「保留 seed ＋ 挂 Waiver」或「就地改条目以通过新口径」，而不是诚实回退——这两种做法都掩盖了口径变更的真实影响面。
 5. **方案甲失去闭环**：重判清单产出后没有标准处置路径，§6.3 的「不通过者处置」只能停留在纸面。
@@ -131,7 +137,7 @@
 |---|---|---|---|
 | 1 | 母本 0.17.5 L451 | 待执行（下一批） | 零插行追加权限行（行内追加，行数 4,447 不变） |
 | 2 | `软件工程元框架成文法-changlog.md` | 待执行（随 1） | 0.17.5 修订记录（0.13 落迹） |
-| 3 | `registry/CHECK-SPEC.md` C1 C-ST 行（原 README §5，随分权迁入） | 待执行（随 1） | C-ST 行补「回落依据见 0.17.5 `seed→draft`」 |
+| 3 | `registry/CHECK-SPEC.md` C1 C-ST 行（原 README §5，随分权迁入） | **已完成（2026-11-07）** | 落点改指 CHECK-SPEC C1；回落依据补记于 §2.5（0.17.5 `seed→draft`，高影响）；C-ST 行文不增字，待 #1 落地后按 §2.5 加指针 |
 | 4 | `method_registry.yaml` | 待执行（随首次实际回退） | 允许 `from: seed`／`to: draft` 简记，与 `seed_rejudication` 批次互链 |
 | 5 | `project.py` `check_ledgers`（L1286–L1322） | **已完成（本批）** | 时间切片＋迁入覆盖校验（§6.1） |
 | 6 | 投影 | 无需 | 本批无状态改写，不生成 `seed重判清单.md` |
@@ -177,5 +183,6 @@
 ## 8. 本批边界
 
 - **本批已改**：母本 0.17.8 行内追加一句 M5 级别权威声明（零语义变更）；`project.py check_ledgers` 的时间切片校验；本 ADR 定稿。
-- **本批未改**：0.17.5 条文（下一批）、`method_registry.yaml`、条目数据、README、changelog 中 0.17.5 的修订（M5 澄清另记一条，见 changelog 2026-11-07 续条）。
+- **本批补记**：§2.5（C-ST 回落依据与落点）＋ §6 #3 闭合；`CHECK-SPEC.md` C1 C-ST 行文未动（零插行），原 README 引用改指分权后的落点。
+- **本批未改**：0.17.5 条文（下一批）、`method_registry.yaml`、条目数据、changelog 中 0.17.5 的修订（M5 澄清另记一条，见 changelog 2026-11-07 续条）。
 - 不执行任何 `status` 改写；不生成 `seed_rejudication` 空节；本 ADR 不再是拍板材料。
