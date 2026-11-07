@@ -1472,3 +1472,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **块清单**：`DATA-SPEC.md` D1.4 第 3／7／13／16／17 行备注由「本批未录」改为「2026-11-07 第二批已录」，第 9 行补「＋第二批五名」；17 块中除 `9.5` 的既有扩容外，机器层已全部投影入表。
 - **自检**：`--check` 硬失败 **0**／软警告 **0**／1,213 条记录；指针反查 2,314→**2,352**（miss 0），`predicate_vocabulary.yaml` 139→**177**；条目引用面未变（新名零调用）。四件投影按源哈希重生成。
 - **不变量**：母本零改动（仍 4,461 行／围栏 216）；entries 138／138 seed；gaps 24／SO 24／`vocabulary_gaps` 9；open gap 2、open SO 3。剩余：条款层 36 名（40 名中已做 §207 的 4 名）。只 commit 不 push。
+
+## 2026-11-07（续 14）：条款层补录第三批（36 名）＋抽样核对
+
+- **口径**：取母本各 x.5「可验证性质」公式内使用、但不在 17 个机器层块定义行的检查谓词；按 D4 剔除单字母变量、字段/槽名、枚举值与集合构造子。落表每条带 `block`／`line`／`anchor`／`arity`／`kind`；36 条均为 `predicate`。
+- **块分布**：`1.5` 2（`cycle`／`allowed_protocols`）、`2.5` 7（`capacity_evidence_sufficient`／`dsm_optimal`／`semantically_coherent`／`flag_for_review`／`interface_cost`／`cohesion_gain`／`tech_debt_flag`）、`3.5` 2（`interaction`／`satisfies`）、`4.5` 4（`allowed_mechanisms`／`residency_compliant`／`conflict_signal`／`reopen`）、`6.5` 5（`routed_to`／`recorded_in`／`consumed`／`mapped`／`monitored`）、`7.5` 5（`material`／`five_fields_complete`／`downstream_consumption`／`consumed_as`／`tension_acknowledgment`）、`8.5` 2（`seven_fields_complete`／`scheduled`）、`9.5` 7（`deployed_without`／`five_elements`／`external_cause`／`closed`／`auto_escalate`／`silent_renewal`／`routed_through`）、`10.5` 2（`referenced_by`／`generated_from`）。
+- **当轮不收（单列待裁）**：`sla_bound`(@2593)、`expiry`(@2598)、`band`(@2902) 形为 term function，按 ⑧「term 不另立组、入 `predicates` 加 `kind: term`」应另行归组；`consumed_by`(@503、@2600) 出现为无签名的关系短语（`card consumed_by`），元数不可判定。以上 4 项未入表，未动正文。
+- **在册数**：`predicates` 145、`formula_words` 7、`clause_defined_predicates` 17→**53**，合计 **169→205**。
+- **抽样核对（5 条，母本原文签名 vs 词汇表登记）**：`contract`(@2004, 7)／`waiver`(@3710, 6)／`guard_rule`(@3708, 9)／`verdict_table`(@616, 4) 四处逐槽一致；`registry_entry`(@493) 母本字面为 5 固定槽＋`fields...`，词汇表记 `arity: 6`＋`variadic: true`，按 ⑤「最小固定槽 6＋变长标记」口径一致（末槽按 1 计入 arity）。无自行修正后再报。
+- **自检**：硬失败 **0**／软警告 **0**／1,213 条记录；指针反查 2,352→**2,388**（miss 0），`predicate_vocabulary.yaml` 177→**213**；条目引用面未变（新增名零调用）。四件投影按源哈希重生成。
+- **不变量**：母本零改动（仍 4,461 行／围栏 216）；entries 138／138 seed。只 commit 不 push。
