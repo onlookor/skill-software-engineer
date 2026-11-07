@@ -1501,3 +1501,17 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **在册数**：`predicates` 145→**147**（142 predicate／5 term／1 constant）、`formula_words` 7、`clause_defined_predicates` 53，合计 **205→207**；`pending_review` 1 条不计。
 - **自检**：硬失败 **0**／软警告 **0**／1,213 条记录；指针反查 2,388→**2,390**（miss 0），`predicate_vocabulary.yaml` 213→**215**；条目引用面未变。投影按源哈希重生成。
 - **不变量**：母本零改动（4,461 行／围栏 216）；只 commit 不 push。
+
+## 2026-11-07（续 16）：`node_role` 单族入表（ADR-VG03-NR-01 落地）
+
+- **范围**：1 名谓词 `node_role(node, role)`；只动母本 1.5 谓词块（+2 行），不改任何条款正文、不新增条款。`STY-009-AP1` 三项非谓词事实不动。
+- **母本**：4,461 → **4,463 行**（+2），围栏 **216** 不变。插入位置：改前 `@1478` 前（块头）、`@1479` 前（定义）；终态 `@1478` 块头／`@1479` 定义／`@1480` 闭合围栏（原 `@1478` 围栏顺移）。机械插入后第 2 行落在围栏外，已人工交换 `1479`／`1480` 两行校正；该三行无任何锚端点，交换不影响落点。
+- **位移实测（真实仓库，与预演同参数）**：`anchors_changed` **6,613**／`range_anchors` **940**／`endpoints_shifted` **7,553**／`span_inside_insert` **0**／`collision_prefixed` **0**／`blank_landing` **17**／`exceptions` **0**；跳过 冻结 1,636／标题内嵌 86／代码跨度 248。与预演 6,613／940／7,553／0 逐项一致（差 0）；分区间 `[1478,2577)` **1,816**（任务书所指预演值）、`[2577,3433)` 2,897、`[3433,3709)` 1,308、`[3709,∞)` 592。
+- **口径说明**：预演与实测均不计本 ADR 自身的母本行号引用（其 `@N` 为改前快照说明），故 6,613 与 1,816 可对账。
+- **词汇表**：`predicates` 147→**148**（143 predicate／5 term／1 constant），合计 **207→208**；新条带 `arity: 2`／`kind: predicate`／`block: "1.5"`／`line: 1479`／`anchor: "@1479"`。`role` 为开放枚举，首批 `edge`／`center`／`broker`（取值均有母本出处，见 ADR §3／§9）。
+- **改写面（唯一）**：`STY-019-AP1.detection_predicate` 第 1 个方括号 `[n 为边缘节点]` → `node_role(n, edge)`（替换 1 处）；第 2 个方括号保留；`signal_level: P1` 不动（MJ-4 复核结论维持 P1，见 ADR §11）。
+- **缺口与义务**：`VG-03` 的 `deferred: node_role` 标 `resolved`，`predicate_rows_added: 0→1`，`status_after` 改为「残余 STY-009-AP1 三事实」；`SO-4` 未闭合项 **6→4**（余 VG-02 `over_decomposed`／`responsibility_over_fragmented`、VG-04 `schema`／`error_handling`），`status: open` **维持**（四项均须母本条款补写）。
+- **自检**：`--check` 硬失败 **0**／软警告 **0**／1,213 条记录；占位符 **1,483→1,482**（事实 1＋槽 1,481，减少 1 即 `STY-019-AP1` 第 1 个方括号落地）；指针反查 2,390→**2,391**（miss 0），`predicate_vocabulary.yaml` 215→**216**。
+- **锚索引复算**：`total_rows` 12,494→**12,502**；`live_anchors` 8,795→**8,800**；`ranges` 1,825（不变）；`by_target_kind.mother` 9,269→**9,277**；`by_landing_form.blank` 515→**524**（+9，来自冻结 ADR／todo 旧锚对新母本的复算，非本次引入，冻结文件不改写）；`F-1` 仍为「现状度量 fail」（8,645→8,650）。活跃母本锚分母 7,173→**7,178**。
+- **投影**：四件（`STY.md`／`勘察义务清单.md`／`索引.md`／`自检报告.md`）按源哈希重生成。
+- **不变量**：entries 138／138 seed；gaps 24／SO 24；open gap 2（`G-PRJ-1`／`G-SRC-1`）、open SO 3（`SO-1`／`SO-4`／`SO-6`）。本批单独 commit；随后按用户指令把全部未推提交一并 push。
