@@ -1462,3 +1462,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **在册数**：`predicates` 87→**107**（17 补录＋4 term/constant−1 移出）、`formula_words` 7、`clause_defined_predicates` 10→**17**（4 §207＋2 正文判定＋1 移入），合计 **104→131**。term/constant：`expiry_of`(term)／`sync_chain_depth`(term @2596)／`slowest_consumer_migration`(term @2018)／`registered_max_depth`(constant @2596)／`bound`(term @2901)。
 - **自检**：`--check` 硬失败 **0**／软警告 **0**／1,213 条记录；指针反查 2,287→**2,314**（miss 0），`predicate_vocabulary.yaml` 112→**139**；条目引用面未变（新名零调用）。四件投影已按源哈希重生成。
 - **不变量**：母本零改动（仍 4,461 行／围栏 216）；entries 138／138 seed；gaps 24／SO 24／`vocabulary_gaps` 9；open gap 2、open SO 3。剩余批次：机器层 38 名（3.5／7.5／9.5／0.19.6／0.22.4／0.23.5）＋条款层 36 名（40 名中已做 4），均已有母本锚点，无「拿不出锚点」项。`6116872` 与本批均未推送。
+
+## 2026-11-07（续 13）：机器层块补录·第二批（38 名）
+
+- **范围**：`3.5` 7（`contract`／`sla_clause`／`breaking_change`／`deprecation_window`／`cdc_suite`／`covers`／`context_map`）、`7.5` 11（`decision_record`／`impact_scope`／`reversibility`／`approval_route`／`approved_by`／`shorthand_entry`／`new_fact`／`reopen_proposal`／`decision_lineage`／`unreachable_event`／`disposition`）、`9.5` 5（`guard_rule`／`signal`／`waiver`／`debt_item`／`drift`）、`0.19.6` 8（`conflict_instance`／`concession_record`／`authority_level`／`tiebreak`／`condition_eval`／`conflict_graph`／`escalation_depth`／`human_ruling`）、`0.22.4` 4（`anchor_commitment`／`modality_usage`／`narrative_only_block`／`reference_pointer`）、`0.23.5` 3（`compile_interface_constraint`／`r2_proposal_from_compiler`／`compile_artifact`）。
+- **口径**：每条带母本行号／元数／`kind`／块归属（`block`＋`line`）；元数按顶层逗号计，花括号与 `|` 枚举不拆槽。`7.5` 两类排除已按 D4：`shorthand_pack`（集合构造）与 `rejected(reason)`（枚举值构造子）不计名，故该块 11 名而非 13 个调用记号。
+- **同名核查**：`decision_record`(@788)／`impact_scope`(@3041)／`signal`(@1111-1112)／`waiver`(@3243、@3505)／`concession_record`(@3285) 的其余出现均为形式化注释中的使用实例（实参简写），非定义行；首定义唯一，无需合并或拆分。
+- **在册数**：`predicates` 107→**145**（140 predicate／4 term／1 constant）、`formula_words` 7、`clause_defined_predicates` 17，合计 **131→169**。`vocabulary_gaps` 9 条不变（本批为既有缺口补齐，非新立词）。
+- **块清单**：`DATA-SPEC.md` D1.4 第 3／7／13／16／17 行备注由「本批未录」改为「2026-11-07 第二批已录」，第 9 行补「＋第二批五名」；17 块中除 `9.5` 的既有扩容外，机器层已全部投影入表。
+- **自检**：`--check` 硬失败 **0**／软警告 **0**／1,213 条记录；指针反查 2,314→**2,352**（miss 0），`predicate_vocabulary.yaml` 139→**177**；条目引用面未变（新名零调用）。四件投影按源哈希重生成。
+- **不变量**：母本零改动（仍 4,461 行／围栏 216）；entries 138／138 seed；gaps 24／SO 24／`vocabulary_gaps` 9；open gap 2、open SO 3。剩余：条款层 36 名（40 名中已做 §207 的 4 名）。只 commit 不 push。
