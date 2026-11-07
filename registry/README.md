@@ -486,6 +486,15 @@
 6. **不变量前后**：entries **138／138**；自检记录 **1,212／1,212**；硬失败／软警告 **0／0**；指针 **2,260／miss 0**；占位符 **1,483＝1＋1,482**；F-1 **8,795／8,795**；F-2～F-8 **pass／pass**；`prefix_unresolved` **0／0**；`needs_review` **0／0**（本批无插行、无位移）；母本 **4,447／4,447**；`applicability` 项 **762／762**；A4 提示 **31→0**。
 7. **边界**：只 commit 不 push；本批无人类重新裁定事项。
 
+### 4.30 2 条部分指针、已执行 ADR 进 FROZEN（2026-11-07）
+
+1. **部分指针（零母本）**：`CTR-012` ← 书目 33（`source_pointers` 加 `bib_id "33"`；`references` 限「3.2.2 发现与注册中的 schema registry（事件/消息）角色；不覆盖 API 网关与服务目录」）；`DFL-005` ← 书目 40（限「4.2.4 物化视图的可重建性理论基础（Y7）；不覆盖流处理与 ETL/ELT 批」）。两项均 `compile_usage: metadata_extraction`、`trust_grade: "[已核验]"`。其余面不下探，`G-CTR-1`／`G-DFL-1` **保持 open**；`G-CRD-1`／`G-DEC-1`／`G-STP-1`／`G-STY-5` 不动。
+2. **指针计数**：**2,260 → 2,264**（＋4：两条 `source_pointers.bib_id` ＋两条 `references` 条目）；entries **138／138**；自检记录 **1,212／1,212**；硬失败／软警告 **0／0**；占位符 **1,483＝1＋1,482**；母本 **4,447／4,447**（零改动、零插行）。
+3. **FROZEN 口径**：`anchor_index.py` 的 `FROZEN` 由 **9 → 12** 项。新增三份**已批准且已执行**的 ADR：`ADR草案-SRC-signals字段-方案A.md`（ADR-SRC-02）、`ADR草案-谓词表一次性扩容-VG-09.md`（ADR-VG09-01）、`ADR-R2-APPL-01-applicability事实槽.md`（ADR-R2-APPL-01）。`ADR草案-G-PRJ-1-悬空保留.md` 已在清单内（approved＋已执行，不重复纳入）；`ADR草案-PRJ交付空间-谓词槽纠正.md` 虽已在清单内，但其文件头仍为「草案」且条目改写未获批准，**未按本批新增**，如实保留原状态。
+4. **为什么已执行 ADR 不再参与活跃锚点约束**：ADR 是**历史裁定记录**（0.22 历史只追加），执行完毕后其内部 `@` 引用只用于回放裁定过程，不应再作为「活跃文档之间锚点一致性」的约束源。纳入 `FROZEN` 后，它们只做快照复算；`--target-mode prefix` 下其 `key@行` 也不再计入活跃豁免统计。
+5. **F-1／INFO-1 前后**：`live_anchors` **8,933／8,933**（不变）；`frozen_anchors` **2,709 → 2,748**（＋39＝三份 ADR 的 37＋本批 changelog 证据引用的 2）；`frozen_only_mixed` **110 串／183 次 live** 均**不变**；`key_at_exempt_frozen` **143 → 148**（＋5）；F-1 **8,795／8,795**（不变）；F-2～F-8 **pass／pass**；`prefix_unresolved` **0／0**；`needs_review` **0／0**。**没有任何条目从「混合类」转为「冻结类」而改变 F-1 口径**——这三份 ADR 本就不在 `LIVE`，从未计入 F-1；`FROZEN` 只改变快照归属与 `key@` 豁免，不改变 `INFO-1` 的 `all_kinds` 统计基数。
+6. **D-STY-5 草案**：新增 `ADR草案-框架内生元方法-STY-021-024.md`（`status: draft`，未自批、未落台账）。其执行前置是把 0.17.2 provenance 枚举行的 `origin` 枚举扩为 `manual|compiled|hybrid|framework-internal`（母本行内 1 行＋`project.py` `ENUM_ORIGIN`），须另批；本批未动。
+
 ## 5. 状态纪律与自检清单
 
 生命周期见 0.17.5。`draft→seed` = bootstrap 期专用迁移，条件 **M2–M6 全过**（低影响：简记 ＋ provenance 登记，简记见 `method_registry.yaml: status_transitions`）。`project.py` 执行：

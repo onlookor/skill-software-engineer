@@ -1298,3 +1298,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **不变量**：entries **138**；自检记录 **1,212**；硬失败／软警告 **0／0**；指针 **2,260**／miss **0**；占位符 **1,483＝1＋1,482**；F-1 **8,795**（现状度量）；F-2～F-8 pass；`prefix_unresolved` **0**；`needs_review` **0**；母本 **4,447** 行；`applicability` 项 **762**；A4 提示 **31→0**。
 - **文档**：`registry/README.md` 新增 §4.29；`ADR-R2-APPL-01-applicability事实槽.md` 追加 §11「裁定记录」（不改写既有正文）。
 - **边界**：只 commit 不 push；无人类重新裁定事项。
+
+## 2026-11-07：2 条部分指针＋已执行 ADR 进 `FROZEN`＋D-STY-5 ADR 草案
+
+- **部分指针（零母本）**：`CTR-012` ← 书目 33（限「3.2.2 发现与注册中的 schema registry（事件/消息）角色；不覆盖 API 网关与服务目录」）；`DFL-005` ← 书目 40（限「4.2.4 物化视图的可重建性理论基础（Y7）；不覆盖流处理与 ETL/ELT 批」）。各加一条 `source_pointers.bib_id`＋一条 `references`（`metadata_extraction`／`[已核验]`）；`G-CTR-1`／`G-DFL-1` 保持 open，其余四行不动。
+- **指针计数**：**2,260 → 2,264**（＋4）；entries **138／138**；自检记录 **1,212／1,212**；硬失败／软警告 **0／0**；占位符 **1,483＝1＋1,482**；母本 **4,447／4,447**（零改动）。
+- **`FROZEN` 9→12**：新增 `ADR草案-SRC-signals字段-方案A.md`（ADR-SRC-02）、`ADR草案-谓词表一次性扩容-VG-09.md`（ADR-VG09-01）、`ADR-R2-APPL-01-applicability事实槽.md`（ADR-R2-APPL-01）；均 approved＋已执行。`ADR草案-G-PRJ-1-悬空保留.md` 已在清单内，不重复；`ADR草案-PRJ交付空间-谓词槽纠正.md` 文件头仍为草案且改写未获批，**未新增**。
+- **锚点前后**：`live_anchors` **8,933／8,933**（不变）；`frozen_anchors` **2,709 → 2,748**（＋39＝三份 ADR 的 37＋本条 changelog 证据引用的 2）；`frozen_only_mixed` **110 串／183 次**不变；`key_at_exempt_frozen` **143 → 148**；F-1 **8,795／8,795**；F-2～F-8 pass；`prefix_unresolved` 0；`needs_review` 0。三份 ADR 本不在 `LIVE`，**无条目因转入冻结而改变 F-1 口径**。
+- **D-STY-5 草案**：新增 `ADR草案-框架内生元方法-STY-021-024.md`（`status: draft`，未自批、未落台账）。判定 `1.2.4` `STY-021`（`@m:1394`）／`STY-024`（`@m:1397`）为 framework-internal；给出 FIM-1 五项判据＋否定清单；逐条排除书目 1／2／12／13／23；反例为「分布式单体」（纯提及无定义）与「绞杀者迁移」（有定义但书目 34 已登记）。执行前置：0.17.2 provenance 枚举行的 `origin` 枚举扩为 `framework-internal`＋`project.py` `ENUM_ORIGIN`，须另批。
+- **文档**：`registry/README.md` 新增 §4.30；本 changelog 条目。
+- **边界**：只 commit 不 push；D-STY-5 维持 draft，等待人类批准。

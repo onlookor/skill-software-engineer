@@ -4643,6 +4643,7 @@ entries:
         - {source_type: clause_id, value: "0.3", verified: true}     # 强加范围解包（示例一援引）
         - {source_type: clause_id, value: "0.13", verified: true}    # 漂移检测规则参数注册（3.4 施→9）
         - {source_type: clause_id, value: "6.2.1", verified: true}   # 性能族（延迟分位数）＋可观测性族（追踪覆盖率）
+        - {source_type: bib_id, value: "33", verified: true}          # D-CTR-1：仅 schema registry 子项（5.7 登记面「3.2.2 schema registry 与兼容性规则的工程参照」）
     typical_reversibility: bounded     # 人工判断：注册面切换（API 网关 ↔ schema registry ↔ 服务目录）不改变契约语义与 version/compat_policy，但已登记工件与消费者查询路径须同步迁移 → 非 free；母本未给本行的逆转成本（默认值列仅『按方面 1 风格选择』）→ 不推定为 costly
     applicability:
       problem_space:                   # 骨架源：3.2.2「内容」列
@@ -4693,7 +4694,8 @@ entries:
         signal_level: P1               # 3.4 施→10 级别列为硬（禁止双重维护，0.9 同源生成原则在契约域最强适用）；机器层天然性对同步 API/异步消息/事件/数据契约均为『高』（3.2.1）→ 同源生成可行时应升硬；母本未将其列入 X 系列 → P1（MJ-4 判据）
     formal_anchor:
       - {property_id: X1, role: consumed_by}     # 三类注册面是 X1 中 registry 的具体承载：∃C ∈ registry: covers(C,u1,u2) 的可判定性取决于契约已登记于 API 网关 / schema registry / 服务目录之一（3.2.2 内容列；3.4 施→5）
-    references: []                     # 母本 3.7 书目 28–34 无 3.2.2「发现与注册」行的行级登记提取面（28/29 → CDC 与契约测试区分；30 → 同步 API 契约机器层格式；31 → 3.2.1 事件信封；32 → API 契约设计方法；33 → schema registry 与兼容性规则〔其提取面为兼容性字段与 registry 角色概念，非本行的注册面选型〕；34 → 3.4 绞杀者迁移）；尾注「条目 4《Building Microservices》第 2 版的契约测试章节同样支撑 3.2.2，不重复著录」的支撑面限于契约测试（CDC 行），不扩及本行 → 按 G-CRD-1／G-DEC-1 同型纪律「表级/节级面不下探」不扩张；留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ 登记 G-CTR-1，待人工裁决补勘后回填（SO-9）
+    references:                        # D-CTR-1（2026-11-07 人类批准）：仅「发现与注册」的 schema registry（事件/消息）子项由书目 33 承接——33 的 5.7 登记面为「3.2.2 schema registry 与兼容性规则的工程参照」，行级提取面限于 registry 的登记角色；不覆盖内容列另两类注册面（API 网关／服务目录）→ 28/29（CDC 与契约测试）、30（同步 API 格式）、31（3.2.1 事件信封）、32（API 设计方法）、34（3.4 绞杀者迁移）仍不构成行级面；尾注「条目 4 契约测试章节」仍限于 CDC 行 → 其余面按「表级/节级面不下探」不扩张；未登记面不得被读作『无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ G-CTR-1 保持 open（SO-9）
+      - {bib_id: 33, support_claim: "3.2.2 发现与注册中的 schema registry（事件/消息）角色；不覆盖 API 网关与服务目录", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
     narrative:
       benefit_cost_analysis: "收益：三类注册面把 X1 中的抽象 registry 落成可运维工件——南北向经 API 网关、事件/消息经 schema registry、内部检索经服务目录，使『无未登记跨单元交互』有确定的查证入口；默认值列『按方面 1 风格选择』把注册面选型与风格选择绑定，避免逐案自由裁量；3.6 示例一显示注册面同时是强加范围解包的判据面——网关标准的文义只覆盖南北向，东西向不在其内。代价：三类注册面并存使同一契约可能被多处登记，施→10 的禁止双重维护在本行最易违例（AP3）；南北向网关引入额外一跳，外部可见延迟随串联跳数上升，而母本未给量化增量；schema registry 作为注册面时其兼容性检查依赖 CI 成熟度（3.3 交付空间驱动第二行）；隐式契约的逆向登记成本高（须流量观测 + 消费者代码分析）；注册面存在不等于契约内容齐备——上网关而缺 version/compat_policy 仍违 X2。"
       typical_scenarios: "新契约须选定注册面的场合（3.2.2 内容列三类；默认值列按方面 1 风格选择）；事件/消息契约须登记到 schema registry 的场合（同列流向分列）；既有隐式契约须以流量观测逆向登记到注册面的场合（3.3 现状空间驱动第二行）；公司网关标准强加南北向、而东西向注册面须单独选型的场合（3.6 示例一；0.3）；第三方开放须使对外 SLA 条款在南北向注册面可查的场合（3.3 问题空间驱动第一行）；契约漂移排查须以注册面清单对照实际流量的场合（3.4 施→9；0.13）；分布式单体排查须确认跨单元交互是否已登记的场合（X1；3.4 施→5）。"
@@ -5520,6 +5522,7 @@ entries:
         - {source_type: clause_id, value: "0.8", verified: true}
         - {source_type: clause_id, value: "6.2.1", verified: true}
         - {source_type: clause_id, value: "0.18.7", verified: true}  # S5 保守界消费 ops_cost 与 typical_reversibility
+        - {source_type: bib_id, value: "40", verified: true}          # D-DFL-1：仅可重建性面（4.7 登记面「事件日志/派生视图可重建性（Y7）的理论基础」）
     typical_reversibility: bounded     # 人工判断：视图为派生物、可由权威源重建（4.2.4 第二列『可重建』即其前提）→ 撤销成本有界；但重建须全量回放，且已对外供给的读路径与新鲜度条款一经消费即成既有事实 → 取 bounded（不取 free）。18-B S5 消费字段
     applicability:
       problem_space:                   # 骨架源：4.2.4 第三列「适用条件」原文
@@ -5602,7 +5605,8 @@ entries:
       - {property_id: Y7, role: implements}   # 4.2.4 第四列『重建能力是登记项（Y 系列检查）』→ Y7「∀ D_derived: data_lineage(D_derived, sources, rebuildable=true)」（软 P2）的机制侧落实 → AP2 的性质面（与 STP-003 formal_anchor 的 Y7 implements 同型）
       - {property_id: Y4, role: consumed_by}  # 流动机制与风格的自洽性由 Y4 检查（4.2.4 尾注；4.5 级别列为软 → 偏离标记评审，过度工程信号）
       # Y3（一致性级别显式声明，硬）不登记：声明义务归权威数据所有者，视图侧只承担新鲜度条款（见 consistency_impact）→ 本行非该性质的机制面，按「不下探」纪律不扩张
-    references: []                     # G-DFL-1：4.7 书目中无 4.2.4「物化视图」行的行级登记面——书目 40（Helland, Immutability）登记面为「Y7 可重建性理论基础」＝节级面；书目 5（Richardson, Microservices Patterns）为「部署×通信组合模式（Saga、CQRS、事件驱动）」；书目 35（DDIA）为 4.2.3 谱系与复制/分区权威内联源；书目 42/43 为发件箱与 CDC → 均按「表级/节级面不下探」纪律不扩张；可否下探为行级出处留 G-DFL-1.route 裁决口①②③待人工裁决。留空不得被读作『该行无外部文献支撑』（unknown ≠ false，0.18.6 M15）
+    references:                        # D-DFL-1（2026-11-07 人类批准）：仅「物化视图」的可重建性面由书目 40 承接——40 的 4.7 登记面为「事件日志/派生视图可重建性（Y7）的理论基础」，与 4.2.4 第二列『由权威数据派生、可重建』及第四列『重建能力是登记项（Y 系列检查）』术语级对齐；不覆盖流处理与 ETL/ELT 批两行（其行级面另案）→ 书目 5/35/42/43 仍不构成本行行级面，按「表级/节级面不下探」不扩张；未登记面不得被读作『无外部文献支撑』（unknown ≠ false，0.18.6 M15）→ G-DFL-1 保持 open
+      - {bib_id: 40, support_claim: "4.2.4 物化视图的可重建性理论基础（Y7）；不覆盖流处理与 ETL/ELT 批", compile_usage: metadata_extraction, trust_grade: "[已核验]"}
     narrative:
       benefit_cost_analysis: "收益：4.2.4 第二列把本机制定性为「由权威数据派生、可重建的本地化读模型」——读侧可按查询形态自由优化（1.2.3「事件溯源 + CQRS」行第四列『读模型自由优化』），跨单元查询聚合得以在不引入共享库的前提下满足（第三列；STP-001 的 typical_scenarios 明文以派生读模型替代共享库）；本地化使权威源不可用时视图仍可读，构成 6.6 示例四中「事件投影读模型」这一候选路径。代价：第四列明记「视图是**派生物不是所有者**——重建能力是登记项（Y 系列检查）」→ 血缘与可重建性是登记义务（Y7 软 P2），把视图当权威源即 Y1 硬违例；刷新延迟构成可见性下界，母本未给通用量化界，6.6 示例四的实例（P99 界 = 800ms）明记『出处＝现状消息基础设施基线测量，非编造精确值』→ 数值须实测补入（0.4）；存储面为数据复制成本；源 schema 变更沿视图定义与刷新路径传播至全体消费方（4.4 施→9）；视图一致性不优于最终一致，跨所有者强一致需求仍为 Y6 冲突信号；访问路径须经所有者授权登记，否则 Y2 违例。"
       typical_scenarios: "CQRS 读侧（4.2.4 第三列原文；1.2.3 该行第四列『读模型自由优化』）；跨单元查询聚合（同行第三列；STP-001 明文引本行为共享库的替代路径）；事件日志为权威状态时的派生读模型（4.2.2「事件日志为权威状态」行第二列『状态以事件日志为准，物化视图为派生』）；读经所有者授权的副本形态（4.2.2「所有者 + 授权读副本」行第二列，第四列要求『副本新鲜度条款写入数据契约』）；6.6 示例四质量目标不可达时的建议重审范围之一（『追加 CDC 或物化视图投资并补刷新延迟出处』）。"

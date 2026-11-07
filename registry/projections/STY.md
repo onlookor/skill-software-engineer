@@ -928,6 +928,7 @@
 - **反模式** 3 项（P0×1／P1×2）：CTR-012-AP1 契约未在任何注册面登记（网关、schema registry、服务目录三…；CTR-012-AP2 注册面选择与方面 1 风格不符（事件/消息契约仅登记于南北向 API 网…；CTR-012-AP3 同一契约在两个注册面各持一份不同步的登记（注册面双重维护）
 - **施加约束** 6 项：方面 2←已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 …；方面 4←数据契约的 schema 与语义条款是数据流动的唯一合法路径定义；方面 5←协调模式中的每条跨单元交互必须有注册契约（Z1 的契约来源）；方面 8←契约测试是验证计划的组成部分…
 - **formal_anchor**：X1(consumed_by)
+- **参考文献**：bib 33 [已核验]·metadata_extraction
 - **叙事（收益-成本）**：收益：三类注册面把 X1 中的抽象 registry 落成可运维工件——南北向经 API 网关、事件/消息经 schema registry、内部检索经服务目录，使『无未登记跨单元交互』有确定的查证入…
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；applicability: 骨架源；constraints_imposed: 交叉表源；narrative: 人工判断
 
@@ -1078,6 +1079,7 @@
 - **兼容性**：DFL-002(composable)、STP-003(composable)、STP-001(composable)、STY-004(composable)
 - **施加约束** 7 项：方面 2←数据归属现状回馈分解：现状数据不可干净归属时，S4 策略受约束、拆分序列…；方面 3←数据契约的 schema 与语义条款（单位/值域/空值/敏感性/新鲜度）…；方面 5←一致性模型 → 协调模式可行集：跨所有者强一致需求 → Saga + 业…；方面 6←一致性级别声明与新鲜度条款 → 质量判定的代价计入项…
 - **formal_anchor**：Y1(implements)、Y2(consumed_by)、Y7(implements)、Y4(consumed_by)
+- **参考文献**：bib 40 [已核验]·metadata_extraction
 - **叙事（收益-成本）**：收益：4.2.4 第二列把本机制定性为「由权威数据派生、可重建的本地化读模型」——读侧可按查询形态自由优化（1.2.3「事件溯源 + CQRS」行第四列『读模型自由优化』），跨单元查询聚合得以在不引入…
 - **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；applicability: 骨架源/交叉表源；envelope: 骨架源；constraints_imposed: 交叉表源；formal_anchor: 交叉表源
 
@@ -2009,4 +2011,4 @@
 - **数据来源层**（yaml 行内注释）：narrative: 人工判断；statement: 骨架源/人工判断；impact: 交叉表源；note: 交叉表源；status: 人工判断；judgment: 人工判断
 
 ---
-生成于 2026-11-07T09:08:57｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`3fb0b38916d1`；`profiles.yaml`→`e3acbc568e76`；`predicate_vocabulary.yaml`→`d6524d6a6861`
+生成于 2026-11-07T11:10:41｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`f4890fd0ae51`；`profiles.yaml`→`e3acbc568e76`；`predicate_vocabulary.yaml`→`d6524d6a6861`

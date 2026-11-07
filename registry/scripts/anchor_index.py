@@ -50,6 +50,10 @@ FROZEN = [
     'ADR草案-G-OWN-CSL-行内出处.md',
     'ADR草案-G-STY-1-G-ENV-1-接地编译前置.md',
     'ADR草案-G-PRJ-1-悬空保留.md',
+    # 已批准且已执行（2026-11-07 纳入）：执行后其锚点只做快照复算，不再参与活跃锚点约束（F-1～F-6）
+    'ADR草案-SRC-signals字段-方案A.md',      # ADR-SRC-02（approved；SRC-001…008 与 signals 已落地）
+    'ADR草案-谓词表一次性扩容-VG-09.md',      # ADR-VG09-01（approved；母本 9.5 与 vocabulary 已落地）
+    'ADR-R2-APPL-01-applicability事实槽.md',  # ADR-R2-APPL-01（approved；applicability 事实槽已落地）
 ]
 # 活跃集合（规范 F-1 的适用域）；不存在的文件自动跳过
 LIVE = [
