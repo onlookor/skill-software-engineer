@@ -44,9 +44,9 @@
 | `ADR-R2-APPL-01` | applicability 项级事实槽与问句式判据 | approved | 2026-11-06 | — | 母本 0.17.2 `applicability_item`（+5 行）；`project.py` `check_r2_applicability`；`profiles.yaml` 开关；130 条 `problem_space` | `ADR-R2-APPL-01-approved-20261106-applicability事实槽.md` |
 | `ADR-README-01` | 子目录自检矩阵的授权边界与 README §5 公式拆解 | approved | 2026-11-07 | — | `registry/README.md` §5（迁入 `registry/CHECK-SPEC.md` C1）；`project.py` `check_m2`／`check_cenv`／`check_cst`／`SEED_CHECKS`；母本配套文件说明表 L21；`AGENTS.MD` L15 | `ADR-README-01-approved-20261107-子目录自检矩阵授权边界.md` |
 | `ADR-M5-01` | M5（`narrative_sync`）软硬冲突裁决 | approved | 2026-11-07 | — | 母本 0.17.8 L500 行内追加（同行）；总纲单行本 L475 同步；`CHECK-SPEC` C1 M5 行；`ST-STY-01.condition`；`project.py` `check_m5`／`SEED_CHECKS` | `ADR-M5-01-approved-20261107-M5软硬冲突裁决.md` |
-| `ADR-GAP-01` | 登记面下探与 gap 闭合规则（三态） | **draft（未批准）** | 2026-11-07（起草） | — | 0.12／0.17.7 门槛 6／0.17.8 M6；`ADR-STY-FIM-01` §5.5；gaps `G-CRD-1`／`G-DEC-1`／`G-CTR-1`／`G-STP-1`／`G-DFL-1`；SO-7～SO-11 | `ADR-GAP-01-draft-20261107-登记面下探与gap闭合规则.md` |
+| `ADR-GAP-01` | 登记面下探与 gap 闭合规则（三态） | approved | 2026-11-07 | — | 0.12／0.17.7 门槛 6／0.17.8 M6；`ADR-STY-FIM-01` §5.5；gaps `G-CRD-1`／`G-DEC-1`／`G-CTR-1`／`G-STP-1`／`G-DFL-1`（均 closed）；SO-7～SO-11（均 closed） | `ADR-GAP-01-approved-20261107-登记面下探与gap闭合规则.md` |
 
-**统计**：15 份；approved 13、draft 2（`ADR-SRC-01`、`ADR-GAP-01`）；无 rejected、无 superseded。
+**统计**：15 份；approved 14、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
 
 ## 3. 状态存疑项（正文头部与执行证据不一致，已按证据裁定）
 
@@ -78,6 +78,7 @@
 | `ADR-LC-01-seed到draft迁移权限.md` | `ADR-LC-01-approved-20261107-seed到draft迁移权限.md` |
 | `ADR-R2-APPL-01-applicability事实槽.md` | `ADR-R2-APPL-01-approved-20261106-applicability事实槽.md` |
 | `ADR-README-01-子目录自检矩阵授权边界.md` | `ADR-README-01-approved-20261107-子目录自检矩阵授权边界.md` |
+| `ADR-GAP-01-draft-20261107-登记面下探与gap闭合规则.md` | `ADR-GAP-01-approved-20261107-登记面下探与gap闭合规则.md` |
 | `决策建议-M5-软硬冲突-2026-11-07.md` | `ADR-M5-01-approved-20261107-M5软硬冲突裁决.md`（原件已删除） |
 
 ## 5. 维护规则
