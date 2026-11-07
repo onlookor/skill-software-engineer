@@ -11905,6 +11905,14 @@ gaps:
     route: "逐条把谓词登记进 predicate_vocabulary.yaml（走 R2 提议；该文件为非权威投影，权威在母本 x.5／0.17.8／0.18.6 等）→ 登记完成后另开 ADR，把 M4 扩到 signals[].detection_predicate 并重跑 M4。登记前保持 open；不得以调用式（如 expiry(flag)）冒充已登记谓词，也不得以方括号占位替代登记。"
     status: open
 
+  - gap_id: G-GOV-2
+    type: 语义定义债（manual 的两义混同：录入通道 vs 证据类别）
+    statement: "母本 0.17.6 @m:462 把 `origin: manual` 的适用面定义为「无表格无文献支撑的字段（如 typical_reversibility）」的人工判断兜底，并以「禁止留默认值假充来源」作约束；但台账实际用法是「人工录入、仍引条款」——status_transitions 18／18 条、profiles 3／18 条均为 `origin: manual` 且带 clause_id 源指针，entries 0／138 条使用 manual（138 条全为 hybrid）。即母本定义（无出处兜底）与实际用法（有出处的人工录入）已偏离：`manual` 同时承担「录入通道」（不经编译器，0.17.6(1) @m:455）与「证据类别」（无表格无文献，@m:462）两义，0.17.2 的 `origin` 枚举只有一维、未拆分。"
+    impact: "读取侧仅做枚举校验（M2）与卡片打印，无按 origin 分支的行为差异，故当前不产生硬失败；但投影与人类读者会把 18 条 status_transitions、3 条 profiles 的「人工录入＋引条款」读作「无出处的人工臆造」（0.17.7 门槛 2 的假精确反向风险），且 provenance 上无法区分「人工登记的外部出处」与「母本自建定义行」。本项与 G-STY-5／ADR草案-框架内生元方法-STY-021-024 的 `framework-internal` 扩枚举同源，须合批修订；单独扩值会加剧两义混同，不得先扩后修。"
+    affected: "母本 0.17.2 @m:335（origin 枚举行）与 0.17.6 @m:455／@m:462（手工通道与 manual 定义行）；registry/scripts/project.py ENUM_ORIGIN；status_transitions ST-STY-01…ST-SRC-01 共 18 条的 provenance；profiles.yaml 中 3 条 origin=manual 的剖面；entries 138 条不受值影响（均为 hybrid）"
+    route: "修 manual 定义属改母本条款（0.13 @m:271 高影响：R2／ADR＋人类批准）；与 `framework-internal` 扩枚举合并为一次 schema 变更，只走一次 0.13。批准后同步：① 母本 @m:335 枚举行与 @m:462 定义行；② project.py ENUM_ORIGIN；③ 重跑 --check／--project 与 anchor_index 零插行复核。未批准前保持 open，不得先改枚举、不得以注释补丁替代定义修订。"
+    status: open
+
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
 # ---------------------------------------------------------------------------
@@ -13426,3 +13434,11 @@ survey_obligations:
       - "ADR-G-OWN-CSL-01：行内补写、零插行"
       - "母本 4.2.3 @2193／@2194／@2195（书目 35）、@2196（书目 39）、@2197（书目 36）"
     status: closed
+
+  - obligation_id: SO-24
+    kind: 入库期
+    obligation: "合批修订 manual 的两义混同：① 按 0.13 走 R2／ADR＋人类批准，改母本 0.17.6 @m:462 定义，使其同时容纳「人工录入但引条款」与「无表格无文献的人工判断」两种现状；② 与 ADR草案-框架内生元方法-STY-021-024 的 `framework-internal` 扩 origin 枚举合并为一次 schema 变更，只付一次 0.13 代价；③ 批准后同步 project.py ENUM_ORIGIN，重跑 --check／--project，并以副本复核 anchor_index 零插行（live_anchors／total_rows／drift 分布不变）。"
+    gap_ref: G-GOV-2
+    consumer: "0.17.2 @m:335（origin 枚举）；0.17.6 @m:455／@m:462（手工种子通道与 manual 定义）；0.13 @m:271（高影响治理）；0.17.8 M2（origin 枚举校验）"
+    trigger_rule: "R2／ADR＋人类批准（0.13）；批准后执行并复跑三项检查；未批准前保持 open，不得先扩枚举、不得以注释补丁替代定义修订"
+    status: open
