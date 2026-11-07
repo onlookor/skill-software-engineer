@@ -1135,7 +1135,7 @@ def check_cid(rep: Report, entries: list, idx: Index):
             rep.fail('C-ID', eid, f'entry_id 重复（另见 {seen[eid]}）')
         seen[eid] = kind
         if not re.fullmatch(r'[A-Z]{3}-\d{3}', eid):
-            rep.fail('C-ID', eid, '格式应为 {kind前缀}-{三位序号}（0.17.2 / CHECK-SPEC C1 C-ID）')
+            rep.fail('C-ID', eid, '格式应为 {kind前缀}-{三位序号}（母本 0.17.2 只要求 {kind前缀}-{序号}；三位书写见 DATA-SPEC D4.7／CHECK-SPEC C1 C-ID）')
         if kind not in idx.kinds:
             rep.fail('C-ID', eid, f'kind={kind} ∉ 0.17.3 封闭枚举')
         if eid.split('-')[0] != kind:
