@@ -877,14 +877,15 @@ entries:
   - entry_id: STY-012
     kind: STY
     name: MVC 及变体（MVP/MVVM）
-    version: {major: 1, minor: 0, patch: 0}
+    version: {major: 1, minor: 1, patch: 0}          # 1.0.0 → 1.1.0（ADR-STY-3-01 §4：出处性质 mother-row → external，属实质变更）
     status: seed
     provenance:
       origin: hybrid
-      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
+      source_class: external       # ADR-STY-3-01 §4：1.2.1-MVC 行的外部行级登记面＝书目 81（Fowler, GUI Architectures）；2026-11-07 由 mother-row 变更
       source_pointers:
         - {source_type: row_id, value: "1.2.1-MVC 及变体（MVP/MVVM）", verified: true}
         - {source_type: clause_id, value: "1.2.1", verified: true}
+        - {source_type: bib_id, value: "81", verified: true}   # external 必备指针（ADR-STY-FIM-01 §5.5(2)）：母本 10.8 书目 81 行级登记面覆盖本行
         - {source_type: clause_id, value: "1.4", verified: true}
         - {source_type: clause_id, value: "1.5", verified: true}
         - {source_type: clause_id, value: "0.8", verified: true}
@@ -924,7 +925,17 @@ entries:
       - {property_id: V1, role: implements}     # 人工判断：「单向数据流」即依赖方向约束，可经 layer_of（表现/领域/交互三区）+ dependency_rule 登记 → V1 校验面
       - {property_id: V4, role: consumed_by}
       - {property_id: V5, role: implements}
-    references: []                     # 无合法提取源：书目 1 的登记提取面为 1.2.1 词汇表（分层、管道-过滤器、黑板、微内核、Broker），不含 MVC；书目 2 的登记提取面为「风格对比与架构决策方法」，未登记 MVC 章节。M6 禁止以不承载该主张的文献充当出处 → 留空并登记勘察义务（gaps: G-STY-3）
+    references:
+      - bib_id: "81"                   # ADR-STY-3-01：书目 81 行级登记面（母本 10.8 @m:4231）
+        support_claim: "MVC＝表现与领域分离＋经事件（观察者）同步表现状态；MVP＝Presenter 承担表现逻辑、View 被动（Humble View／Passive View）；Presentation Model／MVVM＝表现状态外置为可测试模型；三者共同构成 1.2.1『MVC 及变体』行的外部文献支撑面"
+        compile_usage: metadata_extraction
+        # 核验（2026-11-07 全文抓取 https://martinfowler.com/eaaDev/uiArchs.html，67,986 字节）逐字引文：
+        #   MVC：「The best way to think of MVC is as set of principles including the separation of presentation from domain logic and synchronizing presentation state through events (the observer pattern).」
+        #   Presentation Model：「I call this a Presentation Model because it's a model that is really designed for and thus part of the presentation layer. (It's also known as MVVM - "Model-View-ViewModel".)」
+        #   Presentation Model：「The Presentation Model solves this for us by giving us a place to put this kind of state.」「all the actual decision making made by the Presentation Model … all the widgets have to do is map themselves to properties of the Presentation Model.」
+        #   MVP／Passive View：「they form a Passive View, manipulated by the presenter.」
+        # 限制：作者自述 draft form、不持续修订 → 仅作模式谱系与结构区分；MVC／MVP 书级权威由本地 PoEAA 第 14 章承担（见书目 81 本地编译锚点）。
+        trust_grade: "[已核验（在线在位：2026-11-07 全文抓取；标题、日期、目录与正文一致；Presentation Model 节覆盖「表现状态外置为可测试模型」、MVP／Passive View 节在正文；作者自述 draft form，仅作模式谱系与结构区分）]"
     narrative:
       benefit_cost_analysis: "收益：表现层可替换（触达面收敛到表现单元，领域零触达），交互式界面与领域逻辑的变更率差异被结构吸收；代价：三分带来每次交互一次转发，且变体（MVC/MVP/MVVM）的数据流约定不同——混用即失去『单向数据流』这一使上界成立的前提。母本把三个变体登记在同一行，故选用哪一个变体须显式记录（约束 10 的投影要求）。"
       typical_scenarios: "交互式界面系统（Web/桌面/移动前端）、表现逻辑与领域逻辑变更率差异明显的系统、需要以表现层为单位替换技术栈（如框架升级）的场景。"
@@ -11782,7 +11793,18 @@ gaps:
     impact: "该条 references: []（0.17.8 M6 严格式 ∀ reference ∈ E: … 对空集平凡为真；禁止以不承载该主张的文献充当出处）。条目其余字段以母本行为骨架源，不受影响。"
     affected: "STY-012"
     route: "勘察补书目并按 0.12 定 compile_usage → 母本参考文献表扩充（高影响，走 R2/ADR）"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-STY-3
+      date: "2026-11-07"
+      ruled_by: "人类责任方（2026-11-07 批准 ADR-STY-3-01）"
+      basis: "按 ADR-GAP-01 §3.1 ① 关闭（补到行级）：书目 81（Fowler, GUI Architectures, 2006-07-18）登记面覆盖 1.2.1-MVC 及变体（MVP/MVVM）行，STY-012 的 source_class 由 mother-row 改为 external 并补 bib_id 81 指针。不按 ③ 关闭——ADR-GAP-01 §5.5(5) 禁止在存在可登记行级书目时以『无行级出处』结案。"
+      evidence:
+        - "adr/ADR-STY-3-01-approved-20261107-MVC行级外部出处补登记.md（§3 著录与行级覆盖表、§3.5 放置例外、§10.2 全文核验记录）"
+        - "母本 10.8 书目 81 @m:4231；书目 81 本地编译锚点＝PoEAA 第 14 章（resources/se PDF+EPUB，2026-09-15 内容核验）"
+        - "registry/method_registry.yaml STY-012：source_class: external／source_pointers bib_id 81／references bib 81／version 1.1.0"
+        - "排除检索：书目 1／2／20／21／22 登记面逐条不覆盖 1.2.1-MVC 行（ADR-STY-3-01 §2.1）"
+      preserved: "statement／impact／route 原文逐字保留（0.22）"
 
   - gap_id: G-STY-4
     type: 登记义务（boundary/dependency_rule 未登记 → 信号级无法升 P0）
@@ -13493,7 +13515,16 @@ survey_obligations:
     gap_ref: G-STY-3, G-STY-5
     consumer: "0.17.8 M6（references 的 compile_usage/trust_grade 声明；存疑级不得为唯一出处）"
     trigger_rule: "M6；0.17.7 门槛 6（禁以不承载主张的文献充当出处）"
-    status: open
+    status: closed
+    closure:
+      gap_ref: "G-STY-3, G-STY-5"
+      date: "2026-11-07"
+      ruled_by: "人类责任方（2026-11-07 批准 ADR-STY-FIM-01／ADR-STY-3-01）"
+      basis: "范围两项均已闭合：G-STY-5 按 ADR-STY-FIM-01 §5.5 将 STY-021／STY-024 转 mother-definition；G-STY-3 按 ADR-STY-3-01 以书目 81 行级覆盖将 STY-012 转 external（1.1.0）。本义务无剩余项。"
+      evidence:
+        - "G-STY-5 closure（mother-definition，ADR-STY-FIM-01 §5.5）"
+        - "G-STY-3 closure（书目 81 行级覆盖，ADR-STY-3-01）"
+        - "registry/method_registry.yaml STY-012 references bib 81／STY-021／STY-024 references []（mother-definition）"
 
   - obligation_id: SO-4
     kind: 入库期
