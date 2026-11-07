@@ -117,7 +117,8 @@ SUBDIM_NAME = {
 
 # 条目级检查（渲染逐条矩阵用）
 ENTRY_CHECKS = ['C-ID', 'M2', 'M3', 'M4', 'M6', 'M9', 'C-ENV', 'C-ST']
-# seed 资格公式（README §5）：M2 ∧ M3 ∧ M4 ∧ M6 ∧ M9 ∧ C-ENV ∧ C-ST（M5 软，记警告不阻断）
+# seed 资格公式（README §5）：M2 ∧ M3 ∧ M4 ∧ M6 ∧ M9 ∧ C-ENV ∧ C-ST ∧ C-ID（M5 软，记警告不阻断）
+# C-ID 为注册表级身份前置（全体判定，失败时仅阻断涉事 entry_id）；其余为条目级判据。
 SEED_CHECKS = ['M2', 'M3', 'M4', 'M6', 'M9', 'C-ENV', 'C-ST', 'C-ID']
 
 
@@ -799,7 +800,9 @@ def check_signals(rep: Report, e: dict, eid: str):
 
 
 def check_m2(rep: Report, e: dict, eid: str, mat: dict, prof_status: dict):
-    """M2 = ∀E(status ≠ draft): fields_complete(E, kind_profile(E.kind))（0.17.8）。"""
+    """M2 = ∀E(status ≠ draft): fields_complete(E, kind_profile(E.kind))（0.17.8）。
+    剖面 status=draft 表示必填面含 undecided_fields（0.17.2 @387／KP-G3）：完备性不可判定，
+    硬检查在三值语义下不能为真 → M2 不成立（per-entry seed 资格由此承担，C-ST 不另设分支）。"""
     check_schema(rep, e, eid)
     check_signals(rep, e, eid)
     kind = e.get('kind')
@@ -811,13 +814,16 @@ def check_m2(rep: Report, e: dict, eid: str, mat: dict, prof_status: dict):
         rep.fail('M2', eid, f'kind={kind} 无物化剖面 → 完备性不可判定')
         return
     missing = [f for f in m['required'] if not has_path(e, f)]
+    if prof_status.get(kind) == 'draft':
+        rep.fail('M2', eid,
+                 f'kind_profile_{kind} 为 draft（KP-G3 适用性无据）→ 必填面含 undecided_fields，完备性不可判定，M2 不成立'
+                 + (f'；已登记必填面缺 {missing}' if missing else ''))
+        return
     if missing:
         rep.fail('M2', eid, f"按 kind_profile_{kind} 剖面缺必填字段：{missing}")
     else:
         rep.ok('M2', eid, 'hard',
                f"剖面 required {len(m['required'])} 项全部在案（optional {len(m['optional'])}／N-A {len(m['not_applicable'])}）")
-    if prof_status.get(kind) == 'draft':
-        rep.skip('M2', eid, f'kind_profile_{kind} 为 draft（KP-G3 适用性无据）→ 必填面含 undecided_fields，判定不完整')
 
 
 def check_m3(rep: Report, e: dict, eid: str, idx: Index):
@@ -1091,8 +1097,10 @@ def check_m9(rep: Report, e: dict, eid: str, all_ids: set):
 
 
 def check_cenv(rep: Report, e: dict, eid: str, mat: dict):
-    """C-ENV（0.8：每种方法条目必须声明包络）：源行属 1.2.1/1.2.2/1.2.3 的条目 envelope 非空；
-    子维度四元方法条目按剖面 entry_level_exemptions 豁免。"""
+    """C-ENV（0.8：每种方法条目必须声明质量属性包络；0.17.2 @387：「每种方法条目」= 0.17.3 全部 kind）：
+    条目 envelope 必须非空；不以质量属性为选择判据的 kind 可在剖面登记 envelope 为 not_applicable
+    （逐项附 reason），或按 entry_level_exemptions 逐条登记豁免（field=envelope, check=C-ENV, scope）；
+    空 envelope 且无上述显式登记 = 硬失败（禁默认放行）。"""
     m = mat.get(e.get('kind')) or {}
     row_clauses = set()
     for sp in (e.get('provenance') or {}).get('source_pointers') or []:
@@ -1103,17 +1111,17 @@ def check_cenv(rep: Report, e: dict, eid: str, mat: dict):
     if exempt:
         rep.skip('C-ENV', eid, f"剖面豁免（scope「{exempt[0].get('scope')}」）：{_trunc(exempt[0].get('reason', ''), 60)}")
         return
+    if 'envelope' in (m.get('not_applicable') or []):
+        rep.skip('C-ENV', eid, '剖面登记 envelope 为 not_applicable（0.17.2 @387：显式豁免，非省略）')
+        return
     env = e.get('envelope') or []
-    if row_clauses & {'1.2.1', '1.2.2', '1.2.3'}:
-        if env:
-            rep.ok('C-ENV', eid, 'hard', f'源行 {sorted(row_clauses)}，envelope {len(env)} 项非空（0.8）')
-        else:
-            rep.fail('C-ENV', eid, f'源行属 {sorted(row_clauses & {"1.2.1", "1.2.2", "1.2.3"})} 但 envelope 为空（0.8 包络声明义务）')
-    elif env:
-        rep.ok('C-ENV', eid, 'hard', f'envelope {len(env)} 项非空（源行 {sorted(row_clauses) or "无 row_id"}）')
+    if env:
+        rep.ok('C-ENV', eid, 'hard',
+               f'envelope {len(env)} 项非空（源行 {sorted(row_clauses) or "无 row_id"}；0.8）')
     else:
-        rep.skip('C-ENV', eid, f'源行不属 1.2.1/1.2.2/1.2.3（实为 {sorted(row_clauses) or "无 row_id"}）且无豁免登记 → 需剖面明示')
-        rep.fail('C-ENV', eid, 'envelope 为空但无 entry_level_exemptions 覆盖（豁免须显式登记，禁默认放行）')
+        rep.skip('C-ENV', eid,
+                 f'源行 {sorted(row_clauses) or "无 row_id"}：envelope 为空且无 not_applicable／entry_level_exemptions 登记')
+        rep.fail('C-ENV', eid, 'envelope 为空且无显式豁免登记（豁免须登记，禁默认放行；0.8／0.17.2 @387）')
 
 
 def check_cid(rep: Report, entries: list, idx: Index):
@@ -1209,7 +1217,7 @@ def check_meta(rep: Report, reg_doc: dict, entries: list, idx: Index, mat: dict,
                    f"覆盖宣称核验通过：{'、'.join(f'{c} {decl[c]} 行' for c in sorted(decl))}，"
                    f'逐行一一对应（去重后行名数 = 条目数）')
 
-    # 剖面 draft 的 kind 不得有 seed 条目（C-ST 附加面，此处先记录事实）
+    # 剖面 draft 的 kind 已有条目入库：kind 级事实登记（per-entry seed 资格由 M2 承担）
     for k, st in prof_status.items():
         if st == 'draft' and counts.get(k):
             rep.fail('META', f'kind={k}', f'剖面为 draft（KP-G3）但已有 {counts[k]} 条条目入库')
@@ -1218,8 +1226,8 @@ def check_meta(rep: Report, reg_doc: dict, entries: list, idx: Index, mat: dict,
 def check_cst(rep: Report, entries: list, mat: dict, prof_status: dict):
     """C-ST：声明状态与自检资格一致。
        (i) status=seed → 该条 SEED_CHECKS 全部硬检查通过；
-       (ii) 任一硬检查未过 → 必须为 draft；
-       (iii) 所属 kind 剖面为 draft → 不得声明 seed（KP-G3）。"""
+       (ii) 任一硬检查未过 → 必须为 draft。
+       剖面 draft 的 kind 不得有 seed 条目由 M2 承担（完备性不可判定 → M2 不成立），本检查不另设分支。"""
     for e in entries:
         eid = str(e.get('entry_id'))
         st = e.get('status')
@@ -1233,19 +1241,15 @@ def check_cst(rep: Report, entries: list, mat: dict, prof_status: dict):
         if st == 'seed':
             if failed:
                 rep.fail('C-ST', eid, f'声明 seed 但硬检查未过：{failed} → 按 C-ST 回落 status: draft')
-            elif prof_status.get(kind) == 'draft':
-                rep.fail('C-ST', eid, f'kind_profile_{kind} 为 draft（适用性无据，KP-G3）→ 该条目不得声明 seed')
             else:
                 rep.ok('C-ST', eid, 'hard', f'seed 资格成立（{"∧".join(SEED_CHECKS)} 全过；剖面 status={prof_status.get(kind)}）')
         elif st == 'draft':
             rep.skip('C-ST', eid, 'status=draft（bootstrap 前状态；不受 seed 资格约束）'
                                   + (f'；未过检查：{failed}' if failed else ''))
         else:
-            if failed:
-                rep.fail('C-ST', eid, f'声明 {st} 但硬检查未过：{failed}')
-            else:
-                rep.add('C-ST', eid, 'info', True,
-                        f'status={st}（active/deprecated/retired 的资格判据见 0.17.5，非本工具静态自检面）')
+            rep.add('C-ST', eid, 'info', True,
+                    f'status={st}（资格判据见 0.17.5／0.17.7，非本工具静态自检面）'
+                    + (f'；当前硬检查未过项：{failed}' if failed else ''))
 
 
 def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dict):
