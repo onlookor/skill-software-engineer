@@ -1284,24 +1284,43 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
     n_wv = len(reg_doc.get('waivers') or [])
 
     ST_KEYS = ('transition_id', 'from', 'to', 'scope', 'date', 'condition', 'evidence', 'impact_level', 'provenance')
-    for s in reg_doc.get('status_transitions') or []:
+    transitions = reg_doc.get('status_transitions') or []
+    touched = set()
+    inbound = {}
+    for s in transitions:
+        touched |= set(s.get('scope') or [])
+        inbound.setdefault(s.get('to'), set()).update(set(s.get('scope') or []))
+    for idx, s in enumerate(transitions):
         miss = [k for k in ST_KEYS if not s.get(k)]
         if miss:
             rep.fail('LEDGER', str(s.get('transition_id')), f'状态迁移简记缺要素 {miss}', level='hard')
+            continue
+        declared = set(s.get('scope') or [])
+        # 时间切片：条目被后序「已登记」迁移从 to 迁走时，本条简记对该条目失效。
+        # 以列表序为时序（status_transitions 只追加）；只豁免已登记的迁出，
+        # 未登记的改动仍会在下面的双向校验里判失败。
+        moved_on = set()
+        for t in transitions[idx + 1:]:
+            if t.get('from') == s.get('to') and t.get('to') != s.get('to'):
+                moved_on |= set(t.get('scope') or [])
+        effective = declared - moved_on
+        actual = {str(e['entry_id']) for e in (reg_doc.get('entries') or [])
+                  if e.get('status') == s.get('to')}
+        if effective - actual:
+            rep.fail('LEDGER', str(s.get('transition_id')),
+                     f'简记声明迁移至 {s.get("to")} 的条目实际状态不符（且无后序迁出简记）：{sorted(effective - actual)}', level='hard')
+        elif s.get('to') != 'draft' and actual - inbound.get(s.get('to'), set()):
+            rep.fail('LEDGER', str(s.get('transition_id')),
+                     f'实际为 {s.get("to")} 但未在任何迁入简记 scope 内：{sorted(actual - inbound.get(s.get("to"), set()))}', level='hard')
+        elif s.get('to') == 'draft' and (actual & touched) - inbound.get('draft', set()):
+            # draft 为初始态：从未登记过任何迁移的新条目不计入；
+            # 曾登记过的条目若现为 draft，必须有本类迁出简记覆盖，防未登记的静默回退。
+            rep.fail('LEDGER', str(s.get('transition_id')),
+                     f'曾登记迁移的条目现为 draft 但未在任何迁出简记 scope 内：{sorted((actual & touched) - inbound.get("draft", set()))}', level='hard')
         else:
-            # 简记 scope 与实际条目状态一致性
-            declared = set(s.get('scope') or [])
-            actual = {str(e['entry_id']) for e in (reg_doc.get('entries') or [])
-                      if e.get('status') == s.get('to')}
-            if declared - actual:
-                rep.fail('LEDGER', str(s.get('transition_id')),
-                         f'简记声明迁移至 {s.get("to")} 的条目实际状态不符：{sorted(declared - actual)}', level='hard')
-            elif actual - declared:
-                rep.fail('LEDGER', str(s.get('transition_id')),
-                         f'实际为 {s.get("to")} 但未在简记 scope 内：{sorted(actual - declared)}', level='hard')
-            else:
-                rep.ok('LEDGER', str(s.get('transition_id')), 'hard',
-                       f'简记 scope {len(declared)} 条与实际 status={s.get("to")} 条目集一致')
+            rep.ok('LEDGER', str(s.get('transition_id')), 'hard',
+                   f'简记 scope {len(effective)} 条与实际 status={s.get("to")} 条目集一致'
+                   + (f'（{len(moved_on)} 条经后序简记迁出）' if moved_on else ''))
     n_st = len(reg_doc.get('status_transitions') or [])
 
     SO_KEYS = ('obligation_id', 'kind', 'obligation', 'gap_ref', 'consumer', 'trigger_rule', 'status')
