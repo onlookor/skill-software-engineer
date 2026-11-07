@@ -5171,6 +5171,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DFL-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.4 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行（bib42 第一行）
       source_pointers:
         - {source_type: row_id, value: "4.2.4-事务性发件箱（outbox）", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
@@ -5265,6 +5266,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DFL-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.4 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；bib43 narrative_only 无行级登记面
       source_pointers:
         - {source_type: row_id, value: "4.2.4-变更数据捕获（CDC）", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
@@ -5368,6 +5370,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DFL-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.4 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；无 references
       source_pointers:
         - {source_type: row_id, value: "4.2.4-流处理", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
@@ -5465,6 +5468,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DFL-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.4 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；无 references
       source_pointers:
         - {source_type: row_id, value: "4.2.4-ETL/ELT 批", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
