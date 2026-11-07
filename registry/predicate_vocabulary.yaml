@@ -100,6 +100,32 @@ predicates:
   - {name: falsification_metric, arity: 4, source: {source_type: clause_id, value: "9.5", verified: true}, note: "falsification_metric(adr, metric, threshold, window)；保守假设 ADR 的可推翻指标"}
   - {name: supplement_evidence_record, arity: 1, source: {source_type: clause_id, value: "9.5", verified: true}, note: "supplement_evidence_record(d)；补证工件入库且指针可查"}
   - {name: assertion_fact_mismatch, arity: 1, source: {source_type: clause_id, value: "9.5", verified: true}, note: "assertion_fact_mismatch(E)；证据断言 vs 在册事实"}
+  # ── 方面 5 配置治理扩容（VG-05；ADR-VGEX-01 D1；2 名）──
+  - {name: expiry_of, arity: 1, source: {source_type: clause_id, value: "5.5", verified: true}, note: "term function：开关到期时刻；与 flag 第四槽 expiry 区分，防槽名充谓词（ADR-VGEX-01 D1）"}
+  - {name: cleanup_filed, arity: 1, source: {source_type: clause_id, value: "5.5", verified: true}, note: "清理已立案（Z6 第四支）"}
+
+  # ── 方面 8 验证计划扩容（VG-07；ADR-VGEX-01 D2；13 名：9 名母本 8.5 已有逐字定义、4 名新增）──
+  - {name: verification_plan, arity: 1, source: {source_type: clause_id, value: "8.5", verified: true}, note: "verification_plan(matrix)；8.2.1 计划矩阵（母本 8.5 已有逐字定义）"}
+  - {name: covers_check, arity: 5, source: {source_type: clause_id, value: "8.5", verified: true}, note: "covers_check(property_id, means, automation_level, trigger_point, evidence_form)；母本 8.5 逐字"}
+  - {name: test_suite, arity: 3, source: {source_type: clause_id, value: "8.5", verified: true}, note: "test_suite(S, layer, target_set)；母本 8.5 逐字"}
+  - {name: evidence_artifact, arity: 2, source: {source_type: clause_id, value: "8.5", verified: true}, note: "evidence_artifact(E, seven_fields)；母本 8.5 逐字"}
+  - {name: verdict_of, arity: 1, source: {source_type: clause_id, value: "8.5", verified: true}, note: "verdict_of(E)；母本 8.5 逐字"}
+  - {name: replayable, arity: 1, source: {source_type: clause_id, value: "8.5", verified: true}, note: "replayable(E)；母本 8.5 逐字"}
+  - {name: review_point, arity: 4, source: {source_type: clause_id, value: "8.5", verified: true}, note: "review_point(rp, kind, scheduled, records)；母本 8.5 逐字"}
+  - {name: injection_case, arity: 2, source: {source_type: clause_id, value: "8.5", verified: true}, note: "injection_case(interaction, fault_kind)；母本 8.5 逐字"}
+  - {name: fitness_function, arity: 2, source: {source_type: clause_id, value: "8.5", verified: true}, note: "fitness_function(property_id, check_program)；母本 8.5 逐字"}
+  - {name: retention_valid, arity: 1, source: {source_type: clause_id, value: "8.5", verified: true}, note: "retention_valid(E)；T3 证据保留期有效，本批新增（ADR-VGEX-01 D2）"}
+  - {name: cited_by, arity: 2, source: {source_type: clause_id, value: "8.5", verified: true}, note: "cited_by(E, ADR)；T3 证据被决策引用，本批新增"}
+  - {name: pyramid_distortion, arity: 1, source: {source_type: clause_id, value: "8.5", verified: true}, note: "pyramid_distortion(system)；T5 金字塔失真，本批新增"}
+  - {name: distortion, arity: 1, source: {source_type: clause_id, value: "8.5", verified: true}, note: "distortion(system)；T5 失真且 hard property 无下层覆盖，本批新增"}
+
+  # ── 方面 9 部署策略扩容（VG-08；ADR-VGEX-01 D3；5 名：4 名母本 9.5 已有逐字定义、1 名新增）──
+  - {name: deploy_strategy, arity: 4, source: {source_type: clause_id, value: "9.5", verified: true}, note: "deploy_strategy(decision_D, switch_points, last_responsible_moment, thresholds_with_source)；母本 9.5 逐字"}
+  - {name: canary_gate, arity: 4, source: {source_type: clause_id, value: "9.5", verified: true}, note: "canary_gate(canary_batch, metric_threshold, window, rollback_trigger)；母本 9.5 逐字"}
+  - {name: evolution_path, arity: 4, source: {source_type: clause_id, value: "9.5", verified: true}, note: "evolution_path(decision_D, switch_points, last_responsible_moment, thresholds_with_source)；母本 9.5 逐字"}
+  - {name: strangler_sequence, arity: 3, source: {source_type: clause_id, value: "9.5", verified: true}, note: "strangler_sequence(legacy_unit, target_unit, step_order)；母本 9.5 逐字"}
+  - {name: gate_verdict, arity: 3, source: {source_type: clause_id, value: "9.5", verified: true}, note: "gate_verdict(metric, threshold, window)；G4 金丝雀门判定（9.2.5），本批新增"}
+
 formula_words:
   # 编译规范 2.3「公式约定词内建语义表」——封闭集，非白板谓词，M4 校验豁免
   - {name: approved, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
@@ -129,40 +155,133 @@ vocabulary_gaps:
     missing_need: "「必须同步部署/独立部署」的谓词形态（分布式单体检测需要）"
     workaround: "以 2.5 depends_on(M1, M2, deploy, ·) 表达部署类依赖；语义等价性由人工判断登记"
     route: "R2 提议候选（成文法谓词未登记）"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（2026-11-07 approved；D1 范围／D4 逐词）"
+      predicate_rows_added: 0
+      resolved_by_composition:
+        - {name: co_deployed, expr: "depends_on(u1, u2, deploy, ·) ∧ depends_on(u2, u1, deploy, ·)", base_predicates: [depends_on], base_in: "母本 2.5（词汇表已登记）"}
+        - {name: independently_deployable, expr: "¬∃v: depends_on(u, v, deploy, ·) ∧ ¬∃w: depends_on(w, u, deploy, ·)", base_predicates: [depends_on], base_in: "母本 2.5（词汇表已登记）"}
+      residual: []
+      status_after: "closed（全部以既有基词复合表达，无残余）"
   - id: VG-02
     missing_need: "「拆分粒度过细（纳米服务）」「职责粒度过细」的可判定谓词"
     workaround: "方括号事实占位符 + M15 勘察义务"
     route: "R2 提议候选"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（D4；本族不扩表）"
+      predicate_rows_added: 0
+      residual:
+        - {name: over_decomposed, reason: "母本无粒度判据与阈值；STY-016-AP2 等仍以方括号事实承载，须母本新条款或外部文献先给可判定阈值", route: "另开 ADR 补 1.2.x 条款"}
+        - {name: responsibility_over_fragmented, reason: "同上；职责粒度判据无母本定义", route: "同上"}
+      status_after: "open（残余 2 项，等母本新条款）"
   - id: VG-03
     missing_need: "依赖方向控制族的方向谓词：(i) 端口方向（六边形的核心 → 端口 ← 适配器，『核心不依赖任何外部技术』的可判定形态）；(ii) 环方向（同心圆/整洁架构『依赖只能指向内层』，layer_of 只给层归属、不给层间方向序）；(iii) 模块边界方向（单体内部边界、模块化单体的模块间禁止穿透）；(iv) 拓扑方位/节点角色（边缘计算的边缘节点 vs 中心，Broker/SOA 的中介角色）。1.5 已登记 dependency_rule 与 layer_of，但四者均无法以其现有元数据表达方向违例。"
     workaround: "以 2.5 depends_on(A, B, ·, ·) 表达依赖存在性 + 方括号事实占位符标注方向约束（M15 勘察义务）；相关 anti_patterns.signal_level 暂按 P1 登记，并在行内注明『词汇补齐后按 V1 同型升 P0』（method_registry.yaml: gaps G-STY-4、manual_judgments MJ-4）"
-    affected: "method_registry.yaml STY-008-AP2（@633/635）、STY-009-AP1（@711）、STY-015-AP1、STY-019-AP1"
+    affected: "method_registry.yaml STY-008-AP2（@633/635）、STY-009-AP1（@711）、STY-015-AP1、STY-019-AP1、STY-009-AP2"
     route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（D4／D5；本族只做复合消解，node_role 后置）"
+      predicate_rows_added: 0
+      resolved_by_composition:
+        - {name: port_direction, expr: "layer_of(core, core_layer) ∧ layer_of(ext, adapter_layer) ∧ dependency_rule(core_layer, adapter_layer, forbidden) ∧ depends_on(core, ext, call, ·)", base_predicates: [layer_of, dependency_rule, depends_on], base_in: "母本 1.5／2.5（词汇表已登记）"}
+        - {name: cycle_direction, expr: "dependency_rule(inner, outer, forbidden) ∧ depends_on(outer, inner, call, ·)", base_predicates: [dependency_rule, layer_of, depends_on], base_in: "母本 1.5／2.5（词汇表已登记）"}
+        - {name: boundary_direction, expr: "boundary_type(m1, ·) ∧ boundary_type(m2, ·) ∧ layer_of(c1, m1) ∧ layer_of(c2, m2) ∧ depends_on(c1, c2, call, ·) ∧ ¬∃C: contract(C, ·, ·, boundary, ·, ·, ·) ∧ covers(C, c1, c2)", base_predicates: [boundary_type, layer_of, depends_on, contract, covers], base_in: "母本 2.5／3.5（contract／covers 母本有逐字定义、词汇表未投影，M4 以母本可查为准）"}
+      deferred:
+        - {name: node_role, reason: "边际成本 1,784 处锚／244 token（占活跃锚 24.9%），且只增行数不减跨点；本轮另立单族 ADR 后置", route: "单族 ADR（VG-03 剩余面 iv）"}
+      residual:
+        - {name: 转发／语义翻译／签名同构, reason: "STY-009-AP1 的三项方括号事实不属方向面，无基词可判定", route: "随 node_role 单族 ADR 或母本新条款"}
+      affected_correction: "affected 清单补列 STY-009-AP2（原清单漏列；2026-11-07 裁定）"
+      status_after: "open（残余 node_role＋STY-009-AP1 三事实；另立单族 ADR）"
   - id: VG-04
     missing_need: "契约形态声明族谓词：(i) 契约版本化/兼容策略的声明态（扩展点契约是否登记 compat_policy——注意 compat_policy 在母本仅为 3.5 contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state) 的实参槽名（@2003），以实参槽名充当谓词属本地造词）；(ii) 数据 schema 的声明态（黑板写入项是否有 schema 声明——schema 在母本为契约工件名（3.2.1『schema + 语义条款』），非 x.5 登记谓词）；(iii) 管道全局错误处理的声明态（pipe 是否有全局错误处理声明、步骤失败是否有处置路径——error_handling 母本全无登记，1.2.1 管道行仅自然语言反模式名）。三者均为『声明存在性』判据，1.5 已登记的 declared(...) 族不覆盖契约形态细分。"
     workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务，禁沉默排除）；修正判读登记 method_registry.yaml manual_judgments MJ-12"
     affected: "method_registry.yaml STY-010-AP1、STY-011-AP1、STY-013-AP2 的 detection_predicate"
     route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（D4）"
+      predicate_rows_added: 0
+      resolved_by_composition:
+        - {name: compat_policy, expr: "contract(C, ·, ·, extension_point, ·, ·, ·) ∧ has(C, compat_policy)", base_predicates: [contract, has], base_in: "母本 3.5 逐字＋编译规范 2.3 formula_words has（contract 未投影于词汇表，M4 以母本可查为准）"}
+      residual:
+        - {name: schema, reason: "schema 是契约工件名（3.2.1），非 x.5 谓词；以工件名充谓词属本地造词", route: "另开 ADR 补 3.5 条款"}
+        - {name: error_handling, reason: "母本 3.5／1.2.1 无谓词载体（1.2.1 管道行仅自然语言反模式名）", route: "另开 ADR 补条款"}
+      status_after: "open（残余 2 项）"
   - id: VG-05
-    missing_need: "配置治理族谓词（5.2.6 四项与 5.5 Z6 公式所需，六面均无谓词形态）：(i) `expiry`（开关到期时刻——Z6 公式 @2595 逐字「Z6: ∀ flag(G,_,behavior,_): ∃ approved(ADR(G)) ∧ declared(expiry(G)) ∧ now ≤ expiry(G) ∨ cleanup_filed」的第二、三支用之，同时是 5.5 @2574 `flag(G, scope, level, expiry)` 的第四槽名；以实参槽名充当谓词属本地造词，同 VG-04 (i) 对 compat_policy 的判读）；(ii) `cleanup_filed`（清理已立案——Z6 第四支的裸谓词，不在 predicates／formula_words／clause_defined_predicates 三表任一）；(iii) `ADR`（行为级变更的决策记录工件——Z6 首支 `approved(ADR(G))` 的实参函数；母本 0.17.6／9.2.2 有 ADR 义务而无 ADR 谓词或工件名登记）；(iv) @2512 五个登记槽名（键／值域／作用域／级别／生命周期）的「已登记」判据形态——registered(...) 族在册，但母本未给配置项的实参类型与值域表示法，registered 的对象域无从判定；(v)「（变更前后 Z 谓词）快照比对」全无谓词形态——@2513／@2515／5.5 @2579 三处明文互指（@2579 括注逐字「**配置变更触发 = 变更前后 Z 谓词快照比对**，5.2.6」），但无比对函数、无快照工件名、无一致性判据，亦无采集时点／粒度／保留期；(vi) @2514 的「审查期／到期日／僵尸开关」三名无谓词形态——僵尸开关＝expiry 超期 ∧ ¬cleanup_filed 的复合判据，9.2.3 @3623 已把它当汇聚信号源用（逐字「僵尸开关（expiry 超期）…Z6 违例 → P0（行为级开关）；其余 P2」）而无词汇支撑。六面均属「声明存在性／时刻比较」判据；在册可直接使用者仅 flag（arity 4）／registered／declared／approved／now／has／interaction_flow／orchestrator／timeout_budget／quality_impact_card（5.5 @2566-2576 与三表实测，在册名合计 **76**＝predicates 59＋formula_words 7＋clause_defined_predicates 10），不足以表达 Z6 的完整判据。"
+    missing_need: "配置治理族谓词（5.2.6 四项与 5.5 Z6 公式所需，六面均无谓词形态）：(i) `expiry`（开关到期时刻——Z6 公式 @2598 逐字「Z6: ∀ flag(G,_,behavior,_): ∃ approved(ADR(G)) ∧ declared(expiry(G)) ∧ now ≤ expiry(G) ∨ cleanup_filed」的第二、三支用之，同时是 5.5 @2574 `flag(G, scope, level, expiry)` 的第四槽名；以实参槽名充当谓词属本地造词，同 VG-04 (i) 对 compat_policy 的判读）；(ii) `cleanup_filed`（清理已立案——Z6 第四支的裸谓词，不在 predicates／formula_words／clause_defined_predicates 三表任一）；(iii) `ADR`（行为级变更的决策记录工件——Z6 首支 `approved(ADR(G))` 的实参函数；母本 0.17.6／9.2.2 有 ADR 义务而无 ADR 谓词或工件名登记）；(iv) @2512 五个登记槽名（键／值域／作用域／级别／生命周期）的「已登记」判据形态——registered(...) 族在册，但母本未给配置项的实参类型与值域表示法，registered 的对象域无从判定；(v)「（变更前后 Z 谓词）快照比对」全无谓词形态——@2513／@2515／5.5 @2582 三处明文互指（@2582 括注逐字「**配置变更触发 = 变更前后 Z 谓词快照比对**，5.2.6」），但无比对函数、无快照工件名、无一致性判据，亦无采集时点／粒度／保留期；(vi) @2514 的「审查期／到期日／僵尸开关」三名无谓词形态——僵尸开关＝expiry 超期 ∧ ¬cleanup_filed 的复合判据，9.2.3 @3631 已把它当汇聚信号源用（逐字「僵尸开关（expiry 超期）…Z6 违例 → P0（行为级开关）；其余 P2」）而无词汇支撑。六面均属「声明存在性／时刻比较」判据；在册可直接使用者仅 flag（arity 4）／registered／declared／approved／now／has／interaction_flow／orchestrator／timeout_budget／quality_impact_card（5.5 @2566-2576 与三表实测，在册名合计 **76**＝predicates 59＋formula_words 7＋clause_defined_predicates 10），不足以表达 Z6 的完整判据。"
     workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务登记，禁沉默排除），**绝不写调用式**（写 `expiry(G)` 即 M4 硬失败，RLP 批 4 处先例）；方括号内 snake_case／中文占位词被 outside_brackets（@d:registry/scripts/project.py#fn-outside_brackets）剔除，不构成 M4 违例（先例 RLP-006 @6204 `[到期时刻](G)`）；判读登记 method_registry.yaml manual_judgments MJ-26 (viii)（方括号兼承「非谓词面」与「待勘察占位」两义而 M4 不区分，含 CH-C(2) 通道号的误读陷阱），缺口面登记 gaps G-CFG-1 statement (1)(2)(5) 与 route ①（expiry 载体形态、审查期长度或到期日计算基准、快照采集时点／存放位置／粒度／保留期是否在母本侧补明文，涉母本改动 → 高影响，走 R2/ADR），勘察义务登记 survey_obligations SO-14（存量开关到期日与存量规避面）"
-    affected: "method_registry.yaml CFG-001…CFG-004 四条的 anti_patterns[].detection_predicate 与 applicability 三空间（口径＝两字段内半角方括号成对匹配计数、不含嵌套，2026-10-08 以 YAML 解析实测）：detection_predicate 20 行**全部**含方括号、处数 **29**；applicability 36 项中 **24** 项含方括号、处数 **24**；合计 **53** 处，其中 [CH-C(2)] 1 处系接续通道号包裹（M4 剔除面，非词汇缺口）、余 **52** 处为待勘察／非谓词占位（[到期日] 3 处、[变更前后 Z 谓词快照不一致] 2 处、其余 47 种各 1 处）。后果：9.2.2 @3601-3602 守护规则九槽中「检测手段」与「阈值与趋势窗口参数」两槽因 (v) 快照比对面无词汇支撑而无母本据可填（G-CFG-1 statement (2)）；CFG-004 的五条 anti_patterns 只能以「无比对面」为违例形态、不能给出可执行检测手段。在册名 **76** 本批未变（不本地造词，R2 前不得扩表）。此 53 处系 VG 侧口径，与 project.py census_placeholders 的 CFG 侧 **60** 处（15／13／14／18）不同轴：后者跨全部字段（含 cost_profile.ops_cost 等）且把同一 detection_predicate 内的多个短语按 #1／#2 拆分计数，两者不得互代（0.4＋计数口径显式声明纪律）。"
+    affected: "method_registry.yaml CFG-001…CFG-004 四条的 anti_patterns[].detection_predicate 与 applicability 三空间（口径＝两字段内半角方括号成对匹配计数、不含嵌套，2026-10-08 以 YAML 解析实测）：detection_predicate 20 行**全部**含方括号、处数 **29**；applicability 36 项中 **24** 项含方括号、处数 **24**；合计 **53** 处，其中 [CH-C(2)] 1 处系接续通道号包裹（M4 剔除面，非词汇缺口）、余 **52** 处为待勘察／非谓词占位（[到期日] 3 处、[变更前后 Z 谓词快照不一致] 2 处、其余 47 种各 1 处）。后果：9.2.2 @3609-3610 守护规则九槽中「检测手段」与「阈值与趋势窗口参数」两槽因 (v) 快照比对面无词汇支撑而无母本据可填（G-CFG-1 statement (2)）；CFG-004 的五条 anti_patterns 只能以「无比对面」为违例形态、不能给出可执行检测手段。在册名 **76** 本批未变（不本地造词，R2 前不得扩表）。此 53 处系 VG 侧口径，与 project.py census_placeholders 的 CFG 侧 **60** 处（15／13／14／18）不同轴：后者跨全部字段（含 cost_profile.ops_cost 等）且把同一 detection_predicate 内的多个短语按 #1／#2 拆分计数，两者不得互代（0.4＋计数口径显式声明纪律）。"
     route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；G-STY-4／G-CFG-1 route ① 同型"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（D1／D4）"
+      predicate_rows_added: 2
+      added: [expiry_of, cleanup_filed]
+      resolved_by_composition:
+        - {name: ADR, expr: "approved(adr) ∧ decision_lineage(adr, ·, ·)", base_predicates: [approved, decision_lineage], base_in: "编译规范 2.3 formula_words approved；母本 7.5 decision_lineage（未投影，M4 以母本可查为准）"}
+        - {name: zombie_flag, expr: "expiry_of(G) < now ∧ ¬cleanup_filed(G)", base_predicates: [expiry_of, cleanup_filed, now], base_in: "本批入表两名（5.5）＋formula_words now"}
+      excluded_as_parameter:
+        - {name: review_period, reason: "审查期是参数／值，由 flag 第四槽 expiry 取值承载，不是谓词"}
+        - {name: expiry_date, reason: "到期日是 expiry_of 的返回值，不另立谓词"}
+      residual:
+        - {name: 五槽登记判据, reason: "属类型／值域缺口（母本未给配置项实参类型与值域表示法），非谓词缺口", route: "母本 5.2.6 补类型定义"}
+        - {name: snapshot_changed, reason: "母本无比对函数、无快照工件名、无采集时点／粒度／保留期", route: "G-CFG-1 route ①"}
+      naming_decision: "expiry 命名定为 expiry_of 并登记为 term function，避免与 flag 第四槽同名造成『槽名充谓词』误读"
+      status_after: "open（谓词面已补，残余 2 项为类型／工件缺口）"
   - id: VG-06
-    missing_need: "质量目标-手段闭合族十三词（QAT 批 6.5 公式所需，2026-10-10 实测均不在 predicates／formula_words／clause_defined_predicates 三表；主组＝Q4–Q6 六词，补充组＝Q1–Q3／Q7 七词，2026-11-03 用户裁决合并登记）：(i) `consumed`（Q5 @2906 逐字「∀ selected pattern: consumed(card) ∧ (observability_requires satisfied ∨ approved_waiver)」的第一合取支——选定的行为模式是否已消费其质量影响卡片，卡片字段面在 5.2.5 @2499-2501）；(ii) `mapped`（Q6 @2908 逐字「∀ g(priority=high): ∃ t ∈ tactic_registry: mapped(g, t)」的映射判据——高优先级目标是否有战术条目映射到它）；(iii) `recorded_in`（Q4 @2904 逐字「∀ verdict=reachable_with_cost: ∃ cost_ledger(quantified) ∧ recorded_in(ADR)」——代价量化结果是否已留痕于 ADR）；(iv) `approved_waiver`（Q5 @2906 第二析取支——已批准的豁免，母本 9.x 有 Waiver 台账义务而无该谓词形态）；(v) `observability_requires`（Q5 @2906 逐字「observability_requires satisfied」——卡片观测要求是否被满足；该名同时是 5.2.5 @2501 的卡片字段名，以字段名／实参槽名充当谓词属本地造词，同 VG-04 (i)／VG-05 (i) 判读）；(vi) `tactic_registry`（Q6 @2908 量词域「∃ t ∈ tactic_registry」——战术注册表本体，母本 0.17.8 有 registry_entry 而无法表达该集合）。六词口径据 G-QAT-1 statement (8) 与 route ⑥（@d:registry/method_registry.yaml#key-entries[111].applicability.delivery_space／@9990）；`satisfied` 同缺但系关系词而非谓词，不并入本条；块头 @7279-7283 另列 Q1／Q2／Q3／Q7 面诸名（`routed_to`／`weight_source`／`band`／`defined`／`monitored`／`human_ruling_pending` 及 `selected`）同属未登记面。**补充组（Q1–Q3／Q7 面七词，2026-11-03 用户裁决收进本条）**：(vii) `routed_to`（Q2 @2900 逐字「verdict=indistinguishable ∧ routed_to(CH-B)」——不可判定目标的路由去向，CH-B 登记缺口的判据面）；(viii) `weight_source`（Q2 @2899 逐字「weight_source(g)=business_derived」——目标权重来源是否为业务推导）；(ix) `band`（Q2 @2899 逐字「band(g)=±20%(registered)」——优先级带宽）；(x) `defined`（Q7 @2909 逐字「error_budget defined」——错误预算是否已定义）；(xi) `monitored`（Q7 @2909 逐字「burn_rate monitored(→ aspect 9)」——燃烧率是否已接入监控，交方面 9）；(xii) `human_ruling_pending`（Q3 @2902 逐字「∃ escalation(evidence) ∧ human_ruling_pending」——不可达升级是否待人类裁决）；(xiii) `selected`（Q5 @2906 逐字「∀ selected pattern: consumed(card)…」——行为模式是否被选定）。**两组口径差异据实登记**：G-QAT-1 statement (8)／route ⑥ 的正式口径只列「Q4–Q6 公式侧六词」（@d:registry/method_registry.yaml#key-entries[111].applicability.delivery_space／@9990），七词系批次块头 @7279-7283 的 Q1–Q3／Q7 面未登记名、不在该正式口径内；2026-11-03 经用户裁决按块头清单收进本条而不另立 VG-09（字段与格式同型，无须新编号）。Q1 面三词 `has_six_elements`／`measurable`／`sourced` 均已在册（前二在 clause_defined_predicates、`sourced` 在 formula_words）→ Q1 无未登记词；`satisfied` 仍排除（G-QAT-1 statement (8) 明记其为关系词而非谓词）。两组共**十三词**（六＋七）全部不在三表。"
+    missing_need: "质量目标-手段闭合族十三词（QAT 批 6.5 公式所需，2026-10-10 实测均不在 predicates／formula_words／clause_defined_predicates 三表；主组＝Q4–Q6 六词，补充组＝Q1–Q3／Q7 七词，2026-11-03 用户裁决合并登记）：(i) `consumed`（Q5 @2909 逐字「∀ selected pattern: consumed(card) ∧ (observability_requires satisfied ∨ approved_waiver)」的第一合取支——选定的行为模式是否已消费其质量影响卡片，卡片字段面在 5.2.5 @2499-2501）；(ii) `mapped`（Q6 @2911 逐字「∀ g(priority=high): ∃ t ∈ tactic_registry: mapped(g, t)」的映射判据——高优先级目标是否有战术条目映射到它）；(iii) `recorded_in`（Q4 @2907 逐字「∀ verdict=reachable_with_cost: ∃ cost_ledger(quantified) ∧ recorded_in(ADR)」——代价量化结果是否已留痕于 ADR）；(iv) `approved_waiver`（Q5 @2909 第二析取支——已批准的豁免，母本 9.x 有 Waiver 台账义务而无该谓词形态）；(v) `observability_requires`（Q5 @2909 逐字「observability_requires satisfied」——卡片观测要求是否被满足；该名同时是 5.2.5 @2501 的卡片字段名，以字段名／实参槽名充当谓词属本地造词，同 VG-04 (i)／VG-05 (i) 判读）；(vi) `tactic_registry`（Q6 @2911 量词域「∃ t ∈ tactic_registry」——战术注册表本体，母本 0.17.8 有 registry_entry 而无法表达该集合）。六词口径据 G-QAT-1 statement (8) 与 route ⑥（@d:registry/method_registry.yaml#key-entries[111].applicability.delivery_space／@9990）；`satisfied` 同缺但系关系词而非谓词，不并入本条；块头 @7279-7283 另列 Q1／Q2／Q3／Q7 面诸名（`routed_to`／`weight_source`／`band`／`defined`／`monitored`／`human_ruling_pending` 及 `selected`）同属未登记面。**补充组（Q1–Q3／Q7 面七词，2026-11-03 用户裁决收进本条）**：(vii) `routed_to`（Q2 @2903 逐字「verdict=indistinguishable ∧ routed_to(CH-B)」——不可判定目标的路由去向，CH-B 登记缺口的判据面）；(viii) `weight_source`（Q2 @2902 逐字「weight_source(g)=business_derived」——目标权重来源是否为业务推导）；(ix) `band`（Q2 @2902 逐字「band(g)=±20%(registered)」——优先级带宽）；(x) `defined`（Q7 @2912 逐字「error_budget defined」——错误预算是否已定义）；(xi) `monitored`（Q7 @2912 逐字「burn_rate monitored(→ aspect 9)」——燃烧率是否已接入监控，交方面 9）；(xii) `human_ruling_pending`（Q3 @2905 逐字「∃ escalation(evidence) ∧ human_ruling_pending」——不可达升级是否待人类裁决）；(xiii) `selected`（Q5 @2909 逐字「∀ selected pattern: consumed(card)…」——行为模式是否被选定）。**两组口径差异据实登记**：G-QAT-1 statement (8)／route ⑥ 的正式口径只列「Q4–Q6 公式侧六词」（@d:registry/method_registry.yaml#key-entries[111].applicability.delivery_space／@9990），七词系批次块头 @7279-7283 的 Q1–Q3／Q7 面未登记名、不在该正式口径内；2026-11-03 经用户裁决按块头清单收进本条而不另立 VG-09（字段与格式同型，无须新编号）。Q1 面三词 `has_six_elements`／`measurable`／`sourced` 均已在册（前二在 clause_defined_predicates、`sourced` 在 formula_words）→ Q1 无未登记词；`satisfied` 仍排除（G-QAT-1 statement (8) 明记其为关系词而非谓词）。两组共**十三词**（六＋七）全部不在三表。"
     workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务登记，禁沉默排除），**绝不写调用式**（写 `mapped(g, t)` 即 M4 硬失败，RLP 批 4 处先例）；QAT 批 formal_anchor 以条款整体为锚（Q6 implements 15／Q5 triggers 15／Q4 triggers 2，合计 33 项）而非以六词为调用式 → M4 全过；实际调用词实测 {goal 13, tactic 54, tactic_card 1, verdict 1, cost_ledger 1}、不在册者 0（十三词在检测式与 applicability 两字段零调用式，Q1–Q3／Q7 面同以方括号承载）；Q1／Q2／Q3／Q7 四面在 formal_anchor 零计息，影响面在性质接线与判据书写。判读登记 method_registry.yaml manual_judgments MJ-27 与 G-QAT-1 statement (8)（该处正式口径仍记六词，本条扩写系 2026-11-03 用户裁决、不改写其文本）。"
     affected: "method_registry.yaml QAT 批块头 @7279-7284 与 G-QAT-1 statement (8)／route ⑥（@9987／@9990）；QAT-001…QAT-015 十五条的 anti_patterns[].detection_predicate 与 applicability 三空间（十三词零调用式，影响面在 Q 系列性质的接线而非检测式书写；formal_anchor 只登 Q4 triggers 2／Q5 triggers 15／Q6 implements 15／Y5 consumed_by 1，Q1／Q2／Q3／Q7 四面零计息）；在册名 **76** 本批未变（不本地造词，R2 前不得扩表）。"
-    route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；归 s5g 落盘（本条目即 s5g 的登记面，2026-11-03；不扩 predicates 组、不改写各批块头与简记，0.22 承诺一）。**裁决注（2026-11-03）**：`mapped` 归本条（唯一母本出处为 6.5 @2908 Q6），VG-07 已移出该词并留指针；Q1–Q3／Q7 七词按批次块头 @7279-7283 收进本条、**不另立 VG-09**（字段与格式同型，扩写不破坏语义）；G-QAT-1 的『六词』正式口径不改写，差异登记于 missing_need。"
+    route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；归 s5g 落盘（本条目即 s5g 的登记面，2026-11-03；不扩 predicates 组、不改写各批块头与简记，0.22 承诺一）。**裁决注（2026-11-03）**：`mapped` 归本条（唯一母本出处为 6.5 @2911 Q6），VG-07 已移出该词并留指针；Q1–Q3／Q7 七词按批次块头 @7279-7283 收进本条、**不另立 VG-09**（字段与格式同型，扩写不破坏语义）；G-QAT-1 的『六词』正式口径不改写，差异登记于 missing_need。"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（D4）"
+      predicate_rows_added: 0
+      resolved_by_composition:
+        - {name: consumed, expr: "∃p: card_consumed(p, card, ·)", base_predicates: [card_consumed], base_in: "母本 6.5（已登记）"}
+        - {name: recorded_in, expr: "decision_lineage(adr, ·, ·) ∧ cost_ledger(x, ·)", base_predicates: [decision_lineage, cost_ledger], base_in: "母本 7.5／6.5（cost_ledger 已登记；decision_lineage 母本可查）"}
+        - {name: approved_waiver, expr: "∃w: waiver(w, ·, ·, ·, ·, approval=approved)", base_predicates: [waiver, approved], base_in: "母本 9.5（waiver 母本可查）＋formula_words approved"}
+        - {name: tactic_registry, expr: "∃t: tactic(g, t)", base_predicates: [tactic], base_in: "母本 6.5（已登记）"}
+        - {name: weight_source, expr: "goal(g, ·, ·, ·, ·, weight_source, ·)", base_predicates: [goal], base_in: "母本 6.5（已登记，含第 6 槽）"}
+        - {name: band, expr: "goal(g, ·, ·, ·, ·, ·, band)", base_predicates: [goal], base_in: "母本 6.5（已登记，含第 7 槽）"}
+        - {name: defined, expr: "∃b: error_budget(service, slo, b, burn_rate)", base_predicates: [error_budget], base_in: "母本 6.5（已登记）"}
+        - {name: monitored, expr: "∃s: signal(s, burn_rate, ·, ·, ·)", base_predicates: [signal], base_in: "母本 9.5（signal 母本有逐字定义、词汇表未投影）"}
+      corrected:
+        - {name: mapped, reason: "普查误判更正：母本 6.5 战术映射已由 tactic(g, t) 覆盖，与 Q6 的 mapped(g, t) 同义；不入表，不改写既有文本（0.22）"}
+      excluded_as_quantifier_domain:
+        - {name: selected, reason: "『selected pattern』是量词域，由 selection_log（0.18.6）承载；立为谓词会把域判定伪装成事实"}
+      residual:
+        - {name: observability_requires, reason: "该名是 5.2.5 卡片字段名，以字段名充谓词属反模式；『satisfied』判据无词", route: "母本 5.2.5 补判据条款"}
+        - {name: routed_to, reason: "CH-B 路由通道语义在母本无谓词载体", route: "另开 ADR"}
+        - {name: human_ruling_pending, reason: "是 escalation 台账状态标记，非方法空间谓词", route: "由 0.18.6 状态字段承载"}
+      status_after: "open（残余 3 项）"
   - id: VG-07
-    missing_need: "验证计划族谓词（VFM 批 8.5／T 系列所需，2026-10-11 实测十七词全部不在三表；经 2026-11-03 裁决移出 `mapped`（归 VG-06）后本条收 **十六词**＝九机器层＋七公式侧）：九机器层（8.5 @3424-3432）——(i) `verification_plan`（@3424 `verification_plan(matrix)`，8.2.1 计划矩阵五元组 {性质/目标 → 验证手段 → 自动化级别 → 触发点 → 证据形态} 的承载谓词）；(ii) `covers_check`（@3425，T1 @3438「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·)」的判据谓词）；(iii) `test_suite`（@3426 `test_suite(S, layer, target_set)`，T4 @3443 的执行域判据）；(iv) `evidence_artifact`（@3427，8.2.6 七要素证据工件）；(v) `verdict_of`（@3428，证据三值判定 pass／fail／escalate，T9 @3451 的判据面）；(vi) `replayable`（@3429，T3 @3441 证据保全三合取支之一）；(vii) `review_point`（@3430 `review_point(rp, kind ∈ 8.2.7五类, scheduled, records)`，T8 @3449 的判据面）；(viii) `injection_case`（@3431 `injection_case(interaction, fault_kind)`，8.2.3 注入用例）；(ix) `fitness_function`（@3432 `fitness_function(property_id, check_program)`，8.2.4 适应度函数）。七公式侧词（T1–T9 @3438-3452 的书写形态）——`seven_fields_complete`／`retention_valid`／`cited_by`（T3 @3441 三支）、`pyramid_distortion`／`distortion`（T5 @3444 两判据）、`scheduled`／`records`（T8 @3449 两支）。语义判读据实登记：① `review_point` 的第三、四实参槽名 `scheduled`／`records` 同时被 T8 当谓词用（`scheduled(rp)`／`records preserved`）→ 以实参槽名充当谓词属本地造词，同 VG-04 (i)／VG-05 (i) 判读，本条把二者并入公式侧词而非另立；② **移出注（2026-11-03 用户裁决）**：原批记八公式侧词含 `mapped`，该词归 VG-06（母本唯一出处 6.5 @2908 Q6；8.5／T1–T9 全文 @3424-3452 实测无此词），本条已移除、不再收录，避免后人重复收。"
+    missing_need: "验证计划族谓词（VFM 批 8.5／T 系列所需，2026-10-11 实测十七词全部不在三表；经 2026-11-03 裁决移出 `mapped`（归 VG-06）后本条收 **十六词**＝九机器层＋七公式侧）：九机器层（8.5 @3427-3435）——(i) `verification_plan`（@3427 `verification_plan(matrix)`，8.2.1 计划矩阵五元组 {性质/目标 → 验证手段 → 自动化级别 → 触发点 → 证据形态} 的承载谓词）；(ii) `covers_check`（@3428，T1 @3446「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·)」的判据谓词）；(iii) `test_suite`（@3429 `test_suite(S, layer, target_set)`，T4 @3451 的执行域判据）；(iv) `evidence_artifact`（@3430，8.2.6 七要素证据工件）；(v) `verdict_of`（@3431，证据三值判定 pass／fail／escalate，T9 @3459 的判据面）；(vi) `replayable`（@3432，T3 @3449 证据保全三合取支之一）；(vii) `review_point`（@3433 `review_point(rp, kind ∈ 8.2.7五类, scheduled, records)`，T8 @3457 的判据面）；(viii) `injection_case`（@3434 `injection_case(interaction, fault_kind)`，8.2.3 注入用例）；(ix) `fitness_function`（@3435 `fitness_function(property_id, check_program)`，8.2.4 适应度函数）。七公式侧词（T1–T9 @3446-3460 的书写形态）——`seven_fields_complete`／`retention_valid`／`cited_by`（T3 @3449 三支）、`pyramid_distortion`／`distortion`（T5 @3452 两判据）、`scheduled`／`records`（T8 @3457 两支）。语义判读据实登记：① `review_point` 的第三、四实参槽名 `scheduled`／`records` 同时被 T8 当谓词用（`scheduled(rp)`／`records preserved`）→ 以实参槽名充当谓词属本地造词，同 VG-04 (i)／VG-05 (i) 判读，本条把二者并入公式侧词而非另立；② **移出注（2026-11-03 用户裁决）**：原批记八公式侧词含 `mapped`，该词归 VG-06（母本唯一出处 6.5 @2911 Q6；8.5／T1–T9 全文 @3424-3457 实测无此词），本条已移除、不再收录，避免后人重复收。"
     workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务登记，禁沉默排除），**绝不写调用式**（写 `test_suite(·)` 即 M4 硬失败）；VFM 批检测式与 applicability 实测调用词 39 处／distinct 11、未登记 0（predicate_names 只扫该两字段），九机器层词只在 formal_anchor 与注释内引母本公式原文（VFM-004 formal_anchor 注 @9161 同型）；判读登记 method_registry.yaml manual_judgments MJ-28 与 G-VFM-1 statement (3)／route ②。"
     affected: "method_registry.yaml VFM 批块头 @8708-8720 与 G-VFM-1 statement (3)／route ②（@9995／@9998）；VFM-001…VFM-006 的 formal_anchor（T1–T9 implements 共 15 项，以条款整体为锚）与 VFM-003／VFM-005 的 references 空列表面（8.7 无行级对应行，属另一缺口轴，不混）；在册名 **76** 本批未变（不本地造词，R2 前不得扩表）。"
-    route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；归 s5g 落盘（本条目即 s5g 的登记面，2026-11-03；不扩 predicates 组、不改写各批块头与简记，0.22 承诺一）。**编号注（2026-11-03 更新）**：`mapped` 经用户裁决归 VG-06（母本出处 6.5 @2908 Q6；8.5／T1–T9 实测无此词），本条已移出该词 → 预告原记十七词现为十六词；G-VFM-1 的预告文本不改写，差异据实登记于 missing_need；VG-08 的 route 括注（本文件 @156）所记『条目仅 VG-01…VG-05』系落盘当时实测，本条目落盘后成历史陈述，不改写（0.22 承诺一）。"
+    route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；归 s5g 落盘（本条目即 s5g 的登记面，2026-11-03；不扩 predicates 组、不改写各批块头与简记，0.22 承诺一）。**编号注（2026-11-03 更新）**：`mapped` 经用户裁决归 VG-06（母本出处 6.5 @2911 Q6；8.5／T1–T9 实测无此词），本条已移出该词 → 预告原记十七词现为十六词；G-VFM-1 的预告文本不改写，差异据实登记于 missing_need；VG-08 的 route 括注（本文件 @156）所记『条目仅 VG-01…VG-05』系落盘当时实测，本条目落盘后成历史陈述，不改写（0.22 承诺一）。"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（D2／D4）"
+      predicate_rows_added: 13
+      added: [verification_plan, covers_check, test_suite, evidence_artifact, verdict_of, replayable, review_point, injection_case, fitness_function, retention_valid, cited_by, pyramid_distortion, distortion]
+      mother_lines_added: 4
+      mother_note: "9 名在母本 8.5 已有逐字定义（仅缺词汇表投影，不插行）；4 名新增（retention_valid／cited_by／pyramid_distortion／distortion）"
+      resolved_by_composition:
+        - {name: seven_fields_complete, expr: "evidence_artifact(E, fields) ∧ fields_complete(fields)", base_predicates: [evidence_artifact, fields_complete], base_in: "母本 8.5＋0.17.8 clause_defined_predicates 已登记"}
+        - {name: scheduled, expr: "review_point(rp, ·, scheduled, ·)", base_predicates: [review_point], base_in: "母本 8.5 第 3 槽"}
+        - {name: records, expr: "review_point(rp, ·, ·, records)", base_predicates: [review_point], base_in: "母本 8.5 第 4 槽"}
+      residual: []
+      status_after: "closed（13 名入表＋3 名复合）"
   - id: VG-08
-    missing_need: "部署策略族与发布判据谓词（9.2.5／9.5 行为所需，本批实测全部不在册）：(i) `deploy_strategy`（9.5 @3705 逐字「deploy_strategy(scope, strategy, params, rollback_procedure)」——G3 @3730「∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)」的量词域谓词）；(ii) `canary_gate`（9.5 @3706 逐字「canary_gate(strategy, metric, threshold, window)」——G4 @3731-3732 的判据谓词，公式侧写作 `gate_verdict(metric, threshold, window)`，`gate_verdict` 亦不在册）；(iii) `evolution_path`（9.5 @3707）与 (iv) `strangler_sequence`（9.5 @3708）——二者属 9.2.6 演化面、非本批接线缺口，据实一并登记以免二次扩表（与 VG-06／VG-07 的『整节机器层谓词一次登记』同型）；(v) 公式侧 `gate_verdict`（G4 @3731）。**不得以实参槽名充当谓词**：`rollback_procedure`／`strategy`／`params`／`metric`／`threshold`／`window` 系上述谓词的实参槽名（同 VG-04 (i) 对 compat_policy、VG-05 (i) 对 expiry 的判读）→ 本批一律不写调用式。9.2.5 的 G3／G4 与 9.5 的四谓词均为母本明文机器层形态，但在册名实测 **76**＝predicates 59＋formula_words 7＋clause_defined_predicates 10，五词**全部 MISSING**。"
+    missing_need: "部署策略族与发布判据谓词（9.2.5／9.5 行为所需，本批实测全部不在册）：(i) `deploy_strategy`（9.5 @3713 逐字「deploy_strategy(scope, strategy, params, rollback_procedure)」——G3 @3740「∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)」的量词域谓词）；(ii) `canary_gate`（9.5 @3714 逐字「canary_gate(strategy, metric, threshold, window)」——G4 @3741-3742 的判据谓词，公式侧写作 `gate_verdict(metric, threshold, window)`，`gate_verdict` 亦不在册）；(iii) `evolution_path`（9.5 @3715）与 (iv) `strangler_sequence`（9.5 @3716）——二者属 9.2.6 演化面、非本批接线缺口，据实一并登记以免二次扩表（与 VG-06／VG-07 的『整节机器层谓词一次登记』同型）；(v) 公式侧 `gate_verdict`（G4 @3741）。**不得以实参槽名充当谓词**：`rollback_procedure`／`strategy`／`params`／`metric`／`threshold`／`window` 系上述谓词的实参槽名（同 VG-04 (i) 对 compat_policy、VG-05 (i) 对 expiry 的判读）→ 本批一律不写调用式。9.2.5 的 G3／G4 与 9.5 的四谓词均为母本明文机器层形态，但在册名实测 **76**＝predicates 59＋formula_words 7＋clause_defined_predicates 10，五词**全部 MISSING**。"
     workaround: "方括号事实占位符 + M15 勘察义务（unknown → 候选保留 + 勘察义务登记，禁沉默排除），**绝不写调用式**（写 `deploy_strategy(·)` 即 M4 硬失败，RLP 批 4 处先例）；DPS 五条的 formal_anchor 只取性质编号（G3／G4／Z6），不据 9.5 谓词面补绑或造词（0.17.1 零新增规范命题）；接线面阻断按 WV-DPS-E3-01 remediation_plan (a) 分性质登记（G3 阻于 deploy_strategy；G4 阻于 canary_gate／gate_verdict；Z6 阻于 cleanup_filed，后者属 VG-05 已登面）。判读登记 method_registry.yaml manual_judgments MJ-29 与 ST-DPS-01.note。"
     affected: "method_registry.yaml DPS-001…DPS-005 五条的 anti_patterns[].detection_predicate 与 applicability 三空间：本批 M4 扫描面**零命中**上述五词（调用词全部取自已登记名，UNREG 集为空 → 无硬失败、无改写落点）；实际影响面在 **formal_anchor 接线**（G3 5 实例／G4 1 实例，均因 9.5 谓词未在册而不可接线），并延及未来 GRD 批（9.2.6 的 evolution_path／strangler_sequence）。在册名 **76** 本批未变（不本地造词，R2 前不得扩表）。"
     route: "R2 提议候选（成文法谓词未登记；补齐属 1.5 谓词表扩充 = 高影响，走 ADR + 批准）；归 s5g，与 VG-06（QAT 批六词）／VG-07（VFM 批十七词）同批处置。**编号注**：VG-06／VG-07 已在各自批次简记与块头以『登记』口吻预告但**未落盘**于本文件（实测本文件条目仅 VG-01…VG-05）→ 本条为避免编号撞车取 VG-08，不改写既有预告、不代其落盘（0.22 承诺一）。"
+    resolution_2026_11_07:
+      adr: "ADR-VGEX-01（D3／D4）"
+      predicate_rows_added: 5
+      added: [deploy_strategy, canary_gate, evolution_path, strangler_sequence, gate_verdict]
+      mother_lines_added: 1
+      mother_note: "4 名在母本 9.5 已有逐字定义（仅缺词汇表投影，不插行）；gate_verdict 新增（G4 金丝雀门判定）"
+      residual: []
+      status_after: "closed"
   - id: VG-09
     missing_need: "SRC 信号源判据族谓词（9.2.3 八条非部署信号源，2026-11-06 实测 **17 个未登记名**分属 16 串，在 predicates／formula_words／clause_defined_predicates 三表**全无登记**；母本 9.2.3 只给自然语言信号描述与 9.2.1 守护分级，未给谓词名）。17 名按所属串分列：(i) `cross_boundary_density`（跨边界调用密度，SRC-001-S1）；(ii) `baseline`（密度/指标基线值，SRC-001-S1、SRC-005-S2）；(iii) `monotonic_trend`（连续窗口同向上升/漂移，SRC-001-S1、SRC-001-S2、SRC-005-S1 及 5 条 when 式）；(iv) `cycle`（interaction_flow 成环，SRC-001-S2）；(v) `cycle_scale`（环规模随时间单调上升，SRC-001-S2）；(vi) `conforms_to`（流量与注册契约一致／schema 声明与实际报文结构一致，SRC-002-S1、SRC-003-S1；关系词）；(vii) `auth_bypass`（access_path 绕过 owner 授权，SRC-003-S2）；(viii) `execution_order`（未登记的执行顺序，SRC-004-S2）；(ix) `baseline_change_record`（基线变更记录，SRC-005-S2）；(x) `falsification_metric`（ADR 可推翻指标，SRC-006-S1）；(xi) `metric_hit`（可推翻指标命中，SRC-006-S1）；(xii) `lower_layer_coverage`（hard property 有下层覆盖，SRC-007-S1 及其 when）；(xiii) `assertion_fact_mismatch`（套件断言与在册事实不符，SRC-007-S2）；(xiv) `consecutive_failure`（用例连续周期失败，SRC-007-S3）；(xv) `remediation_or_waiver_record`（整改/豁免记录，SRC-007-S3）；(xvi) `traceable_to_fact`（决策可追溯到三空间事实）与 `supplement_evidence_record`（补证记录），SRC-008-S1。其中已由既有 VG 覆盖者不重复收录：expiry／cleanup_filed（VG-05）、pyramid_distortion／distortion（VG-07）、burn_rate（VG-06，仅词名、阈值与窗口面仍归本条）。**清点口径**：19 串＝14 条 `detection_predicate`＋5 条 `severity_condition.when_predicate`；完全已登记 0；既有 VG 覆盖 3（VG-05 两条、VG-06 一条且覆盖不足）；本条承载 16 串／17 名。"
     workaround: "保持自然语言散文判据，**不写调用式**（写 `baseline(·)`／`metric_hit(adr)` 即 M4 硬失败，RLP 批 4 处先例），也**不以实参槽名或字段名充谓词**（同 VG-04 (i)／VG-05 (i)／VG-06 (v) 判读）。与 VG-05…VG-08 的关键差异：**本批不得用方括号占位**——signals 的 S-4 明禁 `[`／`]`，且方括号会虚增槽数（占位符口径 1,483）并可能误触发 M15 事实口径；故本批口径为『散文＋不调用』。判读与影响面登记 gaps `G-SRC-1`（statement 已追加清点结论）；本批无新增勘察项，不新立 SO。"
@@ -184,5 +303,6 @@ vocabulary_gaps:
         - {name: consecutive_failure, expr: "同一 case 连续 N 周期 verdict_of=fail", base_predicates: [test_suite, injection_case, verdict_of], source: {source_type: clause_id, value: "8.5", verified: true}}
       residual:
         - {name: cycle_scale, reason: "度量定义不足＋母本无承载位置：5.2.1 只定义成环、不定义环规模；1.5 cycle 指依赖环", route: "R2；需新增 5.2.1 条款文字后另案"}
+      carried_2026_11_07: "cycle_scale 维持残余，不随 VG-01～08 扩容改判（无新母本条款）"
       vocabulary_gaps_count: 9
       registered_names: "76→84（+8）"

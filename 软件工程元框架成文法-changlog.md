@@ -1438,3 +1438,15 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **SO-4**：实测核对 `predicate_vocabulary.yaml`——在册名 **84**（predicates 67＋formula_words 7＋clause_defined_predicates 10），`vocabulary_gaps` 9 条中仅 **VG-09** 有 `resolution_2026_11_06`（`ADR-VG09-01` 一次性扩 17 名／入表 8 名），**VG-01／02／03／04 四族仍全部 MISSING**，该 ADR 未覆盖本条。补齐属母本 1.5 谓词表扩充＝高影响（0.13 完整 ADR＋批准），本轮不自行落地；已在 SO-4 增 `decision_basis` 固化口径：一次性扩充／按族登记／拒绝槽名充谓词／可复合者走 `resolved_by_composition`／补齐后按 MJ-4 复核 `signal_level`；并注明 VG-05～VG-08 同缺、若同批扩充须一并裁决，避免反复小扩表。状态保持 open，待人类裁决。
 - **SO-6**：核 `projections/勘察义务清单.md` Part A——按 7 类字段给出槽分布（applicability 三空间 574、`anti_patterns.detection_predicate` 764、`cost_profile` 127、`envelope.bound_expr` 16、`narrative` 1），事实占位单列 1 处（DPS-004）、0.12 可信度标注单列，三空间／平台参数／粒度阈值三类均被覆盖。该义务为决策期常驻义务：枚举面已由工具承接，但「选型时逐条求值入 `selection_log`」尚未发生 → 不关闭；增 `evidence` 记录承接关系与不关闭理由。
 - **不变量**：entries **138／138 seed**；gaps 24、SO 24、`vocabulary_gaps` 9 不变；自检 **1,213 条记录｜硬失败 0｜软警告 0｜占位符 1,483＝事实 1＋槽 1,482**；open gap **2**（`G-PRJ-1`／`G-SRC-1`）、open SO **3**（`SO-1`／`SO-4`／`SO-6`）；母本零改动。只 commit 不 push。
+
+## 2026-11-07（续 11）：VG-01～VG-08 谓词表扩容落地（ADR-VGEX-01）
+
+- **裁决**：规模取方案 B（不含 VG-03 `node_role`）；20 名入表；承载面坚持母本 x.5 与词汇表同步；母本改动走 0.13 完整 ADR＋批准。
+- **母本**：4,451 → **4,461 行**（+10），围栏 **216** 不变。5.5 机器层谓词块末（改前 @2577）插 3 行（块头＋`expiry_of`＋`cleanup_filed`）；8.5 谓词块末（改前 @3433）插 5 行（块头＋`retention_valid`＋`cited_by`＋`pyramid_distortion`＋`distortion`）；9.5 VG-09 块前（改前 @3709）插 2 行（块头＋`gate_verdict`）。
+- **与预演 23 行的偏差（须记明）**：实测 20 名中 **14 名母本已有逐字定义**（8.5 改前 @3424-3432 九名、9.5 改前 @3704-3708 五名），只有 7 名需插行；照 23 行执行会产生 13 行重复谓词，故按 10 行落地。受影响锚集合由插入位置决定、不因行数改变，实测与预演 B 逐项一致。
+- **跨点裁定**：5 条跨越区间锚按「扩成」——`@2564-2600→@2564-2603`、`@2566-2577→@2566-2580`（3 条）、`@3424-3452→@3424-3457`。
+- **词汇表**：`predicates` 67→**87**、在册名 84→**104**；`vocabulary_gaps` 9 条不变，VG-01～08 各追加 `resolution_2026_11_07`（入表 20／复合 19／既有覆盖更正 1／参数排除 2／量词域排除 1／残余 13），`VG-09` 追加 `carried_2026_11_07`（`cycle_scale` 维持残余）。
+- **`mapped` 更正**：`tactic(g,t)` 已覆盖 Q6 语义，属普查误判；更正缺口描述，不入表（0.22 不改写既有文本）。
+- **锚点实测**：`anchors_changed 4,747`／`range_anchors 645`／`endpoints_shifted 5,392`／`collision_prefixed 0`／`exceptions 0`／`span_inside_insert 5`（已扩成）。预演 A 为 6,531／923／7,454，差 1,784 即 `node_role` 后置。
+- **备查**：`deployed_on` 三参／二参不一致记入 ADR §9，不改数据；`blank_landing` 4 处（本次位移集合内检出；预演 A 16 处）单列待办；母本 `contract`／`covers`／`decision_lineage`／`waiver`／`signal`／`evidence_artifact`／`review_point` 未投影于词汇表，未做全量对账。
+- **不变量**：自检 **1,213 条记录｜硬失败 0｜软警告 0｜占位符 1,483＝事实 1＋槽 1,482**；entries 138／138 seed；gaps 24／SO 24；open gap 2（`G-PRJ-1`／`G-SRC-1`）、open SO 3（`SO-1`／`SO-4`／`SO-6`）。只 commit 不 push。
