@@ -1429,3 +1429,12 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **自检**：**1,213 条记录｜硬失败 0｜软警告 0**（较上批 1,214 少 1：G-STY-3／SO-3 转 closed 减 2 行、新增 bib 指针增 1 行）；聚合口径 **references（有引用的条目）65／external 34／mother-row 73／mother-clause 29／mother-definition 2／未分类 0**；seed 资格成立 138 条。
 - **机械抽印本**：总纲单行本抽印范围＝母本 26–1302，本次三处改动均在其外，**单行本零变更**（不重抽）。
 - **边界**：未改 `project.py`／`profiles.yaml`／`predicate_vocabulary.yaml`；未动 `G-PRJ-1`／`G-SRC-1`。只 commit 不 push。
+
+## 2026-11-07（续 10）：「无据新增」普查基线落盘＋SO-1／SO-4／SO-6 定性
+
+- **基线落盘**：`registry/DATA-SPEC.md` 新增「附录 B：『无据新增』普查基线（2026-11-07）」，六行结论逐条附判定依据与处置提交——仍越界已降级 3（0.22 扩用／目录布局归 0.13／三位编号）、普查误判已更正 1（`target_aspect=0`）、对象不存在无动作 1（R-19）、已有 ADR 追认 1（GAP-SO 白名单）。末尾判定基线：判「有母本依据」须母本行号逐字支持；判「新立」须在子目录文档显式标注且不得表述为母本义务；今后新增「新立」条目一律在本表续行登记。**位置取舍**：选 DATA-SPEC 附录而非 changelog 专节——该表是规范类固定比对基线、须随规范长期可检索；changelog 为时序流水，不承载可比对的常设表格。
+- **普查更正（承接 `49820e5`，本批补记 changelog）**：D1.2 依据改〔新立〕（0.13 治理对象是注册表条目，不含目录布局）；D4.1 收窄 0.22 承诺一射程（「只追加不改写」为本目录自设纪律）；D2.5 登记 `target_aspect=0`＝母本 8.4 @3413 首列「全部方面」（全库 84 处，MJ-28 (ii)）；D4.7 登记三位书写为本目录约定（母本 0.17.2 @330 只要求 `{kind前缀}-{序号}`），CHECK-SPEC C-ID 与 `project.py` 报错文案同步。R-19 全库零命中（无对象）；GAP-SO 白名单已有 `ADR-G-PRJ-1-01`（2026-11-06 approved）追认。
+- **SO-1**：`kind` 由「入库期」改「**接地编译期**」——依据 `ADR-G-STY-ENV-01`（2026-11-04）决定项：现状空间／交付空间条件属部署事实，由接地编译期在条目 `applicability` 填写；`G-STY-1` 已 closed 而该 ADR 明写「`SO-1` 保持 open」，故只改类型、不关闭（`project.py` `GAP_SO_WHITELIST` 已留痕）。
+- **SO-4**：实测核对 `predicate_vocabulary.yaml`——在册名 **84**（predicates 67＋formula_words 7＋clause_defined_predicates 10），`vocabulary_gaps` 9 条中仅 **VG-09** 有 `resolution_2026_11_06`（`ADR-VG09-01` 一次性扩 17 名／入表 8 名），**VG-01／02／03／04 四族仍全部 MISSING**，该 ADR 未覆盖本条。补齐属母本 1.5 谓词表扩充＝高影响（0.13 完整 ADR＋批准），本轮不自行落地；已在 SO-4 增 `decision_basis` 固化口径：一次性扩充／按族登记／拒绝槽名充谓词／可复合者走 `resolved_by_composition`／补齐后按 MJ-4 复核 `signal_level`；并注明 VG-05～VG-08 同缺、若同批扩充须一并裁决，避免反复小扩表。状态保持 open，待人类裁决。
+- **SO-6**：核 `projections/勘察义务清单.md` Part A——按 7 类字段给出槽分布（applicability 三空间 574、`anti_patterns.detection_predicate` 764、`cost_profile` 127、`envelope.bound_expr` 16、`narrative` 1），事实占位单列 1 处（DPS-004）、0.12 可信度标注单列，三空间／平台参数／粒度阈值三类均被覆盖。该义务为决策期常驻义务：枚举面已由工具承接，但「选型时逐条求值入 `selection_log`」尚未发生 → 不关闭；增 `evidence` 记录承接关系与不关闭理由。
+- **不变量**：entries **138／138 seed**；gaps 24、SO 24、`vocabulary_gaps` 9 不变；自检 **1,213 条记录｜硬失败 0｜软警告 0｜占位符 1,483＝事实 1＋槽 1,482**；open gap **2**（`G-PRJ-1`／`G-SRC-1`）、open SO **3**（`SO-1`／`SO-4`／`SO-6`）；母本零改动。只 commit 不 push。
