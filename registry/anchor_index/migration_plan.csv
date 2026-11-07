@@ -1,12 +1,12 @@
 cls,file,line,col,old,target,symbol,new,decision,reason
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,14,164,README @260,,,,exempt,冻结文件（0.22 不重写）
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,33,73,README @259,,,,exempt,冻结文件（0.22 不重写）
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,34,83,R2 @381,,,,exempt,冻结文件（0.22 不重写）
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,39,130,R2 @381,,,,exempt,冻结文件（0.22 不重写）
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,44,83,R2 @381,,,,exempt,冻结文件（0.22 不重写）
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,70,118,project.py @847,,,,exempt,冻结文件（0.22 不重写）
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,106,101,README @259,,,,exempt,冻结文件（0.22 不重写）
-frozen_key_at,ADR草案-GRD-PRJ-GOV-剖面变更.md,119,35,README @260,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,14,164,README @260,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,33,73,README @259,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,34,83,R2 @381,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,39,130,R2 @381,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,44,83,R2 @381,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,70,118,project.py @847,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,106,101,README @259,,,,exempt,冻结文件（0.22 不重写）
+frozen_key_at,adr/ADR-KP-G3-01-approved-20261103-GRD-PRJ-GOV剖面变更.md,119,35,README @260,,,,exempt,冻结文件（0.22 不重写）
 frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,61,3,GRD @471,,,,exempt,冻结文件（0.22 不重写）
 frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,62,3,PRJ @502,,,,exempt,冻结文件（0.22 不重写）
 frozen_key_at,R2提案-KP-G3-包络义务适用范围.md,63,3,GOV @533,,,,exempt,冻结文件（0.22 不重写）

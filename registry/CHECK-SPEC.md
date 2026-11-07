@@ -60,7 +60,7 @@ python3 scripts/project.py --project    # 自检 + 生成人类层投影
 - **C4.4 闭合登记**：KP-G3 类闭合以 `status: open → closed` ＋同条目 `closure` 块完成；闭合不改 gap 原文。〔先例，原 README §4.15〕
 - **C4.5 台账承接归一**：只为既有无承接的 open gap 补登记 SO，不改任何 gap 原文、不改条目、不改剖面。〔先例，§4.19〕
 - **C4.6 gap↔SO 完整性**：`check_gap_so_integrity` 校验 open gap 是否有 open SO、SO 的 `gap_ref` 是否指向存在 gap、open SO 是否指向 closed gap；该检查为 **info 级**，不参与 seed 资格、不作硬失败；白名单悬空须有 ADR 依据（`G-PRJ-1`）。〔先例，§4.20〕
-- **C4.7 状态迁移**：每条简记登记 `transition_id`／`from`／`to`／`scope`／`date`／`condition`／`evidence`／`impact_level`／`provenance`；`check_ledgers` 按时间切片＋迁入覆盖校验，合法回退不误判、未登记迁移仍硬失败。〔2026-11-07 实现〕
+- **C4.7 状态迁移**：每条简记登记 `transition_id`／`from`／`to`／`scope`／`date`／`condition`／`evidence`／`impact_level`／`provenance`；`check_ledgers` 按时间切片＋迁入覆盖校验，合法回退不误判、未登记迁移仍硬失败。〔2026-11-07 实现〕`seed→draft` 另须 `seed_rejudication_ref`／`consumption_checked`／`affected_decisions`／`disposition` 四字段，`impact_level` 必须为「高」；缺项判硬失败（DATA-SPEC D2.4、ADR-LC-01 §3.6）。
 
 ## C5 批次先例（检查与台账面）
 

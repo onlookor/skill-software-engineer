@@ -41,6 +41,12 @@
 
 〔母本派生〕
 - **D2.3 字段封闭与顶层节**：条目内**不得出现 0.17.2 之外的字段**。注册表级信息（缺口、状态迁移简记、Waiver、人工判断登记、未闭合的冲突矩阵行）一律置于 `method_registry.yaml` 的**顶层节**，不进入条目。〔母本派生〕
+- **D2.4 状态迁移简记 schema**：`status_transitions` 每条固定九字段 `transition_id`／`from`／`to`／`scope`／`date`／`condition`／`evidence`／`impact_level`／`provenance`，可选 `note`。`from`／`to` ∈ {`draft`,`seed`,`active`,`deprecated`,`retired`}。**撤回型 `seed→draft`（ADR-LC-01 §3.6）另需四字段**：
+  - `seed_rejudication_ref`：重判批次号，指向同次重判的 `seed_rejudication` 差异记录；
+  - `consumption_checked`：布尔，`true` 表示已查存量消费；
+  - `affected_decisions`：已被消费的决策 ADR／编译产物清单，查过且无为 `[]`；
+  - `disposition` ∈ {`revalidate`,`replace`,`retain-annotated`}：对已消费条目的处置。
+  且 `impact_level` 必须为「高」（与 `active→deprecated` 同构）。`draft→seed` 的 `impact_level` 维持「低」。缺项由 `check_ledgers` 判硬失败（`CHECK-SPEC` C4.7）。〔ADR-LC-01 §3.2／§3.6〕
 
 ## D3 谓词书写约定（M4／M15 的校验对象）
 
@@ -62,7 +68,7 @@
 ## D5 来源与出处标注
 
 - **D5.1 出处门槛**：`source_pointers` 的 `source_type ∈ {clause_id, bib_id, row_id}`；`clause_id` 须可反查母本；`bib_id` 须指向参考文献已著录条目；`row_id` 形如 `"{表号}-{行名}"`。参考文献须同时声明 `compile_usage` 与 `trust_grade`（0.12）。〔母本派生 0.17.2／0.12〕
-- **D5.2 出处类别**：`provenance` 增可选键 `source_class`；值域、`manual` 两类现状的区分、与 `origin` 的分工及判定程序全部见 [`../ADR草案-框架内生元方法-STY-021-024.md`](../ADR草案-框架内生元方法-STY-021-024.md) §5.5（本规范只做指引，不复述规则）。当前「未分类」条数见 `projections/自检报告.md` 汇总行。〔本轮新立（承接 README §4.31）〕
+- **D5.2 出处类别**：`provenance` 增可选键 `source_class`；值域、`manual` 两类现状的区分、与 `origin` 的分工及判定程序全部见 [`../adr/ADR-STY-FIM-01-approved-20261107-框架内生元方法与source_class.md`](../adr/ADR-STY-FIM-01-approved-20261107-框架内生元方法与source_class.md) §5.5（本规范只做指引，不复述规则）。当前「未分类」条数见 `projections/自检报告.md` 汇总行。〔本轮新立（承接 README §4.31）〕
 - **D5.3 部分指针**：来源只覆盖条目的部分面时，`references` 须以「限…；不覆盖…」显式登记覆盖边界；未覆盖面继续由对应缺口承接。〔先例，§4.30〕
 
 ## D6 数据侧变更口径

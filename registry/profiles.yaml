@@ -822,13 +822,13 @@ gaps:
   - gap_id: KP-G2
     type: 自指循环
     statement: "0.17.8 M2 = ∀E(status ≠ draft) 按 kind 剖面完备；而 kind profile 本身是注册表条目（0.17.2 元注册），其自身完备性若也按剖面判定即自指。母本未定元条目的判据。"
-    impact: "本目录以 README §5 C-KP 临时约定：元条目完备性 = required_fields/optional_fields 两列表在案（物化自 common_required + 增量），不受 M2 按 kind 剖面判定；元条目 id 形态 kind_profile_{KIND} 不受 C-ID 的 {kind前缀}-{序号} 格式约束。"
+    impact: "本目录以 CHECK-SPEC C1 C-KP 临时约定：元条目完备性 = required_fields/optional_fields 两列表在案（物化自 common_required + 增量），不受 M2 按 kind 剖面判定；元条目 id 形态 kind_profile_{KIND} 不受 C-ID 的 {kind前缀}-{序号} 格式约束。"
     route: R2 提议澄清候选
     status: open
   - gap_id: KP-G3
     type: 适用性无据
     statement: "非 0.18 选型路径的 kind（GRD/PRJ/GOV）是否须声明 0.8 包络与 cost_profile，母本无明文；0.8 表述为「每种方法条目」，未界定「方法条目」是否含守护规则模板/投影规则/治理模板。"
-    impact: "三个剖面 status=draft，undecided_fields 明列；这些 kind 的条目在缺口闭合前不得声明 status=seed（README §5 C-ST）。"
+    impact: "三个剖面 status=draft，undecided_fields 明列；这些 kind 的条目在缺口闭合前不得声明 status=seed（CHECK-SPEC C1 C-ST）。"
     route: R2 提议澄清候选
     status: closed           # 2026-11-03：R2-KP-G3-01 已落地、三剖面已转 seed；statement／impact 原文不改写（0.22 承诺一），闭合依据见下方 closure
     closure:
