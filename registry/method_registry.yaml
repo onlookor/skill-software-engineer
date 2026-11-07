@@ -881,6 +881,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.1-MVC 及变体（MVP/MVVM）", verified: true}
         - {source_type: clause_id, value: "1.2.1", verified: true}
@@ -7458,6 +7459,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2836 性能族列举序首项「引入并发」逐字；界形参数化、失败模式、观测前提与技能前提为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-01", verified: true}   # 行内标记（6.2.5-Q-01）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2836 骨架源（性能族五项列举序第一）＋@2834「达成手段从战术注册表选择…禁止即兴发明战术」＋@2841 卡片义务与 Q6 闭合
@@ -7547,6 +7549,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2836 性能族列举序第二项「维持多副本」逐字；@2841 明文代价「多副本 → 一致性负担 + 成本」为母本逐字；界形与观测前提为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-02", verified: true}   # 行内标记（6.2.5-Q-02）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2836 骨架源＋@2841 逐字「多副本 → 一致性负担 + 成本」（本条 tension 与 Q4 triggers 的母本明文依据）
@@ -7647,6 +7650,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2836 性能族列举序第三项「增加资源」逐字；界形与技能前提为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-03", verified: true}   # 行内标记（6.2.5-Q-03）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2836 骨架源（性能族列举序第三）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -7736,6 +7740,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2836 性能族列举序第四项「减少开销（批处理/缓存）」逐字；name 取括注前的战术名（块头 name 段），括注「批处理/缓存」为本条的两个形态、转入 applicability 与 narrative 承载；@2841 明文代价「缓存 → 新鲜度条款」为母本逐字；界形与技能前提为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-04", verified: true}   # 行内标记（6.2.5-Q-04）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2836 骨架源（性能族列举序第四）＋@2841 逐字「缓存 → 新鲜度条款」（本条 tension 与 Q4 triggers 的母本明文依据）
@@ -7836,6 +7841,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2836 性能族列举序第五项（末项）「限制排队」逐字；界形与阈值形态为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-05", verified: true}   # 行内标记（6.2.5-Q-05）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2836 骨架源（性能族列举序第五）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -7925,6 +7931,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2837 可用性族列举序第一项「故障检测（心跳/看门狗）」逐字（name 取列举项本体，括注两形态入 applicability 与 skill_prerequisites）；界形与阈值形态为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-06", verified: true}   # 行内标记（6.2.5-Q-06）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2837 骨架源（可用性族列举序第一）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8014,6 +8021,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2837 可用性族列举序第二项「恢复（主动冗余/被动冗余/ spare）」逐字（母本 `/ spare` 前含一个空格，原样引用不改写）；界形与演练前提为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-07", verified: true}   # 行内标记（6.2.5-Q-07）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2837 骨架源（可用性族列举序第二，括注三形态）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8103,6 +8111,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2837 可用性族列举序第三项（末项）「故障预防（事务、过程监视器）」逐字（name 取列举项本体，括注两形态分列登记）；界形与范围形态为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-08", verified: true}   # 行内标记（6.2.5-Q-08）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2837 骨架源（可用性族列举序第三）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8192,6 +8201,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2838 可修改性族列举序第一项「语义内聚（联动方面 2）」逐字（括注的联动面入 constraints_imposed 与 compatibility 留注）；界形与密度形态为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-09", verified: true}   # 行内标记（6.2.5-Q-09）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2838 骨架源（可修改性族列举序第一，明文「联动方面 2」）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8281,6 +8291,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2838 可修改性族列举序第二项「限制依赖（联动方面 3 契约）」逐字（括注的联动面入 constraints_imposed 与 compatibility 留注）；依赖规则的判据形态为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-10", verified: true}   # 行内标记（6.2.5-Q-10）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2838 骨架源（可修改性族列举序第二，明文「联动方面 3 契约」）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8370,6 +8381,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2838 可修改性族列举序第三项「参数化配置（联动方面 5 配置子维度）」逐字；联动面的治理规则取 5.2.6 @2512-2515 四项逐字（CFG 批同源）；值域与判别形态为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-11", verified: true}   # 行内标记（6.2.5-Q-11）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2838 骨架源（可修改性族列举序第三，明文「联动方面 5 配置子维度」）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8466,6 +8478,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2838 可修改性族列举序第四项「抽象中介」逐字（四项中**唯一无括注联动面**者：语义内聚「联动方面 2」、限制依赖「联动方面 3 契约」、参数化配置「联动方面 5 配置子维度」皆有括注，本项无 → compatibility 不据 @2838 登记任何 peer）；中介形态与判据为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-12", verified: true}   # 行内标记（6.2.5-Q-12）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2838 骨架源（可修改性族列举序第四，末项，无括注）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8555,6 +8568,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2839 安全族列举序第一项「抵抗攻击（认证/授权/加密）」逐字（括注三机制为**手段列举**而非联动面指名，母本未将其分列为三条 → 不本地拆分，MJ-9 同型；三机制分别闭合「身份不可信」「访问越权」「数据明文」三类攻击面）；判据形态为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-13", verified: true}   # 行内标记（6.2.5-Q-13）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2839 骨架源（安全族列举序第一，明文「认证/授权/加密」）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8645,6 +8659,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2839 安全族列举序第二项「检测攻击（审计日志→联动 Y 域血缘）」逐字（括注为**手段＋联动面**双成分：手段＝审计日志、联动面＝Y 域血缘 → 联动面指名唯一可定，故本条登记 formal_anchor Y5，与 QAT-013 的「手段列举」型括注不同）；判据形态为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-14", verified: true}   # 行内标记（6.2.5-Q-14）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2839 骨架源（安全族列举序第二，明文「审计日志→联动 Y 域血缘」）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -8735,6 +8750,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-QAT-01）
     provenance:
       origin: hybrid                   # 骨架=6.2.5 @2839 安全族列举序第三项「从攻击恢复（限流/熔断联动 5.2.3）」逐字（括注为**手段＋联动面**双成分：限流与熔断为两个手段面、联动面明文指向 5.2.3；母本未将限流与熔断分列为两条 → 不本地拆分，MJ-9 同型，与 QAT-013 的三机制同处置）；判据形态为 manual
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "6.2.5-Q-15", verified: true}   # 行内标记（6.2.5-Q-15）
         - {source_type: clause_id, value: "6.2.5", verified: true}   # @2839 骨架源（安全族列举序第三，明文「限流/熔断联动 5.2.3」）＋@2834 战术注册表选择义务＋@2841 卡片义务
@@ -10276,6 +10292,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-PRJ-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=10.2.2 @3891 表行三列逐字；三空间判据与 delivery_space 勘察义务为人工判断
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}   # @3883 heading＋@3889-3901 表＋@3903 履行判据
         - {source_type: row_id, value: "10.2.2-1.4", verified: true}   # @3891 数据行逐字
@@ -10333,6 +10350,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-2.4", verified: true}   # @3892 数据行逐字：{2.5 边界谓词集}
@@ -10390,6 +10408,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-4.4", verified: true}   # @3893 数据行逐字：{Y 谓词集、血缘}
@@ -10447,6 +10466,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-5.4", verified: true}   # @3894 数据行逐字：{Z 谓词集}
@@ -10504,6 +10524,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-8.4", verified: true}   # @3895 数据行逐字：{T 谓词集}
@@ -10563,6 +10584,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-9.4", verified: true}   # @3896 数据行逐字：{G 谓词集、演化路线图}
@@ -10622,6 +10644,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-8.2.7 评审点一 × 0.5 批准材料", verified: true}   # @3897 数据行逐字
@@ -10681,6 +10704,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-8.2.7 评审点二", verified: true}   # @3898 数据行逐字
@@ -10739,6 +10763,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-8.2.7 评审点三", verified: true}   # @3899 数据行逐字
@@ -10798,6 +10823,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-8.2.7 评审点四", verified: true}   # @3900 数据行逐字
@@ -10858,6 +10884,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "10.2.2", verified: true}
         - {source_type: row_id, value: "10.2.2-8.2.7 评审点五", verified: true}   # @3901 数据行逐字
