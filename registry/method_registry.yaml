@@ -6564,6 +6564,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-SCH-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.4 @2490 第一分号子命题逐字「定时器/截止期/cron 的登记」（三种触发形态并列，登记义务不因形态而豁免）；界形参数化、失败模式与技能前提（manual，MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.4-SCH-01", verified: true}   # 行内标记（5.2.4-SCH-01）
         - {source_type: clause_id, value: "5.2.4", verified: true}   # @2490 第一子命题（本条骨架源）
@@ -6765,6 +6766,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-SCH-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.4 @2490 第三分号子命题逐字（含括注：哪个单元有权调度哪个流程——调度权也是所有权的一种，受 Y1 同型约束）；界形参数化与失败模式（manual，MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.4-SCH-03", verified: true}   # 行内标记（5.2.4-SCH-03）
         - {source_type: clause_id, value: "5.2.4", verified: true}   # @2490 第三子命题（本条骨架源，含 Y1 同型约束的明文挂钩）
@@ -6976,6 +6978,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2512 行内加粗引导词「配置 schema 注册」逐字；登记对象四形态（开关、阈值、路由规则、池大小）与五槽 {键, 值域, 作用域, 级别, 生命周期} 均母本逐字；界形参数化、失败模式与技能前提（manual，MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.6-CFG-01", verified: true}   # 行内标记（5.2.6-CFG-01）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2510 引言段（准决策通道／纪律的潜在旁路；四条共同 problem_space 源）＋@2512 本条骨架源（登记义务与五槽逐字）
@@ -7077,6 +7080,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2513 行内加粗引导词「决策/参数判别谓词」逐字；二分判据（改变任一 Z 系列谓词取值 → 行为级变更 = 决策／不触及 Z 谓词且仅在登记值域内调参 → 参数级变更 = 低影响）、两处括注例（开关切换同步↔异步路径 = 改变 interaction_flow.kind；切换编排器启停 = 改变协调风格）、升格条件（超时值变更若影响 Z4 预算闭合则升为行为级）与机器可查面（@2515 变更前后 Z 谓词快照比对、按硬约束阻塞）均母本逐字；@2513 括注「登记入注册表，不允许运行时即兴判断」在加粗引导词之外 → 记入本注与 narrative.common_misuse，不入 name（MJ-21 (iii) 同型：加粗引导词是 name 的唯一骨架源）。判据的实例化清单（何谓「触及 Z 谓词」）、失败模式与技能前提为 manual（MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.6-CFG-02", verified: true}   # 行内标记（5.2.6-CFG-02）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2513 判据全文（本条骨架）＋@2515 机器可查面（快照比对、按硬约束阻塞）＋@2510 引言段（准决策通道＝判别义务的存在理由）
@@ -7291,6 +7295,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2515 行内加粗引导词「与 0.10 权力条款的联动」**逐字含条款号**，不改写为「权力条款联动」（块头 name 段：MJ-21 (iii) 同型，与 RLP-004 @5896 保留原形同理）；三项实体内容（禁止以参数级之名行行为级之实、判别谓词机器可查〔变更前后 Z 谓词快照比对〕、规避行为 = 纪律违例并按硬约束阻塞）均母本逐字，无改写。「联动」的落地形态（谁执行比对、在哪一层阻塞、违例如何登记与升级）母本未给 → manual（MJ-2 同型）；0.10 无注册表条目实体 → 联动面以 source_pointer＋formal_anchor＋narrative 承载，compatibility 留空并注（块头注释⑤）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.6-CFG-04", verified: true}   # 行内标记（5.2.6-CFG-04）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2515 本条骨架全文逐字（三项实体内容）；@2510 引言段「构成**准决策通道**——它们能在不走 ADR 的情况下改变运行时行为，是纪律的潜在旁路」＝本条要封堵的对象；@2513 判据本体（CFG-002 承载）是本条联动的前提
