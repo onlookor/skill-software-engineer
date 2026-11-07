@@ -43,6 +43,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions
     provenance:
       origin: hybrid                   # 骨架=表格行（compiled 视图）＋谓词人工转写（manual）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.3-同步请求-响应", verified: true}
         - {source_type: clause_id, value: "1.2.5", verified: true}
@@ -117,6 +118,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.3-异步消息", verified: true}
         - {source_type: clause_id, value: "1.4", verified: true}
@@ -185,6 +187,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.3-事件驱动（发布订阅）", verified: true}
         - {source_type: clause_id, value: "1.4", verified: true}
@@ -273,6 +276,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.3-事件溯源 + CQRS", verified: true}
         - {source_type: clause_id, value: "1.2.5", verified: true}
@@ -352,6 +356,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.3-Broker 中介", verified: true}
         - {source_type: clause_id, value: "1.4", verified: true}
@@ -422,6 +427,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.3-共享数据", verified: true}
         - {source_type: clause_id, value: "1.4", verified: true}
@@ -499,6 +505,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions
     provenance:
       origin: hybrid                   # 骨架=1.2.1 表格行（compiled 视图）＋谓词/界式人工转写（manual）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.1-分层", verified: true}
         - {source_type: clause_id, value: "1.2", verified: true}
@@ -579,6 +586,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "1.2.1-六边形（端口-适配器）", verified: true}
         - {source_type: clause_id, value: "1.2.1", verified: true}
@@ -657,6 +665,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "1.2.1-整洁/洋葱架构", verified: true}
         - {source_type: clause_id, value: "1.2.1", verified: true}
@@ -738,6 +747,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.1-微内核-插件", verified: true}
         - {source_type: clause_id, value: "1.2.1", verified: true}
@@ -804,6 +814,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.1-黑板", verified: true}
         - {source_type: clause_id, value: "1.2.1", verified: true}
@@ -925,6 +936,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.1-管道-过滤器", verified: true}
         - {source_type: clause_id, value: "1.2.1", verified: true}
@@ -1005,6 +1017,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions
     provenance:
       origin: hybrid                   # 骨架=1.2.2 表格行（compiled 视图）＋界式/谓词人工转写（manual）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.2-单体", verified: true}
         - {source_type: clause_id, value: "1.2.2", verified: true}
@@ -1082,6 +1095,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.2-模块化单体", verified: true}
         - {source_type: clause_id, value: "1.2.2", verified: true}
@@ -1162,6 +1176,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "1.2.2-微服务", verified: true}
         - {source_type: clause_id, value: "1.2.2", verified: true}
@@ -1250,6 +1265,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.2-SOA", verified: true}
         - {source_type: clause_id, value: "1.2.2", verified: true}
@@ -1321,6 +1337,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.2-Serverless / FaaS", verified: true}
         - {source_type: clause_id, value: "1.2.2", verified: true}
@@ -1395,6 +1412,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.2-边缘-中心混合", verified: true}
         - {source_type: clause_id, value: "1.2.2", verified: true}
@@ -1488,6 +1506,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "1.2.4-质量属性驱动", verified: true}
         - {source_type: clause_id, value: "1.2.4", verified: true}
@@ -1587,6 +1606,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "1.2.4-领域驱动", verified: true}
         - {source_type: clause_id, value: "1.2.4", verified: true}
@@ -1633,6 +1653,7 @@ entries:
     status: seed
     provenance:
       origin: hybrid
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "1.2.4-演进式", verified: true}
         - {source_type: clause_id, value: "1.2.4", verified: true}
@@ -1874,6 +1895,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-OWN-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.1 表行＋4.3 三空间驱动交叉表源＋书目 41 参考资料源
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "4.2.1-数据产品", verified: true}
         - {source_type: clause_id, value: "4.2.1", verified: true}
@@ -2212,6 +2234,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CSL-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.3 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "4.2.3-最终一致", verified: true}
         - {source_type: clause_id, value: "4.2.3", verified: true}
@@ -2276,6 +2299,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CSL-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.3 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "4.2.3-补偿一致（业务级）", verified: true}
         - {source_type: clause_id, value: "4.2.3", verified: true}
@@ -2349,6 +2373,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.1-编排（orchestration）", verified: true}
         - {source_type: clause_id, value: "5.2.1", verified: true}
@@ -2432,6 +2457,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.1-协同（choreography）", verified: true}
         - {source_type: clause_id, value: "5.2.1", verified: true}
@@ -2516,6 +2542,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "5.2.1-同步调用链", verified: true}
         - {source_type: clause_id, value: "5.2.1", verified: true}
@@ -2597,6 +2624,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.1 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "5.2.1-混合（宏观编排 + 微观协同）", verified: true}
         - {source_type: clause_id, value: "5.2.1", verified: true}
@@ -2680,6 +2708,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.2 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.2-Saga（编排式）", verified: true}
         - {source_type: clause_id, value: "5.2.2", verified: true}   # 步骤三分类纪律（compensable/retriable/pivot）＋关键设计规则列
@@ -2767,6 +2796,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CRD-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.2 表行＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.2-Saga（协同式）", verified: true}
         - {source_type: clause_id, value: "5.2.2", verified: true}   # 关键设计规则列原文「仅适合步骤少（注册上限，默认 ≤4）且无需集中留痕的流程」
@@ -3031,6 +3061,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
     provenance:
       origin: hybrid                   # 骨架=2.2.1 表行（策略/定义/主导驱动空间三列）＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "2.2.1-S1 按业务领域", verified: true}
         - {source_type: clause_id, value: "2.2.1", verified: true}   # 「策略可组合；组合冲突的处置见 2.6 示例一」
@@ -3367,6 +3398,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
     provenance:
       origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "2.2.1-S5 按变更频率", verified: true}
         - {source_type: clause_id, value: "2.2.1", verified: true}   # 主导驱动空间列原文含「该输入缺失时 S5 不可用，走 CH-B（见 2.6 示例二）」
@@ -3451,6 +3483,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DEC-01）
     provenance:
       origin: hybrid                   # 骨架=2.2.1 表行＋三空间事实与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "2.2.1-S6 按团队认知负荷", verified: true}
         - {source_type: clause_id, value: "2.2.1", verified: true}   # 主导驱动空间列＝交付空间
@@ -3793,6 +3826,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
     provenance:
       origin: hybrid                   # 骨架=3.2.1 表行（定义列含 REST/gRPC 两支）＋3.6 示例一（南北向/东西向解包）＋谓词转写（manual）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "3.2.1-同步 API 契约", verified: true}
         - {source_type: clause_id, value: "3.2.1", verified: true}
@@ -3969,6 +4003,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
     provenance:
       origin: hybrid                   # 骨架=3.2.1 表行（定义列三构成项：schema＋事件信封＋演化策略）＋3.2.1 表后判别规则＋3.2.2 默认值列事件侧两项＋谓词转写（manual）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "3.2.1-事件契约", verified: true}
         - {source_type: clause_id, value: "3.2.1", verified: true}   # 判别规则：命名含事实语义（OrderCreated）→ 事件，一对多消费者，走事件契约
@@ -4220,6 +4255,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
     provenance:
       origin: hybrid                   # 骨架=3.2.2 表行「版本化策略」（内容列三载体＋事件契约推荐项；默认值列两条）＋谓词转写（manual）；母本对本行仅给一行表数据，无独立小节 → 不扩张（G-CRD-1 同型纪律）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "3.2.2-版本化策略", verified: true}
         - {source_type: clause_id, value: "3.2.2", verified: true}   # 表头「默认值（注册表登记，可覆盖需 ADR）」
@@ -4302,6 +4338,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
     provenance:
       origin: hybrid                   # 骨架=3.2.2 表行「兼容性规则」（内容列四取值＋每契约登记其一；默认值列三条）＋谓词转写（manual）；母本对本行仅给一行表数据 → 不扩张（G-CRD-1 同型纪律）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "3.2.2-兼容性规则", verified: true}
         - {source_type: clause_id, value: "3.2.2", verified: true}
@@ -4387,6 +4424,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
     provenance:
       origin: hybrid                   # 骨架=3.2.2 表行「消费者驱动契约测试（CDC）」（内容列机制与幻觉；默认值列『高风险契约必备（见 X4）』）＋谓词转写（manual）；name 逐字承表行首列（含括号缩写）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "3.2.2-消费者驱动契约测试（CDC）", verified: true}
         - {source_type: clause_id, value: "3.2.2", verified: true}
@@ -4545,6 +4583,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
     provenance:
       origin: hybrid                   # 骨架=3.2.2 表行「破坏性变更流程」（内容列高影响决策四要件；默认值列弃用窗口下界）＋谓词转写（manual）；name 逐字承表行首列
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "3.2.2-破坏性变更流程", verified: true}
         - {source_type: clause_id, value: "3.2.2", verified: true}
@@ -4635,6 +4674,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CTR-01）
     provenance:
       origin: hybrid                   # 骨架=3.2.2 表行「发现与注册」（内容列三类注册面；默认值列『按方面 1 风格选择』）＋谓词转写（manual）；name 逐字承表行首列
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "3.2.2-发现与注册", verified: true}
         - {source_type: clause_id, value: "3.2.2", verified: true}
@@ -4912,6 +4952,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-STP-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.2 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "4.2.2-事件日志为权威状态", verified: true}
         - {source_type: clause_id, value: "4.2.2", verified: true}
@@ -5001,6 +5042,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-STP-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.2 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "4.2.2-多语言持久化", verified: true}
         - {source_type: clause_id, value: "4.2.2", verified: true}
@@ -5512,6 +5554,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DFL-01）
     provenance:
       origin: hybrid                   # 骨架=4.2.4 表行（compiled 视图）＋谓词转写与界形参数化（manual，MJ-2 同型）
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: row_id, value: "4.2.4-物化视图", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
@@ -5673,6 +5716,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2484 行内加粗清单项（幂等键 + 去重表/去重窗口）＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.3-R-01", verified: true}   # 行内标记（5.2.3-R-01）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2484 首项「**幂等**（幂等键 + 去重表/去重窗口）」＋@2486 投递语义登记纪律
@@ -5780,6 +5824,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2484 行内加粗清单项（消费侧去重与业务写同事务）＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.3-R-02", verified: true}   # 行内标记（5.2.3-R-02）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2484 第二项「**收件箱（inbox）**（消费侧去重与业务写同事务）」
@@ -5882,6 +5927,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2484 行内加粗清单项（生产侧，4.2.4 已定义，行为面消费其投递语义）＋界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: mother-clause    # ADR-STY-FIM-01 §5.5：出处为条款内行内清单，非独立表格行
       source_pointers:
         - {source_type: row_id, value: "5.2.3-R-03", verified: true}   # 行内标记（5.2.3-R-03）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2484 第三项「**发件箱（outbox）**（生产侧，4.2.4 已定义，行为面消费其投递语义）」＋@2486 投递语义登记纪律
@@ -5980,6 +6026,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2484 行内加粗清单项＋5.2.2 @2480 retriable 定义；界形参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.3-R-04", verified: true}   # 行内标记（5.2.3-R-04）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2484 第四项「**重试 + 指数退避 + 抖动**」（母本未给参数与量化增量）
@@ -6094,6 +6141,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2484 行内加粗清单项（括号内界形逐字：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4）；参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.3-R-05", verified: true}   # 行内标记（5.2.3-R-05）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2484 第五项「**超时预算**（路径级联超时的预算分配：下游超时 < 上游超时 − 传播开销，全链预算 ≤ SLA 上界，Z4）」
@@ -6206,6 +6254,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2484 行内加粗清单项（括号内机制逐字：失败率越阈时快速失败 + 半开探测）；阈值参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.3-R-06", verified: true}   # 行内标记（5.2.3-R-06）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2484 第六项「**断路器**（失败率越阈时快速失败 + 半开探测）」
@@ -6313,6 +6362,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-RLP-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.3 @2484 行内加粗清单项（括号内机制逐字：线程/连接池按消费者隔离，防单点拖垮全局）；池容量参数化与谓词转写（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.3-R-07", verified: true}   # 行内标记（5.2.3-R-07）
         - {source_type: clause_id, value: "5.2.3", verified: true}   # @2484 第七项「**舱壁**（线程/连接池按消费者隔离，防单点拖垮全局）」
@@ -6589,6 +6639,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-SCH-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.4 @2490 第二分号子命题逐字（含括注：事件时间 = 事实发生时刻，处理时间 = 系统见到时刻；乱序容忍度以水位线表达）；界形参数化、失败模式与验证面（manual，MJ-2 同型）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.4-SCH-02", verified: true}   # 行内标记（5.2.4-SCH-02）
         - {source_type: clause_id, value: "5.2.4", verified: true}   # @2490 第二子命题（本条骨架源，含 watermark 内联释义）
@@ -7102,6 +7153,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-CFG-01）
     provenance:
       origin: hybrid                   # 骨架=5.2.6 @2514 行内加粗引导词「开关生命周期」逐字；三项实体内容（诞生即带审查期/到期日、到期未清理 → P2 漂移信号、交方面 9 守护 G 系列）与两处括注（`expiry` 字段；僵尸开关 = 隐式架构分支，腐化源）均母本逐字，无改写。级别归属的**双读**取自两处明文并据实分列：@2514 与 9.2.1 @3592 记 P2（监测级），9.2.3 @3623 记「Z6 违例 → P0（行为级开关）；其余 P2」→ 本条 AP 分列 P0／P1／P2，母本内部差异**不在注册表侧择一改写**（0.22 承诺一），登记入 G-CFG-1 route ④ 与 MJ-26 (vii)。「诞生即带」的落地面（由谁在何时写入 expiry、以何载体承载、存量开关是否补登）母本未给 → manual（MJ-2 同型：骨架 hybrid、判据与落地面人工）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: row_id, value: "5.2.6-CFG-03", verified: true}   # 行内标记（5.2.6-CFG-03）
         - {source_type: clause_id, value: "5.2.6", verified: true}   # @2514 本条骨架全文逐字（生命周期三项＋僵尸开关定义＋交方面 9 守护）；@2510 引言段「构成**准决策通道**」作四条共同 problem_space 源；@2512 五槽中「生命周期」槽＝本条的登记落点（compatibility 镜像依据）；@2515 机器可查面为到期判定的求值前提
@@ -9571,6 +9623,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DPS-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=9.2.5 @3645 表行三列逐字（定义「逐批替换实例，新旧版本短暂共存」／适用条件「无状态服务默认；版本间协议兼容（X 系列契约约束）」／卡片要点「回滚粒度粗（批次级）；共存期兼容性是前提」）；包络方向与代价相对序为人工判断（母本只给方向性卡片要点、无任何数值）；归属判据 @3639 与 G3 @3730 为交叉表源
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: clause_id, value: "9.2.5", verified: true}   # @3637 heading＋@3639 归属判据（不改变部署拓扑的发布决策归本方面）＋@3643-3649 表（本条骨架源 @3645）＋@3651「部署策略选择是高影响决策；策略与风格自洽性由 G3 检查」
         - {source_type: row_id, value: "9.2.5-滚动发布", verified: true}   # @3645 数据行逐字：定义／适用条件／卡片要点三列
@@ -9655,6 +9708,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DPS-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=9.2.5 @3646 表行三列逐字（定义「全量新环境（绿）就绪后流量一次性切换，旧环境（蓝）保留待回滚」／适用条件「回滚时间要求苛刻（RTO 出处为合同/监管）；资源双倍成本可承受」／卡片要点「回滚最快（切回蓝）；数据层双写/迁移方案是必答项（联动 Y 域——数据不可『切回』时蓝绿退化）」）；RTO 界形与代价相对序为人工判断（母本只给「苛刻」定性、无任何数值）；G3 @3730 与 9.4 @3687-3693 为交叉表源
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: clause_id, value: "9.2.5", verified: true}   # @3637 heading＋@3639 归属判据＋@3643-3649 表（本条骨架源 @3646）＋@3651 高影响决策与 G3 自洽性检查
         - {source_type: row_id, value: "9.2.5-蓝绿发布", verified: true}   # @3646 数据行逐字：定义／适用条件／卡片要点三列
@@ -9738,6 +9792,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DPS-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=9.2.5 @3647 表行三列逐字（定义「小比例流量先导新版本，观测指标达标后渐进放量」／适用条件「生产观测能力就绪（可观测性卡片前提）；有自动化回滚判据」／卡片要点「爆炸半径最小；放量判据必须是注册参数（指标＋阈值＋观测窗），人工『看着还行』不构成放量依据」）；放量判据形式化为交叉表源（G4 @3731）；包络与代价相对序为人工判断（母本无任何比例/阈值数值）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: clause_id, value: "9.2.5", verified: true}   # @3637 heading＋@3639 归属判据＋@3643-3649 表（本条骨架源 @3647）＋@3651 高影响决策与 G3 自洽性检查
         - {source_type: row_id, value: "9.2.5-金丝雀发布", verified: true}   # @3647 数据行逐字：定义／适用条件／卡片要点三列
@@ -9822,6 +9877,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DPS-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=9.2.5 @3648 表行三列逐字（定义「部署与发布解耦：代码先行部署，行为由开关控制（5.2.6 flag 的发布面用法）」／适用条件「高频发布、需业务侧控制放量节奏」／卡片要点「开关即 Z6 治理对象（expiry 纪律全适用）；开关矩阵组合爆炸是 P2 监测项」）；Z6 @2595 为交叉表源；包络与代价相对序为人工判断（母本无任何数值）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: clause_id, value: "9.2.5", verified: true}   # @3637 heading＋@3639 归属判据＋@3643-3649 表（本条骨架源 @3648）＋@3651 高影响决策与 G3 自洽性检查
         - {source_type: row_id, value: "9.2.5-功能开关驱动发布", verified: true}   # @3648 数据行逐字：定义／适用条件／卡片要点三列
@@ -9909,6 +9965,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-DPS-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=9.2.5 @3649 表行三列逐字（定义「每策略必附：回滚判据（自动触发指标）、回滚操作序列、数据回滚方案或『数据不可回滚』显式声明」／适用条件「全部策略（无回滚规程的部署策略不予注册）」／卡片要点「数据不可回滚场景（Y 域迁移类）→ 回滚语义改为『前滚修复』，须显式登记并附前滚预案」）；G3 @3730 为交叉表源；规程三件套的界形为人工判断（母本已给三件套结构，未给任何阈值）
+      source_class: external    # ADR-STY-FIM-01 §5.5：x.7 行级登记面覆盖本行
       source_pointers:
         - {source_type: clause_id, value: "9.2.5", verified: true}   # @3637 heading＋@3639 归属判据＋@3643-3649 表（本条骨架源 @3649）＋@3651 高影响决策与 G3 自洽性检查
         - {source_type: row_id, value: "9.2.5-回滚规程", verified: true}   # @3649 数据行逐字：定义／适用条件／卡片要点三列；语义判读（跨策略义务按表行序取 DPS-005）见块头
@@ -10889,6 +10946,7 @@ entries:
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-GOV-01，M3 落盘）
     provenance:
       origin: hybrid                   # 骨架=0.5 @117 表行三列逐字；分级／批准路径与 R 性质绑定为人工判断
+      source_class: mother-row    # ADR-STY-FIM-01 §5.5：出处为母本表格行；书目登记面为表级/节级
       source_pointers:
         - {source_type: clause_id, value: "0.5", verified: true}     # @111 heading＋@115-122 表（本条 @117）＋@124-131 分级／批准／超时链
         - {source_type: row_id, value: "0.5-完整 ADR", verified: true}   # @117 数据行首列正文逐字
