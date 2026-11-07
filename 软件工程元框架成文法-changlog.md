@@ -1308,3 +1308,15 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **D-STY-5 草案**：新增 `ADR草案-框架内生元方法-STY-021-024.md`（`status: draft`，未自批、未落台账）。判定 `1.2.4` `STY-021`（`@m:1394`）／`STY-024`（`@m:1397`）为 framework-internal；给出 FIM-1 五项判据＋否定清单；逐条排除书目 1／2／12／13／23；反例为「分布式单体」（纯提及无定义）与「绞杀者迁移」（有定义但书目 34 已登记）。执行前置：0.17.2 provenance 枚举行的 `origin` 枚举扩为 `framework-internal`＋`project.py` `ENUM_ORIGIN`，须另批。
 - **文档**：`registry/README.md` 新增 §4.30；本 changelog 条目。
 - **边界**：只 commit 不 push；D-STY-5 维持 draft，等待人类批准。
+
+## 2026-11-07：A′ 落盘——0.17.2 增 `source_class`＋`manual` 定义修订（ADR-STY-FIM-01 approved）
+
+- **母本两行（行内改文本、零插行；行数 4,447 不变）**：① `@m:335` `provenance` 增可选键 `source_class`（`external|mother-row|mother-clause|mother-definition|fallback`），`origin` 三值不动；② `@m:462` 将 `manual` 重定义为「人工录入、未经编译器」的**通道**语义，两类现状（有出处的人工录入、无表格无文献的人工判断）一并容纳，出处类别移交 `source_class`，字段级判断移交 `manual_judgments`。明细规则不入母本，写于 ADR §5.5。
+- **转向 A→A′**：原裁 A（扩 `origin` 枚举至 `framework-internal`）不成立——`origin` 三值同属产出通道轴，`framework-internal` 属出处类别轴；同域互斥会丢失 `STY-021` 的 `hybrid` 通道事实，且 `compiled × mother-definition` 等组合无值可写。改采 A′ 后两轴分离，成本同为一次 0.13，138 条既有 `origin` 无需改写。
+- **代码**：`project.py` 新增 `ENUM_SOURCE_CLASS`；`PROVENANCE_FIELDS` 纳入 `source_class`；M2 对「已填但越域」判硬失败；新增 `check_source_class`，补 `status_transitions`／`profiles` 枚举校验，并在自检报告汇总行报「未分类 n／总数」（当前 **174／174，已分类 0**；未填不阻断、不默认填充）。
+- **台账**：`G-GOV-2`／`SO-24` → `closed`（closure 记 2026-11-07 人类批准 ADR-STY-FIM-01）。gaps **24（open 9）**；SO **24（open 9）**；entries **138**；自检记录 **1,213**；硬失败／软警告 **0／0**；指针 **2,260**／miss **0**；占位符 **1,483＝1＋1,482**。
+- **锚点前后**：母本两行均为行内替换，零位移；`live_anchors` **8,933 → 8,956**（＋23，来自新增 ADR／README／台账文本的键控锚点）；`frozen_anchors` **2,748 → 2,750**（＋2＝本条 changelog 的 `@m:335`／`@m:462`）；`total_rows` **12,441 → 12,473**（＋32 行文档）；`frozen_only_mixed` **110 串／183 次**不变；`key_at_exempt_frozen` **148**；F-1 **8,795／8,795**；F-2～F-8 pass；`prefix_unresolved` **0**；drift `n/a 11,974`＋`suspect 499`（无新增 suspect）。
+- **抽印**：`软件工程元框架总纲单行本.md` 第 317／437 行同步重抽（行数 1,285 不变）。
+- **ADR**：`ADR草案-框架内生元方法-STY-021-024.md` 由 draft 转 **approved**，新增 §5.5 规范细则（两轴分工、五值含义、`manual` 两类区分、判定程序与判错后果）与 §5.6 转向记录。
+- **文档**：`registry/README.md` 新增 §4.31（仅一句指引，不复述规则）。
+- **边界**：只 commit 不 push；**数据侧未动**——`STY-021`／`STY-024` 的 `source_class` 未写入，`G-STY-5` 仍 open，`SO-3` 仍 open。

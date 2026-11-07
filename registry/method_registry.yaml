@@ -11911,7 +11911,19 @@ gaps:
     impact: "读取侧仅做枚举校验（M2）与卡片打印，无按 origin 分支的行为差异，故当前不产生硬失败；但投影与人类读者会把 18 条 status_transitions、3 条 profiles 的「人工录入＋引条款」读作「无出处的人工臆造」（0.17.7 门槛 2 的假精确反向风险），且 provenance 上无法区分「人工登记的外部出处」与「母本自建定义行」。本项与 G-STY-5／ADR草案-框架内生元方法-STY-021-024 的 `framework-internal` 扩枚举同源，须合批修订；单独扩值会加剧两义混同，不得先扩后修。"
     affected: "母本 0.17.2 @m:335（origin 枚举行）与 0.17.6 @m:455／@m:462（手工通道与 manual 定义行）；registry/scripts/project.py ENUM_ORIGIN；status_transitions ST-STY-01…ST-SRC-01 共 18 条的 provenance；profiles.yaml 中 3 条 origin=manual 的剖面；entries 138 条不受值影响（均为 hybrid）"
     route: "修 manual 定义属改母本条款（0.13 @m:271 高影响：R2／ADR＋人类批准）；与 `framework-internal` 扩枚举合并为一次 schema 变更，只走一次 0.13。批准后同步：① 母本 @m:335 枚举行与 @m:462 定义行；② project.py ENUM_ORIGIN；③ 重跑 --check／--project 与 anchor_index 零插行复核。未批准前保持 open，不得先改枚举、不得以注释补丁替代定义修订。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-GOV-2
+      date: '2026-11-07'
+      ruled_by: 人类责任方（2026-11-07 批准 ADR-STY-FIM-01，方案 A′）
+      basis: "0.17.2 @m:335 行内增 `source_class`（可选键、五值），0.17.6 @m:462 将 `manual` 重定义为「人工录入通道」；出处类别移入 `source_class`，与 `origin` 两轴分离。『manual 同时承担录入通道与证据类别两义』的混同前提自此消失。"
+      evidence:
+        - ADR草案-框架内生元方法-STY-021-024.md §5.2／§5.5／§5.6
+        - 母本 @m:335（provenance 行）、@m:462（四层数据源表 manual 行）
+        - registry/scripts/project.py（ENUM_SOURCE_CLASS、check_source_class）
+        - 软件工程元框架总纲单行本.md 第 317／437 行（机械重抽）
+      preserved: statement／impact／route 原文逐字保留（0.22）
+    note: "2026-11-07 执行转向：原 route 写『与 framework-internal 扩枚举合并』；人类同日改采 A′（不扩 origin，改增 source_class），实际落盘为 source_class。route 原文保留（0.22）。"
 
 # ---------------------------------------------------------------------------
 # 二、状态迁移简记（0.17.5：draft→seed = bootstrap 期专用，低影响 = 简记 + provenance）
@@ -13441,4 +13453,10 @@ survey_obligations:
     gap_ref: G-GOV-2
     consumer: "0.17.2 @m:335（origin 枚举）；0.17.6 @m:455／@m:462（手工种子通道与 manual 定义）；0.13 @m:271（高影响治理）；0.17.8 M2（origin 枚举校验）"
     trigger_rule: "R2／ADR＋人类批准（0.13）；批准后执行并复跑三项检查；未批准前保持 open，不得先扩枚举、不得以注释补丁替代定义修订"
-    status: open
+    status: closed
+    evidence:
+      - ADR草案-框架内生元方法-STY-021-024.md §5.2／§5.5／§5.6（A′：不扩 origin，增 source_class）
+      - 母本 @m:335（provenance 行）、@m:462（manual 定义行）
+      - registry/scripts/project.py（ENUM_SOURCE_CLASS、check_source_class）
+      - 软件工程元框架总纲单行本.md 第 317／437 行（机械重抽）
+    note: "2026-11-07 人类改采 A′：`origin` 保持三值，出处类别由 `provenance.source_class` 承载；未做 ENUM_ORIGIN 扩值，故 obligation 第②项的『扩 origin 枚举』按 A′ 置换为『增 source_class』。"

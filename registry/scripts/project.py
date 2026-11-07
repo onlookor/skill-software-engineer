@@ -54,6 +54,8 @@ PROJ_DIR = REG_DIR / 'projections'
 ENUM_STATUS = {'draft', 'seed', 'active', 'deprecated', 'retired'}
 ENUM_REVERSIBILITY = {'free', 'bounded', 'costly', 'irreversible'}
 ENUM_ORIGIN = {'manual', 'compiled', 'hybrid'}
+# ── ADR-STY-FIM-01 §5.5：出处类别（可选键；未填 = 未分类，不阻断）──
+ENUM_SOURCE_CLASS = {'external', 'mother-row', 'mother-clause', 'mother-definition', 'fallback'}
 ENUM_RELATION = {'hard_conflict', 'tension', 'composable', 'requires'}
 ENUM_LEVEL = {'hard', 'soft', 'conditional'}
 ENUM_SIGNAL = {'P0', 'P1', 'P2'}
@@ -75,7 +77,7 @@ APPLICABILITY_SPACES = ('problem_space', 'current_space', 'delivery_space')
 APPLICABILITY_ITEM_FIELDS = {'expr', 'form', 'answered_by', 'slot_name', 'value', 'source'}
 APPLICABILITY_ITEM_FORMS = {'predicate', 'question', 'slot'}
 SOURCE_REF_FIELDS = {'source_type', 'value', 'verified'}
-PROVENANCE_FIELDS = {'origin', 'source_pointers'}
+PROVENANCE_FIELDS = {'origin', 'source_class', 'source_pointers'}
 VERSION_FIELDS = {'major', 'minor', 'patch'}
 ENVELOPE_ITEM_FIELDS = {'metric', 'bound_expr', 'source'}
 COST_PROFILE_FIELDS = {
@@ -600,6 +602,9 @@ def check_schema(rep: Report, e: dict, eid: str):
             rep.fail('M2', where, f'provenance 含 0.17.2 之外字段：{sorted(set(prov) - PROVENANCE_FIELDS)}')
         if prov.get('origin') not in ENUM_ORIGIN:
             rep.fail('M2', where, f"provenance.origin={prov.get('origin')!r} ∉ {sorted(ENUM_ORIGIN)}（0.17.6 四层）")
+        sc = prov.get('source_class')
+        if sc is not None and sc not in ENUM_SOURCE_CLASS:
+            rep.fail('M2', where, f"provenance.source_class={sc!r} ∉ {sorted(ENUM_SOURCE_CLASS)}（ADR-STY-FIM-01 §5.5）")
         sps = prov.get('source_pointers')
         if not isinstance(sps, list) or not sps:
             rep.fail('M2', where, 'provenance.source_pointers 应为非空列表（0.4 出处门槛）')
@@ -1357,6 +1362,38 @@ GAP_SO_WHITELIST = {
 }
 
 
+def check_source_class(rep: Report, reg_doc: dict, profiles_doc: dict):
+    """ADR-STY-FIM-01 §5.5：source_class 的枚举校验与未分类计数（信息级，不参与阻断）。
+
+    条目侧枚举校验已由 check_schema 执行；本函数补 status_transitions／profiles 侧，
+    并统计三类台账的「未分类」条数（未填 = 未分类，不得读作 external 或 fallback）。
+    """
+    for ledger, rows, id_key in (
+        ('status_transitions', reg_doc.get('status_transitions') or [], 'transition_id'),
+        ('profiles', profiles_doc.get('profiles') or [], 'entry_id'),
+    ):
+        for item in rows:
+            prov = item.get('provenance')
+            if not isinstance(prov, dict):
+                continue
+            sc = prov.get('source_class')
+            if sc is not None and sc not in ENUM_SOURCE_CLASS:
+                rep.fail('M2', f'{ledger}:{item.get(id_key)}',
+                         f'provenance.source_class={sc!r} ∉ {sorted(ENUM_SOURCE_CLASS)}（ADR-STY-FIM-01 §5.5）')
+    total = unclassified = 0
+    for rows in (reg_doc.get('entries') or [], reg_doc.get('status_transitions') or [],
+                 profiles_doc.get('profiles') or []):
+        for item in rows:
+            prov = item.get('provenance')
+            if not isinstance(prov, dict):
+                continue
+            total += 1
+            if prov.get('source_class') is None:
+                unclassified += 1
+    rep.add('M2', 'source_class', 'info', True,
+            f'未分类 {unclassified}／{total}（已分类 {total - unclassified}）；未填 = 未分类，不得读作 external 或 fallback')
+
+
 def check_gap_so_integrity(rep, reg_doc):
     """信息级：gap↔SO 双向引用完整性（不参与 seed 资格，不作硬失败）。"""
     gaps = {g['gap_id']: g for g in (reg_doc.get('gaps') or [])}
@@ -1775,7 +1812,9 @@ def render_self_check(ctx: dict) -> str:
          f'未绑定槽 **{n_slot}** 处（原方括号总数 {n_total}；旧口径亦为 1480，'
          f'见 README §4.16／§4.17，不回改）',
          '- seed 资格：' + ('、'.join(f'{k} {v} 条' for k, v in sorted(verdicts.items())) or '（无）'),
-         f'- 指针反查：{ctx["ptr_total"]} 个，miss {ctx["ptr_miss"]} 个', '']
+         f'- 指针反查：{ctx["ptr_total"]} 个，miss {ctx["ptr_miss"]} 个',
+         f'- `provenance.source_class`：{next((r.reason for r in rep.rows if r.check == "M2" and r.scope == "source_class"), "未统计")}'
+         f'（ADR-STY-FIM-01 §5.5）', '']
     L += ['### 指针反查（PTR）分文件', '', '| 文件 | 指针数 | 命中 | miss |', '|---|---|---|---|']
     for name, (n, okn, misses) in ctx['per_file'].items():
         L.append(f'| {name} | {n} | {okn} | {len(misses)} |')
@@ -2084,6 +2123,7 @@ def run_checks():
     check_meta(rep, reg_doc, entries, idx, mat, prof_status)
     check_cst(rep, entries, mat, prof_status)
     check_ledgers(rep, reg_doc, vocab_doc, profiles_doc)
+    check_source_class(rep, reg_doc, profiles_doc)
     check_gap_so_integrity(rep, reg_doc)
     r2_mode = str((profiles_doc.get('check_switches') or {}).get('R2_APPL', 'info')).lower()
     check_r2_applicability(rep, entries, idx, r2_mode)
