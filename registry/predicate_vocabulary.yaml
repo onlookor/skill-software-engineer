@@ -152,6 +152,52 @@ predicates:
   - {name: registered_max_depth, arity: 0, kind: constant, block: "5.5", line: 2596, source: {source_type: clause_id, value: "5.5", verified: true}, note: "constant：已登记最大深度（Z5 公式引用 @2596；无实参）"}
   - {name: bound, arity: 1, kind: term, block: "6.5", line: 2901, source: {source_type: clause_id, value: "6.5", verified: true}, note: "term function：目标界值 bound(g)（Q1 公式使用 @2901；母本无独立定义行）"}
 
+  # ── 机器层块补录·第二批（2026-11-07；块清单唯一权威＝DATA-SPEC D1.4）──
+  # 3.5 契约与上下文映射层（7 名）
+  - {name: contract, arity: 7, kind: predicate, block: "3.5", line: 2004, source: {source_type: clause_id, value: "3.5", verified: true}, note: "contract(C, provider, consumer_set, kind, version, compat_policy, lifecycle_state)"}
+  - {name: sla_clause, arity: 3, kind: predicate, block: "3.5", line: 2005, source: {source_type: clause_id, value: "3.5", verified: true}, note: "sla_clause(C, metric, bound_expr)"}
+  - {name: breaking_change, arity: 3, kind: predicate, block: "3.5", line: 2006, source: {source_type: clause_id, value: "3.5", verified: true}, note: "breaking_change(C, v1, v2)"}
+  - {name: deprecation_window, arity: 3, kind: predicate, block: "3.5", line: 2007, source: {source_type: clause_id, value: "3.5", verified: true}, note: "deprecation_window(C, v1, until)"}
+  - {name: cdc_suite, arity: 1, kind: predicate, block: "3.5", line: 2008, source: {source_type: clause_id, value: "3.5", verified: true}, note: "cdc_suite(C)"}
+  - {name: covers, arity: 3, kind: predicate, block: "3.5", line: 2009, source: {source_type: clause_id, value: "3.5", verified: true}, note: "covers(C, u1, u2)；契约 C 覆盖单元 u1→u2 的交互"}
+  - {name: context_map, arity: 3, kind: predicate, block: "3.5", line: 2010, source: {source_type: clause_id, value: "3.5", verified: true}, note: "context_map(ctx1, ctx2, relation)；relation ∈ {customer_supplier, conformist, acl, shared_kernel, separate_ways}"}
+  # 7.5 决策与批准层（11 名）
+  - {name: decision_record, arity: 7, kind: predicate, block: "7.5", line: 3120, source: {source_type: clause_id, value: "7.5", verified: true}, note: "decision_record(D, kind, level, status, evidence_set, timestamp, author)"}
+  - {name: impact_scope, arity: 2, kind: predicate, block: "7.5", line: 3121, source: {source_type: clause_id, value: "7.5", verified: true}, note: "impact_scope(D, aspect_set)"}
+  - {name: reversibility, arity: 2, kind: predicate, block: "7.5", line: 3121, source: {source_type: clause_id, value: "7.5", verified: true}, note: "reversibility(D, class)；与 0.17.2 字段 typical_reversibility 不同指"}
+  - {name: approval_route, arity: 4, kind: predicate, block: "7.5", line: 3122, source: {source_type: clause_id, value: "7.5", verified: true}, note: "approval_route(D, role_chain, deadline, escalation_log)"}
+  - {name: approved_by, arity: 4, kind: predicate, block: "7.5", line: 3123, source: {source_type: clause_id, value: "7.5", verified: true}, note: "approved_by(D, role, credential, t)"}
+  - {name: shorthand_entry, arity: 2, kind: predicate, block: "7.5", line: 3124, source: {source_type: clause_id, value: "7.5", verified: true}, note: "shorthand_entry(e, fields5)；五字段简记条目"}
+  - {name: new_fact, arity: 4, kind: predicate, block: "7.5", line: 3125, source: {source_type: clause_id, value: "7.5", verified: true}, note: "new_fact(f, space, source, t)"}
+  - {name: reopen_proposal, arity: 5, kind: predicate, block: "7.5", line: 3126, source: {source_type: clause_id, value: "7.5", verified: true}, note: "reopen_proposal(R, target_D, fact_set, verdict ∈ {admitted, rejected(reason)}, ruling)"}
+  - {name: decision_lineage, arity: 4, kind: predicate, block: "7.5", line: 3127, source: {source_type: clause_id, value: "7.5", verified: true}, note: "decision_lineage(D, upstream_facts, upstream_decisions, downstream_decisions)；4.5 数据血缘为 data_lineage"}
+  - {name: unreachable_event, arity: 2, kind: predicate, block: "7.5", line: 3128, source: {source_type: clause_id, value: "7.5", verified: true}, note: "unreachable_event(D, t)"}
+  - {name: disposition, arity: 2, kind: predicate, block: "7.5", line: 3128, source: {source_type: clause_id, value: "7.5", verified: true}, note: "disposition(D, block|provisional|defer)"}
+  # 9.5 治理与演化层（5 名；同块另有 VG-09／VG-08 扩容十三名）
+  - {name: guard_rule, arity: 9, kind: predicate, block: "9.5", line: 3708, source: {source_type: clause_id, value: "9.5", verified: true}, note: "guard_rule(rule_id, monitored_predicate, level, means, params, obligation, waiver_clause, source_adr, version)"}
+  - {name: signal, arity: 5, kind: predicate, block: "9.5", line: 3709, source: {source_type: clause_id, value: "9.5", verified: true}, note: "signal(s, rule_id, value, t, trend_window_verdict)"}
+  - {name: waiver, arity: 6, kind: predicate, block: "9.5", line: 3710, source: {source_type: clause_id, value: "9.5", verified: true}, note: "waiver(w, scope, deadline, remediation_plan, risk_quant, approval)；五要素见 9.2.2"}
+  - {name: debt_item, arity: 5, kind: predicate, block: "9.5", line: 3711, source: {source_type: clause_id, value: "9.5", verified: true}, note: "debt_item(d, source_signal, interest_expr, repayment_action, priority)"}
+  - {name: drift, arity: 4, kind: predicate, block: "9.5", line: 3712, source: {source_type: clause_id, value: "9.5", verified: true}, note: "drift(D_approved, observed_predicate_set, deviation, remediation_route ∈ {waiver, reopen, evolution_path})"}
+  # 0.19.6 冲突消解层（8 名）
+  - {name: conflict_instance, arity: 6, kind: predicate, block: "0.19.6", line: 744, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "conflict_instance(cf, dp, directive_a, directive_b, diagnosis_step, resolution)"}
+  - {name: concession_record, arity: 4, kind: predicate, block: "0.19.6", line: 745, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "concession_record(cf, overridden, overrider, pointers)"}
+  - {name: authority_level, arity: 2, kind: predicate, block: "0.19.6", line: 746, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "authority_level(directive, level ∈ A0..A5)"}
+  - {name: tiebreak, arity: 3, kind: predicate, block: "0.19.6", line: 747, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "tiebreak(cf, step ∈ T1..T4, verdict)"}
+  - {name: condition_eval, arity: 3, kind: predicate, block: "0.19.6", line: 748, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "condition_eval(pred, value ∈ {true, false, unknown}, obligation)；三值不得塌缩为两值"}
+  - {name: conflict_graph, arity: 2, kind: predicate, block: "0.19.6", line: 749, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "conflict_graph(nodes, edges)"}
+  - {name: escalation_depth, arity: 2, kind: predicate, block: "0.19.6", line: 750, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "escalation_depth(chain, depth)"}
+  - {name: human_ruling, arity: 3, kind: predicate, block: "0.19.6", line: 751, source: {source_type: clause_id, value: "0.19.6", verified: true}, note: "human_ruling(cf, ruling, t)；裁决后即为 A2 约束"}
+  # 0.22.4 结构性承诺层（4 名）
+  - {name: anchor_commitment, arity: 3, kind: predicate, block: "0.22.4", line: 1187, source: {source_type: clause_id, value: "0.22.4", verified: true}, note: "anchor_commitment(type ∈ {numbering, modality, registration}, target, version)"}
+  - {name: modality_usage, arity: 3, kind: predicate, block: "0.22.4", line: 1188, source: {source_type: clause_id, value: "0.22.4", verified: true}, note: "modality_usage(paragraph, verb, tier ∈ {must, must_not, should, may})"}
+  - {name: narrative_only_block, arity: 2, kind: predicate, block: "0.22.4", line: 1189, source: {source_type: clause_id, value: "0.22.4", verified: true}, note: "narrative_only_block(section, content)"}
+  - {name: reference_pointer, arity: 2, kind: predicate, block: "0.22.4", line: 1190, source: {source_type: clause_id, value: "0.22.4", verified: true}, note: "reference_pointer(text_location, entry_id)"}
+  # 0.23.5 编译接口层（3 名）
+  - {name: compile_interface_constraint, arity: 3, kind: predicate, block: "0.23.5", line: 1280, source: {source_type: clause_id, value: "0.23.5", verified: true}, note: "compile_interface_constraint(source_clause, target_requirement, level ∈ hard | soft)"}
+  - {name: r2_proposal_from_compiler, arity: 3, kind: predicate, block: "0.23.5", line: 1281, source: {source_type: clause_id, value: "0.23.5", verified: true}, note: "r2_proposal_from_compiler(gap_description, impact, suggested_fix)"}
+  - {name: compile_artifact, arity: 4, kind: predicate, block: "0.23.5", line: 1282, source: {source_type: clause_id, value: "0.23.5", verified: true}, note: "compile_artifact(version, framework_version, registry_version, fidelity_verdict)"}
+
 formula_words:
   # 编译规范 2.3「公式约定词内建语义表」——封闭集，非白板谓词，M4 校验豁免
   - {name: approved, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
