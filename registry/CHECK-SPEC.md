@@ -26,9 +26,9 @@
 | C-ENV | 母本 0.8「每种方法条目必须声明质量属性包络」＋0.17.2 澄清「每种方法条目」指 0.17.3 全部 kind：kind 不以质量属性为选择判据时，可在剖面把 `envelope` 登记为 `not_applicable`（逐项附 `reason` 引本条），属显式豁免而非省略。所有 kind 的条目 `envelope` 必须取值；空值须有显式登记（剖面 `not_applicable`，或 `entry_level_exemptions` 的 `field: envelope`／`check: C-ENV`／`scope`／`reason`）；无值且无登记 = 硬失败（**禁默认放行**） | 硬（阻断 seed） | 逐条目、逐 envelope 项 |
 | C-KP | 元注册条目（`kind_profile_*`）的完备性判据 = 物化后的 required_fields／optional_fields 两列表在案（不受 M2 按 kind 剖面判定，避免自指循环；`profiles.yaml: gaps/KP-G2`） | 硬 | 逐元条目 |
 | C-ST | 声明状态与自检资格一致：`status=seed` 必须全过硬检查；未过者必须为 `draft`（剖面 `draft` 的情形由 M2 承担）。本检查只判 seed 资格；`active`／`deprecated`／`retired` 的资格由 0.17.5／0.17.7 管辖，工具只记 info、不判失败 | 硬（仅 seed 资格） | `∀E(status=seed)` |
-| C-ID | `entry_id` 唯一、格式 `{kind前缀}-{三位序号}`、kind ∈ 0.17.3 封闭枚举、无与母本既有引用冲突的重排；元条目例外：`kind_profile_{KIND}` | 硬（注册表级身份前置，失败仅阻断涉事 `entry_id`） | 全体条目 |
+| C-ID | `entry_id` 唯一、格式 `{kind前缀}-{序号}`（本目录统一三位书写，DATA-SPEC D4.7）、kind ∈ 0.17.3 封闭枚举、无与母本既有引用冲突的重排；元条目例外：`kind_profile_{KIND}` | 硬（注册表级身份前置，失败仅阻断涉事 `entry_id`） | 全体条目 |
 
-〔M2–M6／M9 母本派生 0.17.8；C-ENV 母本派生 0.8＋0.17.2；C-KP 母本派生 0.17.2／0.17.8；C-ST 母本派生 0.17.5／0.17.7；C-ID 母本派生 0.17.3〕
+〔M2–M6／M9 母本派生 0.17.8；C-ENV 母本派生 0.8＋0.17.2；C-KP 母本派生 0.17.2／0.17.8；C-ST 母本派生 0.17.5／0.17.7；C-ID 身份/唯一性母本派生 0.17.2；「三位」书写为本目录新立（DATA-SPEC D4.7）〕
 
 - **C1.11 seed 资格**：`seed 资格 = M2 ∧ M3 ∧ M4 ∧ M6 ∧ M9 ∧ C-ENV ∧ C-ST ∧ C-ID`（M5 为软，记警告不阻断；C-ID 按全体条目判定，失败时仅阻断涉事 `entry_id`）。生命周期与迁移权限见 0.17.5；`draft→seed` 为 bootstrap 期专用（条件 M2–M6 全过；M5 级别按 0.17.8 为软）。〔母本派生 0.17.5／0.17.7／0.17.8〕
 
