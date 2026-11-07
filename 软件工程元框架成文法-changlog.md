@@ -1330,3 +1330,10 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **`check_ledgers`（L1255–L1323）**：旧逻辑要求每条 `status_transitions` 简记 `scope` 与当前 `status=to` 条目集**双向相等**，任何合法回退都会被判硬失败。改为**时间切片＋迁入覆盖**：`effective = declared − moved_on`（`moved_on`＝后序、`from == to`、已登记的迁出简记 scope 并集）；正向 `effective − actual` 为空；反向 `actual − inbound(to)` 为空（`to ≠ draft`）；`to = draft` 仅校验 `(actual ∩ touched) − inbound(draft)`。**不放松强度**：未登记的状态改动仍被正向／反向校验抓住；同时新增「非初态必须有迁入简记覆盖」「曾登记条目静默退回」两类校验。合成夹具实测：基线 0；回退＋登记 0（旧 18）；回退未登记 18；登记未执行 1；回退再升 0。
 - **不变量**：entries **138／138 seed**；自检记录 **1,213**；硬失败 **0**、软失败 **0**（info 级既有 3 条不变）；M5 **138 条全 soft ok**；母本 **4,447 行／216 围栏**；单行本 **1,285 行**。
 - **边界**：只 commit 不 push；本批不改 0.17.5 条文（`seed→draft` 权限行留待下一批）、不改 `method_registry.yaml` 的迁移记录 schema、不改 README C-ST 注记、不改任何条目状态。
+
+## 2026-11-07（续 2）：STY-021／STY-024 登记 `source_class`＋关闭 G-STY-5
+
+- **数据侧**：`STY-021`／`STY-024` 的 `provenance` 增 `source_class: mother-definition`（ADR-STY-FIM-01 §5.5；`origin` 保持 `hybrid`，`references` 维持 `[]`）。未分类计数 **174／174 → 172／174（已分类 2）**；条目 `status` 未动。
+- **台账**：`G-STY-5` → `closed`（`date: 2026-11-07`、`ruled_by: 人类批准 ADR-STY-FIM-01`、basis = 书目 1／2／12／13／23 逐条排除＋FIM-1 F1–F5 全满足）。`SO-3` **保持 open**：其范围另含 `STY-012`／`G-STY-3`（ADR-STY-FIM-01 §7 决策 D、§8 第 3 条；先例：G-STY-1 关闭后 SO-1 保持 open）。
+- **不变量**：entries **138／138 seed**；硬失败 **0**；自检记录 **1,213 → 1,214**；gaps **24（open 9 → 8）**。
+- **边界**：只 commit 不 push。
