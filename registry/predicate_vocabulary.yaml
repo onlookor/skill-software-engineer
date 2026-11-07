@@ -233,6 +233,53 @@ clause_defined_predicates:
   # ── 集合成员判定（2026-11-07 ⑨-⑦；由 predicates 移入，不删除）──
   - {name: conflict_matrix, arity: 1, block: "1.5", line: 1485, anchor: "@1485", source: {source_type: clause_id, value: "1.5", verified: true}, note: "集合成员判定，arity 1；V3 公式内使用（1.2.5 冲突矩阵表）"}
 
+  # ── 条款公式残差谓词·第三批（2026-11-07；x.5 性质公式内使用、无机器层块定义；36 名）──
+  # 1.5（2 名）
+  - {name: cycle, arity: 1, kind: predicate, block: "1.5", line: 1483, anchor: "@1483", source: {source_type: clause_id, value: "1.5", verified: true}, note: "V1 公式内使用（cycle(forbidden_dependency)）"}
+  - {name: allowed_protocols, arity: 1, kind: predicate, block: "1.5", line: 1484, anchor: "@1484", source: {source_type: clause_id, value: "1.5", verified: true}, note: "V2 公式内使用（allowed_protocols(S)）"}
+  # 2.5（7 名）
+  - {name: capacity_evidence_sufficient, arity: 1, kind: predicate, block: "2.5", line: 1722, anchor: "@1722", source: {source_type: clause_id, value: "2.5", verified: true}, note: "W3 公式内使用"}
+  - {name: dsm_optimal, arity: 1, kind: predicate, block: "2.5", line: 1725, anchor: "@1725", source: {source_type: clause_id, value: "2.5", verified: true}, note: "W5 公式内使用"}
+  - {name: semantically_coherent, arity: 1, kind: predicate, block: "2.5", line: 1725, anchor: "@1725", source: {source_type: clause_id, value: "2.5", verified: true}, note: "W5 公式内使用"}
+  - {name: flag_for_review, arity: 1, kind: predicate, block: "2.5", line: 1725, anchor: "@1725", source: {source_type: clause_id, value: "2.5", verified: true}, note: "W5 公式内使用"}
+  - {name: interface_cost, arity: 1, kind: predicate, block: "2.5", line: 1727, anchor: "@1727", source: {source_type: clause_id, value: "2.5", verified: true}, note: "W6 公式内使用（interface_cost(M)）"}
+  - {name: cohesion_gain, arity: 1, kind: predicate, block: "2.5", line: 1727, anchor: "@1727", source: {source_type: clause_id, value: "2.5", verified: true}, note: "W6 公式内使用（cohesion_gain(M)）"}
+  - {name: tech_debt_flag, arity: 1, kind: predicate, block: "2.5", line: 1727, anchor: "@1727", source: {source_type: clause_id, value: "2.5", verified: true}, note: "W6 公式内使用（tech_debt_flag(M)）"}
+  # 3.5（2 名）
+  - {name: interaction, arity: 2, kind: predicate, block: "3.5", line: 2016, anchor: "@2016", source: {source_type: clause_id, value: "3.5", verified: true}, note: "X1 公式内使用（interaction(u1,u2)）"}
+  - {name: satisfies, arity: 1, kind: predicate, block: "3.5", line: 2023, anchor: "@2023", source: {source_type: clause_id, value: "3.5", verified: true}, note: "X6 公式内使用（satisfies(3.2.3 四条件)）"}
+  # 4.5（4 名）
+  - {name: allowed_mechanisms, arity: 1, kind: predicate, block: "4.5", line: 2293, anchor: "@2293", source: {source_type: clause_id, value: "4.5", verified: true}, note: "Y4 公式内使用"}
+  - {name: residency_compliant, arity: 1, kind: predicate, block: "4.5", line: 2295, anchor: "@2295", source: {source_type: clause_id, value: "4.5", verified: true}, note: "Y5 公式内使用"}
+  - {name: conflict_signal, arity: 1, kind: predicate, block: "4.5", line: 2297, anchor: "@2297", source: {source_type: clause_id, value: "4.5", verified: true}, note: "Y6 公式内使用"}
+  - {name: reopen, arity: 1, kind: predicate, block: "4.5", line: 2297, anchor: "@2297", source: {source_type: clause_id, value: "4.5", verified: true}, note: "Y6 公式内使用（reopen(aspect1)，嵌套于 conflict_signal）"}
+  # 6.5（5 名）
+  - {name: routed_to, arity: 1, kind: predicate, block: "6.5", line: 2903, anchor: "@2903", source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q3 公式内使用（routed_to(CH-B)）"}
+  - {name: recorded_in, arity: 1, kind: predicate, block: "6.5", line: 2907, anchor: "@2907", source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q4 公式内使用（recorded_in(ADR)）"}
+  - {name: consumed, arity: 1, kind: predicate, block: "6.5", line: 2909, anchor: "@2909", source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q5 公式内使用（consumed(card)）"}
+  - {name: mapped, arity: 2, kind: predicate, block: "6.5", line: 2911, anchor: "@2911", source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q6 公式内使用（mapped(g, t)）"}
+  - {name: monitored, arity: 1, kind: predicate, block: "6.5", line: 2912, anchor: "@2912", source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q7 公式内使用；0.17.8 M7 亦见 monitored(P2)"}
+  # 7.5（5 名）
+  - {name: material, arity: 2, kind: predicate, block: "7.5", line: 3138, anchor: "@3138", source: {source_type: clause_id, value: "7.5", verified: true}, note: "R2 公式内使用（material(f, target_D)）"}
+  - {name: five_fields_complete, arity: 1, kind: predicate, block: "7.5", line: 3139, anchor: "@3139", source: {source_type: clause_id, value: "7.5", verified: true}, note: "R3 公式内使用"}
+  - {name: downstream_consumption, arity: 1, kind: predicate, block: "7.5", line: 3145, anchor: "@3145", source: {source_type: clause_id, value: "7.5", verified: true}, note: "R6 公式内使用"}
+  - {name: consumed_as, arity: 1, kind: predicate, block: "7.5", line: 3146, anchor: "@3146", source: {source_type: clause_id, value: "7.5", verified: true}, note: "R6 公式内使用（consumed_as(soft)）"}
+  - {name: tension_acknowledgment, arity: 1, kind: predicate, block: "7.5", line: 3146, anchor: "@3146", source: {source_type: clause_id, value: "7.5", verified: true}, note: "R6 公式内使用"}
+  # 8.5（2 名）
+  - {name: seven_fields_complete, arity: 1, kind: predicate, block: "8.5", line: 3449, anchor: "@3449", source: {source_type: clause_id, value: "8.5", verified: true}, note: "T3 公式内使用"}
+  - {name: scheduled, arity: 1, kind: predicate, block: "8.5", line: 3457, anchor: "@3457", source: {source_type: clause_id, value: "8.5", verified: true}, note: "T8 公式内使用"}
+  # 9.5（7 名）
+  - {name: deployed_without, arity: 1, kind: predicate, block: "9.5", line: 3736, anchor: "@3736", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G1 公式内使用（deployed_without(remediation ∨ approved_waiver)）"}
+  - {name: five_elements, arity: 1, kind: predicate, block: "9.5", line: 3738, anchor: "@3738", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G2 公式内使用"}
+  - {name: external_cause, arity: 1, kind: predicate, block: "9.5", line: 3738, anchor: "@3738", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G2 公式内使用"}
+  - {name: closed, arity: 1, kind: predicate, block: "9.5", line: 3743, anchor: "@3743", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G5 公式内使用（closed(w)）"}
+  - {name: auto_escalate, arity: 1, kind: predicate, block: "9.5", line: 3743, anchor: "@3743", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G5 公式内使用（auto_escalate(P0)）"}
+  - {name: silent_renewal, arity: 1, kind: predicate, block: "9.5", line: 3743, anchor: "@3743", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G5 公式内使用"}
+  - {name: routed_through, arity: 1, kind: predicate, block: "9.5", line: 3748, anchor: "@3748", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G8 公式内使用（routed_through(R2)）"}
+  # 10.5（2 名）
+  - {name: referenced_by, arity: 1, kind: predicate, block: "10.5", line: 4037, anchor: "@4037", source: {source_type: clause_id, value: "10.5", verified: true}, note: "E1 公式内使用"}
+  - {name: generated_from, arity: 1, kind: predicate, block: "10.5", line: 4038, anchor: "@4038", source: {source_type: clause_id, value: "10.5", verified: true}, note: "E2 公式内使用（generated_from(snapshot)）"}
+
 vocabulary_gaps:
   # 检测谓词书写中发现的词汇缺口 → R2 提议候选（不得本地造词），与 method_registry.yaml gaps 台账联动
   - id: VG-01
