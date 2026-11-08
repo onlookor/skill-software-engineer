@@ -1701,3 +1701,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **编号审计**：S-1～S-9 不占独立 id（经 `M2` 记录，S-9 已占）；S-10／S-11 已用；**S-12 占用前逐一核对现有 id 确认未冲突**，并在 CHECK-SPEC C5.21 与 ADR 中记录在先占用与改名映射要求。
 - **治理**：新建 `adr/ADR-SRC-P0-07-approved-20261108-元数校验S-12-info干跑.md`；`adr/INDEX.md`（25→**26** 份，approved 25）；`CHECK-SPEC.md` 新增 **C5.21**。
 - **自检**：`--check` **1,235 条记录**（+23：22 条条目行＋1 条全量行）｜硬 **0**｜软 **0**｜info **63**（未成立 23）；占位符 **1,478**；指针 **2,409**，miss **0**；母本 **0 行**；词表 **218** 名不变。
+
+## 2026-11-08（续 32）：S-12 转硬、显式占位与可变长槽
+
+- **三条规矩**：DATA-SPEC 新增 **D3.7 显式占位与投影边界**（少给参数必须 `·`，裸缺参报错；`·` = 该槽有意不约束，写漏 = 该槽未出现；投影只用于引用某槽值，`).槽名` 才识别，值位／布尔位边界见 ADR-SRC-P0-08 §9）与 **D3.8 可变长槽的 ≥N 判定**（`variadic: true` 按 `argc ≥ arity`，当前仅 `registry_entry`，N=6；其余 `argc = arity`；含可变槽调用单列计数）。CHECK-SPEC **C5.21** 由 info 改 **hard**，补判定式、投影、未覆盖分组与编号审计。
+- **23 条必要性评估（结论 A）**：VFM-001…006 的 24 个 AP 逐条判定面均为「单条性质／检查／工件／用例／评审点／信号」的字段或记录不全，没有一条是「族中缺条目」；被否条件全部落在绑定变量自身，不需要族级前提。`registry_entry(·, VFM-00x)` 是「本条目已登记」作用域守卫，`VFM-00x` 是条目 ID 而非 `kind`，属槽位错类型；改为 **`registry_entry(VFM-00x, ·, ·, ·, ·, ·)`**（E 归位 + kind／version／status／provenance／fields 显式不约束）。**不新登记谓词。**
+- **43 处修补**：23 条 `registry_entry`（槽位互换 + 6 实参）；9 条少参补 `·`（`shared_write_exception`×3、`quality_impact_card`、`dsm`、`interaction_flow(·)`、`has_approved_exception`、`baseline`、`falsification_metric`）；11 条真错（`delivery_semantics(I)`×3、`timeout_budget(path)`×2＋`(·)`×1、`selection_log`×2、`interaction_flow(path/u1, sync_chain)`×2、`verdict(·,·,·)`×1）。**改变语义 3 条**：STY-001-AP1／STY-002-AP1 的 `kind` 从 participants 槽移回第 3 槽；DPS-003-AP2 删除 `verdict` 多余第 3 槽（判定目标不变）。
+- **未覆盖 72**：`approved` 8／`declared` 27／`has` 16／`registered` 18／`sourced` 3；`formula_words` 无 `arity`，不计通过、不计失败，`--check` 单列 `S-12／未覆盖` info 行按名分组。
+- **S-12 转硬**：info → **hard**；固定元数 `argc = arity`，variadic `argc ≥ arity`；投影（`)`+`.`+标识符）不计 arity；无 arity 项记未覆盖。**零豁免**：未新增 `waivers`／`GAP_SO_WHITELIST`／gap／`rep.skip`；`arity` 零改动；母本 **0 行**。
+- **自检**：`--check` **1,214 条记录**（1,235 −22 条 S-12 失败行 −1 条旧 info 全量行 +2 条新 S-12 行）｜硬 **0**｜软 **0**｜info **41**（S-12 仅未覆盖 1 行；未成立 0）｜退出码 **0**；S-12：调用 **501**（470／6／19／6）、不匹配 **0**、解析可疑 **0**、投影 **0**、variadic **23**／固定 **406**、无调用串 **870**；占位符 **1,478**；指针 **2,409**，miss **0**。
+- **治理**：新建 `adr/ADR-SRC-P0-08-approved-20261108-S12转硬与显式占位.md`；`adr/INDEX.md`（26→**27** 份，approved 26）；`ADR-SRC-P0-07` 追加状态更新（原文保留）。
