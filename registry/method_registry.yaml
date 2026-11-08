@@ -11374,7 +11374,7 @@ entries:
     compatibility: []                  # 信号源之间无组合/冲突语义；跨条目关系由 9.2.3 汇聚表承载
     constraints_imposed:
       - {target_aspect: 9, constraint: "本信号进入守护消费面：检测结果按 9.2.1 级别触发响应义务", level: hard}
-      - {target_aspect: 10, constraint: "机器层：signals.detection_predicate 须最终可执行（G-SRC-1 结清前不宣称）；人类层：投影须列出本信号与消费方式", level: hard}
+      - {target_aspect: 10, constraint: "机器层：signals.detection_predicate 与 severity_condition.when_predicate 须词汇封闭、可执行（2026-11-08 起由 M4 硬校验，S-11 硬判纯散文）；人类层：投影须列出本信号与消费方式", level: hard}
     anti_patterns: []                  # 信号源本身即检测面，不再嵌套反模式（避免双重真相）
     signals:
       - signal_id: SRC-001-S1
@@ -11402,7 +11402,7 @@ entries:
     narrative:
       benefit_cost_analysis: "收益：把「跨边界调用密度」与「反馈环趋势」从一句格言变成两条可结构化的信号，级别升级条件写进 severity_condition，消费方式写进 consumption，避免在交付压力下被解释成「再看看」。代价：DSM 基线本身须由现状勘察给出（无基线则密度判据不可求值）；反馈环检测需要交互图维护。"
       typical_scenarios: "源：2.2.4 通道一（增量）。棕地模块化改造后跨边界调用回升；事件流改造后出现隐性反馈环；两者均以「P2 阈值＋趋势」起步，恶化持续才升 P1。"
-      common_misuse: "把单次峰值当「恶化持续」直接升 P1；把密度下降当作反馈环已消除（两者是不同子信号）；用自由文本记录消费方式而不进 consumption；在 detection_predicate 里写方括号占位（本批禁，谓词缺口走 G-SRC-1）。"
+      common_misuse: "把单次峰值当「恶化持续」直接升 P1；把密度下降当作反馈环已消除（两者是不同子信号）；用自由文本记录消费方式而不进 consumption；在 detection_predicate 里写方括号占位（S-4 禁，谓词缺口走 R2 提议并登记 vocabulary_gaps）。"
 
   - entry_id: SRC-002
     kind: SRC
@@ -11537,7 +11537,7 @@ entries:
       - {property_id: G1, role: triggers}
     references: []
     narrative:
-      benefit_cost_analysis: "收益：僵尸开关不再一律按 P2 记录——行为级开关直接升 P0，这条升级路径由 severity_condition 结构化，机器可读；隐式时序假设单独成信号，避免它被「没坏就先不动」掩盖。代价：expiry 与「行为级」判定都依赖台账与人工分类，属于 G-SRC-1 待登记谓词。"
+      benefit_cost_analysis: "收益：僵尸开关不再一律按 P2 记录——行为级开关直接升 P0，这条升级路径由 severity_condition 结构化，机器可读；隐式时序假设单独成信号，避免它被「没坏就先不动」掩盖。代价：expiry 与「行为级」判定依赖的谓词（expiry_of／cleanup_filed／behavior_switch）已于 2026-11-08 登记，但其取值仍依赖台账与人工分类。"
       typical_scenarios: "源：5.4 施加项。功能开关过期未清理；发布顺序被隐含在脚本里；只在上次成功过的时间窗内能跑。"
       common_misuse: "把所有僵尸开关都当 P2（忽略行为级分支）；把「没坏」当作未过期；用注释记录隐式时序而不登记。"
 
@@ -11683,7 +11683,7 @@ entries:
     formal_anchor: []
     references: []
     narrative:
-      benefit_cost_analysis: "收益：把 8.4 的 T5 基级与条件升级原样搬进 severity／severity_condition，T5 不再是一条只存在于散文里的分级；幻觉套件与长期失败用例各自成为可消费子信号，清理与积压不再混为一谈。代价：金字塔形状与「无下层覆盖」的判定依赖 T5 谓词登记（G-SRC-1）。"
+      benefit_cost_analysis: "收益：把 8.4 的 T5 基级与条件升级原样搬进 severity／severity_condition，T5 不再是一条只存在于散文里的分级；幻觉套件与长期失败用例各自成为可消费子信号，清理与积压不再混为一谈。代价：金字塔形状与「无下层覆盖」的判定依赖 T5 谓词登记（pyramid_distortion／distortion 已于 2026-11-08 登记）。"
       typical_scenarios: "源：8.4 施加项。单元测试很多但硬性质无下层覆盖；测试断言引用了错误事实；同一用例长期红着却无人处理。"
       common_misuse: "把金字塔失真直接报 P1（应走条件升级）；把幻觉套件当普通测试失败；长期失败用例只记录不闭环。"
 
@@ -12167,7 +12167,27 @@ gaps:
     impact: "本批 M4 不扫 signals（只做 S-4 非空校验），故 signals.detection_predicate 是未机器封闭的文本，不得被读作「可执行谓词」。为防错分账，本批 detection_predicate／when_predicate 一律禁方括号：带「待勘察：」会误生成 M15 勘察义务，不带会虚增槽数；故占位符口径维持 1,483（事实 1＋槽 1,482）。不影响 M2 必填与 seed 资格（S-1～S-9 全过）。"
     affected: "SRC-001…SRC-008 的 signals[].detection_predicate 与 signals[].severity_condition.when_predicate；predicate_vocabulary.yaml；M4 检查面（现不覆盖 signals）"
     route: "逐条把谓词登记进 predicate_vocabulary.yaml（走 R2 提议；该文件为非权威投影，权威在母本 x.5／0.17.8／0.18.6 等）→ 登记完成后另开 ADR，把 M4 扩到 signals[].detection_predicate 并重跑 M4。登记前保持 open；不得以调用式（如 expiry(flag)）冒充已登记谓词，也不得以方括号占位替代登记。"
-    status: open
+    status: closed
+    closure:
+      gap_ref: G-SRC-1
+      date: '2026-11-08'
+      ruled_by: 人类责任方（2026-11-08 指示「两件一起转硬」）
+      basis: >-
+        route 两段全部履行：(1) 谓词逐条登记——VG-05（expiry_of／cleanup_filed／behavior_switch）、
+        VG-07（pyramid_distortion／distortion）、VG-09（conforms_to／auth_bypass／monotonic_trend／
+        remediation_or_waiver_record／consecutive_failure 等）经 ADR-VG09-01／ADR-SRC-P0-03／ADR-SRC-P0-05 落册；
+        (2) 另开 ADR-SRC-P0-06，把 M4 从 anti_patterns.detection_predicate＋applicability 扩到
+        signals[].detection_predicate 与 signals[].severity_condition.when_predicate 并重跑。
+        重跑实测：M4 扫描面 1,131→1,150 处（14 条 detection_predicate＋5 条 when_predicate 新增），
+        硬失败 0；S-11 由 info 期 6 归 0 后转 hard，纯散文判据零；全程零豁免。
+      evidence:
+        - adr/ADR-SRC-P0-06-approved-20261108-M4扩signals与S-11转硬.md §3／§4
+        - registry/scripts/project.py（check_m4 signals 面、check_signals S-11 hard）
+        - registry/DATA-SPEC.md D3.1（四字段封闭）；registry/CHECK-SPEC.md C1 M4 行／C5.18／C5.20
+        - registry/predicate_vocabulary.yaml（VG-05／VG-07／VG-09 resolution 块）
+        - "registry/scripts/project.py --check：1,212 条记录｜硬失败 0｜软警告 0（G-SRC-1 闭合后，其原先『open gap 无 open SO 承接』的 1 条 info 记录同时消失）"
+      preserved: statement／impact／affected／route 原文逐字保留（0.22）
+    note: "2026-11-08 闭合说明（0.22：不改写上文，以本注覆盖时点性表述）：statement／impact／affected 中『本批 M4 不扫 signals』『signals.detection_predicate 是未机器封闭的文本』『M4 检查面（现不覆盖 signals）』均为 2026-11-06 登记时点的事实，**不再指向现状**——自 ADR-SRC-P0-06 起 M4 已覆盖 `signals[].detection_predicate` 与 `signals[].severity_condition.when_predicate`。今后凡引本 gap 判断 M4 覆盖范围，以本 closure 与 ADR-SRC-P0-06 为准，不得再据上文原文推出『signals 未受校验』。"
 
   - gap_id: G-GOV-2
     type: 语义定义债（manual 的两义混同：录入通道 vs 证据类别）
@@ -12858,7 +12878,7 @@ status_transitions:
         - {source_type: clause_id, value: "0.17.6", verified: true}
         - {source_type: clause_id, value: "9.2.3", verified: true}
         - {source_type: clause_id, value: "0.13", verified: true}
-    note: "本简记迁移对象为 SRC-001…SRC-008（母本 9.2.3 @m:9.2.3 信号源表 9 数据行中的 8 行非部署；第 9 行部署三指标归 DPS，不立 SRC，见 G-GRD-1 closure）。迁移事实 8 条，其余 130 条既有条目由前十七条简记承载（MJ-16 (ii)）。signals 按 0.17.2 必填并通过 S-1～S-9；detection_predicate 的可执行性不宣称（G-SRC-1 保持 open）。C-ENV：kind_profile_SRC.entry_level_exemptions 逐一覆盖 SRC-001…SRC-008（envelope 与 7 个 cost_profile.* 按剖面 N-A 不填）。"
+    note: "本简记迁移对象为 SRC-001…SRC-008（母本 9.2.3 @m:9.2.3 信号源表 9 数据行中的 8 行非部署；第 9 行部署三指标归 DPS，不立 SRC，见 G-GRD-1 closure）。迁移事实 8 条，其余 130 条既有条目由前十七条简记承载（MJ-16 (ii)）。signals 按 0.17.2 必填并通过 S-1～S-11；detection_predicate 与 severity_condition.when_predicate 的词汇封闭性由 M4 硬校验、纯散文由 S-11 硬判（2026-11-08 ADR-SRC-P0-06）。C-ENV：kind_profile_SRC.entry_level_exemptions 逐一覆盖 SRC-001…SRC-008（envelope 与 7 个 cost_profile.* 按剖面 N-A 不填）。"
 
 # ---------------------------------------------------------------------------
 # 三、Waiver 台账（9.2.2 五要素：违例事实、豁免范围、期限、整改计划、豁免期风险量化）

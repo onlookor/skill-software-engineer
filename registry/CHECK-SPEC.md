@@ -19,7 +19,7 @@
 |---|---|---|---|
 | M2 | 按 kind 剖面必填字段在案；所属 kind 剖面 `status=draft` 时完备性不可判定 → M2 不成立（KP-G3） | 硬 | `∀E(status ≠ draft)` |
 | M3 | 每个 envelope 项 `bound_expr` 参数化 ∧ `source` 过 0.4 出处门槛（`clause_id` 反查母本可查） | 硬 | 逐 envelope 项 |
-| M4 | `detection_predicate` 词汇封闭（DATA-SPEC D3.1）＝可执行 | 硬 | 逐 `detection_predicate` |
+| M4 | 谓词词汇封闭（DATA-SPEC D3.1）＝可执行；覆盖面＝`anti_patterns[].detection_predicate`＋`applicability` 三空间＋`signals[].detection_predicate`＋`signals[].severity_condition.when_predicate`（2026-11-08 ADR-SRC-P0-06 扩面） | 硬 | 逐 `detection_predicate`／逐 applicability 项／逐 signal 两字段 |
 | M5 | narrative_sync：决策性叙事已形式化或带 `clue:` 标记 | 软（P2 抽查，积累升 P1；**不阻断 seed／准入**） | 逐条目 |
 | M6 | 每条 reference 声明 `compile_usage` ＋ `trust_grade`；存疑级不得为 envelope／detection 唯一出处 | 硬 | 逐 reference |
 | M9 | `compatibility.peer_entry` 全部存在于本注册表 | 硬 | 逐 peer_entry |
@@ -77,13 +77,14 @@ python3 scripts/project.py --project    # 自检 + 生成人类层投影
 - **C5.10 G-QAT-1**：可伸缩性／合规／可观测性三族不设常备战术；`priority=high` 时按 CH-B 登记显式缺口，不得本地发明战术，不得静默跳过。〔新立，§4.24〕
 - **C5.11 SRC kind 与 9.2.3 接线**：0.17.3 增 SRC 行；9.2.3 非部署八项立 SRC、部署三项归 DPS；行号按插行后登记。〔母本派生 ADR-SRC-01，§4.25〕
 - **C5.12 signals 字段**：0.17.2 块内插入 `signals` 定义（块内写法，使正式形状与 M2 校验面一致）；插行后的锚点清债须在同批完成。〔母本派生 ADR-SRC-02，§4.26〕
-- **C5.13 G-SRC-1 与 VG-09**：只登记缺口、不定义、不造词；`missing_need` 逐条列名。〔新立，§4.27〕
+- **C5.13 G-SRC-1 与 VG-09**：只登记缺口、不定义、不造词；`missing_need` 逐条列名。〔新立，§4.27；**2026-11-08 状态更新**：G-SRC-1 已按 C4.4 以 `status: closed` ＋ `closure` 块闭合（ADR-SRC-P0-06）——其 route 原定的「登记完成后另开 ADR，把 M4 扩到 `signals[].detection_predicate`」已由本批执行；本条「只登记缺口」的口径在其 open 期内有效，原文保留（0.22），不再指向任何在办事项〕
 - **C5.14 VG-09 扩容**：母本 9.5 插行扩容；同名异义谓词改名并登记映射（`cycle`→`interaction_cycle`）。〔新立，§4.28〕
 - **C5.15 R2-APPL-01**：仅 `problem_space` 触发 H1；剥离括注与破折号注释；完成态谓词抑制；主句须为疑问式。只改 2 条，其余不动。〔新立，§4.29〕
 - **C5.16 部分指针与 FROZEN**：部分覆盖以「限…；不覆盖…」登记；已执行 ADR 进 FROZEN 只做快照复算。〔新立，§4.30〕
 - **C5.17 V1 严格逐字读**：`¬∃ cycle(forbidden_dependency)` 按逐字读只认违例环；单条禁止边穿透既不是 V1 违例，也不得经 V1 升 P0。P0 的「禁止边」路径独立存在于 9.2.1 与 `method_registry.yaml: MJ-4`，与 V1 无关。本批先例：`STY-015-AP1` 升 P0 的依据是 1.5 第 1474 行第二族「模块化单体模块边界（仅上层依赖下层）」为已登记禁止边、穿透即直接违例，**不援引 V1**；`STY-009-AP2` 停在「环是否落在同一部署单元内」未裁、`STY-008-AP2` 停在「1.5 无端口方向族」，二者维持 P1。〔新立，ADR-STY015-P0-01，2026-11-08〕
-- **C5.18 signals 观测与改判登记**：`signals[].detection_predicate` 与 `severity_condition.when_predicate` 的词表封闭性（S-10）与「至少含 1 个已登记谓词调用」（S-11）**均为 info 级、只报不判**，不参与 seed 资格、不作硬失败、不改变退出码；标号自 **S-10** 起（S-9 已被 `consumption.note` 缺失占用，不重排）。两者提取器与 M4 同口径，故 S-10 的观测值即 M4 扩容后的预期失败面。台账侧：`resolved_by_composition` 中的名若被后续 `resolution_*` 块的 `registered` 显式改判为直接词条，不再判「重复真源」而记 info（历史原文保留，0.22）；无改判依据的同名仍硬失败。〔新立，ADR-SRC-P0-02，2026-11-08〕
+- **C5.18 signals 观测与改判登记**：`signals[].detection_predicate` 与 `severity_condition.when_predicate` 两字段的判据分两级——**S-11 为硬**（两字段各自至少含 1 个已登记谓词调用；无调用即纯散文 → 硬失败）；**S-10 为 info**（词表封闭性的分项观测，只报不判、不参与 seed 资格、不改变退出码；其判据面已由 M4 硬检查承担，保留 S-10 只为分项可读性）。标号自 **S-10** 起（S-9 已被 `consumption.note` 缺失占用，不重排）。三者提取器同口径，故 S-10 的观测值即 M4 的 signals 面预期失败面。台账侧：`resolved_by_composition` 中的名若被后续 `resolution_*` 块的 `registered` 显式改判为直接词条，不再判「重复真源」而记 info（历史原文保留，0.22）；无改判依据的同名仍硬失败。〔新立，ADR-SRC-P0-02，2026-11-08；**2026-11-08 级别变更**：S-11 由 info 转 hard、观测面由 `detection_predicate` 扩到 `detection_predicate` ＋ `when_predicate`，ADR-SRC-P0-06 §3〕
 - **C5.19 signals 判据转硬的前置条件**：S-10／S-11 转硬或并入 M4 须先满足三条——(i) 全部 `signals` 串的谓词调用在册且元数可判；(ii) 纯散文判据（无任何已登记调用）逐条裁定「改写为表达式」或「显式豁免并登记」；(iii) 元数校验纳入检查面。缺任一条即转硬，会把「账面全绿而判据不可执行」固化。〔新立，ADR-SRC-P0-02 §7.2，2026-11-08〕
+- **C5.20 本批转硬的先例（ADR-SRC-P0-06）**：C5.19 三条在本批的满足情况与残余缺口，逐条记账，不因已转硬而删除——(i) **已满足**：14 条 `signals[].detection_predicate` 与 5 条 `when_predicate` 的全部谓词调用均在册（S-10 在 info 期恒为 0）；(ii) **已满足**：纯散文 6 条经 ADR-SRC-P0-04 改写归 0，**零豁免**（S-11 在 info 期由 6 归 0）；(iii) **部分满足**：`PRED_CALL_RE` 只校名、不校元数（与本文件 M4 全项同口径），元数失配仍不判——此为全检查面共有的缺口，非 signals 独有，故不构成单独阻断项，登记为残余风险。转硬依据是 info 期实测数字（S-10 恒 0、S-11 6→0），不是设计推断；转硬后 `--check` 硬 0／软 0，且未新增任何豁免规则。〔新立，ADR-SRC-P0-06 §3.2／§3.3，2026-11-08〕
 
 ## C6 变更纪律
 

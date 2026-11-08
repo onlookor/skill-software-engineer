@@ -54,8 +54,9 @@
 | `ADR-SRC-P0-03` | SRC 判据谓词批 B（8 名清单核对与 5 名登记） | approved | 2026-11-08 | — | 母本 **0 行**；`predicate_vocabulary.yaml` +5 名（`conforms_to` 2／`auth_bypass` 2／`monotonic_trend` 2／`remediation_or_waiver_record` 1／`consecutive_failure` 2，均 predicate）＋VG-09 记 `resolution_2026_11_08_bB`；`execution_order`／`assertion_fact_mismatch`／`burn_rate` 已在册不重复；8 条 SRC 机器层字符串**未改**；S-10／S-11 仍 info、命中 0／6 不变 | `ADR-SRC-P0-03-approved-20261108-SRC判据谓词批B.md` |
 | `ADR-SRC-P0-04` | SRC 判据改写（6 detection＋3 when；`SRC-004-S1` 删 when 评估后停做） | approved | 2026-11-08 | — | 母本 **0 行**；`method_registry.yaml` 改 6 条 `detection_predicate`（S-11 6→0）与 3 条 `when_predicate`；`SRC-004-S1` 删 when 经评估有三处缺口（适用范围／Z6 支路／条款指代），**停做报裁**；`severity`／`raise_to` 未改；S-10／S-11 仍 info | `ADR-SRC-P0-04-approved-20261108-SRC判据改写.md` |
 | `ADR-SRC-P0-05` | `behavior_switch` 登记与两条 when 护栏可判化 | approved | 2026-11-08 | — | 母本 **0 行**；`predicate_vocabulary.yaml` +1 名（`behavior_switch` predicate arity 1，出处 5.5 第 2600 行 Z6 量词域）＋VG-05 记 `resolution_2026_11_08`；`SRC-004-S1` when → `behavior_switch(flag)`（去独立 `∃`，自由变量回指 detection 绑定）、`SRC-007-S1` when → `distortion(system)`；三项护栏核对全通过；S-11 扩 when 干跑红 **0** | `ADR-SRC-P0-05-approved-20261108-behavior_switch与两条when护栏.md` |
+| `ADR-SRC-P0-06` | M4 扩到 signals 两字段与 S-11 转硬 | approved | 2026-11-08 | — | 母本 **0 行**；`predicate_vocabulary.yaml` **零增删**（VG-09 记 `resolution_2026_11_08_bC`）；`scripts/project.py` `check_m4` 覆盖 `signals[].detection_predicate`＋`severity_condition.when_predicate`（扫描面 1,131→1,150），`check_signals` 的 S-11 **info→hard** 并覆盖 when、S-10 仍 info；`CHECK-SPEC.md` C1 M4 行／C5.13／C5.18／C5.20；`DATA-SPEC.md` D3.1；`method_registry.yaml` `G-SRC-1` **closed**（closure）＋5 处旧说明改写；`--check` 1,212 条｜硬 0｜软 0，零豁免 | `ADR-SRC-P0-06-approved-20261108-M4扩signals与S-11转硬.md` |
 
-**统计**：24 份；approved 23、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
+**统计**：25 份；approved 24、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
 
 ## 3. 状态存疑项（正文头部与执行证据不一致，已按证据裁定）
 

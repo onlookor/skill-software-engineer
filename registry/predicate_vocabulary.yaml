@@ -512,6 +512,15 @@ vocabulary_gaps:
       carried_2026_11_08_bB: "cycle_scale 仍为 residual（5.2.1 无环规模定义）；lower_layer_coverage／baseline_change_record 仍为 resolved_by_composition（未列入本批）"
       vocabulary_gaps_count: 3
       registered_names: "本 gap 已登记名 85→90（+5）；词表 predicates 块 152→157（predicate 142→147、term 9、constant 1），合计 212→217"
+    resolution_2026_11_08_bC:
+      adr: "ADR-SRC-P0-06（批 C；2026-11-08 approved）"
+      predicate_rows_added: 0
+      status_after: "open（残余 2 项不变：cycle_scale 待 5.2.1 环规模定义；lower_layer_coverage／baseline_change_record 仍为 resolved_by_composition）"
+      superseded:
+        - "本 gap 的 `workaround`「保持自然语言散文判据，**不写调用式**」口径**已终止**：2026-11-08 起 14 条 `signals[].detection_predicate` 与 5 条 `severity_condition.when_predicate` 均为调用式，纯散文由 S-11 硬失败拦截（ADR-SRC-P0-06 §3.2）"
+        - "本 gap 的 `affected`「M4 现不扫 `signals`，登记后须另开 ADR 才能扩扫」**已过期**：M4 已覆盖 signals 两字段（`check_m4`），G-SRC-1 同日闭合"
+        - "本 gap 的 `route`「逐条登记完成后另开 ADR，把 M4 扩到 `signals[].detection_predicate`」**已履行**：登记完成（bA／bB）＋扩扫与重跑（本批）；本轮之后 signals 判据不得再以「等 G-SRC-1」为由留散文"
+      registered_names: "在册名 90 不变（本批只扩检查面，不扩词表）"
 
 # ── 待裁清单（拿不出可判定签名前不收；不硬塞、不改名、不加别名）──
 pending_review:
