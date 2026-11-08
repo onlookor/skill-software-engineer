@@ -11382,7 +11382,7 @@ entries:
         detection_predicate: "dsm(system) ∧ 跨边界调用密度 > 基线 ∧ 连续窗口同向上升"
         severity: P2
         severity_condition:
-          when_predicate: "恶化持续（连续窗口同向漂移）"
+          when_predicate: "monotonic_trend(dsm_metric, window)"
           raise_to: P1
         consumption:
           - {action: monitor_trend, note: "P2 阈值＋趋势双判据"}
@@ -11392,7 +11392,7 @@ entries:
         detection_predicate: "interaction_flow(·) 形成环 ∧ 环规模随时间单调上升"
         severity: P2
         severity_condition:
-          when_predicate: "恶化持续（连续窗口同向漂移）"
+          when_predicate: "monotonic_trend(环规模, window)"
           raise_to: P1
         consumption:
           - {action: monitor_trend, note: "P2 阈值＋趋势双判据"}
@@ -11571,7 +11571,7 @@ entries:
         detection_predicate: "burn_rate(·) 连续窗口越阈 ∧ 趋势同向"
         severity: P2
         severity_condition:
-          when_predicate: "错误预算耗尽"
+          when_predicate: "burn_rate(service) ≥ error_budget(service, slo, ·, ·) 的耗尽阈"
           raise_to: P1
         consumption:
           - {action: monitor_trend, note: "燃尽率异常 → P2 趋势监测"}
