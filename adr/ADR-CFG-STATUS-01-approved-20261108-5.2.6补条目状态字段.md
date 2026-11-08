@@ -1,12 +1,12 @@
-# ADR-CFG-STATUS-01：母本 5.2.6 补「配置项条目状态」字段（提案，未落地）
+# ADR-CFG-STATUS-01：母本 5.2.6 补「配置项条目状态」字段（已批准，步 1 已落地）
 
 - 编号：`ADR-CFG-STATUS-01`
-- 状态：**proposed**（只出方案，未批准、未落地；母本 **0 行 diff**）
-- 起草日期：2026-11-08
+- 状态：**approved**（人类责任方 2026-11-08 经任务书授权；Agent 只执行、不自行裁定，0.10 第一条）
+- 批准日期：2026-11-08（起草同日）
 - 上游记账：`registry/DATA-SPEC.md` 附录 C.2 **C-18**
-- 影响范围（若批准后）：母本 5.2.6 @2514（1 行内改写）；`编译规范.md` 2.3(a)（`registered` 对象类）；`registry/DATA-SPEC.md`（C-18 闭合、D3.4 注）；`registry/method_registry.yaml`（CFG-001／CFG-002／VFM-004 的「五槽」表述，及另批恢复 4 条 AP）
+- 影响范围：母本 5.2.6 @2514（1 行内改写，**步 1 已落地**）；`编译规范.md` 2.3(a)（`registered` 对象类，步 2）；`registry/DATA-SPEC.md`（C-18 闭合、D3.4 注，步 3）；`registry/method_registry.yaml`（CFG-001／CFG-002／VFM-004 的「五槽」表述，步 5；恢复 4 条 AP，步 4）
 - 不改：母本 `expiry` 链条（5.5 @2576／@2581、Z6 @2600）、`0.17.2` 方法条目 schema、`predicate_vocabulary.yaml`（不新增谓词、`registered` arity 仍 1）、任何 Waiver／白名单
-- 状态值说明：`proposed` 按用户 2026-11-08 明确要求使用；`adr/INDEX.md` §1 现有枚举为 `draft／approved／rejected／superseded`，本值属枚举外新增，INDEX 规约是否补登待裁定（不影响本提案内容）
+- 取值域裁定（2026-11-08，人类责任方）：**读法 iii**——`status` 与 0.17.2 **同一词汇表**，配置项只启用 `{seed, active, retired}`，`draft`／`deprecated` 不适用于配置项；可消费按 2.3(a) 取 `{active, seed}`。字面缩表（把全局五值砍成三值）**未采纳**：会拆掉 `draft→seed→active` bootstrap 通道并动 M7 与 18 条台账。
 
 ## §1 授权与边界
 
@@ -77,13 +77,14 @@
 
 ### 方案 A（推荐）：@2514 加第六槽 `status`
 
-改法（批准后一次性行内改写，0 行增删）：
+改法（已按读法 iii 落地，一次性行内改写，0 行增删）：
 
-> `…登记入注册表：{键, 值域, 作用域, 级别, 生命周期, status}；status ∈ {active, deprecated, retired}，active＝仍生效，deprecated＝仍可读但禁止新增引用，retired＝已下线；`生命周期` 的 `expiry` 语义不变。`
+> `…登记入注册表：{键, 值域, 作用域, 级别, 生命周期, status}。`status` 与 0.17.2 条目 `status` **同一词汇表**（不另立枚举）；配置项只启用 `seed`／`active`／`retired` 三值（`draft`／`deprecated` 不适用于配置项）：`seed`＝已登记、未验证，`active`＝仍生效，`retired`＝已下线且禁止新增引用。可消费状态按《编译规范》2.3(a) 取 `{active, seed}`（seed 限 bootstrap 期）。`生命周期` 的 `expiry` 语义不变（值为到期日，见 CFG-03）。`
 
 要点：
-- `status` 与 0.17.2 的条目 `status` **同名字段、不同注册面**：前者管配置项条目，后者管方法注册表条目；**不引入 `lifecycle_state` 别名**，避免与契约面混。
-- 可消费状态取 `active`（不再复用 `seed`——配置项没有 bootstrap 通道）。
+- **同一词汇表**：`status` 的可用值全部来自 0.17.2 的条目状态枚举，本表只做「配置项启用哪几值」的用法限制，**不新增任何枚举值**；不引入 `lifecycle_state` 别名，避免与契约面混。
+- `draft`／`deprecated` 不适用于配置项：配置项没有「骨架登记」阶段（无 0.17.6 人工种子通道），退出即下线，不走「仍可读但禁止新增引用」。
+- 可消费状态按 2.3(a) 取 `{active, seed}`（seed 限 bootstrap 期），与方法条目共用同一条消费判据。
 - `expiry` 链条一字不动：`flag` 四槽、`expiry_of`、Z6 全部保持。
 - 不新增谓词（不写 `status(键, 状态)`），`registered` 仍为 `arity: 1` 的公式约定词。
 
@@ -115,14 +116,14 @@
 | `flag` 谓词 | 四槽不变（arity 4） | 若删 expiry 槽则 **arity 4→3** | 不变 |
 | S-12 | **0**：不新增谓词；`registered` arity 1 不变 | 高：`flag` 元数与 `expiry_of` 语义均动，词表＋数据＋Z6 联动 | **0** |
 | M2（0.17.2 条目 schema） | **0**：配置注册表不是方法条目，未改 0.17.2 | **0**（同上） | **0** |
-| 编译规范 2.3(a) | **+1 对象类**：配置项 `status=active` 纳入可消费状态（1 段） | 同 A（另加 Z6 表述澄清） | 不改；`registered(配置项)` 仍不可求值 |
+| 编译规范 2.3(a) | **+1 对象类**：配置项 `status ∈ {active, seed}` 纳入可消费状态（与 0.17.2 同一词汇表，1 段） | 同 A（另加 Z6 表述澄清） | 不改；`registered(配置项)` 仍不可求值 |
 | C-18 | **闭合**（C.2 5→4） | 闭合 | **维持开放** |
 | 4 条 AP | 可恢复 `registered`（另批，先 info 干跑） | 可恢复，但上游代价高 | **不可恢复** |
 | 主要风险 | `status` 与 0.17.2 同名字段混淆 → 用「注册面限定语」写清（配置项条目 vs 方法条目） | `expiry` 语义挤出，Z6 判据链断裂风险 | 长期人工判定＋权威面永久缺口 |
 
 ## §5 结论与推荐
 
-**推荐方案 A**，理由按「改动面／可逆性／判定收益」三项：
+**采纳方案 A（读法 iii）**，理由按「改动面／可逆性／判定收益」三项：
 
 1. **改动面最小**：母本只动 @2514 一行，`expiry`／`flag`／`expiry_of`／Z6 一字不改；`expiry_of` 3 条数据用法零改动。
 2. **可逆**：加槽是可回退的增量；重定义（B）是语义迁移，回退要再改 5 处母本。
@@ -145,16 +146,37 @@
 
 ## §6 待裁定事项
 
-| # | 事项 | 选项 | 建议 |
+| # | 事项 | 选项 | 裁定（2026-11-08） |
 |---|---|---|---|
-| 1 | 方案取舍 | A／B／C | **A** |
-| 2 | `status` 取值域 | `{active, deprecated, retired}`／另加 `draft` | 前者；配置项无 draft／seed 阶段 |
-| 3 | 字段名 | `status`／`entry_status`／`lifecycle_state` | `status`（与母本同名惯例一致，用注写清注册面） |
-| 4 | 是否同时立 `registered` 第三类对象 | 是／否 | 是；否则补了字段仍不可机械判定 |
-| 5 | 恢复 4 条 AP 的批次 | 同批／另批 | 另批，先 info 干跑 |
+| 1 | 方案取舍 | A／B／C | **A**（已批） |
+| 2 | `status` 取值域 | 三值集合 | **`{seed, active, retired}`**；与 0.17.2 同一词汇表，不另立枚举；`draft`／`deprecated` 不适用于配置项（读法 iii） |
+| 3 | 字段名 | `status`／`entry_status`／`lifecycle_state` | **`status`**（与母本同名惯例一致，用注写清注册面） |
+| 4 | 是否同时立 `registered` 第三类对象 | 是／否 | **是**（步 2）；否则补了字段仍不可机械判定 |
+| 5 | 恢复 4 条 AP 的批次 | 同批／另批 | **另批**（步 4），先 info 干跑 |
 
 ## §7 与既有记录的关系
 
-- 上游：`registry/DATA-SPEC.md` 附录 C.2 **C-18**（缺口记账，status 未定）。
+- 上游：`registry/DATA-SPEC.md` 附录 C.2 **C-18**（缺口记账，status 已由本 ADR 确定；步 3 闭合）。
 - 前置执行：[ADR-SRC-P0-10](file:///home/wgz/projects/skills/software-engineering/adr/ADR-SRC-P0-10-approved-20261108-formula_words元数与has待裁.md) §20（4 处降事实槽与影响面）。
 - 本文件不改写任何既有 ADR／changelog 文本（0.22 承诺一）；批准后只在 INDEX 追加状态及落地记录。
+
+## §8 落地记录
+
+### §8.1 步 1（母本 @2514，2026-11-08）
+
+- **改动**：母本 5.2.6 @2514 **1 行内改写，0 行增删**（母本行数不变）。
+- **取值域**：读法 iii（见文档头）。`status` 与 0.17.2 同一词汇表；配置项启用 `{seed, active, retired}`；可消费 `{active, seed}`。
+- **未动**：0.17.2 @334 五值枚举、0.17.5 六条迁移、0.17.6 bootstrap 起点、M7 @510、术语表 @4383、`project.py` `ENUM_STATUS`、`method_registry.yaml` 顶层 `status_transitions`（18 条）、任何注册表条目。
+- **自检**：`--check` **1,218 条｜硬 0｜软 0｜占位符 1,485**（与步前一致；母本非检查器输入，无数字变化）。
+- **提交**：见 `软件工程元框架成文法-changlog.md` 续 46。
+- **回退**：对该提交 `git revert <commit>`（单文件单行、无数据联动）；回退后须同步撤回本 ADR 的 approved 状态与 INDEX 行。
+
+### §8.2 后续步骤状态
+
+| 步 | 内容 | 状态 |
+|---|---|---|
+| 1 | 母本 @2514 加第六槽 `status` | **已落地** |
+| 2 | `编译规范.md` 2.3(a) 增配置项对象类 | 待执行 |
+| 3 | `DATA-SPEC` 附录 C.2 闭合 C-18（5→4） | 待执行 |
+| 4 | 4 条 AP 先 info 干跑后恢复 `registered` | 待执行 |
+| 5 | 五槽 → 六槽（CFG-001／CFG-002／VFM-004） | 待执行 |
