@@ -242,13 +242,13 @@
 - **envelope** 可修改性：典型变更的实现成本（触达单元数）：`模块内变更 → touched_units ≤ |units(m)| + |boundary_contracts(m)|（「接近微服务的可修改性」的参数化落点）；前提：模块边界经 boundary_type 登记且穿透受门禁约束——AP1 成立时该上界退化为 STY-014 形态（无边界收敛）`
 - **envelope** 可修改性：典型变更的实现成本（跨边界契约变更数）：`模块 → 部署单元的迁移成本上界 = |boundary_contracts(m)|（「保留未来拆分选项」的参数化落点：拆分红利取决于既有边界契约面，内部无需重切分）；参数：模块间穿透依赖数（AP1 成立时该项发散）`
 - **成本**：ops_cost＝单一制品、单一发布通道（与 STY-014 同型）；额外成本落在边界门禁工具与模块级度量建设｜聚合语义=itemwise
-- **反模式** 1 项（P1×1）：STY-015-AP1 模块边界只在文档里，代码里随意穿透
+- **反模式** 1 项（P0×1）：STY-015-AP1 模块边界只在文档里，代码里随意穿透
 - **兼容性**：STY-014(composable)、STY-023(composable)
 - **施加约束** 6 项：方面 2←分解可纯逻辑边界（1.4 施→2 单体行），且内部模块边界须强制：模块为…；方面 3←进程内调用可用（1.4 施→3 单体行）；方面 4←共享数据库可用（1.4 施→4 单体行）；方面 5←进程内编排、本地事务可用（1.4 施→5 单体行）…
 - **formal_anchor**：V1(implements)、V2(implements)、V4(consumed_by)、V5(implements)
 - **参考文献**：bib 3 [已核验]·metadata_extraction、bib 2 [已核验]·metadata_extraction、bib 23 [已核验]·narrative_only
 - **叙事（收益-成本）**：收益：以单体的性能/事务优势（网络跳数 = 0、ACID 可用）换取接近微服务的可修改性（变更触达面被模块边界收敛），并保留未来拆分选项（迁移成本上界 = 边界契约面）
-- **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；applicability: 骨架源；envelope: 骨架源；cost_profile: 骨架源/人工判断；compatibility: 骨架源；constraints_imposed: 交叉表源/骨架源/人工判断；anti_patterns: 骨架源/人工判断
+- **数据来源层**（yaml 行内注释）：typical_reversibility: 人工判断；applicability: 骨架源；envelope: 骨架源；cost_profile: 骨架源/人工判断；compatibility: 骨架源；constraints_imposed: 交叉表源/骨架源/人工判断；anti_patterns: 骨架源
 
 ### STY-016｜微服务
 
@@ -2012,4 +2012,4 @@
 - **数据来源层**（yaml 行内注释）：narrative: 人工判断；statement: 骨架源/人工判断；impact: 交叉表源；note: 交叉表源；status: 人工判断；judgment: 人工判断
 
 ---
-生成于 2026-11-08T09:45:14｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`5665dea5db84`；`profiles.yaml`→`2d5851b5f262`；`predicate_vocabulary.yaml`→`f6365fd56cda`
+生成于 2026-11-08T10:06:07｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`d2e8dbda91f6`；`profiles.yaml`→`2d5851b5f262`；`predicate_vocabulary.yaml`→`f6365fd56cda`

@@ -994,7 +994,7 @@ entries:
       - pattern_id: STY-013-AP1
         description: "过滤器间隐式共享状态"
         detection_predicate: "∃ f1, f2: [f1, f2 为管道内过滤器] ∧ depends_on(f1, f2, data, ·) ∧ ¬[该数据经声明的管道数据流传递]"
-        signal_level: P1               # 人工判断：违反「无状态变换单元」的定义性约束；1.2.5 无本风格冲突行 → 不满足 MJ-4 的 P0 判据。若在 dependency_rule 登记「过滤器间禁止旁路数据依赖」，则构成 V1 违例直接来源，升 P0（登记义务见 gaps: G-STY-4）
+        signal_level: P1               # 人工判断：违反「无状态变换单元」的定义性约束；1.2.5 无本风格冲突行 → 不满足 MJ-4 的 P0 判据。本条检测对象是「过滤器间隐式共享状态」，不属 1.5 第 1474 行第三族（过滤器不得绕过上下游直接读写数据源）→ 无已登记禁止边可穿透。若将来另立「过滤器间禁止旁路数据依赖」的登记边，则构成「已登记禁止边被穿透」的直接违例，升 P0（登记义务见 gaps: G-STY-4；不援引 V1，V1 只认违例环）
       - pattern_id: STY-013-AP2
         description: "管道内全局错误处理缺失"
         detection_predicate: "∃ pipe: [pipe 为已声明管道] ∧ ¬declared(error_handling(pipe)) ∧ ∃ f: [f ∈ pipe] ∧ [f 的失败无处置路径（重试/跳过/中止/死信）]"
@@ -1091,7 +1091,7 @@ entries:
       - pattern_id: STY-014-AP1
         description: "单体内部无模块化（大泥球）"
         detection_predicate: "∃ u, c1, c2: unit(u) ∧ [c1, c2 属 u] ∧ depends_on(c1, c2, call, ·) ∧ ¬declared(boundary_type(c1, ·)) ∧ ¬declared(boundary_type(c2, ·))"
-        signal_level: P1               # 人工判断（MJ-4）：1.2.5 无涉本风格的冲突行、1.5 V 系列无对应硬性质 → 不满足 P0 判据；结构漂移限期整改。若内部边界经 boundary_type + dependency_rule 登记，则穿透构成 V1 违例直接来源，升 P0（登记义务见 gaps: G-STY-4）
+        signal_level: P1               # 人工判断（MJ-4）：1.2.5 无涉本风格的冲突行、1.5 无已登记禁止边 → 不满足 P0 判据；结构漂移限期整改。本条检测式要求 ¬declared(boundary_type(...))（边界未声明），故无已登记边可穿透。若内部边界经 boundary_type + dependency_rule 登记，则穿透构成「已登记禁止边被穿透」的直接违例，升 P0（登记义务见 gaps: G-STY-4；不援引 V1，V1 只认违例环）
     formal_anchor:                     # 交叉表源：1.5 V1–V5
       - {property_id: V2, role: implements}     # connects(u1,u2,p) 面在单元数 = 1 时最小（进程内调用），协议自洽检查退化为端点契约检查
       - {property_id: V4, role: consumed_by}
@@ -1170,9 +1170,9 @@ entries:
       - pattern_id: STY-015-AP1
         description: "模块边界只在文档里，代码里随意穿透"
         detection_predicate: "∃ m1, m2, c1, c2: unit(m1) ∧ unit(m2) ∧ boundary_type(m1, ·) ∧ boundary_type(m2, ·) ∧ [c1 属 m1] ∧ [c2 属 m2] ∧ depends_on(c1, c2, call, ·) ∧ ¬[该依赖经 m1/m2 声明的边界契约]"
-        signal_level: P1               # 人工判断（MJ-4）：违反本风格定义性约束「内部强制模块边界」，但 1.2.5 无涉本风格的冲突行、1.5 未登记模块边界方向谓词（VG-03）→ 无 V1 可绑定，定 P1；若在 dependency_rule 登记模块间禁止穿透，则构成 V1 违例直接来源，升 P0（登记义务见 gaps: G-STY-4）
+        signal_level: P0               # 2026-11-08 由 P1 升 P0（ADR-STY015-P0-01）：1.5 第 1474 行第二族「模块化单体模块边界（仅上层依赖下层）」为已登记禁止边，穿越即直接违例 → 9.2.1 P0 第二路「已登记禁止边被穿透」。依据不援引 V1：V1 只认违例环（¬∃ cycle(forbidden_dependency)），单条穿透不是环
     formal_anchor:
-      - {property_id: V1, role: implements}     # 模块边界可经 boundary_type + dependency_rule 登记 → V1 校验面（条件性，见 AP1 注）
+      - {property_id: V1, role: implements}     # 模块边界可经 boundary_type + dependency_rule 登记 → V1（仅违例环）校验面；单条穿透的 P0 路径不在 V1，见 AP1 注（2026-11-08 收口）
       - {property_id: V2, role: implements}
       - {property_id: V4, role: consumed_by}
       - {property_id: V5, role: implements}
@@ -11827,6 +11827,13 @@ gaps:
         - "母本 1.5 @m:1474 三族边界规则注释；母本零插行"
         - "G-STY-4 由 SO-2 承接"
       preserved: "statement／impact／route 原文逐字保留（0.22）"
+    correction_2026_11_08:
+      subject: "impact／closure.basis 中「V1 违例直接来源」表述的口径更正"
+      ruled_by: "人类责任方（2026-11-08 批准 ADR-STY015-P0-01）"
+      before: "相应 dependency_rule 一旦登记在案，该违例即构成 V1 违例直接来源 → 按 MJ-4 判据升 P0"
+      after: "相应 dependency_rule 一旦登记在案，该违例即构成「已登记禁止边被穿透」的直接违例 → 按 MJ-4 判据升 P0。V1 只认违例环（¬∃ cycle(forbidden_dependency)），不承载单条禁止边的升级路径"
+      scope: "只限语义、不改 gap 原文（statement／impact／route 逐字保留，0.22）；与 before 冲突处以本块为准"
+      effect: "三族中本批只有第二族被 STY-015-AP1 消费为 P0 依据；第一族无人消费（STY-014-AP1 检测式要求 boundary_type 未声明，无已登记边可穿透），第三族无人消费（STY-013-AP1 检测式不涉已登记边）→ 二者维持 P1，不得据此自动改级"
 
   - gap_id: G-STY-5
     type: 参考资料源缺失（子维度四元方法无行级登记提取面）
@@ -13291,8 +13298,8 @@ manual_judgments:
 
   - id: MJ-4
     subject: 硬/软级别与 signal_level 的逐条判读规则
-    judgment: "1.4 两表多行标『硬/软按条』，母本未逐条给出。判读规则：禁止性条款（『不得』『禁止』『必须』）→ hard；默认值 + 偏离须显式记录 → hard；许可性/可用性条款（『可用』『可享有』）→ soft；候选性条款（『候选一个部署单元』）→ soft。anti_patterns.signal_level 判读：P0 = 该反模式是 1.2.5 未批准例外的冲突行，或 1.5 V 系列硬性质违例的直接来源；P1 = 违反风格定义性约束但无 V 系列可绑定（限期整改，超期升 P0）；P2 = 需阈值 + 趋势窗口双判据的结构漂移线索。"
-    basis: "0.14 守护分级（P0 即阻塞／P1 限期／P2 双判据）；1.4 两表『硬/软按条』标注；1.2.5；1.5 V1–V5"
+    judgment: "1.4 两表多行标『硬/软按条』，母本未逐条给出。判读规则：禁止性条款（『不得』『禁止』『必须』）→ hard；默认值 + 偏离须显式记录 → hard；许可性/可用性条款（『可用』『可享有』）→ soft；候选性条款（『候选一个部署单元』）→ soft。anti_patterns.signal_level 判读：P0 = 该反模式是 1.2.5 未批准例外的冲突行，或 1.5 已登记禁止边（dependency_rule(·, ·, forbidden) 的 forbidden 项）被穿透，或除 V1 外的硬条目直接违例、或安全/合规红线；V1 只认违例环（¬∃ cycle(forbidden_dependency)），单条禁止边不得经 V1 升 P0，环上的边按「已登记禁止边」路径成 P0；P1 = 违反风格定义性约束但无上述任何 P0 路径可绑定（限期整改，超期升 P0）；P2 = 需阈值 + 趋势窗口双判据的结构漂移线索。（2026-11-08 ADR-STY015-P0-01 修订：V1 摘出 P0 判据，改「已登记禁止边被穿透即 P0」）"
+    basis: "0.14 守护分级（P0 即阻塞／P1 限期／P2 双判据）；9.2.1 P0 三路（硬性质／已登记禁止边被穿透／安全合规红线）；1.4 两表『硬/软按条』标注；1.2.5；1.5 V1–V5 与 dependency_rule（2026-11-08 修订）"
     affected: "全部条目的 constraints_imposed.level 与 anti_patterns.signal_level"
     provenance: manual
 
@@ -13544,6 +13551,7 @@ survey_obligations:
       - "范围注：VG-05～VG-08 亦未登记，但不在本条 gap_ref 内；若同批扩充须一并裁决，避免反复小扩表"
       - "2026-11-07 ADR-VG03-NR-01 落地：node_role 入表（1.5 @1479）→ 本条未闭合项 6→4（余 VG-02 over_decomposed／responsibility_over_fragmented、VG-04 schema／error_handling，四项均须母本条款补写）；status 维持 open"
       - "2026-11-07 ADR-VG02VG04-01 落地（R0 零母本改动）：VG-02 两词裁决不立名（over_decomposed 由 STY-016-AP2 以母本 2.5 W3∧W6 复合承载、responsibility_over_fragmented 放弃，后者真正缺的是注册保守上限常量即参数而非谓词）；VG-04 两词以 term function 入表（schema→3.2.1 第 1929 行、error_handling→1.2.1 第 1348 行），STY-011-AP1／STY-013-AP2 恢复 ¬declared(...) 写法、策略四值不硬化 → 未闭合项 4→0；status 维持 open（余 MJ-4 三条 P0 复核 STY-008-AP2／STY-009-AP2／STY-015-AP1）"
+      - "2026-11-08 ADR-STY015-P0-01 落地：MJ-4 三条 P0 复核完成 —— STY-015-AP1 升 P0（依据 1.5 第 1474 行第二族「模块化单体模块边界（仅上层依赖下层）」为已登记禁止边，穿透即 9.2.1 P0 第二路；不援引 V1）；STY-009-AP2／STY-008-AP2 维持 P1（前者停在「环是否落在同一部署单元内」未裁，后者停在 1.5 无端口方向族）。MJ-4 判据同步修订：V1 只认违例环（¬∃ cycle(forbidden_dependency)），V1 自 P0 判据摘出，改「已登记禁止边被穿透即 P0」→ 本条义务侧未闭合项维持 0；status 维持 open（闭合属状态迁移，须另行授权）"
     status: open
 
   - obligation_id: SO-5
