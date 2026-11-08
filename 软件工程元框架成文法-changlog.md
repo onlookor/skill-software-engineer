@@ -1723,3 +1723,16 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **零豁免**：母本 **0 行**、`predicate_vocabulary.yaml` **零 diff**、无 `waivers`／白名单／新 gap／`rep.skip`。
 - **治理**：新建 `adr/ADR-SRC-P0-09-approved-20261108-背景守卫移出检测式.md`；`adr/INDEX.md`（27→**28** 份，approved 27）；`ADR-SRC-P0-08` §9 盲点 3 追加状态更新（原文保留，0.22）。
 - **未落地**：72 处无 arity 的 `formula_words`（`approved`／`declared`／`has`／`registered`／`sourced`）只出方案，待批准；见交付报告。
+
+## 2026-11-08（续 34）：`formula_words` 四词元数登记与 `has` 的 B1 待裁表
+
+- **裁定**：`has` 采 **B1**（9 处改回一元、第二实参移入方括号条件），但**先摊表、后落地**；其余四词按 B（`arity = 1`、方括号整体占位计 1 实参、零数据改写）。
+- **九条 `has` 摊表（未落地）**：P 5 条（CFG-001-AP3／CFG-002-AP2／CFG-002-AP5／CFG-003-AP4／CFG-004-AP1）——仅去掉显式主体，主体由唯一 `∃` 绑定还原，断言词原样保留；F 2 条（CFG-002-AP4 `[超时值]`＝值类别、CFG-004-AP5 `[快照比对记录]`＝工件名）——语义不变但一元形态易被误读为字段名；**C 2 条（CFG-001-AP2 `[五槽齐备]`、CFG-002-AP3 `[可求值的快照面]`）单列不硬改**——第二实参本身是被判定属性，一元化只能靠操作符替换（`has(主体, 条件)` → `条件(主体)`）。
+- **四词落地**：`predicate_vocabulary.yaml` 给 `approved`／`declared`／`registered`／`sourced` 各加 `arity: 1`；`has`／`compatible`／`now` 未动（`has` 仍按未覆盖单列）。
+- **检查器口径**：`scripts/project.py` 新增 `mask_bracket_contents()`——方括号内文本等长替换为空格、保留 `[`／`]` 边界，使 `registered([契约])` 记 `argc = 1`；`extract_calls()` 用它计数，`raw` 仍取原串；M4 仍用 `outside_brackets`（括号内名字不参与注册检查）。
+- **规范**：`DATA-SPEC.md` 新增 **D3.10**（formula_words 可登记数据侧 arity；方括号整体占位按 1 实参计；无 arity 者仍按未覆盖）；`CHECK-SPEC.md` C5.21 追加同口径。
+- **语义**：9 条 `has` 检测式**一字未改**；母本 **0 行**；不改编译规范 2.3「不注册」定位。
+- **自检**：`--check` **1,214 条记录**｜硬 **0**｜软 **0**｜info **41**｜退出码 **0**；S-12 调用 **478**（447／6／19／6）、不匹配 **0**、解析可疑 **0**、投影 **0**、variadic **0**／固定 **462**（+56＝四词由未覆盖转入硬校）、无调用串 **881**；未覆盖 **72→16**（`has`×16）；占位符 **1,478**；指针 **2,409**，miss **0**。
+- **零豁免**：无 `waivers`／白名单／新 gap／`rep.skip`；C 类 2 条未加例外。
+- **治理**：新建 `adr/ADR-SRC-P0-10-approved-20261108-formula_words元数与has待裁.md`；`adr/INDEX.md`（28→**29** 份，approved 28）。
+- **待签认**：P 5／F 2 可否落地、C 2 条另裁；签认后才给 `has` 登记 arity 并改写 7 条（或全部 9 条，取决于 C 的裁决）。

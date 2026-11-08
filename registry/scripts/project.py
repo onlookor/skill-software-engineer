@@ -325,13 +325,36 @@ def _is_projection(s: str, close: int) -> bool:
     return bool(re.compile(r'\s*\.\s*[A-Za-z_][A-Za-z0-9_]*').match(s, close + 1))
 
 
+def mask_bracket_contents(s: str) -> str:
+    """把方括号内文本替换为等长空格，保留 `[`／`]` 边界。
+
+    用于 S-12 实参计数：方括号整体占位是**一个实参位**（`registered([契约])`
+    记 argc=1），而 M4 的谓词名提取仍用 outside_brackets（不引入括号内名字）。
+    """
+    depth, res = 0, []
+    for ch in s:
+        if ch == '[':
+            depth += 1
+            res.append(ch)
+        elif ch == ']':
+            depth = max(0, depth - 1)
+            res.append(ch)
+        elif depth:
+            res.append(' ')
+        else:
+            res.append(ch)
+    return ''.join(res)
+
+
 def extract_calls(s: str) -> tuple[list[dict], list[tuple[str, str]]]:
     """抽取全部调用（含嵌套），返回 (calls, suspicious)。
 
     calls 项：{name, argc, args, raw, projection}。suspicious 项：(name, 残段)。
-    方括号内文本视为事实占位符，不参与抽取（与 M4 的 outside_brackets 同口径）。
+    方括号内文本视为事实占位符，不参与名字抽取；但方括号整体算**一个实参位**
+    （ADR-SRC-P0-10 / DATA-SPEC D3.10）。
     """
-    s = outside_brackets(s)
+    s0 = s
+    s = mask_bracket_contents(s)
     calls: list[dict] = []
     bad: list[tuple[str, str]] = []
     i = 0
@@ -347,9 +370,9 @@ def extract_calls(s: str) -> tuple[list[dict], list[tuple[str, str]]]:
         inner = s[m.end():close]
         args = split_call_args(inner)
         calls.append({'name': name, 'argc': len(args), 'args': args,
-                      'raw': s[m.start():close + 1],
+                      'raw': s0[m.start():close + 1],
                       'projection': _is_projection(s, close)})
-        sub, sub_bad = extract_calls(inner)
+        sub, sub_bad = extract_calls(s0[m.end():close])
         calls.extend(sub)
         bad.extend(sub_bad)
         i = close + 1

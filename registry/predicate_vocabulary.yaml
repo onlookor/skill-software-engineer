@@ -218,10 +218,10 @@ predicates:
 
 formula_words:
   # 编译规范 2.3「公式约定词内建语义表」——封闭集，非白板谓词，M4 校验豁免
-  - {name: approved, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
-  - {name: declared, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
-  - {name: registered, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
-  - {name: sourced, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: approved, arity: 1, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: declared, arity: 1, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: registered, arity: 1, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: sourced, arity: 1, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
   - {name: compatible, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
   - {name: has, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
   - {name: now, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
