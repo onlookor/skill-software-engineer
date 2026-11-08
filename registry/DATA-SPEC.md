@@ -23,6 +23,7 @@
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影 | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；每条带 clause 指针，须可反查母本 |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威；schema 逐字采用 0.17.2 |
 | `schedules.yaml` | 调度项注册表（C-1）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
+| `canary_gates.yaml` | 放量判据注册表（C-4）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
 | `scripts/project.py` | 自检与同源投影工具 | 工具，不含规范命题 |
 | `projections/*.md` | 人类可读投影与自检报告 | **生成物**；只可重跑生成，不可手改 |
 
@@ -155,7 +156,7 @@
 | C-1 | 定时任务／调度项 | 5.2.4 SCH-01 @2492 只要求「定时器、截止期、cron 的登记」，未定义注册表、字段与状态。**已建表（2026-11-08）：`registry/schedules.yaml` schema＋空表；实例 0，验证留待项目侧** | task_id、cron／截止期、失败处置、owner、status | SCH-001 AP1／AP4、M15 勘察义务、方面 9 守护规则 |
 | C-2 | 评审裁剪项 | 8.2.7 评审点一–五与 10.2.2 义务表允许裁减，未定义裁剪项注册面 | 裁剪项 id、理由、批准人、影响面、复核点 | VFM-005 AP3、PRJ 义务表、T8 周期勘察 |
 | C-3 | 版本间协议兼容性规则 | 3.5 只有 `contract(... compat_policy)`；版本对之间的兼容矩阵无注册面 | 版本对、兼容级别、证据指针、批准 ADR | DPS-001 AP1／AP2、STP-003 AP3、方面 3 契约治理 |
-| C-4 | 放量判据 | @3716 `canary_gate(strategy, metric, threshold, window)` 与 G4 存在，但「判据注册」落在何处未定义 | strategy、metric、threshold、window、批准与出处 | DPS-003 AP1、G4、`canary_gate` |
+| C-4 | 放量判据 | @3716 `canary_gate(strategy, metric, threshold, window)` 与 G4 存在，但「判据注册」落在何处未定义。**已建表（2026-11-08）：`registry/canary_gates.yaml` schema＋空表；实例 0，验证留待项目侧** | strategy、metric、threshold、window、批准与出处、status | DPS-003 AP1、G4、`canary_gate` |
 | C-5 | 部署产物版本 | 9.2.5 只有 `deploy_strategy(scope, strategy, params, rollback_procedure)`；产物版本／摘要无注册面 | artifact、version、digest、provenance、target env | DPS-004 AP3、DPS-005 回滚目标解析 |
 | C-6 | 队列上界 | 6.2.5 性能战术给出「有界队列」机制，未定义容量参数注册面 | 池／队列标识、容量上界、拒绝策略、出处 | QAT-005 AP1、QAT 族容量检查 |
 | C-7 | 排队上限 | 5.2.3 R-07 舱壁只给中文机制名，未定义池容量／排队上限注册面 | 同 C-6（与 C-6 可合并为「池容量注册表」） | RLP-007 AP2 |

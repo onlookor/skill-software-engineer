@@ -1919,3 +1919,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **附录 C.1**：C-1 行标「已建表（schema＋空表；实例 0）」。
 - **数字**：检查器不读本文件，`--check` 数字不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；删文件并撤回三处登记行。
+
+## 2026-11-08（续 52）：C-4 建表——放量判据注册表（schema＋空表）
+
+- **新增**：`registry/canary_gates.yaml`。义务锚点＝9.2.5 @3657 逐字「放量判据必须是注册参数（指标 + 阈值 + 观测窗），人工"看着还行"不构成放量依据」；另锚 @3716 `canary_gate(strategy, metric, threshold, window)` 与 @3743 G4。
+- **内容**：`entry_fields` 八项（gate_id／strategy／metric／threshold／window／approval／provenance／status）＋`entries: []`。**不造实例**；`instance_state: none` 明示「本仓无实例，验证留待项目侧」，空表不得读作「已核对无问题」。
+- **status**：沿用 0.17.2 五值词汇表；适用子集 `{draft, active, deprecated, retired}`——**无 `seed`**（seed 是母本种子数据源通道，而 9.2.5 只定义判据形式、不给参数值，本表无母本种子可预置）；**保留 `draft`**（指标／阈值／观测窗由人按项目实测定，可先起草再启用，与 C-12 守护规则同型）；**保留 `deprecated`**（G4 要求放量事件对应注册判据产物，旧判据弃用后仍须可读以回溯历史放量）。可消费按 2.3(a) 取 `{active}`（子集无 seed）。
+- **目录布局登记（D1.2）**：DATA-SPEC D1.3 文件角色表新增一行；`registry/README.md` §1 新增一行；本 changelog 本条。
+- **附录 C.1**：C-4 行标「已建表（schema＋空表；实例 0）」，「该管什么」列补 `status`。
+- **数字**：检查器不读本文件，`--check` 数字不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；删文件并撤回三处登记行。
