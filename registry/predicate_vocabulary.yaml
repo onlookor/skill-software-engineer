@@ -101,7 +101,7 @@ predicates:
   - {name: supplement_evidence_record, arity: 1, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "supplement_evidence_record(d)；补证工件入库且指针可查"}
   - {name: assertion_fact_mismatch, arity: 1, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "assertion_fact_mismatch(E)；证据断言 vs 在册事实"}
   # ── 方面 5 配置治理扩容（VG-05；ADR-VGEX-01 D1；2 名）──
-  - {name: expiry_of, arity: 1, kind: term, block: "5.5", line: 2579, source: {source_type: clause_id, value: "5.5", verified: true}, note: "term function：开关到期时刻；与 flag 第四槽 expiry 区分，防槽名充谓词（ADR-VGEX-01 D1）"}
+  - {name: expiry_of, arity: 1, kind: term, block: "5.5", line: 2581, source: {source_type: clause_id, value: "5.5", verified: true}, note: "term function：开关到期时刻。与 expiry 分属两对象，依据是角色差别而非同一命名的两次登记：expiry 是 flag 的第四槽名（5.5 第 2576 行 flag(G, scope, level, expiry)）与 CFG 条目字段（5.2.6 第 2516 行「expiry 字段」「expiry 载体＝本注册表条目字段」），位置性命名，本身不是函数；第 2600 行 Z6 逐字 declared(expiry(G)) ∧ now ≤ expiry(G) 为母本原有用法、借槽名当函数，故入表时另取一元函数名 expiry_of 以免槽名充谓词（编译规范 2.3）。第 2581 行的独立定义行是本轮登记面，不作出处（原引第 2579 行括注自证已废：该括注为本轮登记面，不得自证）"}
   - {name: cleanup_filed, arity: 1, kind: predicate, source: {source_type: clause_id, value: "5.5", verified: true}, note: "清理已立案（Z6 第四支）"}
 
   # ── 方面 8 验证计划扩容（VG-07；ADR-VGEX-01 D2；13 名：9 名母本 8.5 已有逐字定义、4 名新增）──
