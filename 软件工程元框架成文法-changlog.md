@@ -1555,3 +1555,10 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **治理**：ADR 文件名 `ADR-STY015-P0-01-approved-20261108-V1严格逐字读与STY-015-AP1升P0.md`；`adr/INDEX.md` 增行（19→**20** 份，approved 18→**19**）。
 - **不变量**：entries 138／138 seed；gaps 24／SO 24；open gap 2（`G-PRJ-1`／`G-SRC-1`）、open SO 3（`SO-1`／`SO-4`／`SO-6`）。本批单独 commit，随后 push。
 - **对用户问句的明确回答**：改完之后，**V1 的判据里没有「禁止边」这一路**——V1 仍逐字 `¬∃ cycle(forbidden_dependency)`；「禁止边」只作独立 P0 路径存在于 9.2.1 与 MJ-4。
+
+## 2026-11-08（续 19）：`SO-4` 转 `closed`
+
+- **依据**：两项关闭条件同时成立——(1) 未闭合项归零（VG-01～VG-04 四族经 ADR-VG09-01／ADR-VG03-NR-01／ADR-VG02VG04-01 三批收口，`decision_basis` 末条明写「未闭合项维持 0」）；(2) 最后一项义务「补齐后按 MJ-4 复核 `signal_level`」由 ADR-STY015-P0-01 完成（`STY-015-AP1` 升 P0，`STY-009-AP2`／`STY-008-AP2` 维持 P1）。V1 口径严格逐字读收口同批落地。`obligation` 原文逐字保留（0.22）。
+- **迁移**：`status: open → closed`，新增 `closure` 块（`gap_ref`／`date`／`ruled_by`／`basis`／`evidence`），形态对齐 `SO-3` 先例。
+- **不变量（关闭后核对）**：open SO **3→2**（余 `SO-1`／`SO-6`）；open gap 维持 **2**（`G-PRJ-1`／`G-SRC-1`）；entries 138／seed 138；gaps 24／SO 24；`SO-4` 的 `gap_ref` 指向 `vocabulary_gaps`，不涉及 `gaps` 台账状态。
+- **自检**：`--check` 1,213 条｜硬失败 **0**｜软警告 **0**｜占位符 **1,478**（事实 1＋槽 1,477，与改前一致）；指针反查 **2,393**，miss **0**（不变）。

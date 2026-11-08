@@ -13552,7 +13552,17 @@ survey_obligations:
       - "2026-11-07 ADR-VG03-NR-01 落地：node_role 入表（1.5 @1479）→ 本条未闭合项 6→4（余 VG-02 over_decomposed／responsibility_over_fragmented、VG-04 schema／error_handling，四项均须母本条款补写）；status 维持 open"
       - "2026-11-07 ADR-VG02VG04-01 落地（R0 零母本改动）：VG-02 两词裁决不立名（over_decomposed 由 STY-016-AP2 以母本 2.5 W3∧W6 复合承载、responsibility_over_fragmented 放弃，后者真正缺的是注册保守上限常量即参数而非谓词）；VG-04 两词以 term function 入表（schema→3.2.1 第 1929 行、error_handling→1.2.1 第 1348 行），STY-011-AP1／STY-013-AP2 恢复 ¬declared(...) 写法、策略四值不硬化 → 未闭合项 4→0；status 维持 open（余 MJ-4 三条 P0 复核 STY-008-AP2／STY-009-AP2／STY-015-AP1）"
       - "2026-11-08 ADR-STY015-P0-01 落地：MJ-4 三条 P0 复核完成 —— STY-015-AP1 升 P0（依据 1.5 第 1474 行第二族「模块化单体模块边界（仅上层依赖下层）」为已登记禁止边，穿透即 9.2.1 P0 第二路；不援引 V1）；STY-009-AP2／STY-008-AP2 维持 P1（前者停在「环是否落在同一部署单元内」未裁，后者停在 1.5 无端口方向族）。MJ-4 判据同步修订：V1 只认违例环（¬∃ cycle(forbidden_dependency)），V1 自 P0 判据摘出，改「已登记禁止边被穿透即 P0」→ 本条义务侧未闭合项维持 0；status 维持 open（闭合属状态迁移，须另行授权）"
-    status: open
+    status: closed
+    closure:
+      gap_ref: "predicate_vocabulary.yaml: vocabulary_gaps VG-01/VG-02/VG-03/VG-04"
+      date: "2026-11-08"
+      ruled_by: "人类责任方（2026-11-08 授权关闭 SO-4）"
+      basis: "两项关闭条件同时成立：(1) 未闭合项归零 —— VG-01／VG-02／VG-03／VG-04 四族已按 ADR-VG09-01／ADR-VG03-NR-01／ADR-VG02VG04-01 三批全部收口，decision_basis 逐条记录，末条明写「未闭合项维持 0」；(2) 最后一项义务「补齐后按 MJ-4 复核 signal_level」已由 ADR-STY015-P0-01 完成 —— STY-015-AP1 升 P0（依据 1.5 第 1474 行第二族已登记禁止边被穿透，不援引 V1），STY-009-AP2／STY-008-AP2 维持 P1（理由见该 ADR §5）。本轮 V1 口径严格逐字读收口（母本 9.2.1 第 3600 行、MJ-4 判据、CHECK-SPEC C2.4／C5.17／C6.3）同批落地。obligation 原文逐字保留（0.22）。"
+      evidence:
+        - "VG-01／VG-03 已入表：ADR-VG09-01（5 族 17 名一次性扩容）、ADR-VG03-NR-01（node_role，1.5 第 1479 行）"
+        - "VG-02 不立名（STY-016-AP2 以 W3∧W6 复合承载）、VG-04 两词 kind: term（schema／error_handling）：ADR-VG02VG04-01"
+        - "MJ-4 三条 P0 复核完成：ADR-STY015-P0-01（STY-015-AP1 升 P0；STY-009-AP2／STY-008-AP2 维持 P1）"
+        - "口径落点：母本 9.2.1 第 3600 行、method_registry MJ-4、CHECK-SPEC C2.4／C5.17／C6.3"
 
   - obligation_id: SO-5
     kind: 入库期
