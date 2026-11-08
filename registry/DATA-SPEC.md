@@ -75,7 +75,7 @@
 
 ## D3 谓词书写约定（M4／M15 的校验对象）
 
-- **D3.1 词汇封闭**：`applicability` 三空间谓词与 `anti_patterns.detection_predicate` 只能使用 `predicate_vocabulary.yaml` 登记的谓词名（编译规范 2.3「谓词名注册」）；缺失词汇 → R2 提议，**不得本地造词**；同时登记为 `gaps`。〔母本派生 0.17.8 M4／编译规范 2.3〕
+- **D3.1 词汇封闭**：`applicability` 三空间谓词、`anti_patterns.detection_predicate`、`signals[].detection_predicate` 与 `signals[].severity_condition.when_predicate` 只能使用 `predicate_vocabulary.yaml` 登记的谓词名（编译规范 2.3「谓词名注册」）；缺失词汇 → R2 提议，**不得本地造词**；同时登记为 `gaps`。四个字段由同一检查 `M4` 硬校验（2026-11-08 ADR-SRC-P0-06 由前两字段扩至四字段；`G-SRC-1` 据此闭合）。〔母本派生 0.17.8 M4／编译规范 2.3〕
 - **D3.2 语法**：联接 `∧`、析取 `∨`、否定 `¬`、蕴含 `→`、量化 `∀`／`∃` 前置、通配 `·`（编译规范 2.3 BNF）。〔母本派生〕
 - **D3.3 谓词槽与事实占位**：方括号 `[…]` 表示**谓词／参数槽**——`applicability` 三空间与 `detection_predicate` 是谓词，`cost_profile`／`envelope.bound_expr` 是参数；它们在决策期求值，**不计事实债**。待勘察事实必须带显式标记：以 `待勘察：` 开头，或整句以 `待勘察` 结尾；仅句中提及不计。`[已核验]`／`[存疑]`／`[未核验]`／`[待核验]` 按 0.12 是可信度标注，单列统计。事实占位求值 `unknown` 时按 M15：候选保留＋勘察义务登记，**禁沉默排除**（0.18.6）。旧口径（全部方括号计事实占位）按 §4.17 迁移记录不回改。〔2026-11-04 新口径，本轮确立为规约〕
 - **D3.4 公式约定词**：`approved`／`declared`／`registered`／`sourced`／`compatible`／`has`／`now` 按编译规范 2.3 内建语义表使用，不算白板谓词。〔母本派生〕

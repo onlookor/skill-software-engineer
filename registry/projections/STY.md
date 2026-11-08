@@ -1953,7 +1953,7 @@
 
 - **状态** seed（seed 资格：成立）｜**版本** 1.0.0｜**可逆性** costly｜**origin** hybrid
 - **源行**：9.2.3-DSM 跨边界密度/反馈环趋势
-- **施加约束** 2 项：方面 9←本信号进入守护消费面：检测结果按 9.2.1 级别触发响应义务；方面 10←机器层：signals.detection_predicate 须最终可…
+- **施加约束** 2 项：方面 9←本信号进入守护消费面：检测结果按 9.2.1 级别触发响应义务；方面 10←机器层：signals.detection_predicate 与 se…
 - **叙事（收益-成本）**：收益：把「跨边界调用密度」与「反馈环趋势」从一句格言变成两条可结构化的信号，级别升级条件写进 severity_condition，消费方式写进 consumption，避免在交付压力下被解释成「再看…
 - **数据来源层**（yaml 行内注释）：provenance: 人工判断；typical_reversibility: 人工判断
 
@@ -2012,4 +2012,4 @@
 - **数据来源层**（yaml 行内注释）：narrative: 人工判断；statement: 骨架源/人工判断；impact: 交叉表源；note: 交叉表源；status: 人工判断；judgment: 人工判断
 
 ---
-生成于 2026-11-08T12:27:26｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`f92499ad5ae4`；`profiles.yaml`→`2d5851b5f262`；`predicate_vocabulary.yaml`→`901b70ba8883`
+生成于 2026-11-08T12:37:19｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`c69121cf0210`；`profiles.yaml`→`2d5851b5f262`；`predicate_vocabulary.yaml`→`31049a74c462`

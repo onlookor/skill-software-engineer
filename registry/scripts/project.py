@@ -259,7 +259,7 @@ _VOCAB_NAMES_CACHE: set | None = None
 
 
 def vocab_names_cached() -> set:
-    """封闭词汇名集合（不产生报告行），供 S-10/S-11 的 info 级观测使用。
+    """封闭词汇名集合（不产生报告行），供 S-10（info 观测）与 S-11（纯散文硬判据）使用。
     与 build_vocab 同口径：predicates ∪ formula_words ∪ clause_defined_predicates。"""
     global _VOCAB_NAMES_CACHE
     if _VOCAB_NAMES_CACHE is None:
@@ -728,9 +728,11 @@ def check_schema(rep: Report, e: dict, eid: str):
 def check_signals(rep: Report, e: dict, eid: str):
     """S-1～S-11：signals 面（ADR-SRC-02 增量；0.17.2 `signals` 条）。
 
-    S-1～S-8 hard，S-9～S-11 info。本面与 M4 解耦：detection_predicate 只做非空与
-    「禁方括号」形状校验，谓词可执行性由 G-SRC-1 承接（不在本批扩 M4）。
-    2026-11-08 批 B 增 S-10（词表封闭观测）与 S-11（纯散文观测）：均 info、只报不判。
+    S-1～S-8 hard（形状与枚举），S-9 info（consumption.note 缺失），
+    S-10 info（词表封闭观测，与 M4 的 signals 面同口径、保留分项可读性），
+    S-11 hard（`detection_predicate` 与 `when_predicate` 至少含 1 个已登记谓词调用）。
+    2026-11-08 ADR-SRC-P0-06：signals 两字段已并入 M4 硬校验（见 check_m4），
+    S-11 自本批起为硬项；此前「signals 暂不校验／由 G-SRC-1 承接」的口径已终止。
     """
     sigs = e.get('signals')
     if sigs is None:
@@ -769,7 +771,7 @@ def check_signals(rep: Report, e: dict, eid: str):
         if not pred.strip():
             issues['S-4'].append(f'{w}.detection_predicate 为空')
         if '[' in pred or ']' in pred:
-            issues['S-4'].append(f'{w}.detection_predicate 含方括号占位（本批禁；谓词缺口走 G-SRC-1）')
+            issues['S-4'].append(f'{w}.detection_predicate 含方括号占位（S-4 禁；谓词缺口走 R2 提议）')
         sev = it.get('severity')
         if sev not in ENUM_SIGNAL:
             issues['S-5'].append(f'{w}.severity={sev!r} ∉ {sorted(ENUM_SIGNAL)}')
@@ -819,7 +821,7 @@ def check_signals(rep: Report, e: dict, eid: str):
     if info_notes:
         rep.add('M2', f'{eid} signals', 'info', True, 'S-9：' + '；'.join(info_notes))
 
-    # ── S-10／S-11（info，只报不判；转硬属下一批，等干跑结果裁定）──
+    # ── S-10（info：词表封闭观测，与 M4 的 signals 面同口径、保留分项可读性）──
     vocab = vocab_names_cached()
     unregistered = []
     for it in sigs:
@@ -836,20 +838,26 @@ def check_signals(rep: Report, e: dict, eid: str):
                     unregistered.append(f'{sid}.when_predicate: {name}')
     if unregistered:
         rep.add('S-10', f'{eid} signals', 'info', False,
-                'S-10（词表未登记调用，info 不判）：' + '；'.join(unregistered))
+                'S-10（词表未登记调用，info 不判；判据在 M4 硬检查）：' + '；'.join(unregistered))
 
+    # ── S-11（hard：detection_predicate 与 when_predicate 均须含 ≥1 个已登记谓词调用；
+    #    2026-11-08 ADR-SRC-P0-06 转硬，依据是 info 期实测 6→0）──
     prose = []
     for it in sigs:
         if not isinstance(it, dict):
             continue
+        sid = str(it.get('signal_id') or '')
         dp = str(it.get('detection_predicate') or '')
-        if not dp.strip():
-            continue
-        if not [n for n in predicate_names(dp) if n in vocab]:
-            prose.append(f'{it.get("signal_id")}.detection_predicate=「{dp}」')
+        if dp.strip() and not [n for n in predicate_names(dp) if n in vocab]:
+            prose.append(f'{sid}.detection_predicate=「{dp}」')
+        seg = it.get('severity_condition')
+        if isinstance(seg, dict):
+            wp = str(seg.get('when_predicate') or '')
+            if wp.strip() and not [n for n in predicate_names(wp) if n in vocab]:
+                prose.append(f'{sid}.severity_condition.when_predicate=「{wp}」')
     if prose:
-        rep.add('S-11', f'{eid} signals', 'info', False,
-                'S-11（无已登记谓词调用＝纯散文，info 不判）：' + '；'.join(prose))
+        rep.fail('S-11', f'{eid} signals',
+                 'S-11（无已登记谓词调用＝纯散文，硬失败）：' + '；'.join(prose))
 
 
 def check_m2(rep: Report, e: dict, eid: str, mat: dict, prof_status: dict):
@@ -912,7 +920,10 @@ def check_m3(rep: Report, e: dict, eid: str, idx: Index):
 def check_m4(rep: Report, e: dict, eid: str, vocab: set):
     """M4 = ∀ p ∈ E.anti_patterns: executable(p.detection_predicate)（0.17.8）；
     可执行性的数据侧判据 = 词汇封闭（DATA-SPEC D3.1 / 编译规范 2.3 谓词名注册）。
-    同时校验 applicability 三空间谓词（DATA-SPEC D3.1）。"""
+    同口径覆盖 applicability 三空间谓词、signals[].detection_predicate 与
+    signals[].severity_condition.when_predicate（DATA-SPEC D3.1）。
+    2026-11-08 ADR-SRC-P0-06：signals 两字段并入本检查；G-SRC-1 据此闭合，
+    「signals 暂不校验／由 S-10 观测承接」的旧口径已终止。"""
     unknown = []
     scanned = 0
     for i, it in enumerate(e.get('anti_patterns') or []):
@@ -930,6 +941,24 @@ def check_m4(rep: Report, e: dict, eid: str, vocab: set):
             for name in predicate_names(expr_of(cond)):
                 if name not in vocab:
                     unknown.append(f'applicability.{sp}[{j}]: {name}')
+    for i, it in enumerate(e.get('signals') or []):
+        if not isinstance(it, dict):
+            continue
+        sid = str(it.get('signal_id') or f'signals[{i}]')
+        dp = str(it.get('detection_predicate') or '')
+        if dp.strip():
+            scanned += 1
+            for name in predicate_names(dp):
+                if name not in vocab:
+                    unknown.append(f'{sid}.detection_predicate: {name}')
+        seg = it.get('severity_condition')
+        if isinstance(seg, dict):
+            wp = str(seg.get('when_predicate') or '')
+            if wp.strip():
+                scanned += 1
+                for name in predicate_names(wp):
+                    if name not in vocab:
+                        unknown.append(f'{sid}.when_predicate: {name}')
     if unknown:
         rep.fail('M4', eid, '未登记谓词（本地造词，禁）：' + '、'.join(sorted(set(unknown)))
                         + ' → 走 R2 提议并登记 vocabulary_gaps')
@@ -2019,10 +2048,12 @@ def render_self_check(ctx: dict) -> str:
     if led:
         L += ['### 台账完整性检查（LEDGER，信息性）', '']
         L += [f'- {r.scope}：{r.reason}' for r in led] + ['']
-    for cid, title in (('S-10', 'signals 词表封闭观测'), ('S-11', 'signals 纯散文观测')):
+    for cid, title, note in (
+            ('S-10', 'signals 词表封闭观测', 'info，只报不判（判据在 M4 硬检查）'),
+            ('S-11', 'signals 纯散文', 'hard（ADR-SRC-P0-06：detection_predicate 与 when_predicate 均须含已登记谓词调用）')):
         rows = rep.of(cid)
         if rows:
-            L += [f'### {cid}：{title}（info，只报不判；转硬须另批 ADR）', '']
+            L += [f'### {cid}：{title}（{note}）', '']
             L += [f'- {r.scope}：{r.reason}' for r in rows] + ['']
     r2 = rep.of('R2-APPL')
     if r2:

@@ -1679,3 +1679,15 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **治理**：新建 `adr/ADR-SRC-P0-05-approved-20261108-behavior_switch与两条when护栏.md`；`adr/INDEX.md`（23→**24** 份，approved 23）。
 - **自检**：`--check` **1,213 条记录**｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
 
+## 2026-11-08（续 30）：M4 扩到 signals 两字段与 S-11 转硬
+
+- **M4 扩面**：`check_m4` 覆盖面由 `anti_patterns[].detection_predicate`（369 处）＋`applicability` 三空间（762 处）扩到另加 `signals[].detection_predicate`（**14 处**）与 `signals[].severity_condition.when_predicate`（**5 处**）；扫描面 **1,131→1,150** 处。空值与 `severity_condition: null` 跳过（由其形状检查 S-2／S-4／S-6 承担），判据仍只做词汇封闭，与全项同口径。
+- **S-11 转硬**：info → **hard**，观测面由 `detection_predicate` 扩到 `detection_predicate` ＋ `when_predicate`（任一字段非空即须含 ≥1 个已登记谓词调用，否则 `rep.fail`）。**依据是 info 期实测**：S-10 恒 **0**、S-11 由 **6 归 0**（ADR-SRC-P0-04 改写）、扩 when 干跑红 **0**（ADR-SRC-P0-05 §5）；非设计推断。
+- **S-10**：仍 info，观测面本就含 when，本批只把报文口径明确为「判据在 M4 硬检查」，实测未登记名 **0**。
+- **零豁免**：`waivers`／`entry_level_exemptions`／`GAP_SO_WHITELIST` 均未新增；S-11 无 skip 分支。转硬后无新增红。
+- **`G-SRC-1` 闭合**：`status: open → closed` ＋ `closure`（gap_ref／date／ruled_by／basis／evidence／preserved）；statement／impact／affected／route 原文逐字保留（0.22），另加 `note` 声明「M4 不扫 signals」等表述为 2026-11-06 登记时点事实、不再指向现状。**未动其他 gap**（`G-PRJ-1` 仍 open；`VG-09` 保持 open，残余 2 项与本批无关）。
+- **旧说明改写（18 处）**：`project.py` 的 `check_signals` docstring／S-4 报文／S-10·S-11 段前注释／S-10 报文／报告渲染／`vocab_names_cached` docstring／`check_m4` docstring；`method_registry.yaml` 的 `SRC-001.constraints_imposed`／`SRC-001.common_misuse`／`SRC-004.benefit_cost_analysis`／`SRC-007.benefit_cost_analysis`／`ST-SRC-01.note`／`G-SRC-1` 状态；`CHECK-SPEC.md` C1 M4 行／C5.13／C5.18（新增 C5.20）；`DATA-SPEC.md` D3.1；`predicate_vocabulary.yaml` VG-09 记 `resolution_2026_11_08_bC`（`superseded` 三条标「已终止／已过期／已履行」）。
+- **词表／母本**：`predicate_vocabulary.yaml` **零增删**（仍在册 90／`predicates` 158＋formula 7＋clause 53＝218）；母本 **0 行**（4,463 行／围栏 216 不变）。
+- **治理**：新建 `adr/ADR-SRC-P0-06-approved-20261108-M4扩signals与S-11转硬.md`；`adr/INDEX.md`（24→**25** 份，approved 24）。
+- **自检**：`--check` **1,212 条记录**（-1＝`G-SRC-1` 闭合后其「open gap 无 open SO 承接」info 行消失）｜硬 **0**｜软 **0**｜**info 40**（未成立 **0**）；占位符 **1,478**（事实 1＋槽 1,477）；指针 **2,409**，miss **0**。open gap **2→1**（余 `G-PRJ-1`）；open SO **2**（`SO-1`／`SO-6`）不变。
+- **残余口子（本批未关）**：S-11 只验「至少一个已登记调用」——`distortion(system) ∧ 散文` 仍过；元数不校；`envelope.bound_expr`／`cost_profile.*`／`constraints_imposed.constraint`／`narrative.*`／`consumption.note`／`anti_patterns.description`／`signals.name` 全部无词汇封闭；`when` 与 `detection` 无语义包含校验。
