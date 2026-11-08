@@ -111,6 +111,33 @@
   not_applicable_reason: null
 ```
 
+## 7.1 可选观测扩展：同一事实的两处落点
+
+当勘察出的事实**同时**被条目侧 `applicability.delivery_space` 槽与部署侧判据 6 状态声明引用时，在该行追加 `dual_site` 组（字段定义见 [selection_log-schema](file:///home/wgz/projects/skills/software-engineering/pilot/selection_log-schema.md) §3.2）。
+
+```yaml
+- question: 谁组织评审
+  provenance: {kind: slot, ref: "PRJ-001/delivery_space/1", slot_id: SLOT-PRJ-001-delivery_space-1, anchor: "<槽内原文，逐字取>"}
+  answer_kind: fact
+  answer: <组织/角色＋出处定位符>
+  verified: <true|false|unknown>
+  not_applicable_reason: null
+  dual_site:                                   # 可选；整组不写＝本次未观测，不判遗漏
+    entry_side: <条目侧取值>
+    deploy_side: <confirmed_present|confirmed_absent|undetermined>
+    first_valued: selection | deployment | simultaneous
+    same_fact: same | granularity_differs | contrary
+    contradiction:                             # 仅 same_fact=contrary 时填；否则 null
+      authoritative: <entry_side|deploy_side|other|unresolved>
+      adr_recorded: <true|false|unknown>
+      other_side_revised: <true|false|unknown>
+    observation_note: <一句：null 的理由，或人当时的处置事实>
+```
+
+- **只观测**：不改变 `answer`／`verified` 的求值，不新增义务，不触发检查，不进 `registry`／`gaps`。
+- **三档口径同 schema §1.1**：整组不写不判遗漏；写了就不得留空；取不到 `unknown` ＋ `open_obligations`；不适用 `null` ＋理由。
+- **不预设正确答案**：`contradiction` 只记「以什么为准、有没有记 ADR、有没有改另一边」，不评价哪种处置才对。
+
 ## 8. 与试跑结论的关系
 
 本模板解决「问什么、给到什么颗粒度才合格」；**不解决「没有真实项目就不存在这些事实」**。仓库自举场景下四类事实均无来源，只能保持 `[待勘察]`——这正是 `G-PRJ-1`／`SO-1` 无法在仓内闭合的原因（详见试跑报告 §5）。

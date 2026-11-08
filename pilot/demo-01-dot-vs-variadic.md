@@ -101,6 +101,7 @@ facts:
     value: true
     note: ''
 slot_registry: []            # 本记录无 kind=slot 事实；条款/ADR 证据不登记
+# dual_site: 本示例不涉及两处落点，故该组字段留空（理由见 §8.5）
 assessments:
   - {id: A1, statement: 全谓词 variadic 等于全局放宽，判定强度下降, basis: [F1, F2, F6], basis_kind: facts, strength: strong}
   - {id: A2, statement: 前缀投影放行会静默吞掉漏写, basis: [F3, F6], basis_kind: facts, strength: strong}
@@ -195,3 +196,11 @@ open_obligations:
 3. `provenance` 是嵌套块，单行流式写法在 6 条事实里可读，但字段一多就会因缩进出错；这是格式风险，不是 schema 缺陷。
 
 **结论**：五处卡点全部闭合，二次回填无死格；未再发现需要改 schema 的矛盾。
+
+### §8.5 两处落点观测：本示例留空（2026-11-08）
+
+**本示例不涉及两处落点，故 `dual_site` 该组字段留空。**
+
+理由：§5 的 6 条事实全部来自条款（`clause`）／ADR／干跑证据，**没有一条**落在 `registry/method_registry.yaml` 条目的 `applicability.delivery_space` 槽（`slot_registry` 因此为空），也没有一条对应母本 10.2.5 判据 6 的部署状态声明（`criteria6_verdicts`）。该观测组的触发条件（同一事实同时出现在条目侧槽与部署侧声明）不成立。
+
+按 [selection_log-schema](file:///home/wgz/projects/skills/software-engineering/pilot/selection_log-schema.md) §3.2 第 1 条，整组不写**不判遗漏、不打回**。选「留空」而不「补示例」，是因为仓内没有可供观测的真实项目：本仓无部署实例，`deploy_side` 只能写 `undetermined`，那样补出来的示例是编的，反而会把观测项做成形式主义。

@@ -2120,3 +2120,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **INDEX**：该行改为「立项；词表归一与 `fact_id` 已落，未选 A／B／C」；统计不变（32 份／proposed 1）。
 - **数字**：`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；撤回 §6 补注、§7 更正、§8 与 INDEX 行。
+
+## 2026-11-08（续 71）：试点包加「同一事实两处落点」观测项（不新增义务）
+
+- **新增**：`pilot/selection_log-schema.md` §3.2——`facts` 侧可选扩展 `dual_site`，记四项：条目侧取值 `entry_side`／部署侧取值 `deploy_side`／哪个先有值 `first_valued`（`selection`／`deployment`／`simultaneous`）／是否同一句事实 `same_fact`（`same`／`granularity_differs`／`contrary`）；另记矛盾处置 `contradiction`（`authoritative`／`adr_recorded`／`other_side_revised`），只记事实、不预设正确答案。
+- **勘察模板**：`pilot/delivery-space-survey-template.md` 新增 §7.1，同一组字段随勘察行可选追加。
+- **硬约束**：只观测——不进必填结构、不触发检查、不影响任何判定；`null`／`unknown`／留空沿用 §1.1 三档；整组不写＝未观测，不判遗漏；写了就不得留空。
+- **`demo-01`**：§5 YAML 注明该组留空，新增 §8.5 说明理由——6 条事实全为 clause／ADR／干跑证据，无一落在条目 `delivery_space` 槽，也无对应判据 6 声明；仓内无真实部署实例，补示例只能编。
+- **反模式表**：新增一行「把 `dual_site` 有值当成两处已归一」。
+- **数字**：`pilot/check-yaml.py` 2 个文件全通过；`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；撤回 schema §3.2、模板 §7.1、demo §8.5 与反模式行。
