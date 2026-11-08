@@ -1909,3 +1909,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **不改判据**：四张表现存检测式（CFG-002 AP3、CFG-004 AP3、VFM-006 AP4、QAT-006 AP1、QAT-014 AP3）均为事实叙述槽，不用 `registered(...)`；补字段只解除 D3.12-S4 禁令，不翻转任何求值结果。
 - **数字**：记录 1,218｜硬 0｜软 0｜占位符 1,481（事实 1＋槽 1,480），与改前一致。
 - **回退**：`git revert 8697619`；仅改 DATA-SPEC 与自检报告时间戳。
+
+## 2026-11-08（续 51）：C-1 建表——调度项注册表（schema＋空表）
+
+- **新增**：`registry/schedules.yaml`。义务锚点＝5.2.4 @2492 逐字「[SCH-01] 定时器/截止期/cron 的登记」。
+- **内容**：`entry_fields` 五项（task_id／schedule／failure_policy／owner／status）＋`entries: []`。**不造实例**；`instance_state: none` 明示「本仓无实例，验证留待项目侧」，空表不得读作「已核对无问题」。
+- **status**：沿用 0.17.2 五值词汇表；适用子集 `{seed, active, retired}`——无 `draft`（登记即进入调度，无骨架起草）；无 `deprecated`（下线即移除调度，无「仍可读禁新增引用」过渡期）。可消费按 2.3(a) 取 `{active, seed}`。
+- **目录布局登记（D1.2）**：DATA-SPEC D1.3 文件角色表新增一行；`registry/README.md` §1 新增一行；本 changelog 本条。
+- **附录 C.1**：C-1 行标「已建表（schema＋空表；实例 0）」。
+- **数字**：检查器不读本文件，`--check` 数字不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；删文件并撤回三处登记行。

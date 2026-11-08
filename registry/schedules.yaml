@@ -1,0 +1,37 @@
+# 调度项注册表（C-1）：schema ＋ 空表
+#
+# 义务锚点（母本逐字）：5.2.4 @2492「[SCH-01] 定时器/截止期/cron 的登记」。
+# 本文件只定义条目 schema，**不含任何实例**：本仓无调度实例，验证留待项目侧。
+# 空表 ≠ 已核对无问题；entries 为 0 只表示尚未登记，不表示「已查无问题」。
+#
+# status 取值：沿用 0.17.2 条目状态枚举（同一词汇表，不另立枚举）；
+# 可消费状态按《编译规范》2.3(a) 取 {active, seed}（seed 限 bootstrap 期）。
+# 适用子集 {seed, active, retired}，逐值理由：
+#   - 无 draft：定时器一经登记即进入调度，不存在「骨架起草」期（0.17.6 人工种子通道
+#     的对象是方法条目，不是调度项）。
+#   - 无 deprecated：下线即移除调度，不存在「仍可读但禁止新增引用」的过渡期；
+#     历史调度记录由变更日志承担，不由本表降级承担。
+#   - retired：已下线且禁止新增引用。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    source_type: clause_id
+    value: "5.2.4"
+    quote: "[SCH-01] 定时器/截止期/cron 的登记"
+    verified: true
+  schema_status: schema-only          # 只有 schema，没有实例
+  instance_state: none                # 本仓无实例；验证留待项目侧
+  status_domain: [seed, active, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+  consumption_states: [active, seed]  # 《编译规范》2.3(a)；seed 限 bootstrap 期
+
+entry_fields:
+  - {name: task_id, type: string, required: true, note: 调度项唯一标识}
+  - {name: schedule, type: "cron | deadline", required: true, note: 触发时刻或截止期}
+  - {name: failure_policy, type: string, required: true, note: 失败处置}
+  - {name: owner, type: string, required: true, note: 调度权归属（5.2.4 SCH-03 受 Y1 同型约束）}
+  - {name: status, type: "enum: seed|active|retired", required: true}
+
+entries: []

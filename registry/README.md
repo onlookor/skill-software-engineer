@@ -13,6 +13,7 @@
 | `profiles.yaml` | 18 个 kind 的字段剖面（元注册条目）＋剖面级缺口台账 | [DATA-SPEC](DATA-SPEC.md) D1.3、D2 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影（非权威） | [DATA-SPEC](DATA-SPEC.md) D1.3、D3 |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | [DATA-SPEC](DATA-SPEC.md) D2；[CHECK-SPEC](CHECK-SPEC.md) C4 |
+| `schedules.yaml` | 调度项注册表（C-1）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `scripts/project.py` | 自检与同源投影工具 | [CHECK-SPEC](CHECK-SPEC.md) C1、C3 |
 | `projections/*.md` | 人类可读投影与自检报告（生成物） | [CHECK-SPEC](CHECK-SPEC.md) C3.2 |
 
