@@ -35,7 +35,9 @@ entry_fields:
   - {name: contract_id, type: string, required: true, note: 被变更契约（@2008 首槽 C）}
   - {name: v1, type: string, required: true, note: 变更前版本（@2008 第二槽）}
   - {name: v2, type: string, required: true, note: 变更后版本（@2008 第三槽）}
-  - {name: breaking, type: boolean, required: true, note: 破坏性判定（判定为 true 时 @1944 四项义务全适用）}
+  - {name: breaking, type: boolean, required: true, note: 破坏性判定（判定为 true 时 @1944 四项义务全适用）。**与 `compat_level` 正交**：本字段只回答「是否破坏兼容」}
+  - {name: compat_level, type: "enum: backward|forward|full|none", required: true, note: 版本对兼容级别（3.2.2 @1941 逐字四值：backward＝新消费者可读旧数据／forward＝旧消费者可读新数据／full／none）。**与 `breaking` 正交**：本字段只回答「允许哪个方向的读取」；`breaking=true` 不等于 `compat_level=none`，`breaking=false` 不等于 `full`，不得以一个代替另一个}
+  - {name: compat_evidence, type: string, required: true, note: 兼容判定证据指针（契约测试／兼容性测试报告／ADR；0.4 出处门槛）}
   - {name: deprecation_window, type: string, required: true, note: 弃用窗口（≥ 最慢消费者迁移时长估计，估计须有出处）}
   - {name: migration_support, type: string, required: true, note: 迁移支持}
   - {name: approval_adr, type: string, required: true, note: 批准 ADR 指针（@1944「完整 ADR + 批准」）}

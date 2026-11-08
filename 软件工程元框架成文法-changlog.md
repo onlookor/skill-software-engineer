@@ -1971,3 +1971,14 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **附录 C.1**：C-6／C-7 两行均标「已建表（合并为 `pool_capacity.yaml`）」；共同结论同步为六项已建、其余六项无表。
 - **数字**：检查器不读本文件，`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；删文件并撤回三处登记行。
+
+## 2026-11-08（续 57）：C-3 并入 C-16——`contract_changes.yaml` 增兼容两字段
+
+- **不新增文件**：C-3（版本间协议兼容性规则）并入刚建的 `registry/contract_changes.yaml`，增 `compat_level`（`backward|forward|full|none`，3.2.2 @1941 逐字四值）与 `compat_evidence`（兼容判定证据指针）。
+- **两轴正交（用户裁定要求）**：字段注写死——`breaking` 只回答「是否破坏兼容」，`compat_level` 只回答「允许哪个方向的读取」；`breaking=true` ≠ `compat_level=none`，`breaking=false` ≠ `full`，不得以一个代替另一个。
+- **不双写的理由**：另立 `version_compat.yaml` 会与 `contract_changes.yaml` 的 v1／v2／approval_adr 形成双权威，正是 F4 要防的漂移。
+- **内容**：`entry_fields` 9→11 项；`entries: []` 仍为空，**本仓无实例**。
+- **目录布局登记（D1.2）**：无新增文件；DATA-SPEC D1.3 的 `contract_changes.yaml` 行不变（字段以文件自身 `entry_fields` 为准）；本 changelog 本条。
+- **附录 C.1**：C-3 行标「已并入 `contract_changes.yaml`」；共同结论同步为「其余五项（C-2／C-5／C-8／C-9／C-17）无表」。
+- **数字**：检查器不读本文件，`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；删两字段并撤回一行登记。
