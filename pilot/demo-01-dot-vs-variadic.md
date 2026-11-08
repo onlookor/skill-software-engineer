@@ -20,7 +20,7 @@
 
 ## §3 事实（三值求值）
 
-| id | slot_ref | 事实 | value | 出处 |
+| id | 证据锚（非 applicability 槽） | 事实 | value | 出处 |
 |---|---|---|---|---|
 | F1 | `编译规范/2.3` | 谓词语法含通配 `·`，且 `·` 表示有意不约束的槽位 | true | 编译规范 2.3 BNF 与语义表 |
 | F2 | `0.17.8/registry_entry` | `registry_entry` 是词表中唯一可变长槽（固定 6 槽＋尾部 `fields...`） | true | 母本 @493 末槽；DATA-SPEC D1.4 第 11 行 |
@@ -45,7 +45,15 @@ F4 的处置（按 M15）：**候选不排除**，`has` 调用单列「未覆盖
 selection_id: SEL-20261108-01
 decided_at: 2026-11-08T17:26:10+08:00
 retrospective: true          # 原始决策在 2026-11-08 早于本记录，决策时刻未留痕
-decided_by: 人类责任方（本仓用户，经任务书裁定）   # 无批准角色注册表实例，见 F2
+decided_by:                  # unregistered 变体：有名分、无人名记录（见 §8 冲突 C1）
+  state: unregistered
+  role: 人类责任方
+  name: null
+  roster_ref: null
+deployment_instance:
+  status: absent
+  roster_ref: null
+approval_status: provisional
 decision: 元数校验采用「`·` 显式占位 + `argc = arity`」，仅 registry_entry 允许 `argc ≥ 6`
 adr_ref: ADR-SRC-P0-08 / DATA-SPEC D3.7-D3.8 / CHECK-SPEC C5.21
 candidates:
@@ -55,23 +63,26 @@ candidates:
   - id: C2
     statement: 全谓词 variadic（一律 argc ≥ arity）
     verdict: rejected
-    rejection_reason: 会让任意 f(x) 合法，全局放宽且无母本依据（F1／F2／F6，A1）
+    rejection_reason: 会让任意 f(x) 合法，全局放宽且无母本依据（A1，basis F1／F2／F6）
   - id: C3
     statement: 裸缺参按前缀投影默认放行
     verdict: rejected
-    rejection_reason: 无法区分漏写与有意不约束，43 处被静默吞掉（F3／F6，A2）
+    rejection_reason: 无法区分漏写与有意不约束，43 处被静默吞掉（A2，basis F3／F6）
 facts:
-  - {slot_ref: 编译规范/2.3, statement: 语法含通配 `·` 且表示有意不约束, value: true, source: 编译规范 2.3 BNF, note: ''}
-  - {slot_ref: 0.17.8/registry_entry, statement: registry_entry 是唯一可变长槽（6 固定＋fields...）, value: true, source: 母本 @493；DATA-SPEC D1.4 #11, note: ''}
-  - {slot_ref: 检查面/全部判定串, statement: 1,150 串中 43 处元数不匹配（23 槽位互换／9 少参／11 真错）, value: true, source: ADR-SRC-P0-08 §4, note: ''}
-  - {slot_ref: formula_words/has, statement: 当时 has 无 arity，16 处无法判定, value: unknown, source: ADR-SRC-P0-10 §9, note: 按 M15 单列未覆盖、候选保留；后续裁定 arity=1（16→0）}
-  - {slot_ref: 可变槽阈值, statement: 用户明定 N=6, value: true, source: ADR-SRC-P0-08 §1.3, note: ''}
-  - {slot_ref: 历史口径, statement: 旧实现按前缀投影默认放行裸缺参, value: true, source: ADR-SRC-P0-08 §1.1, note: ''}
+  - {id: F1, slot_ref: null, slot_id: null, statement: 语法含通配 `·` 且表示有意不约束, value: true, source: 编译规范 2.3 BNF, note: '非条目槽（条款证据）；槽代号不适用，见 §8 C2'}
+  - {id: F2, slot_ref: null, slot_id: null, statement: registry_entry 是唯一可变长槽（6 固定＋fields...）, value: true, source: 母本 @493；DATA-SPEC D1.4 #11, note: '非条目槽（条款证据）'}
+  - {id: F3, slot_ref: null, slot_id: null, statement: 1,150 串中 43 处元数不匹配（23 槽位互换／9 少参／11 真错）, value: true, source: ADR-SRC-P0-08 §4, note: '非条目槽（干跑证据）'}
+  - {id: F4, slot_ref: null, slot_id: null, statement: 当时 has 无 arity，16 处无法判定, value: unknown, source: ADR-SRC-P0-10 §9, note: '按 M15 单列未覆盖、候选保留；后续裁定 arity=1（16→0）'}
+  - {id: F5, slot_ref: null, slot_id: null, statement: 用户明定 N=6, value: true, source: ADR-SRC-P0-08 §1.3, note: '非条目槽（条款证据）'}
+  - {id: F6, slot_ref: null, slot_id: null, statement: 旧实现按前缀投影默认放行裸缺参, value: true, source: ADR-SRC-P0-08 §1.1, note: '非条目槽（条款证据）'}
+slot_registry: []            # 本记录无 registry 条目槽；条款证据无槽可登记（见 §8 C4）
 assessments:
-  - {statement: 全谓词 variadic 等于全局放宽，判定强度下降, basis: F1／F2／F6, strength: strong}
-  - {statement: 前缀投影放行会静默吞掉漏写, basis: F3／F6, strength: strong}
-  - {statement: 显式占位＋精确元数＋唯一 variadic 例外是保强度且可机器校的唯一形态, basis: F1–F5, strength: strong}
-open_obligations: []         # 本次未产生新勘察任务；has 的未知已由后续 ADR 关闭
+  - {id: A1, statement: 全谓词 variadic 等于全局放宽，判定强度下降, basis: [F1, F2, F6], strength: strong}
+  - {id: A2, statement: 前缀投影放行会静默吞掉漏写, basis: [F3, F6], strength: strong}
+  - {id: A3, statement: 显式占位＋精确元数＋唯一 variadic 例外是保强度且可机器校的唯一形态, basis: [F1, F2, F3, F4, F5], strength: strong}
+open_obligations:
+  - {what: 补部署实例声明（批准角色注册表）, owner: 人类责任方, due: 2026-11-30}
+  - {what: 采集决策人姓名，补齐 decided_by.name, owner: 人类责任方, due: 2026-11-30}
 ```
 
 ## §6 填写耗时（实测）
@@ -94,3 +105,42 @@ open_obligations: []         # 本次未产生新勘察任务；has 的未知已
 | F6 | **决策时刻没有留痕** | 原始决策在同日早些时候，无法复算「当时知道什么」 | 追溯记录的时间字段失真，三值求值可能被后见之明污染 | 日志必须在决策当场开；追溯填写须标 `retrospective: true`（已加字段） |
 
 其中 **F1 与 F5 是结构性卡点**：前者决定「逐条」能否机械核对，后者决定流程是否有人真的走。F2 是本框架自举时的治理缺口，靠 schema 补不了。
+
+## §8 按新 schema 回填（2026-11-08）
+
+### §8.1 逐项耗时（口径：agent 编辑操作，**不是**人类填写耗时）
+
+| 段 | 内容 | 起 | 止 | 耗时 |
+|---|---|---|---|---|
+| T0→T1 | §5 YAML 重排：`decided_by` 三态、`deployment_instance`、`approval_status`、6 条 facts 加 `id`／`slot_id`、3 条 assessments 加 `id`／`basis` 列表、`open_obligations` 补 2 条 | 19:04:29 | 19:04:51 | **22 秒** |
+| T1→T2 | 提交前核对 §3／§4 与 §5 编号一致 | 19:04:51 | 19:05:07 | 16 秒 |
+| T2→T3 | 本节记录 | 19:05:07 | 19:05:30 | 23 秒 |
+
+**口径警告**：上表是 agent 的编辑器操作耗时，**不可换算人力成本**。与 §6 的 3 分 43 秒同源问题——原文都在同一会话上下文里，没有冷启动查证。人类首次填写的增量仍只能估计。
+
+| 新增栏 | 条数 | agent 增量 | 人类预估增量 |
+|---|---|---|---|
+| `decided_by` 三态 | 1 | <5 秒 | +30–60 秒（要先判「算不算 unregistered」） |
+| `deployment_instance` | 1 | <5 秒 | +30 秒（要判 absent 并接受 provisional） |
+| `approval_status` | 1 | <5 秒 | +0（随 absent 固定） |
+| `facts.id` | 6 | 均摊在 22 秒内 | +1–2 分钟（要与 §3 表编号一致） |
+| 逐条判 `slot_ref` 填什么 | 6 | 同上 | **+2–3 分钟（最费时）** |
+| `assessments.id`＋`basis: [F*]` | 3 | 同上 | +1 分钟 |
+| `slot_registry` 空段 | 1 | <5 秒 | +10 秒 |
+| `open_obligations` 补 2 条 | 2 | 同上 | +1 分钟 |
+
+**最费时的一栏**：判定 `facts.slot_ref` 该填什么。本记录 6 条事实全部来自条款／ADR／干跑，**没有一条是 registry 条目的方括号槽**；旧写法可以随手写「编译规范/2.3」，新规则下要么 `null`＋理由、要么造一个不存在的槽号——每一条都要停下来判断。
+
+### §8.2 露馅点（schema 是否要改，先列等裁）
+
+| # | 冲突 | 表现 | 严重度 |
+|---|---|---|---|
+| C1 | `decided_by` 缺「有名分、无人名」档 | `unregistered` 定义要求 `name` 为真实人名；本记录只有角色「人类责任方」、无姓名 → 填 `name: null` 违反值域，填 `unknown` 又等于谎称「当场无人可署」。当前取 `unregistered + name: null + obligation`，属**越界填写** | 硬矛盾 |
+| C2 | `slot_ref` 假设事实来自 applicability 槽 | 本记录 6/6 条事实是条款／ADR／干跑证据。`slot_ref: null` 时 §1.1 要求配 `not_applicable_reason`，但 `facts` 五字段里没有这个字段，只能塞进 `note` | 覆盖缺口 |
+| C3 | §3 五字段无 `id`，§4.1 却要求 `basis: [F*]` | 回填被迫给 facts 加第 6 个字段 `id`，否则判断项无法指回事实 | **硬矛盾** |
+| C4 | `slot_registry` 只管条目槽 | 条款证据无登记去向，机械复核只能靠 `source` 自由文本——F1 的「可复核」只覆盖一半 | 覆盖缺口 |
+| C5 | `approval_status` 只有两值 | 本决策在人类层面已批准，但 `deployment_instance=absent` 强制 `provisional` → 「已批准但注册表缺」与「未批准」在记录上无法区分，读者会误读 | 语义失真 |
+
+### §8.3 结论
+
+规则**填得下**（§5 重排无死格，22 秒完成），但 C1／C3 是真矛盾：照规则填必须越界（加字段或填 null 违约）；C2／C4 是覆盖缺口；C5 是语义失真。按本批约束**未改 schema**，等裁定后再决定是加 `evidence_ref`／`id`／第四态，还是收紧为「仅条目槽事实适用本 schema」。
