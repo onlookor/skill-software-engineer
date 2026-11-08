@@ -2069,3 +2069,12 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **不动**：母本 0 行；`registry/` 数据零改动；0.21 状态机不改；续 62 中的旧文件名按 0.22 as-of 保留、不回改。
 - **数字**：`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）；`registry/projections/自检报告.md` 仅生成时间戳刷新（三份源哈希不变）。
 - **回退**：`git revert <sha>`；撤回改名与状态，母本三笔改动不受影响（回退顺序见 ADR §8）。
+
+## 2026-11-08（续 66）：台账开放项加 `debt_kind` 标记（待接地／真欠账）
+
+- **定义**：`registry/DATA-SPEC.md` D3.15——`pending_grounding`（待接地，使用期／部署期填，本仓无交付物）与 `genuine_debt`（真欠账，须本仓交付：建表／补字段／2.3(a) 准入／R2·M4）；仅开放项携带，闭合项不携带；消费方＝欠账排序与 0.18.2 S0／S1；**无检查器消费**。
+- **落点**：`method_registry.yaml` 开放项——`G-PRJ-1`＝`genuine_debt`、`SO-1`／`SO-6`＝`pending_grounding`；`DATA-SPEC` 附录 C.3 逐条标 15 个开放项。
+- **结果**：`pending_grounding` **5** 项（C-5／C-8／C-17、SO-1、SO-6）；`genuine_debt` **13** 项（C-1／C-4／C-6／C-7／C-9／C-10～C-13／C-14～C-16、G-PRJ-1）。无「两值都归不进去」的条目。
+- **未动**：任何检测式、`registered` 求值、`ENUM_STATUS`、《编译规范》2.3(a)、检查器。
+- **数字**：`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；撤回三处 YAML 字段与 C.3 表、D3.15。
