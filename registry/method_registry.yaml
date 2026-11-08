@@ -93,7 +93,7 @@ entries:
     anti_patterns:                     # 骨架源：1.2.3「反模式」列；signal_level 交叉表源：0.14 + 9.2.1
       - pattern_id: STY-001-AP1
         description: "深层同步调用链（链深超出超时预算可容纳层级）"
-        detection_predicate: "∃ path: interaction_flow(path, ·, sync_chain) ∧ timeout_budget(path, ·) ∧ [depth(path) 超过 timeout_budget 可容纳的层级数]"
+        detection_predicate: "∃ path: interaction_flow(path, ·, sync_chain) ∧ timeout_budget(path, ·) ∧ [该 path 的跳数超过其超时预算可容纳的层级数]"
         signal_level: P1               # 结构性漂移须限期整改（0.14 P1）；未直接构成 V1/V3 硬违例
       - pattern_id: STY-001-AP2
         description: "同步链上的跨团队耦合部署"
@@ -4191,7 +4191,7 @@ entries:
         signal_level: P0               # X6 明文「∀ shared_data_access: satisfies(3.2.3 四条件) ∧ explicitly_recorded —— 硬」；3.2.3 条件 4 明文『禁止直连物理表/存储引擎』→ P0（MJ-4 判据）
       - pattern_id: CTR-005-AP2
         description: "共享数据接入四条件的满足情况未显式记录，或四条件任一违反而未触发向方面 1 的重审提议"
-        detection_predicate: "∃ a: [shared_data_access(a)] ∧ (¬[a 满足 3.2.3 四条件] ∨ ¬declared(a))"
+        detection_predicate: "∃ D: dataset(D) ∧ ∃ u: access_path(D, u, ·, ·) ∧ [该访问路径为共享数据接入（X6 量词域）] ∧ (¬[该路径满足 3.2.3 四条件] ∨ ¬declared(该路径))"
         signal_level: P0               # X6 硬性质的后半句 explicitly_recorded（3.2.3 明文『满足情况必须显式记录』）；尾句另定『任一条件违反 → 分布式单体信号（1.2.2 反模式），触发向方面 1 的重审提议（附违反项证据）』→ P0（MJ-4 判据）
       - pattern_id: CTR-005-AP3
         description: "语义条款缺项（单位/值域/空值语义/敏感性标注/所有权声明任一缺失）"
@@ -5561,7 +5561,7 @@ entries:
     anti_patterns:
       - pattern_id: DFL-004-AP1
         description: "以批式 ETL 承载实时/高新鲜度需求（批窗口下界与业务新鲜度要求不匹配）"
-        detection_predicate: "∃ D: data_flow(D, ·, ·, [batch]) ∧ [D 的消费方新鲜度要求 < batch_window(D)] ∧ ¬has_approved_exception(·, ·, ·)"
+        detection_predicate: "∃ D: data_flow(D, ·, ·, [batch]) ∧ [D 的消费方新鲜度要求 < D 的批窗口长度] ∧ ¬has_approved_exception(·, ·, ·)"
         signal_level: P1               # 人工判断（MJ-4 同型）：4.2.4 第三列把适用面明文限定为『分析域、报表；对新鲜度要求低的场景』→ 违反即选型漂移；Y4 在 4.5 级别列为软（偏离标记评审）→ 不升 P0，定 P1 限期整改
       - pattern_id: DFL-004-AP2
         description: "新鲜度条款未写入数据契约（批窗口只存在于调度配置里）"

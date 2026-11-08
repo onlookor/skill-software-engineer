@@ -336,3 +336,42 @@
 
 - 本批**只落实 §12.1**；§12.3 三条检测式**未改**（用户要求「先给方案、暂不入册」）。
 - 不改母本；不加豁免／白名单／新 gap；硬 0／软 0。
+
+## §13 续批三执行：三条改写落地（2026-11-08 用户批准）
+
+### §13.1 最终串（按 2B → 1 → 3 落地）
+
+| # | 位置 | 最终串 |
+|---|---|---|
+| 2 | CTR-005 `anti_patterns[1].detection_predicate` | `∃ D: dataset(D) ∧ ∃ u: access_path(D, u, ·, ·) ∧ [该访问路径为共享数据接入（X6 量词域）] ∧ (¬[该路径满足 3.2.3 四条件] ∨ ¬declared(该路径))` |
+| 1 | STY-001 `anti_patterns[0].detection_predicate` | `∃ path: interaction_flow(path, ·, sync_chain) ∧ timeout_budget(path, ·) ∧ [该 path 的跳数超过其超时预算可容纳的层级数]` |
+| 3 | DFL-004 `anti_patterns[0].detection_predicate` | `∃ D: data_flow(D, ·, ·, [batch]) ∧ [D 的消费方新鲜度要求 < D 的批窗口长度] ∧ ¬has_approved_exception(·, ·, ·)` |
+
+### §13.2 取 B 而非 A 的理由（用户补正，本条为主）
+
+原串 `∃ a: [shared_data_access(a)] ∧ …` 的见证 **`a` 既不由 `dataset(D)` 也不由 `access_path(D, u, ·, ·)` 派生**：它凭空出现，再被 `[shared_data_access(a)]` 贴上一个未在册的名字。这与本批之前刚治掉的**「背景守卫与被约束对象无绑定」是同型缺陷**（D3.9／ADR-SRC-P0-09）：约束项挂着一个没有来源的见证，判定式看上去成立、实际不可追。
+
+B 把见证拆成 `D`（数据集）＋`u`（单元），并由 `dataset(D)`／`access_path(D, u, ·, ·)` **派生**，与同族 AP1 同形；A 只是把伪调用换成条件槽，**无来源的 `a` 原样保留**。故取 B——**同族一致只是附带收益，可追性才是主因**。
+
+### §13.3 `depth` 只余值位：依据留痕（用户要求）
+
+`depth(path)` 从此只出现于 `bound_expr`（@69／@72／@78）。`bound_expr` 是**度量表达式／值位**，不是判定面：
+
+- `CHECK-SPEC` C5.21 的扫描面是四个**判定字段**（`anti_patterns[].detection_predicate`、`applicability` 三空间、`signals[].detection_predicate`、`signals[].severity_condition.when_predicate`）；`bound_expr` 不在其列。
+- D3.7 已区分值位与布尔位：投影／槽值引用只可用于值位（比较式一侧、函数实参、赋值右值）。
+- **值位不参与名注册与元数判定**——这不是「S-12 漏检」，而是判据面边界。若将来要把 `bound_expr` 纳入名／元数检查，须**另立检查项**并改 C5.21 扫描面，不得以「S-12 没报」反推合规。
+
+### §13.4 实测数字与上轮预估的差异
+
+| 项 | 上轮预估 | 实测 | 说明 |
+|---|---|---|---|
+| 准入调用 | 47→46 | **47→46** ✓ | CTR-005 的 `shared_data_access(a)` 消失 |
+| 不在册 info | 1→0 | **1→0** ✓ | 该 info 行整行消失，检查行 1,215→**1,214**（非条目变化，条目仍 138） |
+| 豁免段 | 29→28 | **29→27**（混合 24／通道号 3） | 预估少算 1：STY-001／DFL-004 两段由「含 `(` 的混合段」变为纯散文后**整段不再计入**豁免；CTR-005 那段原本属**准入**（不计豁免），故其消失只减准入 |
+| 顶层调用 | 469 不变 | **469→471** | CTR-005 由「括号内 1 个伪调用」改为「顶层 `dataset(D)`＋`access_path(D,u,·,·)` 两个派生调用」；固定元数同步 469→471 |
+| 无调用串／占位符 | 不变 | **888／1,483 不变** | 括号数量未变 |
+| 硬／软 | 0／0 | **0／0**，退出码 0 | 新增调用全部在册且元数相符 |
+
+### §13.5 混合段剩余（复核）
+
+混合段（`mixed` 豁免）内共 **28** 处调用：27 处在册且元数相符（`delivery_semantics`×10、`idempotency`×8、`owner`×4、`interaction`／`breaking_change`／`time_semantics`／`data_lineage`／`timeout_budget`×2 等）；余 1 处为散文内通道号 `（CH-C(2)）` 的 `C`，属 D3.11 豁免类 b 的散文形态，非谓词。
