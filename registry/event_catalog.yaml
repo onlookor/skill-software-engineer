@@ -1,0 +1,45 @@
+# 领域事件目录（C-9）：schema ＋ 空表（指针表，不复制 schema）
+#
+# 义务锚点（母本逐字）：1.2.3 @1382「事件驱动（发布订阅）…生产者发布领域事件，多个消费者订阅」；
+#   3.2.2 @1930「领域事件 = 已发生业务事实的陈述（过去时态命名）；schema + 事件信封…+ 演化策略」；
+#   3.2.2 @1945「发现与注册：API 网关（南北向）、schema registry（事件/消息）、服务目录（内部检索）」
+#   ——**事件契约的登记面在外部 schema registry**。
+#
+# 本表是**索引**，不是第二权威：只存 `event_id` 与可解析指针 `registry_ref`，**不复制 schema**。
+# 权威仍在外部 registry；本表只回答「这个项目有哪些事件、归谁、指针在哪」。
+#
+# **指针不可解析 → `unknown`，不得读作「无事件」**（0.18.6 M15）。
+# 空表同理：`entries: []` 只表示本仓尚未登记，不表示「该项目没有领域事件」，更不表示「已核对无问题」。
+# 没有 schema registry 的项目：本表只能登记指针为 null 的条目并记 `unknown`，不得因此推出「无事件」。
+#
+# status 取值：沿用 0.17.2 条目状态枚举（同一词汇表，不另立枚举）；
+# 可消费状态按《编译规范》2.3(a) 取 {active, seed}（seed 限 bootstrap 期）。
+# 适用子集 {draft, active, deprecated, retired}，逐值理由：
+#   - draft：事件契约可先起草再发布（与契约生命周期 draft 同型）。
+#   - 无 seed：母本只把「领域事件」列为风格要素，**不给事件清单**——本表无母本种子可预置。
+#   - deprecated：旧事件版本在弃用窗内仍可被消费者引用，记录须可读（否则丢事件）。
+#   - retired：事件已彻底下线，记录保留以供回溯。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    - {source_type: clause_id, value: "1.2.3", line: 1382, quote: "事件驱动（发布订阅）…生产者发布领域事件，多个消费者订阅", verified: true}
+    - {source_type: clause_id, value: "3.2.2", line: 1930, quote: "领域事件 = 已发生业务事实的陈述（过去时态命名）；schema + 事件信封（CloudEvents 类元数据规范）+ 演化策略", verified: true}
+    - {source_type: clause_id, value: "3.2.2", line: 1945, quote: "发现与注册：API 网关（南北向）、schema registry（事件/消息）、服务目录（内部检索）", verified: true}
+  schema_status: schema-only          # 只有 schema，没有实例
+  instance_state: none                # 本仓无实例；验证留待项目侧
+  pointer_unresolvable_semantics: unknown   # 指针不可解析 → unknown，不得读作「无事件」
+  status_domain: [draft, active, deprecated, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+  consumption_states: [active]        # 《编译规范》2.3(a)；本表无 seed
+
+entry_fields:
+  - {name: event_id, type: string, required: true, note: 领域事件唯一标识}
+  - {name: registry_ref, type: string, required: true, note: 外部 schema registry 的可解析定位符，形如 `registry:<系统>#<事件>@<版本>`；**版本随指针携带，不另设版本字段**；不可解析 → unknown，不得读作「无事件」}
+  - {name: publisher, type: string, required: true, note: 发布方（服务／团队）}
+  - {name: subscribers, type: list, required: true, note: 订阅方清单（可为空数组，但不得由空清单反推「无订阅」）}
+  - {name: owner, type: string, required: true, note: 归属责任人}
+  - {name: status, type: "enum: draft|active|deprecated|retired", required: true}
+
+entries: []

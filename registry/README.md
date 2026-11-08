@@ -19,6 +19,7 @@
 | `contract_changes.yaml` | 契约变更登记表（C-16）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `config_changes.yaml` | 配置变更登记表（C-14）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `pool_capacity.yaml` | 池容量注册表（C-6＋C-7 合并）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
+| `event_catalog.yaml` | 领域事件目录（C-9）：指针表 schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `scripts/project.py` | 自检与同源投影工具 | [CHECK-SPEC](CHECK-SPEC.md) C1、C3 |
 | `projections/*.md` | 人类可读投影与自检报告（生成物） | [CHECK-SPEC](CHECK-SPEC.md) C3.2 |
 

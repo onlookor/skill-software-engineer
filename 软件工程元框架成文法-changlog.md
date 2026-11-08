@@ -1982,3 +1982,14 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **附录 C.1**：C-3 行标「已并入 `contract_changes.yaml`」；共同结论同步为「其余五项（C-2／C-5／C-8／C-9／C-17）无表」。
 - **数字**：检查器不读本文件，`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；删两字段并撤回一行登记。
+
+## 2026-11-08（续 58）：C-9 建表——领域事件目录（指针表，schema＋空表）
+
+- **新增**：`registry/event_catalog.yaml`。义务锚点＝1.2.3 @1382 事件驱动（发布订阅）以领域事件为要素；3.2.2 @1930 领域事件定义；3.2.2 @1945「发现与注册：API 网关、schema registry、服务目录」。
+- **指针表，不复制 schema**：权威仍在外部 schema registry；本表只存 `event_id`、可解析指针 `registry_ref`（形如 `registry:<系统>#<事件>@<版本>`）、发布方、订阅方、owner、status。版本随指针携带，不另设版本字段，避免双写。
+- **假阴性防线（写死）**：`pointer_unresolvable_semantics: unknown`——**指针不可解析 → unknown，不得读作「无事件」**；`entries: []` 也不得读作「该项目无事件」；无 registry 的项目只能记 unknown，不得反推无事件。
+- **status**：沿用 0.17.2 五值词汇表；适用子集 `{draft, active, deprecated, retired}`——无 `seed`（母本只把领域事件列为风格要素、不给事件清单）；保留 `draft`（事件契约可起草）、`deprecated`（旧事件在弃用窗内仍被引用，记录须可读）。可消费按 2.3(a) 取 `{active}`。
+- **目录布局登记（D1.2）**：DATA-SPEC D1.3 新增一行（**权威关系列标「索引非权威」**）；`registry/README.md` §1 新增一行；本 changelog 本条。
+- **附录 C.1**：C-9 行标「已建表（指针表；实例 0）」并写死 unknown 语义；共同结论同步为「其余四项（C-2／C-5／C-8／C-17）无表」。
+- **数字**：检查器不读本文件，`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；删文件并撤回三处登记行。
