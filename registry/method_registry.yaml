@@ -11518,7 +11518,7 @@ entries:
     signals:
       - signal_id: SRC-004-S1
         name: "僵尸开关（expiry 超期）"
-        detection_predicate: "∃ flag: now > expiry(flag) ∧ ¬cleanup_filed(flag)"
+        detection_predicate: "∃ flag: now > expiry_of(flag) ∧ ¬cleanup_filed(flag)"   # 2026-11-08 批 A：expiry(flag) → expiry_of(flag)（在册 term，5.5 第 2581 行）。不改判据语义，不设别名；母本 5.5 第 2600 行 Z6 的 expiry(G) 是槽名充函数，词汇表另取 expiry_of 以免槽名充谓词（同 expiry_of 条目注）
         severity: P2
         severity_condition:
           when_predicate: "行为级开关（Z6 违例）"
