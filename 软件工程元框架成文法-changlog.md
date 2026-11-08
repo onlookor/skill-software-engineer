@@ -1645,3 +1645,14 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **治理**：新建 `adr/ADR-SRC-P0-04-approved-20261108-SRC判据改写.md`；`adr/INDEX.md`（22→**23** 份，approved 22）。
 - **自检**：`--check` **1,213 条记录**（-3＝S-11 命中行消失）｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
 
+## 2026-11-08（续 27）：3 条 `when_predicate` 改写
+
+- **逐条**：
+  - `SRC-001-S1`：`恶化持续（连续窗口同向漂移）` → `monotonic_trend(dsm_metric, window)`（D 的指标为跨边界调用密度，与 `dsm(system)` 同源）。
+  - `SRC-001-S2`：`恶化持续（连续窗口同向漂移）` → `monotonic_trend(环规模, window)`。**对指令的最小偏离**：该条 D 的指标是「环规模随时间单调上升」，照抄 `dsm_metric` 会把判据绑到另一指标上（属语义收窄），故实参改用 `环规模`。
+  - `SRC-005-S1`：`错误预算耗尽` → `burn_rate(service) ≥ error_budget(service, slo, ·, ·) 的耗尽阈`。阈值取在册 `error_budget(service, slo, budget, burn_rate)`（6.5 第 2897 行）的 budget 槽，**未填任何精确数**；备选 `burn_rate(service) ≥ 1` 因 `1` 无母本出处而否决（0.4 门槛）。
+- **命中数**：S-11 保持 **0**（仍只看 `detection_predicate`）；S-10 保持 **0**（两处新增调用均已在册）。
+- **仍为散文的 when**：`SRC-004-S1`「行为级开关（Z6 违例）」与 `SRC-007-S1`「distortion ∧ ∃ hard property 无下层覆盖」（前者属第三笔停做项，后者未在本轮指令内）。
+- **母本／级别**：母本 **0 行**；`severity`／`raise_to` 未改；S-10／S-11 仍 info。
+- **自检**：`--check` 1,213 条｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
+
