@@ -1656,3 +1656,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **母本／级别**：母本 **0 行**；`severity`／`raise_to` 未改；S-10／S-11 仍 info。
 - **自检**：`--check` 1,213 条｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
 
+## 2026-11-08（续 28）：`SRC-004-S1` 删 when——**评估后停做**（无数据变更）
+
+- **指令**：删除 `SRC-004-S1` 的 `severity_condition.when_predicate`，保留 `raise_to`；删前须核该条 `detection_predicate` 是否完整承载「行为级开关（Z6 违例）」的门槛，有缺口即停。
+- **评估结论：有缺口，停做**（三处）：
+  1. **适用范围缺口**：`detection`（`∃ flag: now > expiry_of(flag) ∧ ¬cleanup_filed(flag)`）对全部 flag 成立，不区分行为级与结构级；`when` 的「行为级开关」是把 `raise_to: P0` 收窄到 `flag(G,_,behavior,_)` 的护栏（母本第 2600 行 Z6 的量词域）。删 `when` 而留 `raise_to` → 结构级开关超期未清理也升 P0（放宽）；连 `raise_to` 一起删 → 9.2.3 第 3633 行「Z6 违例 → P0（行为级开关）」的 P0 路整条消失。
+  2. **支路缺口**：Z6 含四支（`approved(ADR(G))`／`declared(expiry(G))`／`now ≤ expiry(G)`／`cleanup_filed(gate)`），`detection` 只覆盖后两支的否定；「无批准 ADR」「无 expiry 声明」两支不在 `detection` 内。
+  3. **条款指代缺口**：`when` 同时把该 SRC 挂到 Z6（9.2.3 第 3633 行）；删后只剩 `consumption.note` 文字，不构成机器可判挂钩。
+- **本次无数据变更**：`method_registry.yaml` 未改，`severity`／`raise_to` 保持原样；裁定与三条替代路径见 ADR-SRC-P0-04 §4，等用户裁定后再动。
+- **自检**：`--check` 1,213 条｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
+
