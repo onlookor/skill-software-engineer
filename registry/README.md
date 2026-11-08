@@ -17,6 +17,7 @@
 | `canary_gates.yaml` | 放量判据注册表（C-4）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `test_doubles.yaml` | 测试替身使用登记表（C-15）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `contract_changes.yaml` | 契约变更登记表（C-16）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
+| `config_changes.yaml` | 配置变更登记表（C-14）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `scripts/project.py` | 自检与同源投影工具 | [CHECK-SPEC](CHECK-SPEC.md) C1、C3 |
 | `projections/*.md` | 人类可读投影与自检报告（生成物） | [CHECK-SPEC](CHECK-SPEC.md) C3.2 |
 

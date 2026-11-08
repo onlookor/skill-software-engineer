@@ -1,0 +1,45 @@
+# 配置变更登记表（C-14）：schema ＋ 空表
+#
+# 义务锚点（母本逐字）：5.2.6 @2515「[CFG-02] 决策/参数判别谓词（登记入注册表，不允许运行时即兴判断）」；
+#   @2516-2517「行为级变更 = 决策，按影响级别记 ADR + 批准；…参数级变更 = 低影响，记录留痕即可」。
+#
+# 本文件只定义条目 schema，**不含任何实例**：本仓无配置变更实例，验证留待项目侧。
+# 空表 ≠ 已核对无问题；entries 为 0 只表示尚未登记，不表示「已查无问题」。
+#
+# 边界：本表只记**变更动作与影响**，不复制配置项字段。配置项的六槽
+# （键／值域／作用域／级别／生命周期／status）由 CFG-01 注册面承载；此处只持 `config_key` 指针，
+# 避免与 5.2.6 @2514 六槽双写。
+#
+# status 取值：沿用 0.17.2 条目状态枚举（同一词汇表，不另立枚举）；
+# 可消费状态按《编译规范》2.3(a) 取 {active, seed}（seed 限 bootstrap 期）。
+# 适用子集 {active, retired}，逐值理由：
+#   - 无 draft：变更在批准／生效时登记（行为级经 ADR 批准，参数级生效即留痕），
+#     起草过程在 ADR／变更单里，不在本表。
+#   - 无 seed：母本 5.2.6 只给治理规则，不给变更记录，无母本种子可预置。
+#   - 无 deprecated：变更记录没有「仍可读但禁止新增引用」的过渡态；回滚记一条新变更，
+#     原条目直接退役。
+#   - retired：变更已回滚／被后续变更取代，记录保留以供回溯。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    - {source_type: clause_id, value: "5.2.6", line: 2515, quote: "[CFG-02] 决策/参数判别谓词（登记入注册表，不允许运行时即兴判断）", verified: true}
+    - {source_type: clause_id, value: "5.2.6", line: 2516, quote: "行为级变更 = 决策，按影响级别记 ADR + 批准；变更不触及 Z 谓词、仅在登记值域内调参（…）→ 参数级变更 = 低影响，记录留痕即可", verified: true}
+  schema_status: schema-only          # 只有 schema，没有实例
+  instance_state: none                # 本仓无实例；验证留待项目侧
+  status_domain: [active, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+  consumption_states: [active]        # 《编译规范》2.3(a)；本表无 seed
+
+entry_fields:
+  - {name: change_id, type: string, required: true, note: 变更唯一标识}
+  - {name: config_key, type: string, required: true, note: 被变更配置项的键（指向 CFG-01 条目；不复制其六槽）}
+  - {name: before_snapshot, type: string, required: true, note: 变更前 Z 谓词快照（@2517 CFG-04 采集面）}
+  - {name: after_snapshot, type: string, required: true, note: 变更后 Z 谓词快照（@2517 CFG-04 采集面）}
+  - {name: impact_level, type: "enum: behavior|parameter", required: true, note: 行为级＝决策（ADR＋批准）；参数级＝低影响（留痕）}
+  - {name: approval_adr, type: string, required: false, note: 行为级变更必填（ADR 指针）；参数级可为 null}
+  - {name: effective_at, type: string, required: true, note: 生效时刻（ISO 8601）}
+  - {name: status, type: "enum: active|retired", required: true}
+
+entries: []
