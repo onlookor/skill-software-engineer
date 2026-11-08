@@ -1031,6 +1031,42 @@ def _arity_ok(meta: dict, argc: int) -> bool:
     return argc >= exp if meta.get('variadic') else argc == exp
 
 
+# 通道号形态（如 `CH-C(2)`）：`CH-C` 含连字符、不是合法标识符，整段不构成调用（D3.11 豁免类 b）
+BRACKET_CHANNEL_RE = re.compile(r'^[A-Z][A-Z0-9]*-[A-Z][A-Z0-9]*\(\s*\d+\s*\)$')
+
+
+def bracket_call_sites(text: str) -> tuple[list[dict], dict[str, int]]:
+    """方括号内「整段即单一调用式」的调用（S-12 扩面，DATA-SPEC D3.11）。
+
+    准入：去掉单个前导 `¬` 后，整段恰是一个完整调用 `name(…)`（闭合括号即段尾）。
+    豁免并计数（理由必须留痕，不得只写「不在扫描面」）：
+      · `mixed`       — 整段不是单一调用式（调用＋散文／合取式／比较式等）；
+      · `channel`     — 通道号标记（`CH-C(2)` 一类，首段含连字符非合法标识符）；
+      · `projection`  — 单一调用但为 `f(…).槽名` 投影（D3.7：不计 arity）。
+    """
+    calls: list[dict] = []
+    exempt = {'mixed': 0, 'channel': 0, 'projection': 0}
+    for frag in bracket_spans(text):
+        inner = frag[1:-1].strip()
+        if '(' not in inner:
+            continue
+        body = inner[1:].lstrip() if inner.startswith('¬') else inner
+        m = CALL_START_RE.match(body)
+        if not m:
+            exempt['channel' if BRACKET_CHANNEL_RE.match(inner) else 'mixed'] += 1
+            continue
+        close = _match_paren(body, m.end() - 1)
+        if close < 0 or close != len(body) - 1:
+            exempt['mixed'] += 1
+            continue
+        sub, _bad = extract_calls(body)
+        if not sub or any(c.get('projection') for c in sub):
+            exempt['projection'] += 1
+            continue
+        calls.extend(sub)
+    return calls, exempt
+
+
 def check_arity(rep: Report, e: dict, eid: str):
     """S-12（hard）：调用实参个数 vs 词表 `arity`。
 
@@ -1038,16 +1074,13 @@ def check_arity(rep: Report, e: dict, eid: str):
       · 固定元数 argc == arity；variadic（目前仅 registry_entry）argc ≥ arity；
       · `).槽名` 投影不计 arity（只引用某槽的值，不是一次完整调用）；
       · 无 arity 的 formula_words 记「未覆盖」，不计通过也不计失败（普查行单列）；
-      · 未在册名由 M4 报，本项不重复。
+      · 未在册名由 M4 报，本项不重复；
+      · **方括号内扩面**（D3.11）：整段即单一调用式者一并按本项判（豁免分类由普查行留痕）。
     """
     table = vocab_arity_cached()
     mism, bad = [], []
-    for _field, label, text in arity_surfaces(e):
-        if not text.strip():
-            continue
-        calls, suspicious = extract_calls(text)
-        for name, frag in suspicious:
-            bad.append(f'{label}: `{name}(` 括号未闭合 → {_trunc(frag, 40)}')
+
+    def _judge(calls: list[dict], tag: str):
         for c in calls:
             if c.get('projection'):
                 continue
@@ -1059,7 +1092,16 @@ def check_arity(rep: Report, e: dict, eid: str):
                 continue
             if not _arity_ok(meta, c['argc']):
                 rule = f'≥{exp}' if meta.get('variadic') else str(exp)
-                mism.append(f"{label}: {c['raw']} 期望 {rule} 实得 {c['argc']}")
+                mism.append(f"{tag}: {c['raw']} 期望 {rule} 实得 {c['argc']}")
+
+    for _field, label, text in arity_surfaces(e):
+        if not text.strip():
+            continue
+        calls, suspicious = extract_calls(text)
+        for name, frag in suspicious:
+            bad.append(f'{label}: `{name}(` 括号未闭合 → {_trunc(frag, 40)}')
+        _judge(calls, label)
+        _judge(bracket_call_sites(text)[0], f'{label}（方括号内）')
     if bad:
         rep.fail('S-12', f'{eid} 解析', 'S-12（解析可疑，未静默跳过）：' + '；'.join(bad))
     if mism:
@@ -1068,11 +1110,14 @@ def check_arity(rep: Report, e: dict, eid: str):
 
 def check_arity_census(rep: Report, entries: list):
     """S-12 全量（hard）：调用总数、按字段分项、不匹配／可疑／投影／variadic 计数；
-    无 arity 的 formula_words 另起 info 行单列分组（不计通过、不计失败）。"""
+    无 arity 的 formula_words 另起 info 行单列分组（不计通过、不计失败）；
+    方括号内扩面另起两行 info：准入／豁免分类、不在册名分族计数（D3.11）。"""
     table = vocab_arity_cached()
     field_cnt = {'anti_patterns': 0, 'applicability': 0, 'signals.detection': 0, 'signals.when': 0}
     total = mism = bad = no_call = proj = variadic_cnt = fixed_cnt = 0
     unchecked: dict = {}
+    b_total = b_mism = b_mixed = b_channel = b_proj = 0
+    b_unk: dict[str, dict] = {}
     for e in entries:
         for field, _label, text in arity_surfaces(e):
             if not text.strip():
@@ -1099,12 +1144,34 @@ def check_arity_census(rep: Report, entries: list):
                     fixed_cnt += 1
                 if not _arity_ok(meta, c['argc']):
                     mism += 1
+            bcalls, bex = bracket_call_sites(text)
+            b_mixed += bex['mixed']
+            b_channel += bex['channel']
+            b_proj += bex['projection']
+            for c in bcalls:
+                b_total += 1
+                meta = table.get(c['name'])
+                if not meta or meta['arity'] is None:
+                    rec = b_unk.setdefault(c['name'], {'count': 0, 'families': set()})
+                    rec['count'] += 1
+                    rec['families'].add(e['entry_id'].split('-')[0])
+                    continue
+                if not _arity_ok(meta, c['argc']):
+                    b_mism += 1
     rep.add('S-12', '全量', 'hard', mism == 0 and bad == 0,
             f'S-12 元数校验（hard）：调用 {total} 处（anti_patterns {field_cnt["anti_patterns"]}／'
             f'applicability {field_cnt["applicability"]}／signals.detection {field_cnt["signals.detection"]}／'
             f'signals.when {field_cnt["signals.when"]}）；元数不匹配 {mism} 处；'
             f'解析可疑 {bad} 处；投影（不计 arity）{proj} 处；'
             f'variadic 调用 {variadic_cnt} 处／固定元数调用 {fixed_cnt} 处；无调用串 {no_call} 处')
+    rep.add('S-12', '方括号内扩面', 'info', None,
+            f'S-12 方括号内扩面（D3.11，整段即单一调用式）：准入 {b_total} 处（元数不符 {b_mism} 处）；'
+            f'豁免片段 {b_mixed + b_channel + b_proj} 处（混合描述 {b_mixed}／通道号 {b_channel}／投影 {b_proj}）')
+    if b_unk:
+        rep.add('S-12', '方括号内不在册名', 'info', None,
+                'S-12 方括号内不在册名（不判，仅计）：'
+                + '、'.join(f'{k}×{v["count"]}（{"／".join(sorted(v["families"]))}）'
+                            for k, v in sorted(b_unk.items())))
     if unchecked:
         rep.add('S-12', '未覆盖', 'info', None,
                 f'S-12 未覆盖（无 arity 可校，不计通过、不计失败）：{sum(unchecked.values())} 处（'
