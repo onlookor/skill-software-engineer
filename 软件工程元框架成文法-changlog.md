@@ -1960,3 +1960,14 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **附录 C.1**：C-14 行标「已建表（schema＋空表；实例 0）」；共同结论同步为五张表已建、其余八项无表。
 - **数字**：检查器不读本文件，`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；删文件并撤回三处登记行。
+
+## 2026-11-08（续 56）：C-6／C-7 合并建表——池容量注册表（schema＋空表）
+
+- **新增**：`registry/pool_capacity.yaml`（C-6 与 C-7 合并一张表）。义务锚点＝6.2.5 @2841「[Q-05] 限制排队」（C-6）、5.2.3 @2486「舱壁（线程/连接池按消费者隔离，防单点拖垮全局）」（C-7）。
+- **合并理由**：容量上界与排队上限是同一容量守恒的两个面，分表会造出两个权威；`scope: pool|queue` 只区隔对象，不区隔权威。
+- **内容**：`entry_fields` 七项（pool_id／scope／capacity_bound／queue_limit／rejection_policy／provenance／status）＋`entries: []`。**不造实例**；`instance_state: none`。
+- **status**：沿用 0.17.2 五值词汇表；适用子集 `{draft, active, deprecated, retired}`——无 `seed`（母本只给战术机制名、不给容量数值，无种子可预置）；保留 `draft`（容量按压测／实测核定）；保留 `deprecated`（旧参数须可读以回溯容量核定与饱和事件）。可消费按 2.3(a) 取 `{active}`。
+- **目录布局登记（D1.2）**：DATA-SPEC D1.3 新增一行；`registry/README.md` §1 新增一行；本 changelog 本条。
+- **附录 C.1**：C-6／C-7 两行均标「已建表（合并为 `pool_capacity.yaml`）」；共同结论同步为六项已建、其余六项无表。
+- **数字**：检查器不读本文件，`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；删文件并撤回三处登记行。

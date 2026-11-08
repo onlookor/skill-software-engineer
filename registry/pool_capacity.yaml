@@ -1,0 +1,43 @@
+# 池容量注册表（C-6＋C-7 合并）：schema ＋ 空表
+#
+# 义务锚点（母本逐字）：
+#   6.2.5 @2841「[Q-05] 限制排队」（C-6 队列上界）
+#   5.2.3 @2486「舱壁（线程/连接池按消费者隔离，防单点拖垮全局）」（C-7 池容量／排队上限）
+#
+# C-6 与 C-7 合并为一张表：容量上界与排队上限是同一容量守恒的两个面，分表会造出两个权威。
+# `scope: pool|queue` 区隔对象，不区隔权威。
+#
+# 本文件只定义条目 schema，**不含任何实例**：本仓无池容量实例，验证留待项目侧。
+# 空表 ≠ 已核对无问题；entries 为 0 只表示尚未登记，不表示「已查无问题」。
+#
+# status 取值：沿用 0.17.2 条目状态枚举（同一词汇表，不另立枚举）；
+# 可消费状态按《编译规范》2.3(a) 取 {active, seed}（seed 限 bootstrap 期）。
+# 适用子集 {draft, active, deprecated, retired}，逐值理由：
+#   - draft：容量值与排队上限由人按压测／实测核定，可先起草再启用（同 C-4 放量判据）。
+#   - 无 seed：母本 6.2.5 与 5.2.3 只给战术机制名，**不给容量数值**——本表无母本种子可预置。
+#   - deprecated：旧容量参数弃用后仍须可读，以解释历史容量核定与饱和事件
+#     （RLP-007 AP4 的「池容量核定所依据的快照」须可回溯）。
+#   - retired：已下线且禁止新增引用。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    - {source_type: clause_id, value: "6.2.5", line: 2841, quote: "[Q-05] 限制排队", verified: true}
+    - {source_type: clause_id, value: "5.2.3", line: 2486, quote: "舱壁（线程/连接池按消费者隔离，防单点拖垮全局）", verified: true}
+  schema_status: schema-only          # 只有 schema，没有实例
+  instance_state: none                # 本仓无实例；验证留待项目侧
+  status_domain: [draft, active, deprecated, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+  consumption_states: [active]        # 《编译规范》2.3(a)；本表无 seed
+
+entry_fields:
+  - {name: pool_id, type: string, required: true, note: 池／队列唯一标识}
+  - {name: scope, type: "enum: pool|queue", required: true, note: pool＝线程/连接池（C-7）；queue＝有界队列（C-6）}
+  - {name: capacity_bound, type: string, required: true, note: 容量上界}
+  - {name: queue_limit, type: string, required: true, note: 排队上限（scope=queue 时为本体上界）}
+  - {name: rejection_policy, type: string, required: true, note: 饱和后的拒绝策略（快速拒绝／降级／阻塞）}
+  - {name: provenance, type: object, required: true, note: 出处（0.4 出处门槛；容量值须有实测或压测来源）}
+  - {name: status, type: "enum: draft|active|deprecated|retired", required: true}
+
+entries: []
