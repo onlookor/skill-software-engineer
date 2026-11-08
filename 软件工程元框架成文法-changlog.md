@@ -2099,3 +2099,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **diff**：`git diff -U0` 仅上述 4 行 `+4/−4`，无其他漂移。
 - **数字**：`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；撤回 4 行替换与 D3.16。
+
+## 2026-11-08（续 69）：条目侧 38 处核心事实槽加 `fact_id` 检索锚
+
+- **定义**：`registry/DATA-SPEC.md` 新增 **D3.17**——格式 `FACT-<DIM>-<ENTRY_ID>-<SPACE>-<NN>`；定位键 `entry_id`＋`space`＋`item_index`＋`statement`（逐字），**不存 `line`**；两句写死「仅为检索锚，不构成同一性约束，不代表归一已完成」与「定位以 `statement` 逐字为准，不存行号——行号随编辑漂移，不作复核依据」。
+- **落点**：`method_registry.yaml` 顶层新增 `fact_index:`（**38 条**，不进入条目；条目内仍无 0.17.2 之外字段）。覆盖 core 38 处：CI **20**（CTR 9／CFG 4／VFM 6／DPS-001 1）、ONCALL **18**（CRD 3／RLP 2／SCH 2／CFG-001 1／QAT 5／DPS 4／GRD 1）；空间分布 PS 0／CS 2／DS 36。
+- **口径修正**：ADR-GS-FACT-01 §7 原记「CI core 21、值班 core 17」有误（把 `CFG-001` @7023 的 `值班/on-call` 槽计入 CI）；按实际槽应为 **CI 20／ONCALL 18**，在 ADR §7／§8 一并更正。
+- **未覆盖 12 处 meta 槽**：非核心能力断言（引文／保守界／缺失侧旁证），纳入会与 38 处口径冲突。
+- **不动**：检测式、`registered` 求值、`ENUM_STATUS`、《编译规范》2.3(a)、检查器；`--check` 不消费 `fact_index`。
+- **数字**：`--check` 不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；撤回 `fact_index` 节与 D3.17。
