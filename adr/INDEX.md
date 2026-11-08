@@ -30,7 +30,7 @@
 
 | 编号 | 标题 | 状态 | 批准日期 | 被取代 | 影响的母本条款／注册表区段 | 文件 |
 |---|---|---|---|---|---|---|
-| `ADR-INLINE-MARK-01` | T2 五项行内标记方案（VFM／CFG／SCH／RLP／STY-4） | approved | 2026-11-04 | — | 母本 1.5(@1467)／5.2.3(@2479)／5.2.4(@2485)／5.2.6(@2507-2510)／5.5(@2574)／8.2.1(@3322)；`project.py` row_id 解析与 META；gaps `G-VFM-1`／`G-CFG-1`／`G-SCH-1`／`G-RLP-1`／`G-STY-4` | `ADR-INLINE-MARK-01-approved-20261104-五项行内标记方案.md` |
+| `ADR-INLINE-MARK-01` | T2 五项行内标记方案（VFM／CFG／SCH／RLP／STY-4） | approved | 2026-11-04 | — | 母本 1.5(@1467)／5.2.3(@2479)／5.2.4(@2490)／5.2.6(@2507-2510)／5.5(@2574)／8.2.1(@3322)；`project.py` row_id 解析与 META；gaps `G-VFM-1`／`G-CFG-1`／`G-SCH-1`／`G-RLP-1`／`G-STY-4` | `ADR-INLINE-MARK-01-approved-20261104-五项行内标记方案.md` |
 | `ADR-STY-FIM-01` | 框架内生元方法与 `provenance.source_class` | approved | 2026-11-07 | — | 母本 0.12／0.13／0.17.2（@335 `source_class`、@462 `origin`）／0.17.6／0.22；`project.py` `ENUM_ORIGIN` 与 `source_class` 校验；条目 `STY-021`／`STY-024`；gaps `G-STY-5`／`G-GOV-2`；SO-3／SO-24 | `ADR-STY-FIM-01-approved-20261107-框架内生元方法与source_class.md` |
 | `ADR-VG09-01` | 母本谓词表一次性扩容（VG-09 十七名） | approved | 2026-11-06 | — | 母本 9.5 谓词表；`registry/predicate_vocabulary.yaml` `VOCAB`；gap `VG-09`（另记 `cycle_scale` 残余） | `ADR-VG09-01-approved-20261106-谓词表一次性扩容.md` |
 | `ADR-VGEX-01` | VG-01～VG-08 谓词表扩容（20 名入表） | approved | 2026-11-07 | — | 母本 5.5(@2579)／8.5(@3435)／9.5(@3711)；`registry/predicate_vocabulary.yaml` 20 名与 VG-01～08 resolution；`node_role` 后置 | `ADR-VGEX-01-approved-20261107-VG01-08谓词表扩容.md` |
