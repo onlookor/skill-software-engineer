@@ -1,0 +1,44 @@
+# 契约变更登记表（C-16）：schema ＋ 空表
+#
+# 母本义务锚点（逐字）：
+#   3.2.2 @1944「破坏性变更 = 高影响决策（影响全部消费者 + 难逆转）：完整 ADR + 批准 + 弃用窗口 + 迁移支持」
+#   3.2.3 @1975「契约发布（`published` 状态迁移）与破坏性变更批准属高影响决策，一律走批准路径」
+#   3.5 @2008 `breaking_change(C, v1, v2)`
+#
+# 本文件只定义条目 schema，**不含任何实例**：本仓无契约变更实例，验证留待项目侧。
+# 空表 ≠ 已核对无问题；entries 为 0 只表示尚未登记，不表示「已查无问题」。
+#
+# status 取值：沿用 0.17.2 条目状态枚举（同一词汇表，不另立枚举）；
+# 可消费状态按《编译规范》2.3(a) 取 {active, seed}（seed 限 bootstrap 期）。
+# 适用子集 {seed, active, retired}，逐值理由：
+#   - 无 draft：起草期由 ADR 承担（@1944「完整 ADR」），本表条目只在批准后登记；
+#     登记时变更已是既成决策，不存在「已登记但仍 draft」的条目。
+#   - 无 deprecated：弃用窗口是**条目字段**（deprecation_window），不是条目状态；
+#     窗口结束即退役，中间没有「仍可读但禁止新增引用」的条目态。
+#   - retired：变更已生效且弃用窗口结束，记录保留以供回溯。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    - {source_type: clause_id, value: "3.2.2", line: 1944, quote: "破坏性变更 = 高影响决策（影响全部消费者 + 难逆转）：完整 ADR + 批准 + 弃用窗口 + 迁移支持", verified: true}
+    - {source_type: clause_id, value: "3.2.3", line: 1975, quote: "契约发布（`published` 状态迁移）与破坏性变更批准属高影响决策，一律走批准路径", verified: true}
+    - {source_type: clause_id, value: "3.5", line: 2008, quote: "breaking_change(C, v1, v2)", verified: true}
+  schema_status: schema-only          # 只有 schema，没有实例
+  instance_state: none                # 本仓无实例；验证留待项目侧
+  status_domain: [seed, active, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+  consumption_states: [active, seed]  # 《编译规范》2.3(a)；seed 限 bootstrap 期
+
+entry_fields:
+  - {name: change_id, type: string, required: true, note: 变更唯一标识}
+  - {name: contract_id, type: string, required: true, note: 被变更契约（@2008 首槽 C）}
+  - {name: v1, type: string, required: true, note: 变更前版本（@2008 第二槽）}
+  - {name: v2, type: string, required: true, note: 变更后版本（@2008 第三槽）}
+  - {name: breaking, type: boolean, required: true, note: 破坏性判定（判定为 true 时 @1944 四项义务全适用）}
+  - {name: deprecation_window, type: string, required: true, note: 弃用窗口（≥ 最慢消费者迁移时长估计，估计须有出处）}
+  - {name: migration_support, type: string, required: true, note: 迁移支持}
+  - {name: approval_adr, type: string, required: true, note: 批准 ADR 指针（@1944「完整 ADR + 批准」）}
+  - {name: status, type: "enum: seed|active|retired", required: true}
+
+entries: []
