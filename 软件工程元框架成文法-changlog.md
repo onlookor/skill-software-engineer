@@ -1602,3 +1602,14 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **治理**：新建 `adr/ADR-SRC-P0-02-approved-20261108-SRC判据谓词批A与signals观测.md`；`adr/INDEX.md` 增行（20→**21** 份，approved 19→**20**）。
 - **自检**：`--check` **1,216 条记录**｜硬失败 **0**｜软警告 **0**｜占位符 **1,478**（事实 1＋槽 1,477，不变）；指针反查 **2,393→2,397**（+4），miss 0。
 
+## 2026-11-08（续 24）：signals 观测入检（S-10／S-11，info 不判）与改判登记规则
+
+- **编号**：用户口径中的「S-9」在 `check_signals` 已被 `signals[].consumption.note` 缺失占用（S-1～S-8 为 hard、S-9 为 info），故本批落为 **S-10**（词表封闭观测）与 **S-11**（纯散文观测），**不重排既有编号**；级别与语义按指示（均 info、只报不判）。
+- **S-10**：`detection_predicate` 与 `severity_condition.when_predicate` 的谓词调用纳入词表封闭观测；提取器与 M4 同口径（`name(`，剔方括号）。**干跑命中 0**（批 A 后 signals 面无未登记调用）。
+- **S-11**：`detection_predicate` 至少含 1 个已登记谓词调用。**干跑命中 3 条记录、覆盖 6 条判据**（`SRC-003-S1`／`SRC-003-S2`／`SRC-004-S2`／`SRC-007-S1`／`SRC-007-S2`／`SRC-007-S3`）。
+- **不入 seed 资格**：两项使用独立 check id，**不挂 `M2`**——挂 `M2` 会使 C-ST 按 M2 判 seed 资格而假失败（首版实测 `SRC-003`／`SRC-004`／`SRC-007` 三条 C-ST 硬失败，已改）。
+- **改判登记放行**：`check_ledgers` 原对 `resolved_by_composition` 中的名在词表另有条目时判硬失败「重复真源」。新增扫描 `resolution_*.registered`：有 ADR 显式改判者记 info（历史原文保留，0.22）；无依据的同名仍硬失败。`VG-09:metric_hit` 由此转为 info。
+- **规范**：`CHECK-SPEC.md` 增 **C5.18**（signals 观测与改判登记：均 info、编号自 S-10 起、提取器同 M4 口径）与 **C5.19**（转硬三前置：调用在册且元数可判／纯散文逐条裁定／元数校验入检查面）。
+- **自检**：`--check` 1,216 条｜硬 **0**｜软 **0**｜**info 44**（未成立 6＝`S-11`×3 记录、`LEDGER VG-09:auth_bypass`×1、`GAP-SO`×2）；占位符 1,478（不变）；指针 **2,397**，miss 0。
+- **转硬预估**：批 A 后把 M4 扩到 `signals` 预计红 **0**；三个盲区不表现为红（6 条纯散文 `detection_predicate`＋5 条纯散文 `when_predicate`、元数不校、`burn_rate(·)` 通配）。
+

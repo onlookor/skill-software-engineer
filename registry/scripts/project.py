@@ -255,6 +255,26 @@ def expr_of(item) -> str:
     return str(item or '')
 
 
+_VOCAB_NAMES_CACHE: set | None = None
+
+
+def vocab_names_cached() -> set:
+    """封闭词汇名集合（不产生报告行），供 S-10/S-11 的 info 级观测使用。
+    与 build_vocab 同口径：predicates ∪ formula_words ∪ clause_defined_predicates。"""
+    global _VOCAB_NAMES_CACHE
+    if _VOCAB_NAMES_CACHE is None:
+        doc = load_yaml(VOCAB_PATH) or {}
+        names: set = set()
+        for grp in ('predicates', 'formula_words', 'clause_defined_predicates'):
+            for it in doc.get(grp) or []:
+                if isinstance(it, dict) and it.get('name'):
+                    names.add(str(it['name']))
+                elif isinstance(it, str):
+                    names.add(it)
+        _VOCAB_NAMES_CACHE = names
+    return _VOCAB_NAMES_CACHE
+
+
 def walk_strings(obj, path: str, out: list):
     if isinstance(obj, dict):
         for k, v in obj.items():
@@ -706,10 +726,11 @@ def check_schema(rep: Report, e: dict, eid: str):
 
 
 def check_signals(rep: Report, e: dict, eid: str):
-    """S-1～S-9：signals 面（ADR-SRC-02 增量；0.17.2 `signals` 条）。
+    """S-1～S-11：signals 面（ADR-SRC-02 增量；0.17.2 `signals` 条）。
 
-    S-1～S-8 hard，S-9 info。本面与 M4 解耦：detection_predicate 只做非空与
+    S-1～S-8 hard，S-9～S-11 info。本面与 M4 解耦：detection_predicate 只做非空与
     「禁方括号」形状校验，谓词可执行性由 G-SRC-1 承接（不在本批扩 M4）。
+    2026-11-08 批 B 增 S-10（词表封闭观测）与 S-11（纯散文观测）：均 info、只报不判。
     """
     sigs = e.get('signals')
     if sigs is None:
@@ -797,6 +818,38 @@ def check_signals(rep: Report, e: dict, eid: str):
         rep.ok('M2', f'{eid} signals', 'hard', f'S-1～S-8 全过（{len(sigs)} 个子信号）')
     if info_notes:
         rep.add('M2', f'{eid} signals', 'info', True, 'S-9：' + '；'.join(info_notes))
+
+    # ── S-10／S-11（info，只报不判；转硬属下一批，等干跑结果裁定）──
+    vocab = vocab_names_cached()
+    unregistered = []
+    for it in sigs:
+        if not isinstance(it, dict):
+            continue
+        sid = it.get('signal_id')
+        for name in predicate_names(str(it.get('detection_predicate') or '')):
+            if name not in vocab:
+                unregistered.append(f'{sid}.detection_predicate: {name}')
+        seg = it.get('severity_condition') or {}
+        if isinstance(seg, dict):
+            for name in predicate_names(str(seg.get('when_predicate') or '')):
+                if name not in vocab:
+                    unregistered.append(f'{sid}.when_predicate: {name}')
+    if unregistered:
+        rep.add('S-10', f'{eid} signals', 'info', False,
+                'S-10（词表未登记调用，info 不判）：' + '；'.join(unregistered))
+
+    prose = []
+    for it in sigs:
+        if not isinstance(it, dict):
+            continue
+        dp = str(it.get('detection_predicate') or '')
+        if not dp.strip():
+            continue
+        if not [n for n in predicate_names(dp) if n in vocab]:
+            prose.append(f'{it.get("signal_id")}.detection_predicate=「{dp}」')
+    if prose:
+        rep.add('S-11', f'{eid} signals', 'info', False,
+                'S-11（无已登记谓词调用＝纯散文，info 不判）：' + '；'.join(prose))
 
 
 def check_m2(rep: Report, e: dict, eid: str, mat: dict, prof_status: dict):
@@ -1361,6 +1414,16 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
             if isinstance(_it, dict) and _it.get('name'):
                 _vnames.add(_it['name'])
     _law_pred = set(re.findall(r'^([a-z][a-z0-9_]*)\s*\(', read_text(LAW_PATH), re.M))
+    # 改判登记：后续 resolution_* 块中 `registered` 列出的名，视为把同名复合式改判为直接词条
+    # （历史复合式原文不改写，0.22；此处只承认「有 ADR 的显式改判」，不承认无记录的重复登记）。
+    _reassigned = set()
+    for g in vocab_doc.get('vocabulary_gaps') or []:
+        for k, v in g.items():
+            if not k.startswith('resolution_') or not isinstance(v, dict):
+                continue
+            for r in v.get('registered') or []:
+                if isinstance(r, dict) and r.get('name'):
+                    _reassigned.add(str(r['name']))
     for g in vocab_doc.get('vocabulary_gaps') or []:
         miss = [k for k in ('id', 'missing_need', 'workaround', 'route') if not g.get(k)]
         if miss:
@@ -1372,7 +1435,11 @@ def check_ledgers(rep: Report, reg_doc: dict, vocab_doc: dict, profiles_doc: dic
                 rep.fail('LEDGER', f"{g.get('id')}:{c.get('name', '?')}", f'复合式映射缺要素 {bad}')
                 continue
             if c['name'] in _vnames:
-                rep.fail('LEDGER', f"{g.get('id')}:{c['name']}", '复合式名已单独登记（重复真源）')
+                if c['name'] in _reassigned:
+                    rep.add('LEDGER', f"{g.get('id')}:{c['name']}", 'info', True,
+                            '复合式已被后续 resolution 改判为直接词条（历史原文保留，0.22）')
+                else:
+                    rep.fail('LEDGER', f"{g.get('id')}:{c['name']}", '复合式名已单独登记（重复真源）')
                 continue
             absent = [b for b in c['base_predicates'] if b not in _law_pred and b not in _vnames]
             if absent:
@@ -1952,6 +2019,11 @@ def render_self_check(ctx: dict) -> str:
     if led:
         L += ['### 台账完整性检查（LEDGER，信息性）', '']
         L += [f'- {r.scope}：{r.reason}' for r in led] + ['']
+    for cid, title in (('S-10', 'signals 词表封闭观测'), ('S-11', 'signals 纯散文观测')):
+        rows = rep.of(cid)
+        if rows:
+            L += [f'### {cid}：{title}（info，只报不判；转硬须另批 ADR）', '']
+            L += [f'- {r.scope}：{r.reason}' for r in rows] + ['']
     r2 = rep.of('R2-APPL')
     if r2:
         mode = (ctx['profiles_doc'].get('check_switches') or {}).get('R2_APPL', 'info')
