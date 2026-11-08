@@ -55,8 +55,9 @@
 | `ADR-SRC-P0-04` | SRC 判据改写（6 detection＋3 when；`SRC-004-S1` 删 when 评估后停做） | approved | 2026-11-08 | — | 母本 **0 行**；`method_registry.yaml` 改 6 条 `detection_predicate`（S-11 6→0）与 3 条 `when_predicate`；`SRC-004-S1` 删 when 经评估有三处缺口（适用范围／Z6 支路／条款指代），**停做报裁**；`severity`／`raise_to` 未改；S-10／S-11 仍 info | `ADR-SRC-P0-04-approved-20261108-SRC判据改写.md` |
 | `ADR-SRC-P0-05` | `behavior_switch` 登记与两条 when 护栏可判化 | approved | 2026-11-08 | — | 母本 **0 行**；`predicate_vocabulary.yaml` +1 名（`behavior_switch` predicate arity 1，出处 5.5 第 2600 行 Z6 量词域）＋VG-05 记 `resolution_2026_11_08`；`SRC-004-S1` when → `behavior_switch(flag)`（去独立 `∃`，自由变量回指 detection 绑定）、`SRC-007-S1` when → `distortion(system)`；三项护栏核对全通过；S-11 扩 when 干跑红 **0** | `ADR-SRC-P0-05-approved-20261108-behavior_switch与两条when护栏.md` |
 | `ADR-SRC-P0-06` | M4 扩到 signals 两字段与 S-11 转硬 | approved | 2026-11-08 | — | 母本 **0 行**；`predicate_vocabulary.yaml` **零增删**（VG-09 记 `resolution_2026_11_08_bC`）；`scripts/project.py` `check_m4` 覆盖 `signals[].detection_predicate`＋`severity_condition.when_predicate`（扫描面 1,131→1,150），`check_signals` 的 S-11 **info→hard** 并覆盖 when、S-10 仍 info；`CHECK-SPEC.md` C1 M4 行／C5.13／C5.18／C5.20；`DATA-SPEC.md` D3.1；`method_registry.yaml` `G-SRC-1` **closed**（closure）＋5 处旧说明改写；`--check` 1,212 条｜硬 0｜软 0，零豁免 | `ADR-SRC-P0-06-approved-20261108-M4扩signals与S-11转硬.md` |
+| `ADR-SRC-P0-07` | 元数校验（S-12）info 干跑与解析规则 | approved（仅 info 干跑；转硬未批） | 2026-11-08 | — | 母本 **0 行**；**数据零改动**（`method_registry.yaml`／`predicate_vocabulary.yaml` 无 diff）；`scripts/project.py` 新增 `extract_calls`／`split_call_args`／`vocab_arity_cached`／`check_arity`／`check_arity_census`，覆盖 4 个面 1,150 串；实测调用 **501** 处、元数不匹配 **43**（12 名）、无 arity 可校 **72**（formula_words）、解析可疑 **0**；归类 A 串写错 11／B 规则未覆盖 32／C arity 登记错 **0**；`CHECK-SPEC.md` 新增 C5.21（含 S-12 编号审计）；`--check` 1,235 条｜硬 0｜软 0 | `ADR-SRC-P0-07-approved-20261108-元数校验S-12-info干跑.md` |
 
-**统计**：25 份；approved 24、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
+**统计**：26 份；approved 25、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
 
 ## 3. 状态存疑项（正文头部与执行证据不一致，已按证据裁定）
 

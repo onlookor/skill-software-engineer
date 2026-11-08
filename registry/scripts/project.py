@@ -255,6 +255,120 @@ def expr_of(item) -> str:
     return str(item or '')
 
 
+# ── S-12 元数观测（info 干跑；ADR-SRC-P0-07）──
+# 调用起点：标识符前不得紧邻 [A-Za-z0-9_]，故 `pyramid_distortion(` 不会再命中 `distortion(`
+# （匹配整名后连同 `(` 一起消费，扫描指针跳过实参，天然避免子串误命中）。
+CALL_START_RE = re.compile(r'(?<![A-Za-z0-9_])([A-Za-z_][A-Za-z0-9_]*)\s*\(')
+# 位置占位符（·／_／…／...）算 1 个实参位，不按「省略」处理（ADR-SRC-P0-07 §R3）
+ARITY_PLACEHOLDERS = {'·', '_', '…', '...', '＿'}
+
+
+def _match_paren(s: str, open_idx: int) -> int:
+    """返回与 s[open_idx]=='(' 匹配的 ')' 下标；方括号内的括号不计数。"""
+    depth = 0
+    sq = 0
+    for i in range(open_idx, len(s)):
+        ch = s[i]
+        if ch == '[':
+            sq += 1
+        elif ch == ']':
+            sq = max(0, sq - 1)
+        elif sq:
+            continue
+        elif ch == '(':
+            depth += 1
+        elif ch == ')':
+            depth -= 1
+            if depth == 0:
+                return i
+    return -1
+
+
+def split_call_args(inner: str) -> list[str]:
+    """按**深度 0** 的逗号切分实参：嵌套圆括号、方括号、花括号、全角圆括号内不切。"""
+    parts: list[str] = []
+    cur: list[str] = []
+    pd = sq = br = cn = 0
+    for ch in inner:
+        if ch == '(':
+            pd += 1
+        elif ch == ')':
+            pd = max(0, pd - 1)
+        elif ch == '[':
+            sq += 1
+        elif ch == ']':
+            sq = max(0, sq - 1)
+        elif ch in '{｛':
+            br += 1
+        elif ch in '}｝':
+            br = max(0, br - 1)
+        elif ch == '（':
+            cn += 1
+        elif ch == '）':
+            cn = max(0, cn - 1)
+        if ch in ',，' and pd == 0 and sq == 0 and br == 0 and cn == 0:
+            parts.append(''.join(cur))
+            cur = []
+            continue
+        cur.append(ch)
+    parts.append(''.join(cur))
+    if len(parts) == 1 and parts[0].strip() == '':
+        return []
+    return [p.strip() for p in parts]
+
+
+def extract_calls(s: str) -> tuple[list[dict], list[tuple[str, str]]]:
+    """抽取全部调用（含嵌套），返回 (calls, suspicious)。
+
+    calls 项：{name, argc, args, raw}。suspicious 项：(name, 残段)。
+    方括号内文本视为事实占位符，不参与抽取（与 M4 的 outside_brackets 同口径）。
+    """
+    s = outside_brackets(s)
+    calls: list[dict] = []
+    bad: list[tuple[str, str]] = []
+    i = 0
+    while i < len(s):
+        m = CALL_START_RE.search(s, i)
+        if not m:
+            break
+        name = m.group(1)
+        close = _match_paren(s, m.end() - 1)
+        if close < 0:
+            bad.append((name, s[m.start():m.start() + 60]))
+            break
+        inner = s[m.end():close]
+        args = split_call_args(inner)
+        calls.append({'name': name, 'argc': len(args), 'args': args,
+                      'raw': s[m.start():close + 1]})
+        sub, sub_bad = extract_calls(inner)
+        calls.extend(sub)
+        bad.extend(sub_bad)
+        i = close + 1
+    return calls, bad
+
+
+_VOCAB_ARITY_CACHE: dict | None = None
+
+
+def vocab_arity_cached() -> dict:
+    """name → {arity, kind, group}；无 arity 的条目 arity 为 None。与 vocab_names_cached 同源。"""
+    global _VOCAB_ARITY_CACHE
+    if _VOCAB_ARITY_CACHE is None:
+        doc = load_yaml(VOCAB_PATH) or {}
+        table: dict = {}
+        for grp in ('predicates', 'formula_words', 'clause_defined_predicates'):
+            for it in doc.get(grp) or []:
+                if not isinstance(it, dict) or not it.get('name'):
+                    continue
+                name = str(it['name'])
+                if name in table:      # 同名跨组：保留先出现的 arity，记分组供报告
+                    table[name]['groups'].append(grp)
+                    continue
+                table[name] = {'arity': it.get('arity'), 'kind': it.get('kind'), 'groups': [grp]}
+        _VOCAB_ARITY_CACHE = table
+    return _VOCAB_ARITY_CACHE
+
+
 _VOCAB_NAMES_CACHE: set | None = None
 
 
@@ -858,6 +972,93 @@ def check_signals(rep: Report, e: dict, eid: str):
     if prose:
         rep.fail('S-11', f'{eid} signals',
                  'S-11（无已登记谓词调用＝纯散文，硬失败）：' + '；'.join(prose))
+
+
+# ── S-12：元数观测（info 干跑；ADR-SRC-P0-07；转硬须另批）──
+
+def arity_surfaces(e: dict) -> list[tuple[str, str, str]]:
+    """M4／S-10／S-11 现扫的全部面：(field, label, text)。"""
+    out: list[tuple[str, str, str]] = []
+    for it in e.get('anti_patterns') or []:
+        if isinstance(it, dict):
+            out.append(('anti_patterns', f"anti_patterns[{it.get('pattern_id')}]",
+                        str(it.get('detection_predicate') or '')))
+    for sp in APPLICABILITY_SPACES:
+        for j, it in enumerate((e.get('applicability') or {}).get(sp) or []):
+            out.append(('applicability', f'applicability.{sp}[{j}]', expr_of(it)))
+    for it in e.get('signals') or []:
+        if not isinstance(it, dict):
+            continue
+        sid = str(it.get('signal_id') or '?')
+        out.append(('signals.detection', f'{sid}.detection_predicate',
+                    str(it.get('detection_predicate') or '')))
+        seg = it.get('severity_condition')
+        if isinstance(seg, dict):
+            out.append(('signals.when', f'{sid}.when_predicate',
+                        str(seg.get('when_predicate') or '')))
+    return out
+
+
+def check_arity(rep: Report, e: dict, eid: str):
+    """S-12（info 干跑）：调用实参个数 vs 词表 `arity`。
+
+    规则与边界见 ADR-SRC-P0-07 §2（R1–R8）。本项**只报不判**：不参与 seed 资格、
+    不改变退出码；未在册名由 M4 报，无 arity 的 formula_words 记「无 arity 可校」。
+    """
+    table = vocab_arity_cached()
+    mism, bad, unchecked = [], [], []
+    for _field, label, text in arity_surfaces(e):
+        if not text.strip():
+            continue
+        calls, suspicious = extract_calls(text)
+        for name, frag in suspicious:
+            bad.append(f'{label}: `{name}(` 括号未闭合 → {_trunc(frag, 40)}')
+        for c in calls:
+            meta = table.get(c['name'])
+            if not meta:          # 未在册：M4 硬失败已覆盖，本项不重复
+                continue
+            exp = meta['arity']
+            if exp is None:       # formula_words 无 arity 登记
+                unchecked.append(c['name'])
+                continue
+            if exp != c['argc']:
+                mism.append(f"{label}: {c['raw']} 期望 {exp} 实得 {c['argc']}")
+    if bad:
+        rep.add('S-12', f'{eid} 解析', 'info', False, 'S-12（解析可疑，未静默跳过）：' + '；'.join(bad))
+    if mism:
+        rep.add('S-12', eid, 'info', False, 'S-12（元数不匹配，info 干跑）：' + '；'.join(mism))
+
+
+def check_arity_census(rep: Report, entries: list):
+    """S-12 全量普查行（info）：调用总数、按字段分项、不匹配／无 arity／可疑计数。"""
+    table = vocab_arity_cached()
+    field_cnt = {'anti_patterns': 0, 'applicability': 0, 'signals.detection': 0, 'signals.when': 0}
+    total = mism = bad = no_call = 0
+    unchecked: dict = {}
+    for e in entries:
+        for field, _label, text in arity_surfaces(e):
+            if not text.strip():
+                continue
+            calls, suspicious = extract_calls(text)
+            bad += len(suspicious)
+            if not calls:
+                no_call += 1
+            for c in calls:
+                total += 1
+                field_cnt[field] = field_cnt.get(field, 0) + 1
+                meta = table.get(c['name'])
+                if not meta:
+                    continue
+                if meta['arity'] is None:
+                    unchecked[c['name']] = unchecked.get(c['name'], 0) + 1
+                elif meta['arity'] != c['argc']:
+                    mism += 1
+    rep.add('S-12', '全量', 'info', mism == 0,
+            f'S-12 元数观测（info 干跑）：调用 {total} 处（anti_patterns {field_cnt["anti_patterns"]}／'
+            f'applicability {field_cnt["applicability"]}／signals.detection {field_cnt["signals.detection"]}／'
+            f'signals.when {field_cnt["signals.when"]}）；元数不匹配 {mism} 处；'
+            f'无 arity 可校 {sum(unchecked.values())} 处（' + '、'.join(f'{k}×{v}' for k, v in sorted(unchecked.items())) + '）；'
+            f'解析可疑 {bad} 处；无调用串 {no_call} 处')
 
 
 def check_m2(rep: Report, e: dict, eid: str, mat: dict, prof_status: dict):
@@ -2050,7 +2251,8 @@ def render_self_check(ctx: dict) -> str:
         L += [f'- {r.scope}：{r.reason}' for r in led] + ['']
     for cid, title, note in (
             ('S-10', 'signals 词表封闭观测', 'info，只报不判（判据在 M4 硬检查）'),
-            ('S-11', 'signals 纯散文', 'hard（ADR-SRC-P0-06：detection_predicate 与 when_predicate 均须含已登记谓词调用）')):
+            ('S-11', 'signals 纯散文', 'hard（ADR-SRC-P0-06：detection_predicate 与 when_predicate 均须含已登记谓词调用）'),
+            ('S-12', '元数观测', 'info 干跑（ADR-SRC-P0-07：实参个数 vs 词表 arity；只报不判，转硬待批）')):
         rows = rep.of(cid)
         if rows:
             L += [f'### {cid}：{title}（{note}）', '']
@@ -2262,7 +2464,9 @@ def run_checks():
         check_m6(rep, e, eid)
         check_m9(rep, e, eid, all_ids)
         check_cenv(rep, e, eid, mat)
+        check_arity(rep, e, eid)
     check_meta(rep, reg_doc, entries, idx, mat, prof_status)
+    check_arity_census(rep, entries)
     check_cst(rep, entries, mat, prof_status)
     check_ledgers(rep, reg_doc, vocab_doc, profiles_doc)
     check_source_class(rep, reg_doc, profiles_doc)

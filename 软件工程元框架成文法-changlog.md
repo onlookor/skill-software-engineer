@@ -1691,3 +1691,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **治理**：新建 `adr/ADR-SRC-P0-06-approved-20261108-M4扩signals与S-11转硬.md`；`adr/INDEX.md`（24→**25** 份，approved 24）。
 - **自检**：`--check` **1,212 条记录**（-1＝`G-SRC-1` 闭合后其「open gap 无 open SO 承接」info 行消失）｜硬 **0**｜软 **0**｜**info 40**（未成立 **0**）；占位符 **1,478**（事实 1＋槽 1,477）；指针 **2,409**，miss **0**。open gap **2→1**（余 `G-PRJ-1`）；open SO **2**（`SO-1`／`SO-6`）不变。
 - **残余口子（本批未关）**：S-11 只验「至少一个已登记调用」——`distortion(system) ∧ 散文` 仍过；元数不校；`envelope.bound_expr`／`cost_profile.*`／`constraints_imposed.constraint`／`narrative.*`／`consumption.note`／`anti_patterns.description`／`signals.name` 全部无词汇封闭；`when` 与 `detection` 无语义包含校验。
+## 2026-11-08（续 31）：元数校验（S-12）info 干跑
+
+- **新增 S-12（info）**：`extract_calls` 抽取全部调用（含嵌套），比对 `predicate_vocabulary.yaml` 的 `arity`；覆盖 M4／S-10／S-11 现扫的四个面（`anti_patterns[].detection_predicate`、`applicability` 三空间、`signals[].detection_predicate`、`signals[].severity_condition.when_predicate`）。**只报不判**，不参与 seed 资格、不改退出码。**数据零改动**。
+- **解析规则（ADR-SRC-P0-07 §2，R1–R9）**：标识符前不得紧邻 `[A-Za-z0-9_]`（`pyramid_distortion(` 不再命中 `distortion(`）；仅在圆／方／花／全角括号深度 0 的逗号处切分（`f(g(a,b),c)`=2、`dsm(D,{a,b,c})`=2）；`·`／`_`／`…`／`...` 各算 1 个实参位；量词前缀不产生调用；方括号内不抽取；仅半角 `(` 开启调用（全角 `（…）` 是中文标点，实测 17 处伪调用全为散文）；`formula_words` 无 arity → 记「无 arity 可校」不判；未在册名跳过（M4 已判）。
+- **干跑实测**：调用 **501** 处（anti_patterns 470／applicability 6／signals.detection 19／signals.when 6）；无调用串 **870**；无 arity 可校 **72**（approved 8／declared 27／has 16／registered 18／sourced 3）；解析可疑 **0**；元数不匹配 **43** 处（12 名）。
+- **不匹配归类**：A 串写错 **11**（`delivery_semantics(I)`×3、`timeout_budget(path)`×2＋`(·)`×1、`selection_log(d,·)`×2、`interaction_flow(path,sync_chain)`×2、`verdict(·,·,·)`×1）；B 规则未覆盖 **32**（`registry_entry(·, VFM-001)`×23 同形批量＋单点前缀投影 9：`shared_write_exception(D)`×3、`quality_impact_card(模式)`、`interaction_flow(·)`、`dsm(system)`、`has_approved_exception(该交互)`、`baseline(metric)`、`falsification_metric(adr)`）；C **arity 登记错 0**——12 名登记值与母本定义行逐条一致，**不改词表**。
+- **转硬判断**：直接转硬会红 **43**，其中真问题 **11**、假阳性 **32**（另有 72 处无 arity 无法判）。**不转硬**，待批；转硬前须先裁决 B1 批量模式、「前缀投影是否合法」、「`formula_words` 无 arity 如何处置」。
+- **编号审计**：S-1～S-9 不占独立 id（经 `M2` 记录，S-9 已占）；S-10／S-11 已用；**S-12 占用前逐一核对现有 id 确认未冲突**，并在 CHECK-SPEC C5.21 与 ADR 中记录在先占用与改名映射要求。
+- **治理**：新建 `adr/ADR-SRC-P0-07-approved-20261108-元数校验S-12-info干跑.md`；`adr/INDEX.md`（25→**26** 份，approved 25）；`CHECK-SPEC.md` 新增 **C5.21**。
+- **自检**：`--check` **1,235 条记录**（+23：22 条条目行＋1 条全量行）｜硬 **0**｜软 **0**｜info **63**（未成立 23）；占位符 **1,478**；指针 **2,409**，miss **0**；母本 **0 行**；词表 **218** 名不变。
