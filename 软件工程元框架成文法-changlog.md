@@ -1613,3 +1613,20 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **自检**：`--check` 1,216 条｜硬 **0**｜软 **0**｜**info 44**（未成立 6＝`S-11`×3 记录、`LEDGER VG-09:auth_bypass`×1、`GAP-SO`×2）；占位符 1,478（不变）；指针 **2,397**，miss 0。
 - **转硬预估**：批 A 后把 M4 扩到 `signals` 预计红 **0**；三个盲区不表现为红（6 条纯散文 `detection_predicate`＋5 条纯散文 `when_predicate`、元数不校、`burn_rate(·)` 通配）。
 
+## 2026-11-08（续 25）：SRC 判据谓词批 B（8 名清单核对与 5 名登记）
+
+- **清单核对**：用户所列 8 名中 3 名**已在册**——`execution_order`、`assertion_fact_mismatch`（ADR-VG09-01 D1-A 的 8 名，词表第 98／103 行）、`burn_rate`（ADR-SRC-P0-02 批 A，term）；本批**不重复登记**，实际新增 **5 行**。
+- **新增 5 名**（均 `kind: predicate`，只登记、不定义新规范命题）：
+  - `conforms_to` arity **2**，出处 3.5，签名 `conforms_to(x, contract_C)`；原复合式 `connects ∧ ¬covers` 只覆盖流量—契约一路，`SRC-003-S1` 的 schema ↔ 报文结构面不在 `connects` 定义域。
+  - `auth_bypass` arity **2**，出处 4.5，签名 `auth_bypass(D, consumer)`；原复合式基词 `provider` 不在母本与三表（台账已记该项基谓词缺失），复合式不可执行。
+  - `monotonic_trend` arity **2**，出处 9.5，签名 `monotonic_trend(metric, window)`；原复合式依赖 `signal` 第 5 槽名 `trend_window_verdict`（第 3712 行），槽名充谓词不可执行。
+  - `remediation_or_waiver_record` arity **1**，出处 9.5，签名 `remediation_or_waiver_record(case)`；Waiver（9.2.2）与 debt_item（9.5）分属不同台账、准入不同，`∨` 压成单值丢失台账类型。
+  - `consecutive_failure` arity **2**，出处 8.5，签名 `consecutive_failure(case, window)`；`verdict_of(E)` 是单点三值（第 3433 行），无法表达「连续 N 周期」。
+- **`burn_rate` 调用面**：其在 `SRC-005-S1` 的 when 里仍是散文「错误预算耗尽」；补调用面须改机器层字符串，按边界**只报改法不改**（拟改 `burn_rate(service) ≥ error_budget(service, slo, b, ·) 的耗尽阈值`，见 ADR §3.3）。
+- **台账**：`VG-09` 增 `resolution_2026_11_08_bB`（`predicate_rows_added: 5`，五条 `registered` 各带 `was` 与 `reason`；`already_in_book` 记 3 条；`carried` 记 `cycle_scale` residual 与 `lower_layer_coverage`／`baseline_change_record` composition）；`vocabulary_gaps_count` **8→3**，**不记闭合**。
+- **词表**：`predicates` 152→**157**（predicate 142→**147**、term 9、constant 1），`formula_words` 7、`clause_defined_predicates` 53，合计 **212→217**。
+- **干跑**：S-10 **0→0**、S-11 **6→6**。**登记词条不改机器可判性**——S-11 要求字符串内出现 `name(`，而 8 条 SRC 机器层字符串本批未改（边界禁止）；散文残留不变。
+- **母本／级别**：母本 4,463 行／围栏 216 **零改动**；M4 **未改**；S-10／S-11 **仍 info**、不入 seed 资格、不改退出码；8 条 SRC 机器层字符串**均未改**。
+- **治理**：新建 `adr/ADR-SRC-P0-03-approved-20261108-SRC判据谓词批B.md`；`adr/INDEX.md` 增行（21→**22** 份，approved 20→**21**）。
+- **自检**：`--check` **1,216 条记录**｜硬失败 **0**｜软警告 **0**｜**info 44**（未成立 **5**＝`S-11`×3＋`GAP-SO`×2；`LEDGER VG-09:auth_bypass` 因改判转为成立）；占位符 **1,478**（不变）；指针反查 **2,397→2,407**（+10），miss 0。
+
