@@ -153,6 +153,61 @@ slot_registry:
 | 转正落地后 | `state: promoted` ＋ `promoted_to: <正式编号>`；原临时号不删 |
 | 源文本改动使锚不再逐字匹配 | `state: stale`，**不得静默改序**；重锚后补 `reanchored_at` |
 
+## 3.2 同一事实两处落点（可选观测扩展，不新增义务）
+
+**只观测，不判定**：本节字段不进入必填结构、不触发任何检查项、不影响任何判定；填与不填都不改变 `facts.value` 的求值结果。
+
+**何时填**：某条事实同时出现在两处落点——
+
+- **条目侧**：`registry/method_registry.yaml` 条目的 `applicability.delivery_space`（少数 `current_space`）事实槽；
+- **部署侧**：母本 10.2.5 判据 6 的部署状态声明（`criteria6_verdicts`，取值 `confirmed_present｜confirmed_absent｜undetermined`）。
+
+两处读同一事实但没有同一性登记（见 `ADR-GS-FACT-01`），本组只记观察到的落点差异，**不代表归一已完成**。
+
+```yaml
+facts:
+  - id: F8
+    provenance: {kind: slot, ref: "CTR-002/applicability.delivery_space/1", slot_id: SLOT-CTR-002-delivery_space-1, anchor: "<槽内原文>"}
+    statement: 部署具备契约测试基础设施能力
+    value: true
+    note: ''
+    dual_site:                          # 可选；整组不写＝本次未观测，不判遗漏
+      entry_side: <条目侧取值>            # 槽内原词／一句话概括
+      deploy_side: <部署侧取值>           # confirmed_present｜confirmed_absent｜undetermined
+      first_valued: selection | deployment | simultaneous
+      same_fact: same | granularity_differs | contrary
+      contradiction:                    # 仅 same_fact=contrary 时填；否则 null
+        authoritative: entry_side | deploy_side | other | unresolved
+        adr_recorded: true | false | unknown
+        other_side_revised: true | false | unknown
+      observation_note: <"没有值"的理由，或处置事实一句>
+```
+
+**四问与取值**：
+
+| 字段 | 问法 | 取值 |
+|---|---|---|
+| `entry_side` | 条目侧 applicability 槽当时取值是什么？ | 槽内原词／一句话；取不到见下条三档 |
+| `deploy_side` | 部署侧判据 6 状态声明当时是什么？ | `confirmed_present`／`confirmed_absent`／`undetermined` |
+| `first_valued` | 哪一侧先有值？ | `selection`（选型时先）／`deployment`（部署声明时先）／`simultaneous`（同时） |
+| `same_fact` | 两处说的是不是同一句事实？ | `same`（是）／`granularity_differs`（粒度不同）／`contrary`（相反） |
+
+**矛盾处置（`contradiction`，只记事实、不预设正确答案）**：
+
+- `authoritative`：人当时以什么为准——`entry_side`／`deploy_side`／`other`（在 `observation_note` 写明是什么）／`unresolved`（未定）。
+- `adr_recorded`：是否记了 ADR。
+- `other_side_revised`：是否改了另一边。
+- 不评价「应当以哪边为准」；真实项目未发生处置时按三档记 `unknown` ＋ `open_obligations`，不得编一个「合理做法」。
+
+**三档口径（与 §1.1 同）**：
+
+1. **整组可不写**：事实不涉及两处落点、或本次未观测 → 不写 `dual_site`。这是观测项，无义务，**不判遗漏、不打回**。
+2. **写了就不得留空**：一旦写出 `dual_site`，组内成员必须各有值；某一成员取不到 → `unknown` ＋ `open_obligations` 一条；不适用 → `null` ＋ `observation_note` 写一句理由。只写一两个成员＝遗漏，评审打回。
+3. `first_valued` 事后重建不出先后 → `unknown` ＋义务，不得猜。
+4. `same_fact ≠ contrary` → `contradiction: null`，`observation_note` 写一句「两处不矛盾」；`same_fact = contrary` 但处置不可知 → `contradiction: unknown` ＋义务。
+
+**作用域**：`dual_site` 只在本日志内；不进 `slot_registry`、不进 `registry`、不进 `gaps`，检查器不读。
+
 ## 4. `assessments`（判断项，与事实分栏）
 
 ```yaml
@@ -257,3 +312,4 @@ open_obligations:
 | F4：在日志里复制 ADR 的背景与取舍段 | 双写必然腐化；**挡法**：日志只留 `decision` 一行＋`adr_ref`，论证与后果归 ADR |
 | F5：为未进候选补槽，或候选未定先填 | 762 项≈12 小时，流程被绕过；**挡法**：先裁 3–8 条候选，只填候选消费的事实，其余进 `open_obligations` |
 | F6：补记不标 `retrospective`，或 `decided_at` 写补记时刻 | 无法复算「当时知道什么」；**挡法**：决策当场开日志，补记标 `retrospective: true`，`decided_at` 记原决策时刻 |
+| 把 `dual_site` 有值当成「两处已归一」 | 观测组只记落点差异，不含同一性约束；当成归一完成会掩盖双写（ADR-GS-FACT-01 未选案） |
