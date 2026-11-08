@@ -1666,3 +1666,16 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **本次无数据变更**：`method_registry.yaml` 未改，`severity`／`raise_to` 保持原样；裁定与三条替代路径见 ADR-SRC-P0-04 §4，等用户裁定后再动。
 - **自检**：`--check` 1,213 条｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
 
+## 2026-11-08（续 29）：`behavior_switch` 登记与两条 when 护栏可判化
+
+- **登记**：`behavior_switch`，`kind: predicate`，arity **1**，出处 5.5 第 2600 行 Z6 的量词域 `∀ flag(G,_,behavior,_)`（第三槽 `level=behavior` 即行为级；结构级开关不在 Z6 辖域）。条目注写明它只判「flag 属于行为级开关」，不重述 Z6——Z6 四支治理闭合仍由 `expiry_of`／`cleanup_filed` 与条目 `constraints_imposed`／`source_pointers` 承载，故非重复真源。
+- **`SRC-004-S1`**：`when_predicate` `行为级开关（Z6 违例）` → **`behavior_switch(flag)`**；`raise_to: P0` 未动、`detection_predicate` 未动、`consumption` 两条 note 未动。
+  - **对指令字符串的一处收紧**：指令给的是 `∃ flag: behavior_switch(flag)`，落库时去掉独立存在量词。理由：独立 `∃` 会脱离 detection 的见证，使「结构级僵尸开关 + 任意无关行为级开关」即升 P0，与「护栏只能变可判、不能变松」及核对点①冲突。自由变量写法与 `SRC-001-S1`／`SRC-005-S1`／`SRC-007-S1` 的 when 同型。若用户坚持原串，改回后核对点①不通过。
+- **`SRC-007-S1`**：`when_predicate` `distortion ∧ ∃ hard property 无下层覆盖` → **`distortion(system)`**（第三合取项由 `distortion` 定义吸收，与 detection 侧同口径）。与 detection **不完全同义**：detection 为 `pyramid_distortion(system) ∧ distortion(system)`，when 只取第二支，是真子集；改写前同为子集，故升级行为不变。**when 保留以维持 `raise_to: P1` 的升级门槛语义**，未删。
+- **护栏三点核对**：① 结构级开关仍不升 P0——通过（自由变量回指 detection 的 `∃ flag`，结构级使 when 为假）；② Z6 中 detection 未覆盖的两支（无批准 ADR／无 expiry 声明）仍有挂靠——通过（`constraints_imposed` 逐字覆盖 Z6 违例全体、9.2.3 行与 5.4 约束行保留、`formal_anchor G1 triggers` 未动、consumption note 未动）；**观察**：`source_pointers` 未含 5.5，Z6 机器可查挂靠经 9.2.3 与 5.4 间接落地，补指针需另批 ADR；③ `raise_to: P0` 量词域与母本第 2600 行一致——通过（均只辖行为级）。
+- **干跑**：S-11 扩到 `when`（**未转硬**）红 **0**；S-10 扩到 `when` 未登记名 **0**。现有检测面 S-10／S-11 均 **0**。
+- **词表**：`predicates` 157→**158**（predicate 147→**148**、term 9、constant 1），合计 **217→218**；`VG-05` 记 `resolution_2026_11_08`（+1，`status_after: open`，残余 2 项不变）。
+- **母本／级别**：母本 **0 行**；`severity`／`raise_to` 未改；M4 未扩；S-10／S-11 仍 info。
+- **治理**：新建 `adr/ADR-SRC-P0-05-approved-20261108-behavior_switch与两条when护栏.md`；`adr/INDEX.md`（23→**24** 份，approved 23）。
+- **自检**：`--check` **1,213 条记录**｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
+
