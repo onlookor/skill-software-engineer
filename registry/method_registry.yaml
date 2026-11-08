@@ -11471,14 +11471,14 @@ entries:
     signals:
       - signal_id: SRC-003-S1
         name: "schema 漂移"
-        detection_predicate: "schema 声明与实际报文结构不一致 ∧ 偏离持续（非瞬时抖动）"
+        detection_predicate: "¬conforms_to(schema_decl, 报文实际结构) ∧ 偏离持续（非瞬时抖动）"
         severity: P1
         severity_condition: null
         consumption:
           - {action: remediate, note: "P1 限期整改（9.2.1）"}
       - signal_id: SRC-003-S2
         name: "所有权违例流量"
-        detection_predicate: "access_path 绕过 owner 授权 ∧ 违例流量可指认到具体单元"
+        detection_predicate: "∃ D, consumer: access_path(D, consumer, ·, ·) ∧ auth_bypass(D, consumer) ∧ 违例流量可指认到具体单元"
         severity: P0
         severity_condition: null
         consumption:
@@ -11528,7 +11528,7 @@ entries:
           - {action: monitor_trend, note: "一般僵尸开关按 P2 监测（9.2.1 典型信号源）"}
       - signal_id: SRC-004-S2
         name: "隐式时序假设再现"
-        detection_predicate: "∃ 交互: 依赖未登记的执行顺序 ∧ 该顺序被观测到再次生效"
+        detection_predicate: "∃ 交互: execution_order(e1, e2) ∧ 该顺序未登记 ∧ 该顺序被观测到再次生效"
         severity: P2
         severity_condition: null
         consumption:
@@ -11658,7 +11658,7 @@ entries:
     signals:
       - signal_id: SRC-007-S1
         name: "金字塔失真"
-        detection_predicate: "pyramid_distortion ∧ distortion ∧ ∃ hard property 无下层覆盖"
+        detection_predicate: "pyramid_distortion(system) ∧ distortion(system)"
         severity: P2
         severity_condition:
           when_predicate: "distortion ∧ ∃ hard property 无下层覆盖"
@@ -11668,14 +11668,14 @@ entries:
           - {action: remediate, note: "升 P1 后限期整改（9.2.1）"}
       - signal_id: SRC-007-S2
         name: "幻觉套件"
-        detection_predicate: "∃ 测试: 套件断言与在册事实不符 ∧ 该断言被当作通过依据"
+        detection_predicate: "∃ 测试: assertion_fact_mismatch(该测试) ∧ 该断言被当作通过依据"
         severity: P2
         severity_condition: null
         consumption:
           - {action: remediate, note: "幻觉套件清理本身是整改项（9.2.3 @3636）"}
       - signal_id: SRC-007-S3
         name: "长期失败用例"
-        detection_predicate: "∃ 用例: 连续周期失败 ∧ 未进入整改或豁免记录"
+        detection_predicate: "∃ 用例: consecutive_failure(该用例, window) ∧ ¬remediation_or_waiver_record(该用例)"
         severity: P2
         severity_condition: null
         consumption:

@@ -1630,3 +1630,18 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **治理**：新建 `adr/ADR-SRC-P0-03-approved-20261108-SRC判据谓词批B.md`；`adr/INDEX.md` 增行（21→**22** 份，approved 20→**21**）。
 - **自检**：`--check` **1,216 条记录**｜硬失败 **0**｜软警告 **0**｜**info 44**（未成立 **5**＝`S-11`×3＋`GAP-SO`×2；`LEDGER VG-09:auth_bypass` 因改判转为成立）；占位符 **1,478**（不变）；指针反查 **2,397→2,407**（+10），miss 0。
 
+## 2026-11-08（续 26）：6 条 `detection_predicate` 改写（S-11 归 0）
+
+- **范围**：`SRC-003-S1`／`SRC-003-S2`／`SRC-004-S2`／`SRC-007-S1`／`SRC-007-S2`／`SRC-007-S3` 六条机器层字符串改为含已登记调用的判据；**语义不收窄、不放宽**。
+- **逐条**：
+  - `SRC-003-S1`：`schema 声明与实际报文结构不一致 ∧ 偏离持续（非瞬时抖动）` → `¬conforms_to(schema_decl, 报文实际结构) ∧ 偏离持续（非瞬时抖动）`；持续性条件原样保留。
+  - `SRC-003-S2`：`access_path 绕过 owner 授权 ∧ 违例流量可指认到具体单元` → `∃ D, consumer: access_path(D, consumer, ·, ·) ∧ auth_bypass(D, consumer) ∧ 违例流量可指认到具体单元`。
+  - `SRC-004-S2`：`∃ 交互: 依赖未登记的执行顺序 ∧ 该顺序被观测到再次生效` → `∃ 交互: execution_order(e1, e2) ∧ 该顺序未登记 ∧ 该顺序被观测到再次生效`；「未登记」判定仍留散文（按 `execution_order` 条目注属 `covers`／`registered` 侧）。
+  - `SRC-007-S1`：`pyramid_distortion ∧ distortion ∧ ∃ hard property 无下层覆盖` → `pyramid_distortion(system) ∧ distortion(system)`；第三合取项**由 `distortion` 定义吸收**（T5 失真且 hard property 无下层覆盖），非静默丢弃。
+  - `SRC-007-S2`：`∃ 测试: 套件断言与在册事实不符 ∧ 该断言被当作通过依据` → `∃ 测试: assertion_fact_mismatch(该测试) ∧ 该断言被当作通过依据`。
+  - `SRC-007-S3`：`∃ 用例: 连续周期失败 ∧ 未进入整改或豁免记录` → `∃ 用例: consecutive_failure(该用例, window) ∧ ¬remediation_or_waiver_record(该用例)`；否定号保留。
+- **命中数**：S-11 **6→0**；S-10 保持 **0**。
+- **母本／级别**：母本 **0 行**；`severity`／`raise_to` 未改；M4 未扩；S-10／S-11 仍 info。
+- **治理**：新建 `adr/ADR-SRC-P0-04-approved-20261108-SRC判据改写.md`；`adr/INDEX.md`（22→**23** 份，approved 22）。
+- **自检**：`--check` **1,213 条记录**（-3＝S-11 命中行消失）｜硬 **0**｜软 **0**｜**info 41**（未成立 2＝`GAP-SO`×2）；占位符 1,478；指针 2,407，miss 0。
+
