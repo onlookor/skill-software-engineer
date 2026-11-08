@@ -121,3 +121,7 @@ M2 M3 M4 M5 M6 M9 C-ID C-ENV C-KP C-ST META PTR VCB LEDGER GAP-SO S-10 S-11
 3. **变长槽**：`registry_entry(..., fields...)` 的末槽是变长，严格元数在此处本身不可判定；本批按固定 6 元计，故把「给多」与「给少」都报出来，交人工裁决。
 4. **字符串字面量与自然语言**：`description`／`narrative.*` 不在覆盖面（与 M4 同口径）。
 5. **同形多义**：同名在不同 clauses 下可能取不同元数（如 `verdict` 母本有 1 元与 2 元两种用法）；本批以「词表登记的单一 arity」为唯一期望值，冲突即报。
+
+---
+
+**2026-11-08 状态更新（ADR-SRC-P0-08）**：§5 的转硬建议已执行；§4 的 43 条不匹配已按 A／B 归类修补（A 11 条、B 32 条；C 类仍为 0）。S-12 已由 info 转 hard，`--check` 硬 0／软 0、零豁免。本 ADR 原文与历史数字保留（0.22）；现状以 ADR-SRC-P0-08 与 `projections/自检报告.md` 为准。

@@ -255,7 +255,7 @@ def expr_of(item) -> str:
     return str(item or '')
 
 
-# ── S-12 元数观测（info 干跑；ADR-SRC-P0-07）──
+# ── S-12 元数校验（hard；ADR-SRC-P0-08）──
 # 调用起点：标识符前不得紧邻 [A-Za-z0-9_]，故 `pyramid_distortion(` 不会再命中 `distortion(`
 # （匹配整名后连同 `(` 一起消费，扫描指针跳过实参，天然避免子串误命中）。
 CALL_START_RE = re.compile(r'(?<![A-Za-z0-9_])([A-Za-z_][A-Za-z0-9_]*)\s*\(')
@@ -317,10 +317,18 @@ def split_call_args(inner: str) -> list[str]:
     return [p.strip() for p in parts]
 
 
+def _is_projection(s: str, close: int) -> bool:
+    """闭合括号后紧邻 `.槽名` → 属性投影（只引用该槽的值，不是一次完整调用）。
+
+    ADR-SRC-P0-08 / DATA-SPEC D3.7：投影不得替代完整调用；S-12 对投影不计 arity。
+    """
+    return bool(re.compile(r'\s*\.\s*[A-Za-z_][A-Za-z0-9_]*').match(s, close + 1))
+
+
 def extract_calls(s: str) -> tuple[list[dict], list[tuple[str, str]]]:
     """抽取全部调用（含嵌套），返回 (calls, suspicious)。
 
-    calls 项：{name, argc, args, raw}。suspicious 项：(name, 残段)。
+    calls 项：{name, argc, args, raw, projection}。suspicious 项：(name, 残段)。
     方括号内文本视为事实占位符，不参与抽取（与 M4 的 outside_brackets 同口径）。
     """
     s = outside_brackets(s)
@@ -339,7 +347,8 @@ def extract_calls(s: str) -> tuple[list[dict], list[tuple[str, str]]]:
         inner = s[m.end():close]
         args = split_call_args(inner)
         calls.append({'name': name, 'argc': len(args), 'args': args,
-                      'raw': s[m.start():close + 1]})
+                      'raw': s[m.start():close + 1],
+                      'projection': _is_projection(s, close)})
         sub, sub_bad = extract_calls(inner)
         calls.extend(sub)
         bad.extend(sub_bad)
@@ -351,7 +360,7 @@ _VOCAB_ARITY_CACHE: dict | None = None
 
 
 def vocab_arity_cached() -> dict:
-    """name → {arity, kind, group}；无 arity 的条目 arity 为 None。与 vocab_names_cached 同源。"""
+    """name → {arity, kind, groups, variadic}；无 arity 的条目 arity 为 None。与 vocab_names_cached 同源。"""
     global _VOCAB_ARITY_CACHE
     if _VOCAB_ARITY_CACHE is None:
         doc = load_yaml(VOCAB_PATH) or {}
@@ -364,7 +373,8 @@ def vocab_arity_cached() -> dict:
                 if name in table:      # 同名跨组：保留先出现的 arity，记分组供报告
                     table[name]['groups'].append(grp)
                     continue
-                table[name] = {'arity': it.get('arity'), 'kind': it.get('kind'), 'groups': [grp]}
+                table[name] = {'arity': it.get('arity'), 'kind': it.get('kind'),
+                               'groups': [grp], 'variadic': bool(it.get('variadic'))}
         _VOCAB_ARITY_CACHE = table
     return _VOCAB_ARITY_CACHE
 
@@ -974,7 +984,7 @@ def check_signals(rep: Report, e: dict, eid: str):
                  'S-11（无已登记谓词调用＝纯散文，硬失败）：' + '；'.join(prose))
 
 
-# ── S-12：元数观测（info 干跑；ADR-SRC-P0-07；转硬须另批）──
+# ── S-12：元数校验（hard；ADR-SRC-P0-08；取代 ADR-SRC-P0-07 的 info 干跑）──
 
 def arity_surfaces(e: dict) -> list[tuple[str, str, str]]:
     """M4／S-10／S-11 现扫的全部面：(field, label, text)。"""
@@ -999,14 +1009,23 @@ def arity_surfaces(e: dict) -> list[tuple[str, str, str]]:
     return out
 
 
-def check_arity(rep: Report, e: dict, eid: str):
-    """S-12（info 干跑）：调用实参个数 vs 词表 `arity`。
+def _arity_ok(meta: dict, argc: int) -> bool:
+    """固定元数恰好相等；variadic（registry_entry）按 ≥ arity（DATA-SPEC D3.8）。"""
+    exp = meta['arity']
+    return argc >= exp if meta.get('variadic') else argc == exp
 
-    规则与边界见 ADR-SRC-P0-07 §2（R1–R8）。本项**只报不判**：不参与 seed 资格、
-    不改变退出码；未在册名由 M4 报，无 arity 的 formula_words 记「无 arity 可校」。
+
+def check_arity(rep: Report, e: dict, eid: str):
+    """S-12（hard）：调用实参个数 vs 词表 `arity`。
+
+    规则与边界见 DATA-SPEC D3.7／D3.8 与 ADR-SRC-P0-08：
+      · 固定元数 argc == arity；variadic（目前仅 registry_entry）argc ≥ arity；
+      · `).槽名` 投影不计 arity（只引用某槽的值，不是一次完整调用）；
+      · 无 arity 的 formula_words 记「未覆盖」，不计通过也不计失败（普查行单列）；
+      · 未在册名由 M4 报，本项不重复。
     """
     table = vocab_arity_cached()
-    mism, bad, unchecked = [], [], []
+    mism, bad = [], []
     for _field, label, text in arity_surfaces(e):
         if not text.strip():
             continue
@@ -1014,26 +1033,29 @@ def check_arity(rep: Report, e: dict, eid: str):
         for name, frag in suspicious:
             bad.append(f'{label}: `{name}(` 括号未闭合 → {_trunc(frag, 40)}')
         for c in calls:
+            if c.get('projection'):
+                continue
             meta = table.get(c['name'])
-            if not meta:          # 未在册：M4 硬失败已覆盖，本项不重复
+            if not meta:          # 未在册：M4 硬失败已覆盖
                 continue
             exp = meta['arity']
-            if exp is None:       # formula_words 无 arity 登记
-                unchecked.append(c['name'])
+            if exp is None:       # formula_words 无 arity：未覆盖，不判
                 continue
-            if exp != c['argc']:
-                mism.append(f"{label}: {c['raw']} 期望 {exp} 实得 {c['argc']}")
+            if not _arity_ok(meta, c['argc']):
+                rule = f'≥{exp}' if meta.get('variadic') else str(exp)
+                mism.append(f"{label}: {c['raw']} 期望 {rule} 实得 {c['argc']}")
     if bad:
-        rep.add('S-12', f'{eid} 解析', 'info', False, 'S-12（解析可疑，未静默跳过）：' + '；'.join(bad))
+        rep.fail('S-12', f'{eid} 解析', 'S-12（解析可疑，未静默跳过）：' + '；'.join(bad))
     if mism:
-        rep.add('S-12', eid, 'info', False, 'S-12（元数不匹配，info 干跑）：' + '；'.join(mism))
+        rep.fail('S-12', eid, 'S-12（元数不匹配，hard）：' + '；'.join(mism))
 
 
 def check_arity_census(rep: Report, entries: list):
-    """S-12 全量普查行（info）：调用总数、按字段分项、不匹配／无 arity／可疑计数。"""
+    """S-12 全量（hard）：调用总数、按字段分项、不匹配／可疑／投影／variadic 计数；
+    无 arity 的 formula_words 另起 info 行单列分组（不计通过、不计失败）。"""
     table = vocab_arity_cached()
     field_cnt = {'anti_patterns': 0, 'applicability': 0, 'signals.detection': 0, 'signals.when': 0}
-    total = mism = bad = no_call = 0
+    total = mism = bad = no_call = proj = variadic_cnt = fixed_cnt = 0
     unchecked: dict = {}
     for e in entries:
         for field, _label, text in arity_surfaces(e):
@@ -1046,19 +1068,31 @@ def check_arity_census(rep: Report, entries: list):
             for c in calls:
                 total += 1
                 field_cnt[field] = field_cnt.get(field, 0) + 1
+                if c.get('projection'):
+                    proj += 1
+                    continue
                 meta = table.get(c['name'])
                 if not meta:
                     continue
                 if meta['arity'] is None:
                     unchecked[c['name']] = unchecked.get(c['name'], 0) + 1
-                elif meta['arity'] != c['argc']:
+                    continue
+                if meta.get('variadic'):
+                    variadic_cnt += 1
+                else:
+                    fixed_cnt += 1
+                if not _arity_ok(meta, c['argc']):
                     mism += 1
-    rep.add('S-12', '全量', 'info', mism == 0,
-            f'S-12 元数观测（info 干跑）：调用 {total} 处（anti_patterns {field_cnt["anti_patterns"]}／'
+    rep.add('S-12', '全量', 'hard', mism == 0 and bad == 0,
+            f'S-12 元数校验（hard）：调用 {total} 处（anti_patterns {field_cnt["anti_patterns"]}／'
             f'applicability {field_cnt["applicability"]}／signals.detection {field_cnt["signals.detection"]}／'
             f'signals.when {field_cnt["signals.when"]}）；元数不匹配 {mism} 处；'
-            f'无 arity 可校 {sum(unchecked.values())} 处（' + '、'.join(f'{k}×{v}' for k, v in sorted(unchecked.items())) + '）；'
-            f'解析可疑 {bad} 处；无调用串 {no_call} 处')
+            f'解析可疑 {bad} 处；投影（不计 arity）{proj} 处；'
+            f'variadic 调用 {variadic_cnt} 处／固定元数调用 {fixed_cnt} 处；无调用串 {no_call} 处')
+    if unchecked:
+        rep.add('S-12', '未覆盖', 'info', None,
+                f'S-12 未覆盖（无 arity 可校，不计通过、不计失败）：{sum(unchecked.values())} 处（'
+                + '、'.join(f'{k}×{v}' for k, v in sorted(unchecked.items())) + '）')
 
 
 def check_m2(rep: Report, e: dict, eid: str, mat: dict, prof_status: dict):
@@ -2252,7 +2286,7 @@ def render_self_check(ctx: dict) -> str:
     for cid, title, note in (
             ('S-10', 'signals 词表封闭观测', 'info，只报不判（判据在 M4 硬检查）'),
             ('S-11', 'signals 纯散文', 'hard（ADR-SRC-P0-06：detection_predicate 与 when_predicate 均须含已登记谓词调用）'),
-            ('S-12', '元数观测', 'info 干跑（ADR-SRC-P0-07：实参个数 vs 词表 arity；只报不判，转硬待批）')):
+            ('S-12', '元数校验', 'ADR-SRC-P0-08 起为硬检查：实参个数 vs 词表 arity；可变槽按 ≥N；投影与无 arity 项单列')):
         rows = rep.of(cid)
         if rows:
             L += [f'### {cid}：{title}（{note}）', '']

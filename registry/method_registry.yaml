@@ -93,7 +93,7 @@ entries:
     anti_patterns:                     # 骨架源：1.2.3「反模式」列；signal_level 交叉表源：0.14 + 9.2.1
       - pattern_id: STY-001-AP1
         description: "深层同步调用链（链深超出超时预算可容纳层级）"
-        detection_predicate: "∃ path: interaction_flow(path, sync_chain) ∧ timeout_budget(path, ·) ∧ [depth(path) 超过 timeout_budget 可容纳的层级数]"
+        detection_predicate: "∃ path: interaction_flow(path, ·, sync_chain) ∧ timeout_budget(path, ·) ∧ [depth(path) 超过 timeout_budget 可容纳的层级数]"
         signal_level: P1               # 结构性漂移须限期整改（0.14 P1）；未直接构成 V1/V3 硬违例
       - pattern_id: STY-001-AP2
         description: "同步链上的跨团队耦合部署"
@@ -166,7 +166,7 @@ entries:
     anti_patterns:
       - pattern_id: STY-002-AP1
         description: "用异步消息实现需要同步语义的查询"
-        detection_predicate: "∃ u1, u2: depends_on(u1, u2, event, ·) ∧ [该交互的业务语义为查询且调用方需要即时结果] ∧ ¬interaction_flow(u1, sync_chain)"
+        detection_predicate: "∃ u1, u2: depends_on(u1, u2, event, ·) ∧ [该交互的业务语义为查询且调用方需要即时结果] ∧ ¬interaction_flow(u1, ·, sync_chain)"
         signal_level: P1
     formal_anchor:
       - {property_id: V2, role: implements}
@@ -5272,7 +5272,7 @@ entries:
         signal_level: P0               # 4.2.4 第二列把「同一本地事务」写进定义 → 定义性判据缺失即机制不成立，其后果正是第三列所述「业务成功但事件丢失」→ P0（MJ-4 判据）
       - pattern_id: DFL-001-AP2
         description: "投递语义未显式声明即上线（假设中间件提供恰好一次）"
-        detection_predicate: "∃ I: [I 为经发件箱投递的异步交互] ∧ ¬declared(delivery_semantics(I))"
+        detection_predicate: "∃ I: [I 为经发件箱投递的异步交互] ∧ ¬declared(delivery_semantics(I, ·))"
         signal_level: P0               # 5.2.3 投递语义登记纪律明文「未声明 = Z2 违例」＋5.5 Z2 列为硬 → P0（MJ-4 判据）
       - pattern_id: DFL-001-AP3
         description: "消费者未声明幂等机制而依赖 at-least-once 投递"
@@ -5939,7 +5939,7 @@ entries:
         signal_level: P0               # @2486 把『与业务写同事务』写进机制定义 → 定义性判据缺失即机制不成立，其后果正是 Z2 要求吸收的重复副作用 → P0（MJ-4 判据；与 DFL-001-AP1 同型）
       - pattern_id: RLP-002-AP2
         description: "以收件箱机制替代投递语义声明（未在注册表登记 delivery_semantics）"
-        detection_predicate: "∃ I: [I 为经收件箱消费的异步交互] ∧ ¬declared(delivery_semantics(I))"
+        detection_predicate: "∃ I: [I 为经收件箱消费的异步交互] ∧ ¬declared(delivery_semantics(I, ·))"
         signal_level: P0               # @2488 明文『未声明 = Z2 违例』＋5.5 Z2 列为硬 → P0（MJ-4 判据；与 DFL-001-AP2 同型）
       - pattern_id: RLP-002-AP3
         description: "在收件箱事务内引入跨单元远程调用（持锁时长受下游延迟支配）"
@@ -6038,7 +6038,7 @@ entries:
         signal_level: P0               # 5.5 Z2 硬＋@2486『行为面消费其投递语义』＋4.2.4 第四列 Z2 联动 → P0（MJ-4 判据；与 DFL-001-AP3 同型，本条登记行为面侧）
       - pattern_id: RLP-003-AP2
         description: "投递语义未显式声明即上线，或以中间件 exactly-once 声称替代声明"
-        detection_predicate: "∃ I: [I 为经发件箱投递的异步交互] ∧ (¬declared(delivery_semantics(I)) ∨ [声明依据为中间件 exactly-once 声称])"
+        detection_predicate: "∃ I: [I 为经发件箱投递的异步交互] ∧ (¬declared(delivery_semantics(I, ·)) ∨ [声明依据为中间件 exactly-once 声称])"
         signal_level: P0               # @2488 明文『未声明 = Z2 违例』『非中间件魔法』＋5.5 Z2 硬 → P0（MJ-4 判据）
       - pattern_id: RLP-003-AP3
         description: "行为面与定义面分裂登记（卡片缺项，方面 6 无从校验）"
@@ -6153,7 +6153,7 @@ entries:
         signal_level: P0               # @2486 逐字把『指数退避 + 抖动』写入模式名 → 缺失即机制定义性判据缺失（MJ-4 判据第一支）；且重试风暴使 Z4 的 Σ 预算失去上界
       - pattern_id: RLP-004-AP3
         description: "最坏重试时长未纳入上游超时预算／SLA 论证（Z4 预算不闭合）"
-        detection_predicate: "∃ path: [retry 最坏时长](path) + Σ timeout_budget(path) > [SLA 上界](path)"
+        detection_predicate: "∃ path: [retry 最坏时长](path) + Σ timeout_budget(path, ·) > [SLA 上界](path)"
         signal_level: P1               # 5.5 Z4 为条件硬（『过 0.4 证据门槛时为硬；否则降软 + 保守界』）→ 门槛未过时不满足 MJ-4 的 P0 判据；但 5.6 示例一明记其为 CH-C 冲突信号源 → P1 限期整改
       - pattern_id: RLP-004-AP4
         description: "对确定性失败重试（失败原因不可分类即一律重试）"
@@ -6262,7 +6262,7 @@ entries:
         signal_level: P0               # @2486 括号内逐字给出该界形（机制定义性判据）→ 违例即模式未按定义落地（MJ-4 判据第一支）；后果是上游先超时、下游工作成为无效负载
       - pattern_id: RLP-005-AP2
         description: "全链预算不闭合（Σ timeout_budget(path) > sla_bound(path)）"
-        detection_predicate: "∃ path: Σ timeout_budget(path) > [SLA 上界](path)"
+        detection_predicate: "∃ path: Σ timeout_budget(path, ·) > [SLA 上界](path)"
         signal_level: P1               # 5.5 Z4 为条件硬（过 0.4 门槛时为硬；否则降软 + 保守界）→ 门槛未过时不满足 MJ-4 的 P0 判据；但 5.6 示例一明记其为 CH-C 冲突信号源 → P1 限期整改（门槛已过时该信号按 Z4 硬性质升级 P0，MJ-4 判据）
       - pattern_id: RLP-005-AP3
         description: "传播开销与 SLA 上界无实测/无出处即取便利常数（Z4 被迫降软）"
@@ -6270,7 +6270,7 @@ entries:
         signal_level: P1               # 直接触发 5.5 Z4 括注的降软分支（保守界）→ 硬约束力丧失属证据纪律偏离（0.4）而非性质违例 → P1（MJ-4 判据）
       - pattern_id: RLP-005-AP4
         description: "超时后无处置面（无快速失败/降级/断路，调用方行为未定义）"
-        detection_predicate: "∃ 级: timeout_budget(·) 已登记 ∧ ¬[fallback](·) ∧ ¬[circuit_breaker](·)"
+        detection_predicate: "∃ 级: timeout_budget(·, ·) 已登记 ∧ ¬[fallback](·) ∧ ¬[circuit_breaker](·)"
         signal_level: P1               # 5.4 施→8『超时与断路行为测试』要求超时行为可验证；处置面缺失使该验证无对象 → 选择纪律偏离，无 Z 硬性质可直接绑定 → P1（MJ-4 判据）
       - pattern_id: RLP-005-AP5
         description: "路径拓扑变更而预算未重算（僵尸超时配置）"
@@ -6653,7 +6653,7 @@ entries:
         signal_level: P0               # @2492 逐字「定时器/截止期/cron 的登记」＝本条定义性义务，未登记即模式未按定义落地（MJ-4 判据第一支）；后果是 5.3 @2530『互相踩』无判定对象、现状协调清单不可构造
       - pattern_id: SCH-001-AP2
         description: "重叠执行而无互斥或归属声明（同一数据集事实上出现两个写入者）"
-        detection_predicate: "∃ 任务: [上次执行未毕即再次触发](任务) ∧ ¬approved(shared_write_exception(dataset(任务)))"
+        detection_predicate: "∃ 任务: [上次执行未毕即再次触发](任务) ∧ ¬approved(shared_write_exception(dataset(任务), ·, ·))"
         signal_level: P1               # 重叠执行触及 Y1（4.5 @2288，硬），但 Y1 在调度域的计息由 SCH-003 的 formal_anchor 承载 → 本条只登记触发形态面，定 P1 以避免同一性质重复计息（MJ-25 (iv)）；归属声明补齐后按 SCH-003 侧升 P0
       - pattern_id: SCH-001-AP3
         description: "周期长度与截止期取便利常数（无实测执行时长分布、无新鲜度条款出处）"
@@ -6851,7 +6851,7 @@ entries:
     anti_patterns:
       - pattern_id: SCH-003-AP1
         description: "多方调度同一流程/数据集而无归属声明（事实上共享写）"
-        detection_predicate: "∃ 流程: |{M : owner(流程, M)}| > 1 ∧ ¬approved(shared_write_exception(流程))"
+        detection_predicate: "∃ 流程: |{M : owner(流程, M)}| > 1 ∧ ¬approved(shared_write_exception(流程, ·, ·))"
         signal_level: P0               # @2492 逐字「调度权也是所有权的一种，受 Y1 同型约束」＋Y1（4.5 @2288-2289）标注「—— 硬」→ 未声明即违例于硬性质（MJ-4 判据第一支：母本明文定义性判据）。owner 的量词域原为数据集 D，此处按 @2492 明文作同型应用（对象换为流程/调度权）→ 属母本授权的同构映射而非扩性质，故不在注册表侧造法（0.17.1）；判读入 MJ-25 (viii)
       - pattern_id: SCH-003-AP2
         description: "归属声明与实际触发权不符（声明者不触发、触发者未声明）"
@@ -6859,7 +6859,7 @@ entries:
         signal_level: P1               # 后果是 Y1 的形式满足而实质失效（声明面与执行面背离），但母本未在 5.2.4 明文「声明者须为实际触发者」这一一致性要求 → 系本条人工判断（MJ-25 (vii) 同型），不满足 MJ-4 的 P0 判据；触及 5.4 施→9 @2561『隐式时序假设再现』的守护面 → P1 限期整改
       - pattern_id: SCH-003-AP3
         description: "以 shared_write_exception 长期化替代归属裁决（例外无退出计划或超期）"
-        detection_predicate: "∃ 流程: approved(shared_write_exception(流程)) ∧ (¬[退出计划已登记](流程) ∨ now > [最后负责时刻](流程))"
+        detection_predicate: "∃ 流程: approved(shared_write_exception(流程, ·, ·)) ∧ (¬[退出计划已登记](流程) ∨ now > [最后负责时刻](流程))"
         signal_level: P1               # Y1 @2289 括注逐字「例外须批准+退出计划」，Y8 @2303 逐字「共享写例外不超期 —— 硬（超期自动升级裁决，CH-C(2)）」→ 要件缺失触及两条硬性质；但 expiry／退出计划在 predicate_vocabulary 未登记为谓词（只能方括号占位）→ 检测面不完备，按 MJ-4 判据取 P1，词汇补齐后按 Y8 同型升 P0（VG-03 workaround 同型书写，G-SCH-1 承载）
       - pattern_id: SCH-003-AP4
         description: "争用资源无预留即启用多方调度（峰值不可核算）"
@@ -9100,19 +9100,19 @@ entries:
     anti_patterns:
       - pattern_id: VFM-001-AP1
         description: "结构性硬性质只有叙事性结论、无静态检查程序（「架构我们看过了没问题」而在册无检查）"
-        detection_predicate: "∃ 性质: registry_entry(·, VFM-001) ∧ [该性质为已登记硬性质且属结构性族](性质) ∧ ¬[covers_check 已在计划矩阵命中本手段或任一手段](性质)"
+        detection_predicate: "∃ 性质: registry_entry(VFM-001, ·, ·, ·, ·, ·) ∧ [该性质为已登记硬性质且属结构性族](性质) ∧ ¬[covers_check 已在计划矩阵命中本手段或任一手段](性质)"
         signal_level: P0               # T1 @3448 逐字「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·)   // 硬性质无悬置 —— 硬」＋@3329 逐字「**无手段覆盖的硬性质 = T1 违例 = 阻塞**：不允许『该性质重要但目前没法验』的悬置状态」→ 违反硬性质即 P0（9.2.1 @3600）
       - pattern_id: VFM-001-AP2
         description: "适应度函数在册而未接线到 CI（规则写就但无触发点，检查从不运行）"
-        detection_predicate: "∃ 检查: registry_entry(·, VFM-001) ∧ [该检查已登记为适应度函数](检查) ∧ ¬[该检查已接线到计划矩阵的触发点槽](检查)"
+        detection_predicate: "∃ 检查: registry_entry(VFM-001, ·, ·, ·, ·, ·) ∧ [该检查已登记为适应度函数](检查) ∧ ¬[该检查已接线到计划矩阵的触发点槽](检查)"
         signal_level: P1               # T2 @3449-3450 逐字「∀ property bound to 回归触发: means 为可执行检查程序 ∧ **触发已接线**   // T-F2 回归重跑权闭合 —— 硬」——本项违的是「触发已接线」子句而非 T1 的悬置面（覆盖已成立，故不升 P0）；@3364 逐字「否则回归机制在该项上失效（**失效登记为守护缺口，交方面 9**）」→ 属登记纪律偏离、限期整改（9.2.1 @3601 P1）
       - pattern_id: VFM-001-AP3
         description: "DSM 通道二未在发布节点全量消费（只跑增量或只跑聚类、不做 W5 语义对照、结果不入证据库）"
-        detection_predicate: "∃ 节点: registry_entry(·, VFM-001) ∧ [该节点为已登记发布节点](节点) ∧ ¬[该节点的全量 DSM 与聚类与 W5 语义对照三者齐备且结果已入证据库](节点)"
+        detection_predicate: "∃ 节点: registry_entry(VFM-001, ·, ·, ·, ·, ·) ∧ [该节点为已登记发布节点](节点) ∧ ¬[该节点的全量 DSM 与聚类与 W5 语义对照三者齐备且结果已入证据库](节点)"
         signal_level: P2               # @3355 逐字「DSM 通道二**全量消费**（2.2.4）：发布节点的全量 DSM + 聚类 + W5 语义对照，结果入证据库」——义务明文但母本未把该项列为硬性质（2.2.4 的通道二属周期勘察面）；9.2.1 @3602 P2 两格逐字「结构漂移早期信号，单独出现不行动」＋「记录 + 阈值/趋势双判据监测（2.2.4 告警治理）」→ 定 P2，连续多个发布节点缺项即按 @3601 逾期升 P0
       - pattern_id: VFM-001-AP4
         description: "配置注册表比对缺项（只比一侧，或比对的注册表版本非当前版）"
-        detection_predicate: "∃ 项: registry_entry(·, VFM-001) ∧ [该项为运行时生效的配置项](项) ∧ ¬registered(项)"
+        detection_predicate: "∃ 项: registry_entry(VFM-001, ·, ·, ·, ·, ·) ∧ [该项为运行时生效的配置项](项) ∧ ¬registered(项)"
         signal_level: P1               # @3357 逐字「配置注册表比对：实际配置项 vs 注册表（5.2.6 的静态面，**未注册配置项 = 违例**）」——违例判定明文，但本项的失败形态是**比对程序缺项**（违例未被检出）而非违例本身；违例本身的级别归属在 CFG-001（已发布条目，不在此改级，@3604）→ 本项定 P1（登记纪律偏离，9.2.1 @3601）
     formal_anchor:
       - {property_id: T1, role: implements}   # @3448「硬性质无悬置」：本条为 ∃ means ∈ plan 量词域中的合法 means 之一（@3329 六类第一项）。计息：T1 本批 6 项之一（T 系列全库首次入账）
@@ -9192,19 +9192,19 @@ entries:
     anti_patterns:
       - pattern_id: VFM-002-AP1
         description: "叙事性结论触发或解除阻塞（以「我看过了没问题」放行，或以「我感觉有风险」卡死）"
-        detection_predicate: "∃ 结论: registry_entry(·, VFM-002) ∧ [该结论已用于触发或解除阻塞](结论) ∧ ¬[该结论以形式化且可重放的证据工件形态存在](结论)"
+        detection_predicate: "∃ 结论: registry_entry(VFM-002, ·, ·, ·, ·, ·) ∧ [该结论已用于触发或解除阻塞](结论) ∧ ¬[该结论以形式化且可重放的证据工件形态存在](结论)"
         signal_level: P0               # @3363 T-F1 逐字双禁「叙事性结论（口头、聊天记录、无工件报告）**不得触发阻塞，也不得解除阻塞**」＋T1 @3448「硬性质无悬置 —— 硬」：T-F1 的前件即「验证结论将作为任一**硬性质**判定的依据」→ 违例触及硬性质即 P0（9.2.1 @3600）
       - pattern_id: VFM-002-AP2
         description: "T-F2 命中（验证项已绑定一致性回归检查的触发条件）而未形式化为可执行检查程序"
-        detection_predicate: "∃ 项: registry_entry(·, VFM-002) ∧ [该项已绑定 0.7 一致性回归检查的触发条件](项) ∧ ¬executable(项)"
+        detection_predicate: "∃ 项: registry_entry(VFM-002, ·, ·, ·, ·, ·) ∧ [该项已绑定 0.7 一致性回归检查的触发条件](项) ∧ ¬executable(项)"
         signal_level: P1               # T2 @3449-3450「∀ property bound to 回归触发: means 为可执行检查程序 ∧ 触发已接线 // T-F2 回归重跑权闭合 —— 硬」为硬，但 @3364 明定其失效的处置通道是**登记**而非阻塞——逐字「否则回归机制在该项上失效（**失效登记为守护缺口，交方面 9**）」→ 属登记纪律偏离、限期整改（9.2.1 @3601 P1），逾期自动升 P0（@3601 响应义务列）
       - pattern_id: VFM-002-AP3
         description: "证据工件七要素不齐备即入库，或不齐备的工件被 ADR 引用"
-        detection_predicate: "∃ E: registry_entry(·, VFM-002) ∧ [E 已入库或已被 ADR 引用](E) ∧ ¬fields_complete(E)"
+        detection_predicate: "∃ E: registry_entry(VFM-002, ·, ·, ·, ·, ·) ∧ [E 已入库或已被 ADR 引用](E) ∧ ¬fields_complete(E)"
         signal_level: P0               # @3371 逐字「七要素齐备方可入库」（入库门槛明文）＋T3 @3451-3452「∀ E cited_by(ADR): seven_fields_complete(E) ∧ replayable(E) ∧ retention_valid(E) // T-F3 证据保全 —— **硬**」＋@3365「**未保全的结果无引用资格**，引用即 R7 违例（方面 7 拦截）」；8.6 示例一 @3467 的处置示范（七要素缺五 → 引用资格否定、ADR 退回）即本项的执行形态 → 违反硬性质即 P0（9.2.1 @3600）
       - pattern_id: VFM-002-AP4
         description: "工件无输入指纹或无程序版本，致结论不可重放（「证据」实为线索）"
-        detection_predicate: "∃ E: registry_entry(·, VFM-002) ∧ [E 已作为证据入库](E) ∧ ¬independently_verifiable(E)"
+        detection_predicate: "∃ E: registry_entry(VFM-002, ·, ·, ·, ·, ·) ∧ [E 已作为证据入库](E) ∧ ¬independently_verifiable(E)"
         signal_level: P1               # @3372 逐字「任何有访问权的一方（人类评审者、后续 Agent、审计方）凭工件可重执行得到同一结论（输入指纹 + 程序版本保证确定性；**不可重放的『证据』降级为线索**）」——母本对该失败形态明定的是**降级**（改变其证据资格）而非阻塞，且 T3 @3451-3452 的 replayable(E) 子句同属硬但降级已是母本给出的处置 → 定 P1（限期整改，9.2.1 @3601）；若该工件已被 ADR 引用则按 AP3 的 T3 面升 P0（replayable 与 seven_fields_complete 同处一条硬性质）
     formal_anchor:
       - {property_id: T1, role: implements}   # @3448「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·) // 硬性质无悬置 —— 硬」：本条为 ∃ means ∈ plan 量词域中的合法 means 之一（@3329 六类第二项）；@3396 明文人类运行时「手段允许是人工检查」→ 人工执行的形式化检查程序同样计入。计息：T1 本批 6 项之一（T 系列全库首次入账）
@@ -9281,19 +9281,19 @@ entries:
     anti_patterns:
       - pattern_id: VFM-003-AP1
         description: "状态机类硬性质以测试抽样替代模型检查，且未登记手段缺口（计划矩阵显示已覆盖）"
-        detection_predicate: "∃ 性质: registry_entry(·, VFM-003) ∧ (saga(·, ·) ∨ orchestrator(·, ·)) ∧ [该性质为已登记硬性质且其真值取决于状态转移序列](性质) ∧ ¬[计划矩阵中该性质的覆盖手段含穷举类手段](性质)"
+        detection_predicate: "∃ 性质: registry_entry(VFM-003, ·, ·, ·, ·, ·) ∧ (saga(·, ·) ∨ orchestrator(·, ·)) ∧ [该性质为已登记硬性质且其真值取决于状态转移序列](性质) ∧ ¬[计划矩阵中该性质的覆盖手段含穷举类手段](性质)"
         signal_level: P1               # T1 @3448「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·) // 硬性质无悬置 —— 硬」在形式上可能已满足（测试是一个 means）→ 本项违的是**覆盖的质量**而非覆盖的有无，属 @3329 末句「要么补手段，要么按 0.4 门槛把该性质降级（降级是高影响决策）」的登记义务面；@3364 同型「失效登记为守护缺口，交方面 9」→ 定 P1（登记纪律偏离、限期整改，9.2.1 @3601）。**升 P0 的条件**：若该性质无**任何**手段覆盖（连抽样也无），则直接是 T1 硬违例 → P0（9.2.1 @3600），该分支归 VFM-001-AP1 承载（同一 T1 面不重复登记，@3604 不改级）
       - pattern_id: VFM-003-AP2
         description: "模型检查结论无可重放工件（缺被检模型版本、状态空间界定或搜索策略三者之一）"
-        detection_predicate: "∃ E: registry_entry(·, VFM-003) ∧ [E 已作为模型检查结论入库或被引用](E) ∧ ¬independently_verifiable(E)"
+        detection_predicate: "∃ E: registry_entry(VFM-003, ·, ·, ·, ·, ·) ∧ [E 已作为模型检查结论入库或被引用](E) ∧ ¬independently_verifiable(E)"
         signal_level: P1               # @3372 逐字「任何有访问权的一方（人类评审者、后续 Agent、审计方）凭工件可重执行得到同一结论（输入指纹 + 程序版本保证确定性；**不可重放的『证据』降级为线索**）」——母本对该失败形态明定的处置是**降级**而非阻塞 → 定 P1（限期整改，9.2.1 @3601）。**升 P0 的条件**：该结论已被 ADR 引用时按 T3 @3451-3452「replayable(E)」子句为硬 → P0（该分支与 VFM-002-AP3/AP4 同轴，级别归属已在彼处登记，此处不重复改级，@3604）
       - pattern_id: VFM-003-AP3
         description: "被检模型与实现漂移（模型据旧设计构造，实现已变更而模型未重建，结论以 pass 形态掩盖失效）"
-        detection_predicate: "∃ 模型: registry_entry(·, VFM-003) ∧ [该模型对应的 Z 谓词或方面 1/3/4 相关谓词已变更](模型) ∧ ¬[该模型已按 @2584 触发条件重建](模型)"
+        detection_predicate: "∃ 模型: registry_entry(VFM-003, ·, ·, ·, ·, ·) ∧ [该模型对应的 Z 谓词或方面 1/3/4 相关谓词已变更](模型) ∧ ¬[该模型已按 @2584 触发条件重建](模型)"
         signal_level: P2               # @2584 逐字「触发条件 = 任一 `interaction_flow`/`saga`/`flag`/`timeout_budget` 谓词变更，或方面 1/3/4 相关谓词变更」——触发义务明文，但母本未把「模型未及时重建」列为硬性质；其后果形态是**结构漂移早期信号**（9.2.1 @3602 P2「记录 + 阈值/趋势双判据监测」），且 @3421 明定其汇入方面 9 腐化监测输入 → 定 P2；连续多个发布周期未重建即按 @3601 趋势窗口判据升 P1
       - pattern_id: VFM-003-AP4
         description: "覆盖性质集与已登记 Z 系列不对账（只覆盖部分而计划矩阵不声明其界，覆盖率虚高）"
-        detection_predicate: "∃ 计划项: registry_entry(·, VFM-003) ∧ [该计划项声明覆盖状态机性质族](计划项) ∧ ¬[该计划项已显式登记其覆盖的性质子集与未覆盖项](计划项)"
+        detection_predicate: "∃ 计划项: registry_entry(VFM-003, ·, ·, ·, ·, ·) ∧ [该计划项声明覆盖状态机性质族](计划项) ∧ ¬[该计划项已显式登记其覆盖的性质子集与未覆盖项](计划项)"
         signal_level: P2               # @3483 逐字「T7 相关条目相应标注『抽样覆盖』，**降密度显式登记，不做静默缺口**」的同型纪律（该句原指注入用例的抽样，本项为模型检查的覆盖子集，登记义务同轴）；未显式声明其界属**登记纪律偏离**但不触及硬性质本身（性质仍被其他手段覆盖或部分覆盖）→ 定 P2（9.2.1 @3602）；若未覆盖项中含硬性质且无其他手段，则按 T1 面升 P0（该分支归 VFM-001-AP1，不在此重复）
     formal_anchor:
       - {property_id: T1, role: implements}   # @3448「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·) // 硬性质无悬置 —— 硬」：本条为 ∃ means ∈ plan 量词域中的合法 means 之一（@3329 六类第三项），且是状态机类硬性质**唯一具完备性的** means（其余五类对该族只能抽样）。计息：T1 本批 6 项之一（T 系列全库首次入账）
@@ -9401,19 +9401,19 @@ entries:
     anti_patterns:
       - pattern_id: VFM-004-AP1
         description: "金字塔失真：端到端层用例占比越过登记上限，或单元层覆盖率与端到端通过率长期背离"
-        detection_predicate: "∃ 计划项: registry_entry(·, VFM-004) ∧ [该计划项已按四层组合登记测试资产](计划项) ∧ ([端到端层用例占比越过登记上限](计划项) ∨ [单元层覆盖率与端到端通过率长期背离](计划项))"
+        detection_predicate: "∃ 计划项: registry_entry(VFM-004, ·, ·, ·, ·, ·) ∧ [该计划项已按四层组合登记测试资产](计划项) ∧ ([端到端层用例占比越过登记上限](计划项) ∨ [单元层覆盖率与端到端通过率长期背离](计划项))"
         signal_level: P2               # 级别由母本**直接给定**（六条中唯一）：@3342 逐字「**金字塔失真信号**（**P2**，阈值 + 趋势双判据，同 2.2.4 告警治理）：端到端层用例占比越过登记上限、或单元层覆盖率与端到端通过率长期背离 → 结构失真漂移信号，交方面 9。失真本身不阻塞（测试结构是可渐进修复的）」；升级条件亦明文——「但**失真 + 相关硬性质无下层覆盖**时升 P1（限期整改，0.14）」，与 T5 @3454-3455「pyramid_distortion → P2 signal（阈值+趋势双判据）；distortion ∧ ∃hard property 无下层覆盖 → P1 // 金字塔失真 —— 软/条件升级」及 9.2.1 @3601 P1 例列「金字塔失真 + 硬性质无下层覆盖（T5 升级分支）」三处同源，不改级（@3604）
       - pattern_id: VFM-004-AP2
         description: "集成层用例以测试替身替换真实依赖而未登记替身使用"
-        detection_predicate: "∃ 用例: registry_entry(·, VFM-004) ∧ [该用例以测试替身替换真实依赖](用例) ∧ ¬registered([替身使用记录](用例))"
+        detection_predicate: "∃ 用例: registry_entry(VFM-004, ·, ·, ·, ·, ·) ∧ [该用例以测试替身替换真实依赖](用例) ∧ ¬registered([替身使用记录](用例))"
         signal_level: P1               # @3338 备注列逐字「测试替身〔test double：以假对象替换真实依赖的技术总称〕的使用**必须登记**（替身掩盖的契约差异是幻觉源）」——义务明文但未列为硬性质，其失效形态是**登记纪律偏离**且构成幻觉源（@3421「幻觉套件清单」的输入面）→ 定 P1（限期整改，@282「超期未整改自动升级为 P0 处置」／9.2.1 @3601）；若该替身掩盖的差异已致 Y2/X1 的动态面结论失真，则按 T1 假闭合面升 P0（该分支归 VFM-001-AP1 承载，不在此重复改级，@3604）
       - pattern_id: VFM-004-AP3
         description: "已发布契约的契约测试套件缺项，或套件存在而未入 CI"
-        detection_predicate: "∃ C: registry_entry(·, VFM-004) ∧ [C 的 lifecycle_state 取值为 published](C) ∧ ¬[3.5 注册的 C 的契约测试集合（含 X4 的 CDC 要求）已入 CI](C)"
+        detection_predicate: "∃ C: registry_entry(VFM-004, ·, ·, ·, ·, ·) ∧ [C 的 lifecycle_state 取值为 published](C) ∧ ¬[3.5 注册的 C 的契约测试集合（含 X4 的 CDC 要求）已入 CI](C)"
         signal_level: P1               # T6 @3456 逐字「∀ C(lifecycle=published): 契约测试套件（3.5 注册的契约测试集合，含 X4 的 CDC 要求）∈ CI // X4 执行域 —— **硬（分级按 X4）**」，而 X4 @2023 逐字「∀C ∈ high_risk: cdc_suite(C) // 高风险契约 CDC —— **软（微服务风格下升硬）**」→ 分级随 X4：默认软面定 P1（限期整改，@3601）；**升 P0 的条件**＝微服务风格下（style(scope, microservices) 成立）或该契约属 high_risk 且 X4 已升硬 → P0（违例触及硬性质，@3600）；@3404 接收方面 1 行「微服务 → 消费者驱动契约测试必备」即该升级的风格侧判据
       - pattern_id: VFM-004-AP4
         description: "注入用例集不覆盖卡片 failure_modes，且未按注册抽样率标注『抽样覆盖』"
-        detection_predicate: "∃ 行为模式: registry_entry(·, VFM-004) ∧ quality_impact_card(·, 行为模式) ∧ ¬[注入用例集覆盖该卡片 failure_modes 全部项](行为模式) ∧ ¬[该条目已标注抽样覆盖且抽样率有 ADR 出处](行为模式)"
+        detection_predicate: "∃ 行为模式: registry_entry(VFM-004, ·, ·, ·, ·, ·) ∧ quality_impact_card(·, 行为模式) ∧ ¬[注入用例集覆盖该卡片 failure_modes 全部项](行为模式) ∧ ¬[该条目已标注抽样覆盖且抽样率有 ADR 出处](行为模式)"
         signal_level: P2               # T7 @3457-3458 逐字「∀ selected behavior pattern: injection_cases ⊇ card.failure_modes // 行为注入覆盖 —— **软（高风险契约/SLA 出处为合同时升硬）**」→ 默认软面定 P2（结构漂移早期信号，记录 + 阈值/趋势双判据监测，@3602）；**升 P0 的条件**＝高风险契约或 SLA 出处为合同（@3390「SLA 合同条款 → 端到端层判据的强制集」同源）使 T7 升硬 → P0（@3600）。**不构成违例的形态**：@3483 已按注册抽样率执行且「T7 相关条目相应标注『抽样覆盖』，**降密度显式登记，不做静默缺口**」→ 检测式的第四支即该豁免面（登记在案即不违），故本项只捕捉**静默**降密度
     formal_anchor:
       - {property_id: T1, role: implements}   # @3448「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·) // 硬性质无悬置 —— 硬」：本条为 ∃ means ∈ plan 量词域中的合法 means 之一（@3329 六类第四项），且是六类中唯一产出**动态证据**者（@3333 四层组合的运行面）→ 对须以运行行为判定的硬性质族，本条常是唯一可满足 T1 的手段。计息：T1 本批 6 项之一（T 系列全库首次入账）
@@ -9510,19 +9510,19 @@ entries:
     anti_patterns:
       - pattern_id: VFM-005-AP1
         description: "五评审点之一被静默删减（未排期、未举行或改为 Agent 自批），而计划矩阵仍显示人类通道已覆盖"
-        detection_predicate: "∃ rp: registry_entry(·, VFM-005) ∧ [rp ∈ 8.2.7 五评审点按部署裁剪后的集合](rp) ∧ ¬[rp 已排期且其评审记录已按 @3371 七要素保全](rp)"
+        detection_predicate: "∃ rp: registry_entry(VFM-005, ·, ·, ·, ·, ·) ∧ [rp ∈ 8.2.7 五评审点按部署裁剪后的集合](rp) ∧ ¬[rp 已排期且其评审记录已按 @3371 七要素保全](rp)"
         signal_level: P0               # T8 @3459-3460 逐字「∀ rp ∈ 8.2.7五类（按部署裁剪后集合）: scheduled(rp) ∧ records preserved // 人类评审通道不可删减 —— **硬**」＋@3378 逐字「以下评审点是验证计划的**不可自动化删减项**（T8 硬性质）」→ 违例触及硬性质，9.2.1 @3600「违例触及硬性质（V/W/X/Y/Z/Q/R/T/G 系列硬条目）」即 P0（即时阻塞：相关变更冻结、升级裁决启动 CH-C(2)，不允许带病发布）。**书写纪律**：母本 T8 公式含 `scheduled(rp)`，而 `scheduled` **不在册 76 名**（predicate_vocabulary.yaml 三表实测；块头未登记谓词面已列）→ 本项以半角方括号承载该子句，绝不写调用式（VG-05 workaround；写 scheduled(rp) 即 M4 硬失败，scripts/project.py @d:registry/scripts/project.py#key-PRED_CALL_RE 只匹配 ASCII 左括号、outside_brackets @207-217 剔除方括号内内容）
       - pattern_id: VFM-005-AP2
         description: "人类评审记录未按证据工件保全（七要素缺项，或已保全但不可重放），而该记录已被 ADR 引用"
-        detection_predicate: "∃ E: registry_entry(·, VFM-005) ∧ [E 为人类评审记录且已被 ADR 引用](E) ∧ ¬independently_verifiable(E)"
+        detection_predicate: "∃ E: registry_entry(VFM-005, ·, ·, ·, ·, ·) ∧ [E 为人类评审记录且已被 ADR 引用](E) ∧ ¬independently_verifiable(E)"
         signal_level: P1               # @3374 逐字「**双使用者同义务**：人类抽查评审的记录（8.2.7）同样是证据工件（执行者 = 人类署名）；Agent 不因自动化获得豁免，人类不因人工获得豁免——保全义务对等」＋@3372 逐字「不可重放的『证据』降级为线索」→ 母本对该失败形态明定的处置是**降级**而非阻塞（与 VFM-002-AP3/VFM-003-AP2 同轴）→ 定 P1（登记纪律偏离、限期整改，9.2.1 @3601；逾期自动升 P0）。**升 P0 的条件**：T3 @3451-3452 逐字「∀ E cited_by(ADR): seven_fields_complete(E) ∧ replayable(E) ∧ retention_valid(E) // T-F3 证据保全 —— **硬**」→ 已被引用而七要素不全即 T3 硬违例，该分支的级别归属已在 VFM-002-AP3 登记，此处不重复改级（@3604「不许运行时即兴改级」）
       - pattern_id: VFM-005-AP3
         description: "评审点集合按部署规模裁剪而未记 ADR（缩减不可追溯，与静默删减在台账上不可分辨）"
-        detection_predicate: "∃ 裁剪项: registry_entry(·, VFM-005) ∧ [评审点集合已按部署规模裁剪](裁剪项) ∧ ¬registered(裁剪项)"
+        detection_predicate: "∃ 裁剪项: registry_entry(VFM-005, ·, ·, ·, ·, ·) ∧ [评审点集合已按部署规模裁剪](裁剪项) ∧ ¬registered(裁剪项)"
         signal_level: P2               # @3386 末句逐字「评审点集合按部署规模在注册表中裁剪，**裁剪本身记 ADR**」——登记义务明文，但母本未把「裁剪未记 ADR」列为硬性质；其后果形态是**结构漂移早期信号**（9.2.1 @3602 P2「记录 + 阈值/趋势双判据监测（2.2.4 告警治理）；积累后聚合分析」），且 @3421 明定其汇入方面 9 腐化监测输入 → 定 P2。**升 P1 的条件**：同一评审点集合连续多个周期缩减而无 ADR（@3601 趋势窗口判据「越阈 + 持续同向漂移」成立）→ 限期整改；**升 P0 的条件**：缩减至五评审点之一完全缺席（即 AP1 的成因形态，级别归属在 AP1，不在此重复，@3604）
       - pattern_id: VFM-005-AP4
         description: "材料性判定由 Agent 机械适用 materiality 谓词而无人工抽查，实质漏判以全通过形态出现"
-        detection_predicate: "∃ 判定: registry_entry(·, VFM-005) ∧ [材料性判定已由谓词机械求值且评审点三未抽查](判定) ∧ ¬[该判定已留人工抽查记录](判定)"
+        detection_predicate: "∃ 判定: registry_entry(VFM-005, ·, ·, ·, ·, ·) ∧ [材料性判定已由谓词机械求值且评审点三未抽查](判定) ∧ ¬[该判定已留人工抽查记录](判定)"
         signal_level: P2               # @3382 括注逐字「（防 Agent 对 materiality 谓词的机械适用漏掉实质）」——设立理由明文，但母本未把「未抽查」本身列为硬性质；其后果与 @3602 P2 典型信号源「简记分級误判积累（R5）」同族（误判**积累**方成信号，单次不行动）→ 定 P2。**升 P1 的条件**：抽查命中率越过登记阈值且持续同向（@3601 趋势窗口判据），或漏判已导致重审门槛失效（该分支触及 R2 的条件 3，级别归属在方面 7 条目入库后确定，本批不预设 → 缺口登 G-VFM-1）
     formal_anchor:
       - {property_id: T1, role: implements}   # @3448「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·) // 硬性质无悬置 —— 硬」：本条为 ∃ means ∈ plan 量词域中的合法 means 之一（@3329 六类第五项），且是「须人类作实质判断」族性质**唯一合法的** means（@3396「人类运行时 T1 仍为硬性质，但手段允许是人工检查」）。计息：T1 本批 6 项之一（T 系列全库首次入账）
@@ -9613,19 +9613,19 @@ entries:
     anti_patterns:
       - pattern_id: VFM-006-AP1
         description: "行为模式已选用而生产观测面未满足其卡片 observability_requires（『选了但养不起』，观测缺口使本条对该模式的结论无效）"
-        detection_predicate: "∃ 模式: quality_impact_card(模式) ∧ [该模式已在本组织的风格或行为选型中选用](模式) ∧ ¬[其 observability_requires 已由生产观测面满足](模式) ∧ ¬declared(模式)"
+        detection_predicate: "∃ 模式: quality_impact_card(模式, ·) ∧ [该模式已在本组织的风格或行为选型中选用](模式) ∧ ¬[其 observability_requires 已由生产观测面满足](模式) ∧ ¬declared(模式)"
         signal_level: P1               # @2508 逐字「observability_requires 未满足而模式已选用 = 『选了但养不起』，按 0.4 证据门槛审查交付空间出处后**降软或阻塞**」——母本明定的处置含两分支：审查后有出处者降软（登记纪律面）、无出处者阻塞。本项针对的是**未走审查即继续运行**的形态（¬declared），属 @3601 P1「违例触及条件硬性质…限期整改：登记整改责任与期限，逾期自动升 P0；期间相关区域变更需附张力承认 ADR」。**升 P0 的条件**：该模式触及的一致性级别或 SLA 为硬性质且观测缺口使其不可判定 → T1 @3448 的硬性质悬置面（该分支归 VFM-001-AP1 承载，同一 T1 面不重复登记，@3604 不改级）
       - pattern_id: VFM-006-AP2
         description: "单点越阈即告警而无趋势窗口判据（阈值 + 趋势窗口双判据未启用），噪声淹没信号致告警疲劳"
-        detection_predicate: "∃ s: registry_entry(·, VFM-006) ∧ [s 为生产监测告警且由单点越阈触发](s) ∧ ¬[s 已按 threshold ∧ trend_window 双判据成立](s)"
+        detection_predicate: "∃ s: registry_entry(VFM-006, ·, ·, ·, ·, ·) ∧ [s 为生产监测告警且由单点越阈触发](s) ∧ ¬[s 已按 threshold ∧ trend_window 双判据成立](s)"
         signal_level: P2               # @283 逐字「**P2**：监测预警级。违例产生漂移信号，交方面 9 的结构腐化/技术债监测消费，**不阻塞**。P2 信号须配**阈值 + 趋势窗口**双判据（见方面 2 的 DSM 通道一），**防告警疲劳**」＋@1655 同旨——本项违的是**告警治理纪律**而非被监测性质本身，其后果形态是噪声积累（@3602 P2「结构漂移早期信号，单独出现不行动…积累后聚合分析」）→ 定 P2。**须显式登记的边界**：@3749 G7 逐字「P2 信号告警 → threshold ∧ trend_window 双判据成立（单点越阈只记录）—— **硬（告警治理本身受守护）**」→ 按 @3600「违例触及硬性质（V/W/X/Y/Z/Q/R/T/**G** 系列硬条目）」该形态本当属 P0，但 **G 系列具体性质 ID 全库未入账**（2026-10-11 实测 property_id 38 种无 G 系列；块头 formal_anchor 段③）→ 本批不预设其级别归属，按可判定面定 P2 并登记该差异入 **G-VFM-1**（方面 9 条目入库后回填改级须走 @3615 的注册表变更 + 批准，不得运行时改级，@3604）
       - pattern_id: VFM-006-AP3
         description: "放量或回滚判据以人工叙事替代注册参数（『看着还行』充当放量依据，或部署策略无回滚规程）"
-        detection_predicate: "∃ d: registry_entry(·, VFM-006) ∧ [d 为已选用的部署策略且已产生放量或回滚事件](d) ∧ ¬parameterized([该事件的判据（指标 + 阈值 + 观测窗）](d))"
+        detection_predicate: "∃ d: registry_entry(VFM-006, ·, ·, ·, ·, ·) ∧ [d 为已选用的部署策略且已产生放量或回滚事件](d) ∧ ¬parameterized([该事件的判据（指标 + 阈值 + 观测窗）](d))"
         signal_level: P1               # @3657 逐字「放量判据必须是注册参数（指标 + 阈值 + 观测窗），**人工『看着还行』不构成放量依据**」＋@3743-3744 G4「canary 放量事件 → gate_verdict(metric, threshold, window) 为注册判据产物（**非人工叙事**）// 放量判据形式化 —— 硬」→ 本项违的是**判据的形式化义务**，其后果是结论不可复核、不可重放（@3372「不可重放的『证据』降级为线索」同型）→ 按 @3601 定 P1（限期整改，逾期自动升 P0；期间相关区域变更需附张力承认 ADR）。**升 P0 的条件**：部署策略**无回滚规程**即上线——@3659 逐字「全部策略（**无回滚规程的部署策略不予注册**）」为明文硬禁（@3742 G3 同旨），该分支的级别归属待方面 9 条目入库后确定（G 系列未入账，同 AP2 的处置），本批不预设 → 缺口并入 G-VFM-1
       - pattern_id: VFM-006-AP4
         description: "生产信号产出后未登记入汇聚信号源清单（源方面与消费方式缺项）且无整改闭环，信号沦为无消费的噪声"
-        detection_predicate: "∃ 信号: registry_entry(·, VFM-006) ∧ [该信号已由生产监测产出并越过登记阈值](信号) ∧ ¬registered(信号)"
+        detection_predicate: "∃ 信号: registry_entry(VFM-006, ·, ·, ·, ·, ·) ∧ [该信号已由生产监测产出并越过登记阈值](信号) ∧ ¬registered(信号)"
         signal_level: P1               # @3626 逐字「汇聚信号源清单（**注册表登记，每条注明源方面与消费方式**）」为明文登记义务＋@3641 逐字「**没有整改闭环的偏离不是『技术现状』，是腐化**」（整改闭环 = Waiver/重审/演进路径三者之一）→ 未登记即无闭环，属 @3601 P1「违例触及条件硬性质…限期整改…逾期自动升 P0」。**升 P0 的条件**：该信号本身为 P0 级（@3600「即时阻塞：相关变更冻结、升级裁决启动（CH-C(2)）」）而未登记即等于 P0 信号被静默吞没（@3590「守护幻觉」逐字「规则不执行、告警无人理、豁免无限期，**比没有守护更危险**，因为它生产虚假的安全感」）→ 该分支按 @3747 G6「偏离必有闭环 —— 硬」处置，级别归属同样待 G 系列入账后确定（G-VFM-1）
     formal_anchor:
       - {property_id: T1, role: implements}   # @3448「∀ property(hard): ∃ means ∈ plan: covers_check(property, ·) // 硬性质无悬置 —— 硬」：本条为 ∃ means ∈ plan 量词域中的合法 means 之一（@3329 六类第六项），且是「只能由运行时观测判定」族性质（延迟分位数生产真值、SLO 达成、错误预算燃尽率、契约与所有权漂移的流量面）**唯一合法的** means。计息：T1 本批 6 项之一（T 系列全库首次入账）
@@ -9833,7 +9833,7 @@ entries:
     anti_patterns:
       - pattern_id: DPS-002-AP1
         description: "伪蓝绿：数据面不可切回而未显式声明（把流量切换当作全量可逆）"
-        detection_predicate: "∃ d: deployed_on(d, ·) ∧ selection_log(d, ·) ∧ [蓝绿切换] ∧ ¬[数据不可切回显式声明] ∧ ¬[数据回滚方案](d)"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ selection_log(d, ·, ·) ∧ [蓝绿切换] ∧ ¬[数据不可切回显式声明] ∧ ¬[数据回滚方案](d)"
         signal_level: P0               # @3656 逐字「数据层双写/迁移方案是必答项；数据不可『切回』时蓝绿退化」——缺失使「回滚最快」的卡片要点成为伪陈述；@3659 要求数据不可回滚须**显式声明** → 未声明即 P0
       - pattern_id: DPS-002-AP2
         description: "RTO 无合同/监管出处而按团队自定值判定「回滚时间要求已满足」"
@@ -9921,7 +9921,7 @@ entries:
         signal_level: P0               # @3657 逐字「放量判据必须是注册参数（指标 + 阈值 + 观测窗），人工『看着还行』不构成放量依据」＋G4 @3743「canary 放量事件 → gate_verdict 为注册判据产物（非人工叙事）」——硬性质违例
       - pattern_id: DPS-003-AP2
         description: "单点越阈即判达标（未覆盖观测窗，判据退化为单次采样）"
-        detection_predicate: "∃ d: deployed_on(d, ·) ∧ verdict(·, ·, ·) ∧ [观测窗未覆盖] ∧ [放量]"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ verdict(·, ·) ∧ [观测窗未覆盖] ∧ [放量]"
         signal_level: P1               # 判据三件套的观测窗项被省略 → gate_verdict 形式成立而语义不成立；结构性违例，限期整改
       - pattern_id: DPS-003-AP3
         description: "观测噪声未降即在噪声中判定放量（判据可信度前提缺失）"
@@ -10013,7 +10013,7 @@ entries:
         signal_level: P2               # @3658 逐字「开关矩阵组合爆炸是 P2 监测项」→ 趋势监测，不单独行动
       - pattern_id: DPS-004-AP3
         description: "以开关切换替代部署发布（把行为生效当作环境变更完成）"
-        detection_predicate: "∃ G: flag(G, ·, behavior, ·) ∧ selection_log(G, ·) ∧ ¬registered([部署产物版本](G))"
+        detection_predicate: "∃ G: flag(G, ·, behavior, ·) ∧ selection_log(G, ·, ·) ∧ ¬registered([部署产物版本](G))"
         signal_level: P1               # @3658 定义逐字「部署与发布解耦」——解耦不等于替代；以开关代替部署使环境内代码版本与行为语义脱节，结构性违例
     formal_anchor:
       - {property_id: G3, role: implements}   # @3742 G3 注册完整性：功能开关驱动发布是量词域内实例
@@ -11379,7 +11379,7 @@ entries:
     signals:
       - signal_id: SRC-001-S1
         name: "DSM 跨边界密度"
-        detection_predicate: "dsm(system) ∧ 跨边界调用密度 > 基线 ∧ 连续窗口同向上升"
+        detection_predicate: "dsm(system, ·) ∧ 跨边界调用密度 > 基线 ∧ 连续窗口同向上升"
         severity: P2
         severity_condition:
           when_predicate: "monotonic_trend(dsm_metric, window)"
@@ -11389,7 +11389,7 @@ entries:
           - {action: remediate, note: "恶化持续升 P1 后限期整改（9.2.1）"}
       - signal_id: SRC-001-S2
         name: "反馈环趋势"
-        detection_predicate: "interaction_flow(·) 形成环 ∧ 环规模随时间单调上升"
+        detection_predicate: "interaction_flow(·, ·, ·) 形成环 ∧ 环规模随时间单调上升"
         severity: P2
         severity_condition:
           when_predicate: "monotonic_trend(环规模, window)"
@@ -11431,7 +11431,7 @@ entries:
     signals:
       - signal_id: SRC-002-S1
         name: "契约漂移（流量 vs 注册契约）"
-        detection_predicate: "∃ 交互: 流量 ∉ 注册契约 ∧ ¬has_approved_exception(该交互)"
+        detection_predicate: "∃ 交互: 流量 ∉ 注册契约 ∧ ¬has_approved_exception(该交互, ·, ·)"
         severity: P0
         severity_condition: null
         consumption:
@@ -11578,7 +11578,7 @@ entries:
           - {action: remediate, note: "预算耗尽升 P1 后限期整改（9.2.1）"}
       - signal_id: SRC-005-S2
         name: "基线漂移"
-        detection_predicate: "baseline(metric) 相对登记值漂移 ∧ 漂移未走基线变更记录"
+        detection_predicate: "baseline(metric, ·) 相对登记值漂移 ∧ 漂移未走基线变更记录"
         severity: P2
         severity_condition: null
         consumption:
@@ -11618,7 +11618,7 @@ entries:
     signals:
       - signal_id: SRC-006-S1
         name: "保守假设可推翻指标命中"
-        detection_predicate: "∃ adr: falsification_metric(adr) ∧ metric_hit(adr)"
+        detection_predicate: "∃ adr: falsification_metric(adr, ·, ·, ·) ∧ metric_hit(adr)"
         severity: P2
         severity_condition: null
         consumption:
