@@ -223,7 +223,7 @@ formula_words:
   - {name: registered, arity: 1, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
   - {name: sourced, arity: 1, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
   - {name: compatible, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
-  - {name: has, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
+  - {name: has, arity: 1, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
   - {name: now, source: {source_type: clause_id, value: "编译规范 2.3", verified: true}}
 
 clause_defined_predicates:

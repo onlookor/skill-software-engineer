@@ -2012,4 +2012,4 @@
 - **数据来源层**（yaml 行内注释）：narrative: 人工判断；statement: 骨架源/人工判断；impact: 交叉表源；note: 交叉表源；status: 人工判断；judgment: 人工判断
 
 ---
-生成于 2026-11-08T14:24:32｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`9f17fce6b8f6`；`profiles.yaml`→`2d5851b5f262`；`predicate_vocabulary.yaml`→`6e3dc8f97cc6`
+生成于 2026-11-08T14:51:10｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`48e6eaaa9b37`；`profiles.yaml`→`2d5851b5f262`；`predicate_vocabulary.yaml`→`c60b64a4ab42`
