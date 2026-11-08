@@ -58,8 +58,9 @@
 | `ADR-SRC-P0-07` | 元数校验（S-12）info 干跑与解析规则 | approved（仅 info 干跑；转硬未批） | 2026-11-08 | — | 母本 **0 行**；**数据零改动**（`method_registry.yaml`／`predicate_vocabulary.yaml` 无 diff）；`scripts/project.py` 新增 `extract_calls`／`split_call_args`／`vocab_arity_cached`／`check_arity`／`check_arity_census`，覆盖 4 个面 1,150 串；实测调用 **501** 处、元数不匹配 **43**（12 名）、无 arity 可校 **72**（formula_words）、解析可疑 **0**；归类 A 串写错 11／B 规则未覆盖 32／C arity 登记错 **0**；`CHECK-SPEC.md` 新增 C5.21（含 S-12 编号审计）；`--check` 1,235 条｜硬 0｜软 0 | `ADR-SRC-P0-07-approved-20261108-元数校验S-12-info干跑.md` |
 | `ADR-SRC-P0-08` | S-12 转硬、显式占位与可变长槽 | approved | 2026-11-08 | — | `DATA-SPEC.md` 新增 D3.7（`·` 显式占位／写漏 vs 有意不约束／投影判据）、D3.8（variadic `argc ≥ arity`，N=6）；`CHECK-SPEC.md` C5.21 info → **hard**；`method_registry.yaml` **43 处**修补（23 `registry_entry` 槽位互换 + 6 实参、9 少参补 `·`、11 真错；语义变化 3 条：STY-001-AP1／STY-002-AP1／DPS-003-AP2）；23 条评估结论 **A**（无族级谓词）；72 处无 arity 记未覆盖分组；`--check` **1,214** 条｜硬 **0**｜软 **0**｜info **41**；零豁免；母本 0 行、`arity` 零改动 | `ADR-SRC-P0-08-approved-20261108-S12转硬与显式占位.md` |
 | `ADR-SRC-P0-09` | 背景守卫移出检测式（23 条 `registry_entry` 恒真合取项清理） | approved | 2026-11-08 | — | `registry/method_registry.yaml` **23 条** `detection_predicate` 删除首合取项（`VFM-001…006` 各 AP）；`DATA-SPEC.md` 新增 **D3.9**（背景守卫不得入检测式）；`CHECK-SPEC.md` C5.21 追加口径；`--check` 1,214 条｜硬 0｜软 0｜info 41；S-12 调用 **501→478**、variadic **23→0**；零豁免 | `ADR-SRC-P0-09-approved-20261108-背景守卫移出检测式.md` |
+| `ADR-SRC-P0-10` | `formula_words` 元数登记（四词 arity=1）与 `has` 的 B1 待裁表 | approved（四词已落地；`has` 九条**待签认未落地**） | 2026-11-08 | — | `predicate_vocabulary.yaml` 四词加 `arity: 1`（`approved`／`declared`／`registered`／`sourced`），`has`／`compatible`／`now` 未动；`scripts/project.py` 新增 `mask_bracket_contents`（方括号整体占位计 1 实参）；`DATA-SPEC.md` 新增 **D3.10**；`CHECK-SPEC.md` C5.21 追加；`--check` 1,214 条｜硬 **0**｜软 **0**｜info 41；未覆盖 **72→16**（`has`×16）、固定元数 **406→462**；9 条 `has` 数据零改动、C 类 2 条单列 | `ADR-SRC-P0-10-approved-20261108-formula_words元数与has待裁.md` |
 
-**统计**：28 份；approved 27、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
+**统计**：29 份；approved 28、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
 
 ## 3. 状态存疑项（正文头部与执行证据不一致，已按证据裁定）
 
