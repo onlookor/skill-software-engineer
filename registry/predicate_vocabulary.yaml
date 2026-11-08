@@ -42,6 +42,9 @@ predicates:
   - {name: seam, arity: 1, kind: predicate, source: {source_type: clause_id, value: "2.5", verified: true}}
   - {name: dsm, arity: 2, kind: predicate, source: {source_type: clause_id, value: "2.5", verified: true}}
 
+  # ── 方面 3（3.5）合同一致扩容（VG-09 批 B；2026-11-08，ADR-SRC-P0-03；1 名）──
+  - {name: conforms_to, arity: 2, kind: predicate, source: {source_type: clause_id, value: "3.5", verified: true}, note: "conforms_to(x, contract_C)：x（流量或 schema 声明）与登记契约／实际报文结构一致。出处 3.5 形式化锚点；消费面为 9.2.3 第 3616–3617 行（SRC-002-S1「流量 ∉ 注册契约」、SRC-003-S1「schema 声明与实际报文结构不一致」）。原为 VG-09 resolved_by_composition（connects ∧ ¬covers），本批改判为直接词条：该复合式只覆盖「流量—契约」一路，SRC-003-S1 的 schema ↔ 报文结构面不在 connects 的定义域内，复合式无法承载"}
+
   # ── 方面 4（4.5）──
   - {name: dataset, arity: 1, kind: predicate, source: {source_type: clause_id, value: "4.5", verified: true}}
   - {name: owner, arity: 2, kind: predicate, source: {source_type: clause_id, value: "4.5", verified: true}, note: "权威所有权：W4 的数据域投影；方面 2 分解层检查为 owned_by（2.5）"}
@@ -53,6 +56,7 @@ predicates:
   - {name: sensitivity, arity: 2, kind: predicate, source: {source_type: clause_id, value: "4.5", verified: true}, note: "tag: pii|regulated|internal|public"}
   - {name: invariant, arity: 3, kind: predicate, source: {source_type: clause_id, value: "4.5", verified: true}}
   - {name: shared_write_exception, arity: 3, kind: predicate, source: {source_type: clause_id, value: "4.5", verified: true}, note: "共享写治理例外：退出计划 + 最后负责时刻（CH-B 推迟模式）"}
+  - {name: auth_bypass, arity: 2, kind: predicate, source: {source_type: clause_id, value: "4.5", verified: true}, note: "auth_bypass(D, consumer)：该消费方对 D 的访问路径绕过 owner 授权（未登记契约或非 owner 提供）。出处 4.5（owner／access_path 定义面）；消费面 9.2.3 第 3621 行（SRC-003-S2）。原为 VG-09 resolved_by_composition（access_path ∧ (¬registered(C) ∨ provider≠owner)），本批改判为直接词条：其基词 provider 不在母本与三表（台账 LEDGER 已记该项『复合式基谓词不在母本/词汇表』），复合式不可执行；绕过判定本身是单一二值判断，无须四槽复合"}
 
   # ── 方面 5（5.5）──
   - {name: interaction_flow, arity: 3, kind: predicate, source: {source_type: clause_id, value: "5.5", verified: true}, note: "kind: sync_chain|orchestrated|choreographed|hybrid"}
@@ -101,6 +105,9 @@ predicates:
   - {name: metric_hit, arity: 1, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "metric_hit(adr)：可推翻指标命中（9.2.3 第 3635 行「保守假设可推翻指标命中」）。与在册 falsification_metric(adr, metric, threshold, window) 分工：后者登记指标、阈值与窗口三槽，本谓词只判「该 ADR 的已登记指标在窗口内越阈」这一事件；adr 为两者共用首槽，故本谓词一元、不重复携带 metric／threshold／window，禁用 metric_hit(adr, metric) 等多元形态（ADR-SRC-P0-02 批 A）"}
   - {name: supplement_evidence_record, arity: 1, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "supplement_evidence_record(d)；补证工件入库且指针可查"}
   - {name: assertion_fact_mismatch, arity: 1, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "assertion_fact_mismatch(E)；证据断言 vs 在册事实"}
+  # ── 方面 9（9.5）SRC 判据批 B（2026-11-08，ADR-SRC-P0-03；2 名）──
+  - {name: monotonic_trend, arity: 2, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "monotonic_trend(metric, window)：指标在 window 个连续窗口上同向漂移／上升。出处 9.2.1 第 3601 行（P1＝越阈 + 持续同向漂移）与 6.4 第 1655 行（P2 阈值 + 趋势窗口双判据，窗口长度 N 属守护规则参数、按 0.13 注册治理）；消费面 9.2.3 第 3615–3622 行及 5 条 when 式。原为 VG-09 resolved_by_composition（连续 N 窗口 signal(..., trend_window_verdict) 同向），本批改判为直接词条：复合式依赖的 trend_window_verdict 是 signal 的第 5 槽名（9.5 第 3712 行），以槽名充谓词不可执行，故立二元判据（指标 × 窗口）"}
+  - {name: remediation_or_waiver_record, arity: 1, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "remediation_or_waiver_record(case)：该失败／失真个案已进入整改或豁免记录（9.2.2 Waiver 台账或 9.5 debt_item 台账）。出处 9.5（debt_item）＋9.2.2（Waiver 五要素）；消费面 9.2.3 第 3622 行（SRC-007-S3）。原为 VG-09 resolved_by_composition（waiver ∨ debt_item），本批改判为直接词条：两条台账分属不同子句且准入不同（Waiver 需五要素、debt_item 需利息表达式），复合式把「其一存在」压成单值会丢失台账类型，无法据此驱动整改流程"}
   # ── 方面 5 配置治理扩容（VG-05；ADR-VGEX-01 D1；2 名）──
   - {name: expiry_of, arity: 1, kind: term, block: "5.5", line: 2581, source: {source_type: clause_id, value: "5.5", verified: true}, note: "term function：开关到期时刻。与 expiry 分属两对象，依据是角色差别而非同一命名的两次登记：expiry 是 flag 的第四槽名（5.5 第 2576 行 flag(G, scope, level, expiry)）与 CFG 条目字段（5.2.6 第 2516 行「expiry 字段」「expiry 载体＝本注册表条目字段」），位置性命名，本身不是函数；第 2600 行 Z6 逐字 declared(expiry(G)) ∧ now ≤ expiry(G) 为母本原有用法、借槽名当函数，故入表时另取一元函数名 expiry_of 以免槽名充谓词（编译规范 2.3）。第 2581 行的独立定义行是本轮登记面，不作出处（原引第 2579 行括注自证已废：该括注为本轮登记面，不得自证）"}
   - {name: cleanup_filed, arity: 1, kind: predicate, source: {source_type: clause_id, value: "5.5", verified: true}, note: "清理已立案（Z6 第四支）"}
@@ -121,6 +128,7 @@ predicates:
   - {name: cited_by, arity: 2, kind: predicate, source: {source_type: clause_id, value: "8.5", verified: true}, note: "cited_by(E, ADR)；T3 证据被决策引用，本批新增"}
   - {name: pyramid_distortion, arity: 1, kind: predicate, source: {source_type: clause_id, value: "8.5", verified: true}, note: "pyramid_distortion(system)；T5 金字塔失真，本批新增"}
   - {name: distortion, arity: 1, kind: predicate, source: {source_type: clause_id, value: "8.5", verified: true}, note: "distortion(system)；T5 失真且 hard property 无下层覆盖，本批新增"}
+  - {name: consecutive_failure, arity: 2, kind: predicate, source: {source_type: clause_id, value: "8.5", verified: true}, note: "consecutive_failure(case, window)：同一注入／回归用例在 window 个连续周期上 verdict_of=fail。出处 8.5（verdict_of／injection_case 定义面）＋9.2.3 第 3622 行（SRC-007-S3「长期失败用例」）；原为 VG-09 resolved_by_composition（同一 case 连续 N 周期 verdict_of=fail），本批改判为直接词条：失败具有时间连续性，verdict_of(E) 是单点三值（8.5 第 3433 行），单点判定无法表达「连续 N 周期」，故立二元判据（用例 × 窗口）"}
 
   # ── 方面 9 部署策略扩容（VG-08；ADR-VGEX-01 D3；5 名：4 名母本 9.5 已有逐字定义、1 名新增）──
   - {name: deploy_strategy, arity: 4, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "deploy_strategy(scope, strategy, params, rollback_procedure)；母本 9.5 逐字（签名纠错 2026-11-07 ⑥）"}
@@ -481,6 +489,22 @@ vocabulary_gaps:
       carried_2026_11_08: "cycle_scale 仍为 residual（5.2.1 无环规模定义）；monotonic_trend／conforms_to／lower_layer_coverage／auth_bypass／baseline_change_record／remediation_or_waiver_record／consecutive_failure 仍为 resolved_by_composition（母本无承载位置，见 ADR-SRC-P0-02 §2）"
       vocabulary_gaps_count: 8
       registered_names: "本 gap 已登记名 84→85（+1：metric_hit）；词表 predicates 块 150→152（predicate 141→142、term 8→9、constant 1），合计 210→212"
+    resolution_2026_11_08_bB:
+      adr: "ADR-SRC-P0-03（批 B；2026-11-08 approved）"
+      predicate_rows_added: 5
+      registered:
+        - {name: conforms_to, arity: 2, kind: predicate, source: {source_type: clause_id, value: "3.5", verified: true}, was: "resolved_by_composition（connects ∧ ¬covers）", reason: "复合式只覆盖流量—契约一路；SRC-003-S1 的 schema ↔ 报文结构面不在 connects 定义域，改判直接词条（3.5 定义面）"}
+        - {name: auth_bypass, arity: 2, kind: predicate, source: {source_type: clause_id, value: "4.5", verified: true}, was: "resolved_by_composition（access_path ∧ (¬registered(C) ∨ provider≠owner)）", reason: "基词 provider 不在母本与三表，复合式不可执行（LEDGER 曾记该项基谓词缺失）；绕过判定为单一二值判断"}
+        - {name: monotonic_trend, arity: 2, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, was: "resolved_by_composition（连续 N 窗口 signal(..., trend_window_verdict) 同向）", reason: "trend_window_verdict 系 signal 第 5 槽名（9.5 第 3712 行），槽名充谓词不可执行；立二元判据（指标 × 窗口）"}
+        - {name: remediation_or_waiver_record, arity: 1, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, was: "resolved_by_composition（waiver ∨ debt_item）", reason: "Waiver（9.2.2 五要素）与 debt_item（9.5 利息表达式）分属不同台账、准入不同，压成单值会丢失台账类型；一元判据只判『其一已在案』"}
+        - {name: consecutive_failure, arity: 2, kind: predicate, source: {source_type: clause_id, value: "8.5", verified: true}, was: "resolved_by_composition（同一 case 连续 N 周期 verdict_of=fail）", reason: "verdict_of(E) 是单点三值（8.5 第 3433 行），无法表达时间连续性；立二元判据（用例 × 窗口）"}
+      already_in_book:
+        - {name: execution_order, in: "ADR-VG09-01 D1-A（8 名之一，词表第 98 行）", action: "未重复登记；用户清单中的该名在本批前已在册"}
+        - {name: assertion_fact_mismatch, in: "ADR-VG09-01 D1-A（8 名之一，词表第 103 行）", action: "未重复登记；用户清单中的该名在本批前已在册"}
+        - {name: burn_rate, in: "ADR-SRC-P0-02 批 A（term，arity 1）", action: "未重复立词条；其在 SRC-005-S1 when 的调用面属机器层字符串改写，按边界只报改法、不改（见 ADR-SRC-P0-03 §3.3）"}
+      carried_2026_11_08_bB: "cycle_scale 仍为 residual（5.2.1 无环规模定义）；lower_layer_coverage／baseline_change_record 仍为 resolved_by_composition（未列入本批）"
+      vocabulary_gaps_count: 3
+      registered_names: "本 gap 已登记名 85→90（+5）；词表 predicates 块 152→157（predicate 142→147、term 9、constant 1），合计 212→217"
 
 # ── 待裁清单（拿不出可判定签名前不收；不硬塞、不改名、不加别名）──
 pending_review:
