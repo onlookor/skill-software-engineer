@@ -106,6 +106,8 @@ facts:
 | `person` | `person:<角色或姓名>@<日期或会议ID>` | 原话片段 |
 | `system` | `system:<系统名>#<记录ID>` | 记录字段片段 |
 
+`clause` 的 `ref` 里**行号仅作导航，复核以 `anchor` 为准**：母本编辑后行号会漂移，按 §3.1 的 `stale` 重锚，不得拿行号当证据。
+
 `source_class` 可选，仅在出处门槛需要分类时填；取值**逐字**取母本 0.17.2 条目 schema（@335）：`external｜mother-row｜mother-clause｜mother-definition｜fallback`。**出处是 0.17.2，不是 0.4**。
 
 口语类输入按 0.4 处理：有「来源人＋日期」→ `kind: person` 记事实；无任何载体 → 仍记 `unknown` 事实 ＋ `note: 出处不明` ＋ `open_obligations`（**不得**因「说不清缺什么」降为判断）；只有内容本身是**评价性／预测性命题**时，才进 `assessments.assumption`。
@@ -245,9 +247,6 @@ open_obligations:
 |---|---|
 | 把「我认为 X 会放宽」写进 `facts.value` | 记录看似客观，实则结论先行（F3） |
 | `unknown` 填 `false` | 候选被沉默排除，违反 M15 |
-| 同一段话同时写 ADR 和 `selection_log` | 双写，第二次就没人维护（F4） |
-| 对全部条目逐槽填 applicability | 单次选型 12 小时+，实际不可执行（F5） |
-| 事后补记不标 retrospective | 时间字段失真，无法复算决策时的事实状态（F6） |
 | 用「领导／架构组／按公司流程」填 `decided_by` | 批准链看似齐备，实际无出处（F2） |
 | 用 `null` 或 `false` 代 `unknown` | 该查的事实被记成不适用，M15 失效（F2） |
 | 一个格子同时写事实与结论 | 复核时分不清哪句可被反驳，等于结论先行（F3） |
@@ -255,3 +254,6 @@ open_obligations:
 | `provenance.ref` 写成散文（「大家都知道」「会议上说过」） | 不可解析，等于无出处（0.4 公理 A2） |
 | 无来源人的口述记成 `facts` | 把「来源人」来源伪造出来；应记 `unknown`＋勘察，或降 `assumption` |
 | 把部署实例缺失写进 `approval_status` | 批准与否、实例缺不缺两轴混压，导致「已批准但无实例」与「未批准」同形（C5） |
+| F4：在日志里复制 ADR 的背景与取舍段 | 双写必然腐化；**挡法**：日志只留 `decision` 一行＋`adr_ref`，论证与后果归 ADR |
+| F5：为未进候选补槽，或候选未定先填 | 762 项≈12 小时，流程被绕过；**挡法**：先裁 3–8 条候选，只填候选消费的事实，其余进 `open_obligations` |
+| F6：补记不标 `retrospective`，或 `decided_at` 写补记时刻 | 无法复算「当时知道什么」；**挡法**：决策当场开日志，补记标 `retrospective: true`，`decided_at` 记原决策时刻 |

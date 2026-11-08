@@ -71,6 +71,9 @@ todo 3.8 的产出目录，也是母本 0.17 方法空间注册表的**实体**�
 | `pilot/selection_log-schema.md` | 选型日志最小 schema（核心 7 字段＋事实/判断分栏＋三值求值规则） | 开始一次真实选型前；决定要记什么 |
 | `pilot/delivery-space-survey-template.md` | `delivery_space` 四类待勘察事实的颗粒度与 0.4 出处门槛（G-PRJ-1 用） | 做交付空间勘察时；判断「答到什么程度算合格」 |
 | `pilot/demo-01-dot-vs-variadic.md` | 试跑示范：`·` 显式占位 vs variadic 的完整记录、实测耗时与六个卡点 | 想先看流程长什么样时先读这份 |
+| `pilot/check-yaml.py` | 守门脚本：把 demo-01 与模板里的 `yaml` 块逐个过 `yaml.safe_load` | 每次改 pilot 文档后、提交前跑一次 |
+
+> 为什么需要守门：demo-01 的「完整记录」曾因 `statement` 以反引号开头而不是合法 YAML，**任何工具都没读过它**。检查器全绿不等于命题可解析，同理。
 
 ### 决策记录：`adr/`（ADR 归档）
 

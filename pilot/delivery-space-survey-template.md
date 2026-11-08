@@ -101,13 +101,13 @@
   provenance: {kind: slot, ref: "PRJ-001/delivery_space/1", slot_id: SLOT-PRJ-001-delivery_space-1, anchor: "<槽内原文，逐字取>"}
   answer_kind: fact                              # fact 才进本表；assessment 拆到 assessments
   answer: <组织/角色＋出处定位符>
-  verified: true | false | unknown               # unknown 必须配 open_obligations 一条
+  verified: <true|false|unknown>                 # unknown 必须配 open_obligations 一条
   not_applicable_reason: null                     # answer 为 null 时必填一句
 - question: 评审人能力门槛
   provenance: {kind: person, ref: "person:架构组负责人@2026Q4轮值表", anchor: "<原话片段>"}
   answer_kind: fact
   answer: <角色＋人数＋资格形式>
-  verified: true | false | unknown
+  verified: <true|false|unknown>
   not_applicable_reason: null
 ```
 
