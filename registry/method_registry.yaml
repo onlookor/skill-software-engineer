@@ -11521,7 +11521,7 @@ entries:
         detection_predicate: "∃ flag: now > expiry_of(flag) ∧ ¬cleanup_filed(flag)"   # 2026-11-08 批 A：expiry(flag) → expiry_of(flag)（在册 term，5.5 第 2581 行）。不改判据语义，不设别名；母本 5.5 第 2600 行 Z6 的 expiry(G) 是槽名充函数，词汇表另取 expiry_of 以免槽名充谓词（同 expiry_of 条目注）
         severity: P2
         severity_condition:
-          when_predicate: "行为级开关（Z6 违例）"
+          when_predicate: "behavior_switch(flag)"   # 2026-11-08 ADR-SRC-P0-05：自由变量回指 detection 的 ∃ flag 绑定；不加独立存在量词（否则结构级僵尸叠加无关行为级开关即升 P0）
           raise_to: P0
         consumption:
           - {action: block, note: "行为级开关升 P0 后即时阻塞（9.2.1）"}
@@ -11661,7 +11661,7 @@ entries:
         detection_predicate: "pyramid_distortion(system) ∧ distortion(system)"
         severity: P2
         severity_condition:
-          when_predicate: "distortion ∧ ∃ hard property 无下层覆盖"
+          when_predicate: "distortion(system)"
           raise_to: P1
         consumption:
           - {action: monitor_trend, note: "T5 基级 P2：监测金字塔形状与下层覆盖变化"}
