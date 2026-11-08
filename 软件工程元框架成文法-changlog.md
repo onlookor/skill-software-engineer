@@ -1589,3 +1589,16 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **未改（不同类，仅登记）**：`1.5(@1467)` 落在 1.5 正文首行「**机器层谓词**（写入共享白板）：」，非空行、亦非前一节行，不属本规则处理范围。
 - **自检**：`--check` 1,213 条｜硬 **0**｜软 **0**｜占位符 **1,478**（不变）；指针反查 **2,393**，miss **0**（不变）。
 - **锚索引**：`total_rows` **12,558** 不变；`landing_form.blank` **552 → 550**（消除第 2507 行与第 3322 行两处空行落点）。
+
+## 2026-11-08（续 23）：SRC 判据谓词批 A（`metric_hit`／`burn_rate` 登记与 `SRC-004-S1` 改写）
+
+- **范围**：三件同批——(1) `metric_hit` 登记为 `predicate`／arity 1；(2) `burn_rate` 登记为 `term`／arity 1；(3) `SRC-004-S1` 的 `expiry(flag)` 改为在册 `expiry_of(flag)`。三者缺一则后续扩 M4 仍会红，故必须同批。
+- **`metric_hit`**：`{kind: predicate, arity: 1, source: 9.5}`，出处 9.2.3 第 3635 行「保守假设可推翻指标命中」。与在册 `falsification_metric(adr, metric, threshold, window)` 分工：后者登记指标、阈值与窗口三槽；本谓词只判「该 ADR 的已登记指标在窗口内越阈」这一事件。实参取 `adr`（两者共用首槽），故一元、不重复携带 metric／threshold／window；禁用 `metric_hit(adr, metric)` 等多元形态。`SRC-006-S1` 既有逐字 `∃ adr: falsification_metric(adr) ∧ metric_hit(adr)` **零改动**即通过。
+- **`burn_rate`**：`{kind: term, arity: 1, source: 6.5}`，按 VG-06 口径。出处 9.2.3 第 3634 行「错误预算燃尽率、基线漂移」＋6.4 施加项 Q7（6.5 第 2914 行「burn_rate monitored(→ aspect 9)」）。该名在 6.5 第 2913 行 `error_budget(service, slo, b, burn_rate)` 中作第四槽名使用，槽名充谓词属反模式（同 VG-04 (i)／VG-05 (i)），故立为**一元数值函数**而非 predicate；「是否接入监控」由在册 `monitored` 承载。
+- **`SRC-004-S1`**：`∃ flag: now > expiry(flag) ∧ ¬cleanup_filed(flag)` → `∃ flag: now > expiry_of(flag) ∧ ¬cleanup_filed(flag)`。判据语义不变、不设别名；母本 5.5 第 2600 行 Z6 的 `expiry(G)` 是槽名充函数，词汇表以 `expiry_of` 承载。
+- **台账**：`VG-09`／`VG-06` 各记 `resolution_2026_11_08_bA`，**不记闭合**。VG-09 记 `predicate_rows_added: 1`／`registered` 含 `was`（原 `resolution_2026_11_06` 的 `resolved_by_composition`）／`carried_2026_11_08`（`cycle_scale` 仍 residual，其余六名仍 `resolved_by_composition`）／`vocabulary_gaps_count: 8`；VG-06 记 `predicate_rows_added: 1`／`registered` 记 `burn_rate`／`status_after: open`（残余 3 项不变）。
+- **词汇表**：`predicates` 150→**152**（predicate 141→**142**、term 8→**9**、constant 1），`formula_words` 7、`clause_defined_predicates` 53，合计 **210→212**。
+- **母本**：4,463 行／围栏 216，**零改动**；M4 **未改**（仍只扫 `anti_patterns[].detection_predicate` 与 `applicability`）；条目级别零变更。
+- **治理**：新建 `adr/ADR-SRC-P0-02-approved-20261108-SRC判据谓词批A与signals观测.md`；`adr/INDEX.md` 增行（20→**21** 份，approved 19→**20**）。
+- **自检**：`--check` **1,216 条记录**｜硬失败 **0**｜软警告 **0**｜占位符 **1,478**（事实 1＋槽 1,477，不变）；指针反查 **2,393→2,397**（+4），miss 0。
+

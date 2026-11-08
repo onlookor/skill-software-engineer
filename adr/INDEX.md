@@ -50,8 +50,9 @@
 | `ADR-VG03-NR-01` | 节点角色谓词单族扩容（`node_role`，1 名） | approved | 2026-11-07 | — | 母本 1.5 @1479（+2 行，4,461→4,463；闭合围栏 @1480）；`registry/predicate_vocabulary.yaml` `node_role`（arity 2）与 VG-03 resolution；`method_registry.yaml` `STY-019-AP1` 改写（1 方括号）／SO-4 未闭合项 6→4 | `ADR-VG03-NR-01-approved-20261107-节点角色谓词单族扩容.md` |
 | `ADR-VG02VG04-01` | VG-02／VG-04 残余四词裁决（R0 零母本改动） | approved | 2026-11-07 | — | 母本 **0 行**（载体 1.2.1 行 1348／2.2.3 行 1638／2.5 行 1724、行 1729／3.2.1 行 1929）；`registry/predicate_vocabulary.yaml` `schema`／`error_handling`（`kind: term`，arity 1）与 VG-02／VG-04 resolution；`method_registry.yaml` `STY-016-AP2`／`STY-011-AP1`／`STY-013-AP2` 改写（共 4 方括号）；SO-4 未闭合项 4→0 | `ADR-VG02VG04-01-approved-20261107-VG02-VG04残余词条款补写评估.md` |
 | `ADR-STY015-P0-01` | V1 严格逐字读收口与 `STY-015-AP1` 升 P0 | approved | 2026-11-08 | — | 母本 9.2.1（第 3600 行，**0 行增减**，围栏 216 不变）／1.5 第 1474 行三族、第 1485 行 V1；`method_registry.yaml` `STY-015-AP1`（P1→P0）／`MJ-4` P0 判据／`G-STY-4` `correction_2026_11_08`／`SO-4` `decision_basis`；`registry/CHECK-SPEC.md` C2.4／C5.17／C6.3 | `ADR-STY015-P0-01-approved-20261108-V1严格逐字读与STY-015-AP1升P0.md` |
+| `ADR-SRC-P0-02` | SRC 判据谓词批 A 登记与 signals 观测（S-10／S-11） | approved | 2026-11-08 | — | 母本 **0 行**；`predicate_vocabulary.yaml` +2 名（`metric_hit` predicate arity 1、`burn_rate` term arity 1）＋VG-06／VG-09 各记 `resolution_2026_11_08_bA`；`method_registry.yaml` `SRC-004-S1` 判据 `expiry`→`expiry_of`；`scripts/project.py` 增 S-10／S-11（info）与改判登记放行；`CHECK-SPEC.md` C5.18／C5.19 | `ADR-SRC-P0-02-approved-20261108-SRC判据谓词批A与signals观测.md` |
 
-**统计**：20 份；approved 19、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
+**统计**：21 份；approved 20、draft 1（`ADR-SRC-01`）；无 rejected、无 superseded。
 
 ## 3. 状态存疑项（正文头部与执行证据不一致，已按证据裁定）
 
