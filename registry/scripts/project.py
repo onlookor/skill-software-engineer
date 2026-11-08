@@ -1124,6 +1124,81 @@ def bracket_bare_sites(text: str) -> tuple[list[dict], dict[str, int]]:
     return calls, stats
 
 
+# 后置式谓词：`[对象] name`（可 `[对象](主体)`），name 为 ASCII 标识符且其后不紧邻 `(`。
+# 2.3c 的 `X registered` 形：M4（需 `name(`）与 S-12（需 `(`）都不识 → 双盲（DATA-SPEC D3.13）。
+POSTFIX_NAME_RE = re.compile(r'(?<![A-Za-z0-9_])[A-Za-z_][A-Za-z0-9_]*')
+
+# 与 DATA-SPEC 附录 C 同步维护：对象命中这些关键词即提示「无可查注册面」，
+# 只作 info（postfix_predicate_no_surface），不判失败——语义可求值性须人判。
+POSTFIX_NO_SURFACE_HINTS = ('配置变更记录', '替身使用', '契约变更', '破坏性变更', '漏洞清单',
+                            '定时任务', '裁剪项', '兼容性规则', '放量判据', '部署产物版本',
+                            '队列上界', '排队上限', '密钥', '领域事件')
+
+
+def postfix_sites(text: str) -> tuple[list[dict], dict[str, int]]:
+    """后置式谓词的识名通道（DATA-SPEC D3.13；ADR-SRC-P0-10 §18 方案 A）。
+
+    形态：`[对象] name`，或 `[对象](主体) name`，可带前导 `¬`。name 为 ASCII 标识符，
+    且**其后不紧邻 `(`**（`[X] p(...)` 属前缀调用，已由 extract_calls／D3.11 承载）。
+
+    规则：
+      · 头部 argc 恒为 1——整个对象表达式是一个实参（2.3c 后置式即一元形态）；
+      · 对象内若含调用则递归判定；已被 D3.11 准入承载的调用按 raw 去重，不重复计；
+      · 不在册名只计 info，不升 hard（与 D3.11 同口径）。
+    """
+    calls: list[dict] = []
+    stats = {'postfix': 0, 'inner': 0}
+    admitted_raws = {c['raw'] for c in bracket_call_sites(text)[0]}
+    spans: list[tuple[int, int]] = []
+    depth, start = 0, -1
+    for i, ch in enumerate(text):
+        if ch == '[':
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == ']':
+            if depth > 0:
+                depth -= 1
+                if depth == 0 and start >= 0:
+                    spans.append((start, i))
+    for st, en in spans:
+        after = en + 1
+        while after < len(text) and text[after].isspace():
+            after += 1
+        subj_end = after - 1
+        if after < len(text) and text[after] == '(':
+            close = _match_paren(text, after)
+            if close < 0:
+                continue
+            subj_end = close
+            after = close + 1
+            while after < len(text) and text[after].isspace():
+                after += 1
+        m = POSTFIX_NAME_RE.match(text, after)
+        if not m:
+            continue
+        name = m.group(0)
+        tail = m.end()
+        while tail < len(text) and text[tail].isspace():
+            tail += 1
+        if tail < len(text) and text[tail] == '(':
+            continue
+        obj = text[st:subj_end + 1].strip()
+        calls.append({'name': name, 'argc': 1, 'raw': f'{obj} {name}',
+                      'projection': False, 'object': obj, 'role': 'postfix'})
+        stats['postfix'] += 1
+        inner_calls = extract_calls(text[st + 1:en])[0]
+        if subj_end > en:
+            inner_calls += extract_calls(text[en + 1:subj_end + 1])[0]
+        for c in inner_calls:
+            if c['raw'] in admitted_raws:
+                continue
+            c['role'] = 'inner'
+            calls.append(c)
+            stats['inner'] += 1
+    return calls, stats
+
+
 def check_arity(rep: Report, e: dict, eid: str):
     """S-12（hard）：调用实参个数 vs 词表 `arity`。
 
@@ -1160,6 +1235,7 @@ def check_arity(rep: Report, e: dict, eid: str):
         _judge(calls, label)
         _judge(bracket_call_sites(text)[0], f'{label}（方括号内）')
         _judge(bracket_bare_sites(text)[0], f'{label}（方括号内裸名）')
+        _judge(postfix_sites(text)[0], f'{label}（后置式）')
     if bad:
         rep.fail('S-12', f'{eid} 解析', 'S-12（解析可疑，未静默跳过）：' + '；'.join(bad))
     if mism:
@@ -1178,6 +1254,9 @@ def check_arity_census(rep: Report, entries: list):
     b_unk: dict[str, dict] = {}
     n_bare = n_head = n_value = 0
     n_unk: dict[str, dict] = {}
+    p_total = p_inner = p_mism = p_nosurface = 0
+    p_unk: dict[str, dict] = {}
+    p_nosurface_objs: set = set()
     for e in entries:
         for field, _label, text in arity_surfaces(e):
             if not text.strip():
@@ -1228,6 +1307,23 @@ def check_arity_census(rep: Report, entries: list):
                     rec = n_unk.setdefault(c['name'], {'count': 0, 'families': set()})
                     rec['count'] += 1
                     rec['families'].add(e['entry_id'].split('-')[0])
+            pcalls, pst = postfix_sites(text)
+            p_total += pst['postfix']
+            p_inner += pst['inner']
+            for c in pcalls:
+                meta = table.get(c['name'])
+                if not meta or meta['arity'] is None:
+                    rec = p_unk.setdefault(c['name'], {'count': 0, 'families': set()})
+                    rec['count'] += 1
+                    rec['families'].add(e['entry_id'].split('-')[0])
+                    continue
+                if not _arity_ok(meta, c['argc']):
+                    p_mism += 1
+                    continue
+                if c.get('role') == 'postfix' and any(h in c.get('object', '')
+                                                       for h in POSTFIX_NO_SURFACE_HINTS):
+                    p_nosurface += 1
+                    p_nosurface_objs.add(c['object'])
     rep.add('S-12', '全量', 'hard', mism == 0 and bad == 0,
             f'S-12 元数校验（hard）：调用 {total} 处（anti_patterns {field_cnt["anti_patterns"]}／'
             f'applicability {field_cnt["applicability"]}／signals.detection {field_cnt["signals.detection"]}／'
@@ -1245,6 +1341,15 @@ def check_arity_census(rep: Report, entries: list):
     rep.add('S-12', '方括号内裸谓词名', 'info', None,
             f'S-12 方括号内裸谓词名（D3.11 续批四）：谓词位 {n_bare + n_head} 处'
             f'（零元裸名 {n_bare}／带参谓词头 {n_head}）；实参值位跳过 {n_value} 处')
+    rep.add('S-12', '后置式谓词', 'info', None,
+            f'S-12 后置式谓词（D3.13）：{p_total} 处（对象内另计调用 {p_inner} 处）；'
+            f'元数不匹配 {p_mism} 处；postfix_predicate_no_surface＝{p_nosurface} 处'
+            f'（对象命中附录 C 无注册面提示，只提示不判失败）；不在册名 '
+            f'{sum(v["count"] for v in p_unk.values())} 处（info，不升 hard）')
+    if p_nosurface_objs:
+        rep.add('S-12', '后置式对象无注册面', 'info', None,
+                'postfix_predicate_no_surface（提示，不判失败）：'
+                + '、'.join(sorted(p_nosurface_objs)))
     if n_unk:
         rep.add('S-12', '方括号内裸名不在册', 'info', None,
                 'S-12 方括号内裸名不在册（不判，仅计）：'
