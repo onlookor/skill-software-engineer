@@ -161,3 +161,12 @@ todo.md 3.7 剩余部分完成：丙类九项全部起草，全文档仅余 #9�
 - **执行偏差登记**：本目录 `AGENTS.MD` 未约束执行环境，但 PACT 仓库 `~/projects/pact/AGENTS.md` 要求开发在 distrobox 容器 `pact-dev` 内进行；本次执行环境 `distrobox` 命令不可达，改用宿主机已构建的 `./target/debug/pact` 做**只读**离线校验（未修改 PACT 仓库任何代码）。偏差性质：校验结果可信（同一二进制来源），但未按该仓库规约在容器内复跑，接地验收时须补做。
 - **不改动**：编译规范.md 全部章节条款正文、字段定义、2.3 谓词封闭集（七词）、#5–#21 编号与状态标记、附录与反例库；成文法母本零改动；`registry/` 零改动（`.pact` 只声明"条目被谁读/消费/生产"的结构位，方法条目内容权威仍在 `registry/method_registry.yaml`，两者不重复登记同一命题）。
 - **波及文本**：新增 `pact/se_tier1_solo.pact`、`pact/se_tier2_small_team.pact`、`pact/se_tier3_multi_team.pact`、`pact/README.md`（4 件）；`README.md`（§2 新增"形式层"子节、§4 依赖关系补 `pact/` 行、§5 阶段 A 第 2 步补选档后取结构位基线、§6 当前状态补一行）；`todo.md`（新增工作项 3.10）。编译规范.md **零改动**。兄弟目录 RE 侧配套层对齐（`stages/s2|s3|s4|s5|s6`、`SKILL.md` §4.6、`README.md`、`PROGRESS.md`）不属本目录治理范围，登记于 PACT 仓库 `docs/skill-adaptation-change.md`。
+
+## 2026-11-08：`registered` 可消费对象类扩配置项（批 A 步 2）
+
+- **上游**：母本 `软件工程元框架成文法.md` 5.2.6 @2514 已加第六槽 `status`（批 A 步 1，提交 `0086c00`）；ADR-CFG-STATUS-01 approved。
+- **改动**：2.3(a) `registered` 函数式判据的可消费对象类由两类扩为三类——在「注册表条目」之后增「配置项条目 `status ∈ {active, seed}`〔与 0.17.2 同一词汇表，母本 5.2.6 只启用 `{seed, active, retired}`〕，seed 限 bootstrap 期」。**措辞直接引用母本 5.2.6 与 0.17.2，不另立枚举**。
+- **未动**：2.3 其余六个约定词的内建语义、`registered` 的元数与三形态结构、母本任何一行、`registry/` 数据与检查器。
+- **效果**：`registered(配置项键)` 由「无可套判据」变为「判据可求值」；本仓无配置注册表实例，实例求值仍为 `unknown`（批 A 步 4 逐条记录）。
+- **自检**：`--check` 1,218 条｜硬 0｜软 0｜占位符 1,485（编译规范非检查器输入，无数字变化）。
+- **回退**：对本提交 `git revert <sha>`；单行内改写，无数据联动。
