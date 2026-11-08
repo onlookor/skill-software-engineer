@@ -1711,3 +1711,15 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **S-12 转硬**：info → **hard**；固定元数 `argc = arity`，variadic `argc ≥ arity`；投影（`)`+`.`+标识符）不计 arity；无 arity 项记未覆盖。**零豁免**：未新增 `waivers`／`GAP_SO_WHITELIST`／gap／`rep.skip`；`arity` 零改动；母本 **0 行**。
 - **自检**：`--check` **1,214 条记录**（1,235 −22 条 S-12 失败行 −1 条旧 info 全量行 +2 条新 S-12 行）｜硬 **0**｜软 **0**｜info **41**（S-12 仅未覆盖 1 行；未成立 0）｜退出码 **0**；S-12：调用 **501**（470／6／19／6）、不匹配 **0**、解析可疑 **0**、投影 **0**、variadic **23**／固定 **406**、无调用串 **870**；占位符 **1,478**；指针 **2,409**，miss **0**。
 - **治理**：新建 `adr/ADR-SRC-P0-08-approved-20261108-S12转硬与显式占位.md`；`adr/INDEX.md`（26→**27** 份，approved 26）；`ADR-SRC-P0-07` 追加状态更新（原文保留）。
+
+## 2026-11-08（续 33）：背景守卫移出检测式（23 条 `registry_entry` 恒真合取项清理）
+
+- **判定**：23 条 `registry_entry(VFM-00x, …)` 均为**背景条件**（「本条目已在册」），不是「个体已登记」；`VFM-00x` 是 `entry_id` 而非 `kind`，与 `∃` 见证无变量共享，在已装载的方法注册表上恒真。结论：移出 detection，不新增谓词、不改绑见证。
+- **处置**：删除 23 条 `detection_predicate` 的首合取项 `registry_entry(VFM-00x, ·, ·, ·, ·, ·) ∧ `，其余逐字保留；VFM-006-AP1 原本即无该守卫，不在内。
+- **接管者**：C-ID（编号存在／格式／唯一）、M2（schema 与字段完备）、C-KP（kind 剖面齐备）、META（`seed_source.table_rows` `8.2.1（6 行）` vs `8.2.1-T-01…06` row_id 分布）。删除后无「无人接管」空洞。
+- **规范**：DATA-SPEC 新增 **D3.9 背景守卫不得入检测式**（恒真项不得写成 `registry_entry(…)` 合取项，也不得用 `·` 填槽伪装）；CHECK-SPEC C5.21 追加同口径。
+- **语义影响**：正常域（VFM-001…006 在册）真值表逐点相同；破坏域不可达（META 先硬失败）。**改变语义条目 0 条。**
+- **自检**：`--check` **1,214 条**｜硬 **0**｜软 **0**｜info **41**｜退出码 **0**；S-12 调用 **501→478**（anti_patterns 470→447，applicability 6、signals.detection 19、signals.when 6 不变），variadic **23→0**，固定元数 **406**，无调用串 **870→881**，不匹配／解析可疑／投影均 **0**；未覆盖 **72** 不变。
+- **零豁免**：母本 **0 行**、`predicate_vocabulary.yaml` **零 diff**、无 `waivers`／白名单／新 gap／`rep.skip`。
+- **治理**：新建 `adr/ADR-SRC-P0-09-approved-20261108-背景守卫移出检测式.md`；`adr/INDEX.md`（27→**28** 份，approved 27）；`ADR-SRC-P0-08` §9 盲点 3 追加状态更新（原文保留，0.22）。
+- **未落地**：72 处无 arity 的 `formula_words`（`approved`／`declared`／`has`／`registered`／`sourced`）只出方案，待批准；见交付报告。
