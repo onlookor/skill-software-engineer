@@ -1,0 +1,45 @@
+# 放量判据注册表（C-4）：schema ＋ 空表
+#
+# 义务锚点（母本逐字）：
+#   9.2.5 @3657「放量判据必须是注册参数（指标 + 阈值 + 观测窗），**人工"看着还行"不构成放量依据**」
+#   9.5 @3716 `canary_gate(strategy, metric, threshold, window)`
+#   9.5 @3743 `G4: canary 放量事件 → gate_verdict(metric, threshold, window) 为注册判据产物（非人工叙事）`
+#
+# 本文件只定义条目 schema，**不含任何实例**：本仓无放量判据实例，验证留待项目侧。
+# 空表 ≠ 已核对无问题；entries 为 0 只表示尚未登记，不表示「已查无问题」。
+#
+# status 取值：沿用 0.17.2 条目状态枚举（同一词汇表，不另立枚举）；
+# 可消费状态按《编译规范》2.3(a) 取 {active, seed}（seed 限 bootstrap 期）。
+# 适用子集 {draft, active, deprecated, retired}，逐值理由：
+#   - draft：判据的指标／阈值／观测窗由人依项目实测定，可先起草再启用；
+#     与 C-12 守护规则同型（规则可起草）。
+#   - 无 seed：seed 是母本种子数据源通道（0.17.6 四层数据源），而母本 9.2.5 只定义
+#     谓词签名与判据形式，**不给参数值** —— 本表无母本种子可预置。
+#   - deprecated：旧判据弃用后仍须可读 —— G4 要求放量事件对应「注册判据产物」，
+#     历史放量记录要能回溯到当时生效的判据，不得因换判据而失去可解释性。
+#   - retired：已退役且禁止新增引用（历史回溯仍可读，但不再参与任何放量判定）。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    - {source_type: clause_id, value: "9.2.5", line: 3657, quote: "放量判据必须是注册参数（指标 + 阈值 + 观测窗），人工\"看着还行\"不构成放量依据", verified: true}
+    - {source_type: clause_id, value: "9.5", line: 3716, quote: "canary_gate(strategy, metric, threshold, window)", verified: true}
+    - {source_type: clause_id, value: "9.5", line: 3743, quote: "G4: canary 放量事件 → gate_verdict(metric, threshold, window) 为注册判据产物（非人工叙事）", verified: true}
+  schema_status: schema-only          # 只有 schema，没有实例
+  instance_state: none                # 本仓无实例；验证留待项目侧
+  status_domain: [draft, active, deprecated, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+  consumption_states: [active]        # 《编译规范》2.3(a)；本表无 seed
+
+entry_fields:
+  - {name: gate_id, type: string, required: true, note: 判据唯一标识}
+  - {name: strategy, type: string, required: true, note: 所属部署策略（canary_gate 首槽，@3716）}
+  - {name: metric, type: string, required: true, note: 放量观测指标}
+  - {name: threshold, type: string, required: true, note: 达标阈值}
+  - {name: window, type: string, required: true, note: 观测窗}
+  - {name: approval, type: string, required: true, note: 批准（批准人／ADR 指针；高影响决策，9.2.5）}
+  - {name: provenance, type: object, required: true, note: 出处（0.4 出处门槛：来源文档／来源人／来源系统）}
+  - {name: status, type: "enum: draft|active|deprecated|retired", required: true}
+
+entries: []
