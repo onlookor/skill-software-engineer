@@ -9749,15 +9749,15 @@ entries:
     anti_patterns:
       - pattern_id: DPS-001-AP1
         description: "共存期新旧版本协议不兼容且无契约约束"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [新旧版本共存] ∧ ¬registered([版本间协议兼容性规则])"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [新旧版本共存] ∧ ¬registered([版本间协议兼容性规则])"
         signal_level: P0               # @3655 逐字「版本间协议兼容（X 系列契约约束）」＋@3661「策略与风格自洽性由 G3 检查」：X 系列硬性质违例 → @3600 P0「违例触及硬性质…不允许带病发布」
       - pattern_id: DPS-001-AP2
         description: "把批次级回滚降级为单实例回滚（回滚粒度被误读为可按实例精细控制）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [回滚以单实例为执行单位] ∧ ¬[批次边界已登记]"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [回滚以单实例为执行单位] ∧ ¬[批次边界已登记]"
         signal_level: P1               # @3655 卡片要点逐字「回滚粒度粗（批次级）」是**约束陈述**而非缺陷；以单实例实施回滚使已替换批次的其余实例处于无回滚覆盖状态 → @3601 P1「违例触及条件硬性质…限期整改」
       - pattern_id: DPS-001-AP3
         description: "共存期版本分布不可观测（混合态被读作单一版本）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [新旧版本共存] ∧ ¬[版本维度流量分布可观测]"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [新旧版本共存] ∧ ¬[版本维度流量分布可观测]"
         signal_level: P2               # @3655「共存期兼容性是前提」在不可观测时不可求值 → @3602 P2「结构漂移早期信号，单独出现不行动」，记录 + 趋势监测
     formal_anchor:
       - {property_id: G3, role: implements}   # @3742 G3 逐字「∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)」——本条是该量词域内的一个 deploy_strategy 实例，implements 的判据是「策略注册完整性」由本条与 DPS-005 共同闭合；G 系列全库首次入账
@@ -9833,15 +9833,15 @@ entries:
     anti_patterns:
       - pattern_id: DPS-002-AP1
         description: "伪蓝绿：数据面不可切回而未显式声明（把流量切换当作全量可逆）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ selection_log(d, ·) ∧ [蓝绿切换] ∧ ¬[数据不可切回显式声明] ∧ ¬[数据回滚方案](d)"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ selection_log(d, ·) ∧ [蓝绿切换] ∧ ¬[数据不可切回显式声明] ∧ ¬[数据回滚方案](d)"
         signal_level: P0               # @3656 逐字「数据层双写/迁移方案是必答项；数据不可『切回』时蓝绿退化」——缺失使「回滚最快」的卡片要点成为伪陈述；@3659 要求数据不可回滚须**显式声明** → 未声明即 P0
       - pattern_id: DPS-002-AP2
         description: "RTO 无合同/监管出处而按团队自定值判定「回滚时间要求已满足」"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [RTO 值](d) ∧ ¬sourced([合同/监管文本])"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [RTO 值](d) ∧ ¬sourced([合同/监管文本])"
         signal_level: P1               # @3656 逐字「RTO 出处为合同/监管」——自定值使「苛刻」不可核；@2801 量化纪律：无出处的具体数值＝假精确 → 结构性违例，限期整改
       - pattern_id: DPS-002-AP3
         description: "双环境长期并存（旧环境不按发布窗口回收）使资源双倍成本常态化"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [新旧环境并存时长]↑ ∧ ¬[旧环境回收计划](d)"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [新旧环境并存时长]↑ ∧ ¬[旧环境回收计划](d)"
         signal_level: P2               # @3656「资源双倍成本可承受」在常态并存下由预算前提转为持续性成本漂移 → 趋势监测项
     formal_anchor:
       - {property_id: G3, role: implements}   # @3742 G3「strategy 注册完整性」：蓝绿是量词域内实例；「回滚最快」不构成 G3 的豁免——仍须 has(rollback_procedure) 与 compatible(strategy, active_style)
@@ -9917,15 +9917,15 @@ entries:
     anti_patterns:
       - pattern_id: DPS-003-AP1
         description: "人工「看着还行」作为放量依据（放量判据未注册或退化为叙事）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [放量判据](d) ∧ ¬registered([放量判据](d)) ∧ [判据为人工叙事]"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [放量判据](d) ∧ ¬registered([放量判据](d)) ∧ [判据为人工叙事]"
         signal_level: P0               # @3657 逐字「放量判据必须是注册参数（指标 + 阈值 + 观测窗），人工『看着还行』不构成放量依据」＋G4 @3743「canary 放量事件 → gate_verdict 为注册判据产物（非人工叙事）」——硬性质违例
       - pattern_id: DPS-003-AP2
         description: "单点越阈即判达标（未覆盖观测窗，判据退化为单次采样）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ verdict(·, ·, ·) ∧ [观测窗未覆盖] ∧ [放量]"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ verdict(·, ·, ·) ∧ [观测窗未覆盖] ∧ [放量]"
         signal_level: P1               # 判据三件套的观测窗项被省略 → gate_verdict 形式成立而语义不成立；结构性违例，限期整改
       - pattern_id: DPS-003-AP3
         description: "观测噪声未降即在噪声中判定放量（判据可信度前提缺失）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [告警噪声率](d) ↑ ∧ [放量判据阈值判定](d)"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [告警噪声率](d) ↑ ∧ [放量判据阈值判定](d)"
         signal_level: P2               # @3673 逐字「告警噪声率是现状事实，未降噪则 P2 信号无效化」→ 趋势监测项，不单独行动
     formal_anchor:
       - {property_id: G3, role: implements}   # @3742 G3 注册完整性：金丝雀是量词域内实例，回滚规程仍须在案（DPS-005）
@@ -10099,15 +10099,15 @@ entries:
     anti_patterns:
       - pattern_id: DPS-005-AP1
         description: "策略缺回滚规程（判据/序列/数据方案任一缺失）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ ¬[回滚判据已登记](d)"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ ¬[回滚判据已登记](d)"
         signal_level: P0               # @3659 逐字「无回滚规程的部署策略不予注册」＋G3 @3742 has(rollback_procedure) 硬性质 → P0
       - pattern_id: DPS-005-AP2
         description: "数据不可回滚而未显式声明（回滚语义未改为前滚修复）"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [数据迁移类变更](d) ∧ ¬declared([数据不可回滚](d)) ∧ ¬[数据回滚方案](d)"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [数据迁移类变更](d) ∧ ¬declared([数据不可回滚](d)) ∧ ¬[数据回滚方案](d)"
         signal_level: P0               # @3659 逐字「数据回滚方案或『数据不可回滚』显式声明」——两项必居其一；两项皆缺即 P0
       - pattern_id: DPS-005-AP3
         description: "以「回滚脚本存在」代替「数据可回滚判定」"
-        detection_predicate: "∃ d: deployed_on(d, ·, deploy) ∧ [回滚脚本存在](d) ∧ ¬[数据可回滚判定](d)"
+        detection_predicate: "∃ d: deployed_on(d, ·) ∧ [回滚脚本存在](d) ∧ ¬[数据可回滚判定](d)"
         signal_level: P1               # 脚本存在是执行面事实，数据判定是语义面判定；以执行面事实替代语义判定 → 结构性违例，限期整改
     formal_anchor:
       - {property_id: G3, role: implements}   # @3742 G3 逐字「∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)」——本条直接承载 has(rollback_procedure) 分支；compatible 分支由各策略与风格自洽性检查（@3661）承载
