@@ -20,7 +20,7 @@
 
 ## §3 事实（三值求值）
 
-| id | 证据锚（非 applicability 槽） | 事实 | value | 出处 |
+| id | 出处（`provenance.kind`） | 事实 | value | 定位符 |
 |---|---|---|---|---|
 | F1 | `编译规范/2.3` | 谓词语法含通配 `·`，且 `·` 表示有意不约束的槽位 | true | 编译规范 2.3 BNF 与语义表 |
 | F2 | `0.17.8/registry_entry` | `registry_entry` 是词表中唯一可变长槽（固定 6 槽＋尾部 `fields...`） | true | 母本 @493 末槽；DATA-SPEC D1.4 第 11 行 |
@@ -45,20 +45,21 @@ F4 的处置（按 M15）：**候选不排除**，`has` 调用单列「未覆盖
 selection_id: SEL-20261108-01
 decided_at: 2026-11-08T17:26:10+08:00
 retrospective: true          # 原始决策在 2026-11-08 早于本记录，决策时刻未留痕
-decided_by:                  # unregistered 变体：有名分、无人名记录（见 §8 冲突 C1）
+decided_by:                  # 有名分、姓名未披露（C1 已闭合）
   state: unregistered
   role: 人类责任方
   name: null
   roster_ref: null
+  name_absent_reason: withheld
 deployment_instance:
   status: absent
   roster_ref: null
-approval_status: provisional
+approval_status: approved    # 决策已获人类责任方批准；实例缺由 deployment_instance 表达
 decision: 元数校验采用「`·` 显式占位 + `argc = arity`」，仅 registry_entry 允许 `argc ≥ 6`
 adr_ref: ADR-SRC-P0-08 / DATA-SPEC D3.7-D3.8 / CHECK-SPEC C5.21
 candidates:
   - id: C1
-    statement: `·` 显式占位；默认 argc = arity；唯一 variadic 为 registry_entry（argc ≥ 6）
+    statement: "`·` 显式占位；默认 argc = arity；唯一 variadic 为 registry_entry（argc ≥ 6）"
     verdict: selected
   - id: C2
     statement: 全谓词 variadic（一律 argc ≥ arity）
@@ -69,20 +70,43 @@ candidates:
     verdict: rejected
     rejection_reason: 无法区分漏写与有意不约束，43 处被静默吞掉（A2，basis F3／F6）
 facts:
-  - {id: F1, slot_ref: null, slot_id: null, statement: 语法含通配 `·` 且表示有意不约束, value: true, source: 编译规范 2.3 BNF, note: '非条目槽（条款证据）；槽代号不适用，见 §8 C2'}
-  - {id: F2, slot_ref: null, slot_id: null, statement: registry_entry 是唯一可变长槽（6 固定＋fields...）, value: true, source: 母本 @493；DATA-SPEC D1.4 #11, note: '非条目槽（条款证据）'}
-  - {id: F3, slot_ref: null, slot_id: null, statement: 1,150 串中 43 处元数不匹配（23 槽位互换／9 少参／11 真错）, value: true, source: ADR-SRC-P0-08 §4, note: '非条目槽（干跑证据）'}
-  - {id: F4, slot_ref: null, slot_id: null, statement: 当时 has 无 arity，16 处无法判定, value: unknown, source: ADR-SRC-P0-10 §9, note: '按 M15 单列未覆盖、候选保留；后续裁定 arity=1（16→0）'}
-  - {id: F5, slot_ref: null, slot_id: null, statement: 用户明定 N=6, value: true, source: ADR-SRC-P0-08 §1.3, note: '非条目槽（条款证据）'}
-  - {id: F6, slot_ref: null, slot_id: null, statement: 旧实现按前缀投影默认放行裸缺参, value: true, source: ADR-SRC-P0-08 §1.1, note: '非条目槽（条款证据）'}
-slot_registry: []            # 本记录无 registry 条目槽；条款证据无槽可登记（见 §8 C4）
+  - id: F1
+    provenance: {kind: clause, ref: "编译规范.md#2.3", anchor: "通配 · 表示有意不约束的槽位"}
+    statement: 语法含通配 `·` 且表示有意不约束
+    value: true
+    note: ''
+  - id: F2
+    provenance: {kind: clause, ref: "软件工程元框架成文法.md#L493", anchor: "registry_entry（6 固定槽 + fields...）"}
+    statement: registry_entry 是唯一可变长槽（6 固定＋fields...）
+    value: true
+    note: ''
+  - id: F3
+    provenance: {kind: adr, ref: "ADR-SRC-P0-08#§4", anchor: "1,150 串中 43 处元数不匹配"}
+    statement: 1,150 串中 43 处元数不匹配（23 槽位互换／9 少参／11 真错）
+    value: true
+    note: ''
+  - id: F4
+    provenance: {kind: adr, ref: "ADR-SRC-P0-10#§9", anchor: "has 无 arity，16 处未覆盖"}
+    statement: 当时 has 无 arity，16 处无法判定
+    value: unknown
+    note: '按 M15 单列未覆盖、候选保留；后续裁定 arity=1（16→0）'
+  - id: F5
+    provenance: {kind: adr, ref: "ADR-SRC-P0-08#§1.3", anchor: "N = 6"}
+    statement: 用户明定 N=6
+    value: true
+    note: ''
+  - id: F6
+    provenance: {kind: adr, ref: "ADR-SRC-P0-08#§1.1", anchor: "不再默认前缀投影"}
+    statement: 旧实现按前缀投影默认放行裸缺参
+    value: true
+    note: ''
+slot_registry: []            # 本记录无 kind=slot 事实；条款/ADR 证据不登记
 assessments:
-  - {id: A1, statement: 全谓词 variadic 等于全局放宽，判定强度下降, basis: [F1, F2, F6], strength: strong}
-  - {id: A2, statement: 前缀投影放行会静默吞掉漏写, basis: [F3, F6], strength: strong}
-  - {id: A3, statement: 显式占位＋精确元数＋唯一 variadic 例外是保强度且可机器校的唯一形态, basis: [F1, F2, F3, F4, F5], strength: strong}
+  - {id: A1, statement: 全谓词 variadic 等于全局放宽，判定强度下降, basis: [F1, F2, F6], basis_kind: facts, strength: strong}
+  - {id: A2, statement: 前缀投影放行会静默吞掉漏写, basis: [F3, F6], basis_kind: facts, strength: strong}
+  - {id: A3, statement: 显式占位＋精确元数＋唯一 variadic 例外是保强度且可机器校的唯一形态, basis: [F1, F2, F3, F4, F5], basis_kind: facts, strength: strong}
 open_obligations:
   - {what: 补部署实例声明（批准角色注册表）, owner: 人类责任方, due: 2026-11-30}
-  - {what: 采集决策人姓名，补齐 decided_by.name, owner: 人类责任方, due: 2026-11-30}
 ```
 
 ## §6 填写耗时（实测）
@@ -144,3 +168,30 @@ open_obligations:
 ### §8.3 结论
 
 规则**填得下**（§5 重排无死格，22 秒完成），但 C1／C3 是真矛盾：照规则填必须越界（加字段或填 null 违约）；C2／C4 是覆盖缺口；C5 是语义失真。按本批约束**未改 schema**，等裁定后再决定是加 `evidence_ref`／`id`／第四态，还是收紧为「仅条目槽事实适用本 schema」。
+
+### §8.4 二次回填（schema 改造后，2026-11-08）
+
+| 段 | 内容 | 起 | 止 | 耗时 |
+|---|---|---|---|---|
+| T6→T7 | §5 重写：6 条 facts 换 `provenance`、`decided_by` 加 `name_absent_reason`、`approval_status` 改 `approved`、§3 表头同步 | 19:11:45 | 19:12:16 | **31 秒** |
+| T7→T8 | 本节记录与复核 | 19:12:16 | 19:12:46 | 30 秒 |
+
+**耗时变化**：上一轮同段 22 秒，本轮 31 秒（+9 秒）。绝对值变长，但**结构成本下降**：上一轮最费时的「判定 `slot_ref` 填什么」消失（直接按载体选 `clause／adr／system`），新增的时间花在给每条事实补 `anchor` 与写 `ref` 定位符。人类预估增量从 +2–3 分钟降到 +1 分钟/条。
+
+**C1–C5 处置结果**：
+
+| # | 处置 | 依据 |
+|---|---|---|
+| C1 | **已闭合**：三态 + `name_absent_reason: withheld` | 裁定：不加第四态，姓名是另一轴 |
+| C2 | **已闭合**：`kind` 分类替代 `slot_ref: null`，不再需要 `not_applicable_reason` | 裁定：合并为 `provenance` |
+| C3 | **已闭合**：`id` 进字段表，`basis` 按 `[F1, F2]` 引用 | 裁定：`id` 是主键 |
+| C4 | **已闭合**：`slot_registry` 只索引 `kind=slot`，其余靠 `ref` | 裁定：不强行登记 |
+| C5 | **已闭合**：`approval_status: approved`，实例缺由 `deployment_instance` ＋ 义务表达 | 裁定：取消 `absent→provisional` 映射 |
+
+**新发现（轻量，非矛盾）**：
+
+1. `kind: clause` 的 `ref` 写行号（`#L493`）会随母本编辑漂移；`anchor` 可重锚，但需要一条「行号漂移→以 anchor 为准」的约定。当前靠 §3.1 的 `stale` 机制覆盖，够用。
+2. `system` 类出处（`system:<系统名>#<记录ID>`）在本记录无实例，未被真实验证。
+3. `provenance` 是嵌套块，单行流式写法在 6 条事实里可读，但字段一多就会因缩进出错；这是格式风险，不是 schema 缺陷。
+
+**结论**：五处卡点全部闭合，二次回填无死格；未再发现需要改 schema 的矛盾。
