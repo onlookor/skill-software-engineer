@@ -1939,3 +1939,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **附录 C.1**：C-15 行标「已建表（schema＋空表；实例 0）」；共同结论补「已建表但实例 0 → `registered` 取 unknown，且 2.3(a) 尚未纳入这三类对象」。
 - **数字**：检查器不读本文件，`--check` 数字不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；删文件并撤回三处登记行。
+
+## 2026-11-08（续 54）：C-16 建表——契约变更登记表（schema＋空表）
+
+- **新增**：`registry/contract_changes.yaml`。母本义务锚点（逐字）：3.2.2 @1944「破坏性变更 = 高影响决策（影响全部消费者 + 难逆转）：完整 ADR + 批准 + 弃用窗口 + 迁移支持」；3.2.3 @1975「契约发布与破坏性变更批准属高影响决策，一律走批准路径」；3.5 @2008 `breaking_change(C, v1, v2)`。
+- **内容**：`entry_fields` 九项（change_id／contract_id／v1／v2／breaking／deprecation_window／migration_support／approval_adr／status）＋`entries: []`。**不造实例**；`instance_state: none` 明示「本仓无实例，验证留待项目侧」，空表不得读作「已核对无问题」。
+- **status**：沿用 0.17.2 五值词汇表；适用子集 `{seed, active, retired}`——无 `draft`（起草期由 ADR 承担，本表条目只在批准后登记）；无 `deprecated`（弃用窗口是条目字段而非条目状态，窗口结束即退役）。可消费按 2.3(a) 取 `{active, seed}`。
+- **目录布局登记（D1.2）**：DATA-SPEC D1.3 文件角色表新增一行；`registry/README.md` §1 新增一行；本 changelog 本条。
+- **附录 C.1**：C-16 行标「已建表（schema＋空表；实例 0）」；共同结论同步为「四张表已建、实例 0，其余九项仍无表」。
+- **数字**：检查器不读本文件，`--check` 数字不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；删文件并撤回三处登记行。
