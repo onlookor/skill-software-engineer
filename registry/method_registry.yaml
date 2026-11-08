@@ -4689,7 +4689,7 @@ entries:
         signal_level: P0               # 3.2.2 默认值列明文「弃用窗口 ≥ 最慢消费者的迁移时长估计（估计须有出处，否则按 0.4 证据门槛降级处置）」＋3.6 示例四「S0 判定谓词 facts_sourced(F) 失败 → FM-1 当场触发：f2 从 evidence_set 剔除（不是标记存疑后继续使用——无出处事实不获得任何权重）」＋0.4「不存在『口头可信』豁免」→ P0（MJ-4 判据）
       - pattern_id: CTR-011-AP4
         description: "切割已发布契约而不走本流程（分解直接跨越契约边界）"
-        detection_predicate: "∃ C, u1, u2: [contract(C, ·, ·, ·, ·, ·, lifecycle_state)] ∧ [lifecycle_state = published] ∧ unit(u1) ∧ unit(u2) ∧ [covers(C, u1, u2)] ∧ [u1 与 u2 被拆分到不同新单元] ∧ ¬([breaking_change(C, ·, ·)] registered)"
+        detection_predicate: "∃ C, u1, u2: [contract(C, ·, ·, ·, ·, ·, lifecycle_state)] ∧ [lifecycle_state = published] ∧ unit(u1) ∧ unit(u2) ∧ [covers(C, u1, u2)] ∧ [u1 与 u2 被拆分到不同新单元] ∧ ¬[该契约已有登记在案的破坏性变更](C)"
         signal_level: P0               # 3.4 施→2 级别列为硬「已发布契约的边界冻结——分解不得切割既有契约（切割需求 → 走弃用窗口 + 绞杀者迁移）」＋X1 的 covers 谓词面 → P0；3.6 示例三给出唯一合法出路（CH-E → 契约 v2＋弃用窗口＋绞杀者迁移序列）（MJ-4 判据）
     formal_anchor:
       - {property_id: X3, role: implements}      # deprecation_window(C,v1,t) ∧ t ≥ slowest_consumer_migration(C) 的登记载体：本治理维度给出四要件与窗口下界（3.2.2 内容列＋默认值列）
@@ -7165,7 +7165,7 @@ entries:
     anti_patterns:
       - pattern_id: CFG-002-AP1
         description: "级别判别不经在册判据而由变更者当场作出（运行时即兴判断）"
-        detection_predicate: "∃ 变更: [行为相关配置变更](变更) ∧ ¬[变更] registered"
+        detection_predicate: "∃ 变更: [行为相关配置变更](变更) ∧ ¬[该变更已登记](变更)"
         signal_level: P0               # @2515 括注逐字「登记入注册表，不允许运行时即兴判断」＝本条定义性义务；9.2.1 @3604 分级纪律「不许运行时即兴改级」同轴；即兴判别使 @2517 的机器可查面失效 → 触及硬性质（MJ-4 判据）
       - pattern_id: CFG-002-AP2
         description: "以参数级变更之名行行为级变更之实（快照比对不一致却记为 parameter）"
@@ -8314,7 +8314,7 @@ entries:
         signal_level: P1               # @2843 明文「联动方面 2」＋6.4 @2875 可测试性冻结约束的登记纪律面（约束在册而同步留痕缺项）→ P1（MJ-4 判据第二支，9.2.1 @3601 限期整改，逾期自动升 P0）
       - pattern_id: QAT-009-AP3
         description: "重排期跨边界契约变更未登记（破坏性变更扩散到消费方）"
-        detection_predicate: "∃ 契约: tactic(·, QAT-009) ∧ [边界移动已触达该契约](契约) ∧ ¬([契约变更](契约) registered ∧ [兼容性处置已执行](契约))"
+        detection_predicate: "∃ 契约: tactic(·, QAT-009) ∧ [边界移动已触达该契约](契约) ∧ ¬([该契约已有登记在案的变更](契约) ∧ [兼容性处置已执行](契约))"
         signal_level: P1               # envelope 第四项的过渡代价面失据＋6.2.1 @2795「跨边界契约变更数」为在册指标 → 属登记纪律偏离（指标在册而未计数）→ P1（MJ-4 判据第二支，@3601 限期整改，逾期自动升 P0）
       - pattern_id: QAT-009-AP4
         description: "DSM 密度无持续核算（重排后依赖再度蔓延，收益静默退化）"
@@ -8685,7 +8685,7 @@ entries:
         signal_level: P1               # @2797「攻击面清单闭合率」为在册指标而分散判权使其分母不可枚举 → 属登记纪律偏离（机制在册而核算面缺项，Q1 @2903 measurable 的对应面）→ P1（MJ-4 判据第二支，9.2.1 @3601 限期整改，逾期自动升 P0）；不径定 P0 的根据：分散本身不等于越权已发生，越权面由 Y2 @2290 另行判定
       - pattern_id: QAT-013-AP4
         description: "漏洞修复时限无持续核算（在册指标未测量，修复积压不可见）"
-        detection_predicate: "∃ 漏洞: tactic(·, QAT-013) ∧ [该漏洞](漏洞) registered ∧ ¬[修复时限按窗口核算](漏洞)"
+        detection_predicate: "∃ 漏洞: tactic(·, QAT-013) ∧ [该漏洞已登记入漏洞清单](漏洞) ∧ ¬[修复时限按窗口核算](漏洞)"
         signal_level: P2               # 9.2.1 @3602 P2「单独出现不行动，记录 + 阈值/趋势双判据监测」；单期未核算不构成违例，须按修复时限趋势窗口与在册漏洞数双判据判定；持续积压即 @2797 在册指标失据 → 按 0.4 复核出处后升级（升级路径行内留痕，不在此处改级，@3604）
     formal_anchor:
       - {property_id: Q6, role: implements}   # @2913 目标-手段闭合：本条为安全族目标的映射实例（@2844 列举序第一）。计息：Q6 本批 15 项之一
@@ -8867,7 +8867,7 @@ entries:
     anti_patterns:
       - pattern_id: QAT-015-AP1
         description: "以止损替代抵抗与检测（限流/熔断在册而漏洞仍在、攻击仍不可见）"
-        detection_predicate: "∃ 漏洞: tactic(·, QAT-015) ∧ [该漏洞](漏洞) registered ∧ ¬[其抵抗或检测面已有对应战术](漏洞)"
+        detection_predicate: "∃ 漏洞: tactic(·, QAT-015) ∧ [该漏洞已登记入漏洞清单](漏洞) ∧ ¬[其抵抗或检测面已有对应战术](漏洞)"
         signal_level: P1               # Q6 @2913 逐字「目标-手段闭合 —— 软（缺口走 CH-B）」→ 只有恢复而无敌抗/检测即映射不完备，属软性质的缺口面而非硬性质违例；定 P1 的根据：缺口须限期补登（CH-B 路径），逾期即高优先级安全目标无手段 → 9.2.1 @3601 限期整改，逾期自动升 P0（MJ-4 判据第二支）；不径定 P0 的根据：Q6 母本明文为软 → 不越母本升硬
       - pattern_id: QAT-015-AP2
         description: "阈值无出处（由假定而非基线测量推得）"
@@ -9405,7 +9405,7 @@ entries:
         signal_level: P2               # 级别由母本**直接给定**（六条中唯一）：@3342 逐字「**金字塔失真信号**（**P2**，阈值 + 趋势双判据，同 2.2.4 告警治理）：端到端层用例占比越过登记上限、或单元层覆盖率与端到端通过率长期背离 → 结构失真漂移信号，交方面 9。失真本身不阻塞（测试结构是可渐进修复的）」；升级条件亦明文——「但**失真 + 相关硬性质无下层覆盖**时升 P1（限期整改，0.14）」，与 T5 @3454-3455「pyramid_distortion → P2 signal（阈值+趋势双判据）；distortion ∧ ∃hard property 无下层覆盖 → P1 // 金字塔失真 —— 软/条件升级」及 9.2.1 @3601 P1 例列「金字塔失真 + 硬性质无下层覆盖（T5 升级分支）」三处同源，不改级（@3604）
       - pattern_id: VFM-004-AP2
         description: "集成层用例以测试替身替换真实依赖而未登记替身使用"
-        detection_predicate: "∃ 用例: [该用例以测试替身替换真实依赖](用例) ∧ ¬[替身使用记录](用例) registered"
+        detection_predicate: "∃ 用例: [该用例以测试替身替换真实依赖](用例) ∧ ¬[该用例的替身使用已登记](用例)"
         signal_level: P1               # @3338 备注列逐字「测试替身〔test double：以假对象替换真实依赖的技术总称〕的使用**必须登记**（替身掩盖的契约差异是幻觉源）」——义务明文但未列为硬性质，其失效形态是**登记纪律偏离**且构成幻觉源（@3421「幻觉套件清单」的输入面）→ 定 P1（限期整改，@282「超期未整改自动升级为 P0 处置」／9.2.1 @3601）；若该替身掩盖的差异已致 Y2/X1 的动态面结论失真，则按 T1 假闭合面升 P0（该分支归 VFM-001-AP1 承载，不在此重复改级，@3604）
       - pattern_id: VFM-004-AP3
         description: "已发布契约的契约测试套件缺项，或套件存在而未入 CI"
