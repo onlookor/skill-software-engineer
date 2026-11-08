@@ -8,8 +8,9 @@
 ## 0. 使用方式
 
 1. 每类事实先用 §1–§4 的「问题清单」问一遍；答不上来的保持 `[待勘察：…]`，并登记到 `selection_log.open_obligations`。
-2. 一个事实一条，`slot_ref` 写 `PRJ-00x/delivery_space/<序号>`。
-3. 只有**同时满足** §5 三条验收判据才允许回填；否则不得用方向性陈述降格填充。
+2. 一个事实一条。`slot_ref` 写 `PRJ-00x/delivery_space/<序号>`，**同时**登记 `slot_id` 与 `anchor`（规则见 [selection_log-schema](file:///home/wgz/projects/skills/software-engineering/pilot/selection_log-schema.md) §3.1）；只写裸序号不可复核。
+3. 回填前先判 `answer_kind`：`fact` 才进本表；若写出来的是判断（含「会／应／风险」），按 schema §4.1 拆成「事实 + 判断」两条，事实进本表、判断进 `assessments`。
+4. 只有**同时满足** §5 四条验收判据才允许回填；否则不得用方向性陈述降格填充。
 
 ## 1. 谁组织评审
 
@@ -59,15 +60,28 @@
 
 **不合格**：`由领导批准`／`按公司流程`（无法构成 0.5 的批准角色注册表）。
 
-## 5. 验收判据（三条全过才可回填）
+## 4.1 没有批准角色注册表实例时怎么填（F2）
+
+仓库自举场景（如本仓）没有部署实例，这一栏**填不了真值**，但不允许留空或编造。按三态回落：
+
+| 情况 | `answer` | `source` | `verified` | 义务 |
+|---|---|---|---|---|
+| 有注册表实例 | 主批准人＋备选链＋时限 | 注册表 ID＋版本 | `true` | 无 |
+| 有真实责任人但无注册表 | 角色＋姓名，写明「无注册表实例」 | 人名来源（会议纪要／邮件 ID） | `true`（人名事实为真） | 登记「补部署实例声明」到 `open_obligations`，并在 `deployment_instance.status=absent` 下把相关决策标 `provisional` |
+| 无人可署 | 字面 `unknown` | `null` ＋ `not_applicable_reason: null` 不适用 | `unknown` | 登记「升级到可署人」 |
+
+**硬约定**：`unknown` ≠ 留空。留空是填写遗漏，评审打回；`unknown` 是已确认取不到，必须挂义务。禁止用「领导／架构组／按公司流程／相关方」充数，出现即判凭空填写。
+
+## 5. 验收判据（四条全过才可回填）
 
 | # | 判据 | 问法 |
 |---|---|---|
 | 1 | **可定位** | 能否给出文档名／条款号／名单 ID／会议纪要 ID，而不是「大家都知道」？ |
 | 2 | **可复现** | 第二个人照这条事实执行，能否得出同一结论？ |
 | 3 | **可判定** | 能否回答「这一次评审是否合规」的是／否？ |
+| 4 | **可分类** | 写下的是事实（可判真假）还是判断（含模态词／依赖未来）？只有 `fact` 可进本表 |
 
-三条缺一 → 保持 `[待勘察]`，不得填 `false` 冒充「不适用」（M2 允许显式义务，不允许伪造）。
+四条缺一 → 保持 `[待勘察]`，不得填 `false` 冒充「不适用」（M2 允许显式义务，不允许伪造）。若第 4 条不过，按 schema §4.1 拆成事实与判断两条，不得整句塞进 `answer`。
 
 ## 6. 可接受来源（按 0.4 排序）
 
@@ -84,15 +98,23 @@
 
 ```yaml
 - slot_ref: PRJ-001/delivery_space/1
+  slot_id: SLOT-PRJ-001-delivery_space-1        # 临时代号，登记入 selection_log.slot_registry
+  anchor: "<槽内原文，逐字取>"                    # 与 slot_id 同生同灭
   question: 谁组织评审
+  answer_kind: fact                              # fact 才进本表；assessment 拆到 assessments
   answer: <组织/角色＋来源>
-  source: <文档名＋条款/ID＋日期>
-  verified: true | false
+  source: <文档名＋条款/ID＋日期> | null
+  verified: true | false | unknown               # unknown 必须配 open_obligations 一条
+  not_applicable_reason: null                     # answer 为 null 时必填一句
 - slot_ref: PRJ-001/delivery_space/2
+  slot_id: SLOT-PRJ-001-delivery_space-2
+  anchor: "<槽内原文，逐字取>"
   question: 评审人能力门槛
+  answer_kind: fact
   answer: <角色＋人数＋资格形式>
-  source: <名单 ID＋版本>
-  verified: true | false
+  source: <名单 ID＋版本> | null
+  verified: true | false | unknown
+  not_applicable_reason: null
 ```
 
 ## 8. 与试跑结论的关系
