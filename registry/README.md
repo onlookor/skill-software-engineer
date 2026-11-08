@@ -15,6 +15,7 @@
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | [DATA-SPEC](DATA-SPEC.md) D2；[CHECK-SPEC](CHECK-SPEC.md) C4 |
 | `schedules.yaml` | 调度项注册表（C-1）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `canary_gates.yaml` | 放量判据注册表（C-4）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
+| `test_doubles.yaml` | 测试替身使用登记表（C-15）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `scripts/project.py` | 自检与同源投影工具 | [CHECK-SPEC](CHECK-SPEC.md) C1、C3 |
 | `projections/*.md` | 人类可读投影与自检报告（生成物） | [CHECK-SPEC](CHECK-SPEC.md) C3.2 |
 

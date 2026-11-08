@@ -1929,3 +1929,13 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **附录 C.1**：C-4 行标「已建表（schema＋空表；实例 0）」，「该管什么」列补 `status`。
 - **数字**：检查器不读本文件，`--check` 数字不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
 - **回退**：`git revert <sha>`；删文件并撤回三处登记行。
+
+## 2026-11-08（续 53）：C-15 建表——测试替身使用登记表（schema＋空表）
+
+- **新增**：`registry/test_doubles.yaml`。义务锚点＝8.2.2 @3338 逐字「测试替身〔test double：以假对象替换真实依赖的技术总称〕的使用必须登记（替身掩盖的契约差异是幻觉源）」。
+- **内容**：`entry_fields` 六项（use_case_id／double_type／replaced_dependency／masked_contract_delta／registered_at／status）＋`entries: []`。**不造实例**；`instance_state: none` 明示「本仓无实例，验证留待项目侧」，空表不得读作「已核对无问题」。
+- **status**：沿用 0.17.2 五值词汇表；适用子集 `{seed, active, retired}`——无 `draft`（本表登记既成使用事实，造不出「用了但 draft」的条目）；无 `deprecated`（替身在使用或已移除，无「仍可读禁新增引用」的过渡态，移除直接退役）。可消费按 2.3(a) 取 `{active, seed}`。
+- **目录布局登记（D1.2）**：DATA-SPEC D1.3 文件角色表新增一行；`registry/README.md` §1 新增一行；本 changelog 本条。
+- **附录 C.1**：C-15 行标「已建表（schema＋空表；实例 0）」；共同结论补「已建表但实例 0 → `registered` 取 unknown，且 2.3(a) 尚未纳入这三类对象」。
+- **数字**：检查器不读本文件，`--check` 数字不变（记录 1,218｜硬 0｜软 0｜占位符 1,481）。
+- **回退**：`git revert <sha>`；删文件并撤回三处登记行。
