@@ -11749,7 +11749,7 @@ gaps:
       gap_ref: G-STY-1
       date: "2026-11-04"
       ruled_by: "人类责任方（2026-11-04 批准 ADR-G-STY-ENV-01）"
-      basis: "1.2.1–1.2.4「适用条件」列经裁定只定问题空间；现状/交付空间为部署事实，[]＝该部署尚未勘察、不等于不适用；过滤偏宽由接地编译期填报解决（README §4.23）。母本 0 行改动，未以「母本已补」结案。"
+      basis: "1.2.1–1.2.4「适用条件」列经裁定只定问题空间；现状/交付空间为部署事实，[]＝该部署尚未勘察、不等于不适用；过滤偏宽由使用期（0.18.2 S0／S1）填报解决（README §4.23）。原文措辞「接地编译期」出自 ADR-G-STY-ENV-01 @23，ADR 原文按 as-of 保留、不回改。母本 0 行改动，未以「母本已补」结案。"
       evidence:
         - "adr/ADR-G-STY-ENV-01-approved-20261104-接地编译前置两闸.md（ADR-G-STY-ENV-01 决策一）"
         - "registry/README.md §4.23（职责边界裁定）"
@@ -13521,7 +13521,7 @@ pending_conflict_rows:
 # ---------------------------------------------------------------------------
 survey_obligations:
   - obligation_id: SO-1
-    kind: 接地编译期              # ADR-G-STY-ENV-01 裁定：[]＝该部署尚未勘察，不在入库期补录；事实由接地编译期 S0/S1 填报（M15 兜底）
+    kind: 使用期／选型期          # 溯源：原文措辞「接地编译期」出自 ADR-G-STY-ENV-01 @23；实际时点为 0.18.2 S0／S1，非 10.2.3 层次一。[]＝该部署尚未勘察，不在入库期补录（M15 兜底）
     obligation: "补录各风格条目的现状空间与交付空间适用条件事实（须过 0.4 出处门槛：现状勘察产物/既有 ADR/团队能力事实），回填 applicability.current_space / delivery_space 的空列表。"
     gap_ref: G-STY-1
     consumer: "0.18.2 S1（applicability 求值；unknown ≠ false → 候选保留）"
