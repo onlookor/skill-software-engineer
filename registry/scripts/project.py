@@ -1242,6 +1242,51 @@ def check_arity(rep: Report, e: dict, eid: str):
         rep.fail('S-12', eid, 'S-12（元数不匹配，hard）：' + '；'.join(mism))
 
 
+def check_wellformed(rep: Report, e: dict, eid: str):
+    """S-13 文面完整性：`)` 后紧跟 `(` 的悬空施动／双重调用。
+
+    「硬 0」不等于命题没坏——本项专抓既有检查面看不见的结构走偏（ADR-SRC-P0-10 §20）。
+    两类：①括号组内顶层含 `∧`／`∨`，其后紧跟 `(` → 合取式被当成谓词头用，无 bind 目标；
+    ②其余（单一调用后紧跟 `(`）→ 双重调用／悬空施动。
+    合法形 `[X](主体)` 是 `]` 后接 `(`，不在本项扫描面内。
+    """
+    for _field, label, text in arity_surfaces(e):
+        depth = 0
+        for i, ch in enumerate(text):
+            if ch == '(':
+                depth += 1
+            elif ch == ')':
+                depth = max(0, depth - 1)
+                j = i + 1
+                while j < len(text) and text[j].isspace():
+                    j += 1
+                if j >= len(text) or text[j] != '(':
+                    continue
+                k, d = i - 1, 1
+                while k >= 0:
+                    if text[k] == ')':
+                        d += 1
+                    elif text[k] == '(':
+                        d -= 1
+                        if d == 0:
+                            break
+                    k -= 1
+                body = text[k + 1:i] if k >= 0 else ''
+                bd, ops = 0, set()
+                for ch2 in body:
+                    if ch2 in '([':
+                        bd += 1
+                    elif ch2 in ')]':
+                        bd = max(0, bd - 1)
+                    elif bd == 0 and ch2 in '∧∨¬→':
+                        ops.add(ch2)
+                kind = ('合取／析取式后接主体，无 bind 目标'
+                        if ('∧' in ops or '∨' in ops)
+                        else '调用后紧跟括号（双重调用或悬空施动）')
+                rep.add('S-13', kind, 'hard', False, f'{eid} {label}：{text}')
+                break
+
+
 def check_arity_census(rep: Report, entries: list):
     """S-12 全量（hard）：调用总数、按字段分项、不匹配／可疑／投影／variadic 计数；
     无 arity 的 formula_words 另起 info 行单列分组（不计通过、不计失败）；
@@ -2552,7 +2597,8 @@ def render_self_check(ctx: dict) -> str:
     for cid, title, note in (
             ('S-10', 'signals 词表封闭观测', 'info，只报不判（判据在 M4 硬检查）'),
             ('S-11', 'signals 纯散文', 'hard（ADR-SRC-P0-06：detection_predicate 与 when_predicate 均须含已登记谓词调用）'),
-            ('S-12', '元数校验', 'ADR-SRC-P0-08 起为硬检查：实参个数 vs 词表 arity；可变槽按 ≥N；投影与无 arity 项单列')):
+            ('S-12', '元数校验', 'ADR-SRC-P0-08 起为硬检查：实参个数 vs 词表 arity；可变槽按 ≥N；投影与无 arity 项单列'),
+            ('S-13', '文面完整性', 'hard（ADR-SRC-P0-10 §20.4：`)` 后紧跟 `(` 的双重调用／悬空施动；常驻 info 报总数')):
         rows = rep.of(cid)
         if rows:
             L += [f'### {cid}：{title}（{note}）', '']
@@ -2765,6 +2811,10 @@ def run_checks():
         check_m9(rep, e, eid, all_ids)
         check_cenv(rep, e, eid, mat)
         check_arity(rep, e, eid)
+        check_wellformed(rep, e, eid)
+    n_s13 = len(rep.of('S-13'))
+    rep.add('S-13', '全量', 'info', None,
+            f'S-13 文面完整性（`)` 后紧跟 `(`）：{n_s13} 处（hard；不参与 seed 资格）')
     check_meta(rep, reg_doc, entries, idx, mat, prof_status)
     check_arity_census(rep, entries)
     check_cst(rep, entries, mat, prof_status)
