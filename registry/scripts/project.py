@@ -1067,6 +1067,63 @@ def bracket_call_sites(text: str) -> tuple[list[dict], dict[str, int]]:
     return calls, exempt
 
 
+# 方括号内裸谓词名：整段（去单个前导 `¬` 后）恰为一个 ASCII 标识符（D3.11 续批四）
+BARE_NAME_RE = re.compile(r'^[A-Za-z_][A-Za-z0-9_]*$')
+
+
+def bracket_bare_sites(text: str) -> tuple[list[dict], dict[str, int]]:
+    """方括号内「裸谓词名」的识名通道（DATA-SPEC D3.11 续批四）。
+
+    `[blocking_registered]` 这类片段无圆括号，M4（需 `name(`）与 D3.11 首段（需片段含 `(`）
+    双双看不见 → 双盲。本通道按位置判角色：
+      · 片段后紧邻 `(`（如 `[retry](I)`）→ 谓词头带参，按 `name(args)` 归一计 arity；
+      · 片段前紧邻 `,` 或 `(` → **实参值位**（如 `data_flow(D, ·, ·, [outbox])` 的机制枚举），跳过；
+      · 其余（串首／`∧`／`∨`／`¬`／量词冒号后）→ 零元裸谓词，argc=0。
+    """
+    calls: list[dict] = []
+    stats = {'bare': 0, 'head': 0, 'value': 0}
+    spans: list[tuple[int, int]] = []
+    depth, start = 0, -1
+    for i, ch in enumerate(text):
+        if ch == '[':
+            if depth == 0:
+                start = i
+            depth += 1
+        elif ch == ']':
+            if depth > 0:
+                depth -= 1
+                if depth == 0 and start >= 0:
+                    spans.append((start, i))
+    for st, en in spans:
+        inner = text[st + 1:en].strip()
+        if '(' in inner:
+            continue                      # 已由 bracket_call_sites 承载
+        body = inner[1:].lstrip() if inner.startswith('¬') else inner
+        if not BARE_NAME_RE.match(body):
+            continue
+        after = en + 1
+        while after < len(text) and text[after].isspace():
+            after += 1
+        if after < len(text) and text[after] == '(':
+            close = _match_paren(text, after)
+            if close < 0:
+                continue
+            args = split_call_args(text[after + 1:close])
+            calls.append({'name': body, 'argc': len(args),
+                          'raw': text[st:close + 1], 'projection': _is_projection(text, close)})
+            stats['head'] += 1
+            continue
+        before = st - 1
+        while before >= 0 and text[before].isspace():
+            before -= 1
+        if before >= 0 and text[before] in ',(':
+            stats['value'] += 1          # 实参值位，不是谓词
+            continue
+        calls.append({'name': body, 'argc': 0, 'raw': text[st:en + 1], 'projection': False})
+        stats['bare'] += 1
+    return calls, stats
+
+
 def check_arity(rep: Report, e: dict, eid: str):
     """S-12（hard）：调用实参个数 vs 词表 `arity`。
 
@@ -1102,6 +1159,7 @@ def check_arity(rep: Report, e: dict, eid: str):
             bad.append(f'{label}: `{name}(` 括号未闭合 → {_trunc(frag, 40)}')
         _judge(calls, label)
         _judge(bracket_call_sites(text)[0], f'{label}（方括号内）')
+        _judge(bracket_bare_sites(text)[0], f'{label}（方括号内裸名）')
     if bad:
         rep.fail('S-12', f'{eid} 解析', 'S-12（解析可疑，未静默跳过）：' + '；'.join(bad))
     if mism:
@@ -1118,6 +1176,8 @@ def check_arity_census(rep: Report, entries: list):
     unchecked: dict = {}
     b_total = b_mism = b_mixed = b_channel = b_proj = 0
     b_unk: dict[str, dict] = {}
+    n_bare = n_head = n_value = 0
+    n_unk: dict[str, dict] = {}
     for e in entries:
         for field, _label, text in arity_surfaces(e):
             if not text.strip():
@@ -1158,6 +1218,16 @@ def check_arity_census(rep: Report, entries: list):
                     continue
                 if not _arity_ok(meta, c['argc']):
                     b_mism += 1
+            ncalls, nst = bracket_bare_sites(text)
+            n_bare += nst['bare']
+            n_head += nst['head']
+            n_value += nst['value']
+            for c in ncalls:
+                meta = table.get(c['name'])
+                if not meta:
+                    rec = n_unk.setdefault(c['name'], {'count': 0, 'families': set()})
+                    rec['count'] += 1
+                    rec['families'].add(e['entry_id'].split('-')[0])
     rep.add('S-12', '全量', 'hard', mism == 0 and bad == 0,
             f'S-12 元数校验（hard）：调用 {total} 处（anti_patterns {field_cnt["anti_patterns"]}／'
             f'applicability {field_cnt["applicability"]}／signals.detection {field_cnt["signals.detection"]}／'
@@ -1172,6 +1242,14 @@ def check_arity_census(rep: Report, entries: list):
                 'S-12 方括号内不在册名（不判，仅计）：'
                 + '、'.join(f'{k}×{v["count"]}（{"／".join(sorted(v["families"]))}）'
                             for k, v in sorted(b_unk.items())))
+    rep.add('S-12', '方括号内裸谓词名', 'info', None,
+            f'S-12 方括号内裸谓词名（D3.11 续批四）：谓词位 {n_bare + n_head} 处'
+            f'（零元裸名 {n_bare}／带参谓词头 {n_head}）；实参值位跳过 {n_value} 处')
+    if n_unk:
+        rep.add('S-12', '方括号内裸名不在册', 'info', None,
+                'S-12 方括号内裸名不在册（不判，仅计）：'
+                + '、'.join(f'{k}×{v["count"]}（{"／".join(sorted(v["families"]))}）'
+                            for k, v in sorted(n_unk.items())))
     if unchecked:
         rep.add('S-12', '未覆盖', 'info', None,
                 f'S-12 未覆盖（无 arity 可校，不计通过、不计失败）：{sum(unchecked.values())} 处（'

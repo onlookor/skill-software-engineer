@@ -248,6 +248,7 @@ clause_defined_predicates:
   - {name: lineage_complete, arity: 1, block: "4.5", line: 2295, anchor: "@2297", source: {source_type: clause_id, value: "4.5", verified: true}, note: "Y5 公式内使用；编译规范 2.3 §207 点名"}
   - {name: idempotency_declared, arity: 1, block: "5.5", line: 2587, anchor: "@2589", source: {source_type: clause_id, value: "5.5", verified: true}, note: "Z2 公式内使用；编译规范 2.3 §207 点名"}
   - {name: approved_waiver, arity: 0, block: "6.5", line: 2909, anchor: "@2911", source: {source_type: clause_id, value: "6.5", verified: true}, note: "Q5／G1 公式内使用（零元；@2911、@3738）；编译规范 2.3 §207 点名"}
+  - {name: blocking_registered, arity: 0, block: "9.5", line: 3738, anchor: "@3738", source: {source_type: clause_id, value: "9.5", verified: true}, note: "G1 公式内裸谓词（P0 信号已登记且构成即时阻塞）；无机器层块定义行，按编译规范 2.3 封闭集纪律 3② 归 clause_defined_predicates；零元、裸后置式，不写调用括号（ADR-SRC-P0-10 §14）"}
   # ── 集合成员判定（2026-11-07 ⑨-⑦；由 predicates 移入，不删除）──
   - {name: conflict_matrix, arity: 1, block: "1.5", line: 1485, anchor: "@1487", source: {source_type: clause_id, value: "1.5", verified: true}, note: "集合成员判定，arity 1；V3 公式内使用（1.2.5 冲突矩阵表）"}
 
