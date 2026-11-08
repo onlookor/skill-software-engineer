@@ -15,3 +15,14 @@ Thumbs.db
 # Python 字节码缓存（registry/scripts/ 运行产物，非源）
 __pycache__/
 *.py[cod]
+
+# anchor_index.py 运行产物（生成物，不入库；见 锚点与引用规范.md §8 参考实现）
+# 该目录下历史手写表（migration_plan.csv 等）仍入库，故只忽略生成文件名。
+registry/anchor_index/anchor_index.json
+registry/anchor_index/assertions.csv
+registry/anchor_index/drift.csv
+registry/anchor_index/label_refs.csv
+registry/anchor_index/resolvability.csv
+registry/anchor_index/row_keys.csv
+registry/anchor_index/summary.json
+registry/anchor_index/targets.csv
