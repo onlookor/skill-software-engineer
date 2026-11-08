@@ -31,29 +31,38 @@ facts: [...]                          # 见 §3；只填候选实际消费的事
 
 判据顺序：先问「本次该不该有值」——该有而拿不到 → `unknown`；不该有 → `null` ＋理由。禁止用 `false`／`无`／`N/A`／`待定` 冒充 `unknown`。
 
-## 1.2 `deployment_instance` 与 `decided_by` 值域（F2）
+**边界（与枚举值同名，但不同层）**：字段级 `unknown`（如 `value: unknown`）触发本文务；枚举里的 `unknown` 只是某个附注字段的取值说明（如 `name_absent_reason: unknown`），**不触发** `open_obligations`。
 
-试跑发现：本仓没有 0.5 @129 意义上的**部署实例**（批准角色注册表），按严格读法高影响决策应整体阻塞。schema 不给「假装有」的办法，只给**可记录的不合规**：
+## 1.2 `deployment_instance`、`decided_by` 与 `approval_status`（F2）
+
+本仓没有 0.5 @129 意义上的**部署实例**（批准角色注册表）。schema 不假装有，只把三件事分开记：**有没有可指认的批准人**（`decided_by`）、**这个决策有没有被人类批准**（`approval_status`）、**部署实例缺不缺**（`deployment_instance`）。
 
 ```yaml
 deployment_instance:
   status: declared | absent
   roster_ref: <批准角色注册表 ID／路径> | null    # declared 时必填
-approval_status: approved | provisional          # 条件字段：absent 时只能是 provisional
+approval_status: approved | provisional
+decided_by:
+  state: named | unregistered | unknown
+  role: <角色名> | null
+  name: <人名> | null
+  roster_ref: <注册表 ID> | null
+  name_absent_reason: no_person_assigned | withheld | unknown   # 仅 unregistered 且 name=null 时必填
 ```
 
-`decided_by` 三态值域：
+`decided_by.state` 三态：
 
-| 值 | 何时用 | 写法 |
+| 值 | 何时用 | 写法约束 |
 |---|---|---|
-| `named` | `deployment_instance.status=declared` | `{role: <角色名>, name: <姓名>, roster_ref: <注册表ID>}` |
-| `unregistered` | 有真实责任人但无注册表实例 | `{name: <姓名>, roster_ref: null}` ＋ 一条 `open_obligations`（补部署实例声明） |
+| `named` | 有注册表实例 | `name`／`role`／`roster_ref` 必填 |
+| `unregistered` | 有可指认的批准人，但不在册 | `role` 必填；`name` 可空，空时必填 `name_absent_reason`；`roster_ref: null` ＋ 一条 `open_obligations`（补部署实例声明） |
 | `unknown` | 决策当场无人可署 | 字面 `unknown` ＋ 一条 `open_obligations`（升级到可署人） |
 
-规则（三条，均为**硬约定**，不是建议）：
-1. **`absent` 时不得编造批准链**：`roster_ref` 留 `null`，不得写「架构组 → CTO」这类看起来有序但无出处的链。
-2. **禁止占位词充数**：`领导`／`架构组`／`按公司流程`／`相关方` 不是批准人，出现即判为凭空填写，评审打回。
-3. **`absent` 不等于记录无效**：允许记录，但 `approval_status` 固定 `provisional`，且必须在 ADR 里写明「待补部署实例后追认」，否则视为绕过 0.5。
+规则：
+1. **`absent` 时不编造批准链**：`roster_ref` 留 `null`，不得写「架构组 → CTO」这类无出处的链。
+2. **禁止占位词充数**：`领导`／`架构组`／`按公司流程`／`相关方` 不是批准人，出现即判凭空填写。
+3. **`approval_status` 只说批准**：`approved` 要求 `decided_by.state ∈ {named, unregistered}`（可指认的批准人，哪怕不在册）；`deployment_instance.status=absent` **不再**强制 `provisional`——实例缺不缺由 `deployment_instance` ＋ `open_obligations` 表达，两者不压进同一字段。
+4. **`absent` 不等于记录无效**：允许记录，但必须在 ADR 写明「待补部署实例后追认」，否则视为绕过 0.5。
 
 ## 2. `candidates`（每条候选 4 字段）
 
@@ -73,23 +82,44 @@ candidates:
 
 ```yaml
 facts:
-  - slot_ref: <entry_id>/<field>[/<序号>]   # 例：STY-001/applicability.current_space/2
+  - id: F1
+    provenance:                      # 出处唯一承载（已删自由文本 source）
+      kind: slot | clause | adr | dry_run | other | person | system
+      ref: <可解析定位符>             # 见 §3.0；不接受散文
+      anchor: <原文片段>              # other 可为 null（材料本身即锚）
+      slot_id: SLOT-<...>            # 仅 kind=slot 时必填
+      source_class: <可选，见下>
     statement: <事实一句话，可判真假>
-    value: true | false | unknown           # 三值；禁止二值化
-    source: <出处>                           # 0.4：可定位到文档+条款/行/记录ID
+    value: true | false | unknown    # 三值；禁止二值化
     note: <unknown 的处置，或求值说明>
 ```
 
+### 3.0 定位符格式（对应 0.4：来源文档／来源人／来源系统）
+
+| kind | `ref` 形式 | `anchor` |
+|---|---|---|
+| `slot` | `<entry_id>/<field>/<n>` | 槽内原文逐字片段（≤20 字） |
+| `clause` | `<文件名>#<条款号或行号>`，如 `软件工程元框架成文法.md#5.2.6`／`#L2514` | 条款原句片段 |
+| `adr` | `<ADR 编号或路径>#<小节>` | 决定原句片段 |
+| `dry_run` | `<命令或报告>#<记录ID或行>`，如 `--check@2026-11-08#summary` | 输出片段 |
+| `other` | 材料 ID：`mail:<ID>`／`ticket:<ID>`／`chat:<截图ID>`，限**已存在但形式不规整**的可复核材料 | 可为 `null` |
+| `person` | `person:<角色或姓名>@<日期或会议ID>` | 原话片段 |
+| `system` | `system:<系统名>#<记录ID>` | 记录字段片段 |
+
+`source_class` 可选，仅在出处门槛需要分类时填；取值**逐字**取母本 0.17.2 条目 schema（@335）：`external｜mother-row｜mother-clause｜mother-definition｜fallback`。**出处是 0.17.2，不是 0.4**。
+
+口语类输入按 0.4 处理：有「来源人＋日期」→ `kind: person` 记事实；无任何载体 → 仍记 `unknown` 事实 ＋ `note: 出处不明` ＋ `open_obligations`（**不得**因「说不清缺什么」降为判断）；只有内容本身是**评价性／预测性命题**时，才进 `assessments.assumption`。
+
 规则（每条都来自试跑的真实教训）：
 1. **三值**：`unknown` 不得写成 `false`；`unknown` 的候选一律保留（M15），并登记 `open_obligations`，禁沉默排除。
-2. **有出处才进 `facts`**：无出处的说法进 `open_obligations`，对应字段保持 `[待勘察]`；不得用「方向性陈述」冒充事实。
+2. **有出处才进 `facts`**：`provenance.ref` 必须可解析；无出处的说法进 `open_obligations`，对应字段保持 `[待勘察]`；不得用「方向性陈述」冒充事实。
 3. **判断不进 `facts`**：凡带「会／应当／更好／风险大」的句子是判断，不是事实，见 §4。混进来会让记录看似客观、实则夹带结论（试跑 F3）。
 4. **只填候选消费的事实**：未进候选集的条目不逐槽填（全量 applicability 762 项按每条 1 分钟≈12 小时，不可行；必须先 S1 裁剪）。
-5. `slot_ref` 的序号目前只能按「条目＋字段＋出现序」拼——**这是临时办法**，必须同时登记 §3.1 的 `slot_registry`；只写裸序号、无锚文本的记录不可复核。
+5. **`id` 是主键**：`F*` 唯一，`assessments.basis` 按 `[F1, F2]` 引用它；`provenance` 可空、不可当主键。`kind=slot` 时必须登记 §3.1 的 `slot_registry`。
 
 ## 3.1 方括号槽的临时代号与登记去向（F1）
 
-母本 0.17.2 没有槽位编号字段，检查器也不产出。因此 `slot_ref` 里的「序号」是临时办法，按下列规则收敛到一张可复核的表。
+母本 0.17.2 没有槽位编号字段，检查器也不产出。因此 `provenance.kind=slot` 时 `ref` 里的 `<n>` 是临时办法，按下列规则收敛到一张可复核的表。
 
 **编法**：`SLOT-<entry_id>-<field>-<n>`
 - `<field>` 取字段路径末段：`problem_space`／`current_space`／`delivery_space`／`detection_predicate`／`bound_expr`。
@@ -99,7 +129,7 @@ facts:
 
 **作用域**：以 `selection_id` 为界，只在本日志内有效；**不得跨日志复用、不得写进 `registry`、不得当谓词名**。
 
-**登记去向**：本日志顶层 `slot_registry`。评审与复核只认这张表，不认 `slot_ref` 里的裸序号。
+**登记去向**：本日志顶层 `slot_registry`，**只索引 `kind=slot` 的条目**；`clause／adr／dry_run／other／person／system` 不登记（它们的 `ref` 本身即定位符）。评审只认这张表，不认 `ref` 里的裸序号。
 
 ```yaml
 slot_registry:
@@ -125,8 +155,10 @@ slot_registry:
 
 ```yaml
 assessments:
-  - statement: <判断一句话>
-    basis: <基于哪些 facts / 哪条原则>
+  - id: A1
+    statement: <判断一句话>
+    basis: [F1, F2] | [<原则条号>]    # 指向 facts 的 id
+    basis_kind: facts | derived      # derived 时须写推导链
     strength: strong | weak | assumption
 ```
 
@@ -156,9 +188,9 @@ assessments:
 
 ```yaml
 facts:
-  - {id: F7, statement: 当前实现只校验首参, value: true, source: 源码 X 第 n 行}
+  - {id: F7, provenance: {kind: clause, ref: "源码X#第n行", anchor: "只校验首参"}, statement: 当前实现只校验首参, value: true, note: ''}
 assessments:
-  - {id: A4, statement: variadic 会放宽元数校验, basis: [F7], strength: weak}
+  - {id: A4, statement: variadic 会放宽元数校验, basis: [F7], basis_kind: facts, strength: weak}
 ```
 
 拆完后 `F7` 单独成立，`A4` 可被反驳而 `F7` 不被动摇——这才是分栏的目的。
@@ -181,28 +213,26 @@ open_obligations:
 ```yaml
 selection_id: SEL-20261109-01
 decided_at: 2026-11-09T10:05:00+08:00
-decided_by: {name: 张三, roster_ref: null}       # unregistered：有人名、无注册表
+decided_by: {state: unregistered, role: 架构组负责人, name: 张三, roster_ref: null, name_absent_reason: null}
 deployment_instance: {status: absent, roster_ref: null}
-approval_status: provisional                     # absent 时的固定值
+approval_status: approved        # 有可指认的批准人；实例缺不缺不压进本字段
 decision: 选择「事件溯源 + CQRS」作为订单域通信风格
 adr_ref: ADR-ORDER-01
 candidates:
   - {id: C1, statement: 事件溯源+CQRS, verdict: selected}
-  - {id: C2, statement: 同步请求-响应, verdict: rejected, rejection_reason: 峰值吞吐事实为 false}
+  - {id: C2, statement: 同步请求-响应, verdict: rejected, rejection_reason: 峰值吞吐事实 F1 不满足}
 facts:
-  - slot_ref: STY-004/applicability.current_space/1
-    slot_id: SLOT-STY-004-current_space-1
+  - id: F1
+    provenance: {kind: system, ref: "system:生产监控#OPS-2026-10-03", anchor: "峰值 3.2k TPS"}
     statement: 订单写入峰值 ≥ 3k TPS
     value: true
-    source: 生产监控 2026-10 月报（记录 ID OPS-2026-10-03）
-  - slot_ref: STY-001/applicability.delivery_space/2
-    slot_id: SLOT-STY-001-delivery_space-2
+    note: ''
+  - id: F2
+    provenance: {kind: slot, ref: "STY-001/applicability.delivery_space/2", slot_id: SLOT-STY-001-delivery_space-2, anchor: "[具备事件版本迁移经验]"}
     statement: 团队具备事件版本迁移经验
     value: unknown
-    source: null
     note: 按 M15 保留 C1；已登记 open_obligations
-slot_registry:
-  - {slot_id: SLOT-STY-004-current_space-1, entry_id: STY-004, field: applicability.current_space, ordinal: 1, anchor: "[高写入吞吐]", state: used}
+slot_registry:                   # 只索引 kind=slot
   - {slot_id: SLOT-STY-001-delivery_space-2, entry_id: STY-001, field: applicability.delivery_space, ordinal: 2, anchor: "[具备事件版本迁移经验]", state: used}
 open_obligations:
   - {what: 团队事件版本迁移经验, owner: 张三, due: 2026-11-16}
@@ -222,3 +252,6 @@ open_obligations:
 | 用 `null` 或 `false` 代 `unknown` | 该查的事实被记成不适用，M15 失效（F2） |
 | 一个格子同时写事实与结论 | 复核时分不清哪句可被反驳，等于结论先行（F3） |
 | 改写槽序后沿用旧裸序号 | 历史日志与源文本失配，且没有锚可重锚（F1） |
+| `provenance.ref` 写成散文（「大家都知道」「会议上说过」） | 不可解析，等于无出处（0.4 公理 A2） |
+| 无来源人的口述记成 `facts` | 把「来源人」来源伪造出来；应记 `unknown`＋勘察，或降 `assumption` |
+| 把部署实例缺失写进 `approval_status` | 批准与否、实例缺不缺两轴混压，导致「已批准但无实例」与「未批准」同形（C5） |

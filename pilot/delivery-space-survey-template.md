@@ -8,7 +8,7 @@
 ## 0. 使用方式
 
 1. 每类事实先用 §1–§4 的「问题清单」问一遍；答不上来的保持 `[待勘察：…]`，并登记到 `selection_log.open_obligations`。
-2. 一个事实一条。`slot_ref` 写 `PRJ-00x/delivery_space/<序号>`，**同时**登记 `slot_id` 与 `anchor`（规则见 [selection_log-schema](file:///home/wgz/projects/skills/software-engineering/pilot/selection_log-schema.md) §3.1）；只写裸序号不可复核。
+2. 一个事实一条。出处用 `provenance` 块（见 [selection_log-schema](file:///home/wgz/projects/skills/software-engineering/pilot/selection_log-schema.md) §3.0）：勘察事实多为 `kind: person`（访谈）／`system`（系统记录）／`other`（工单、邮件）；只有落在 registry 条目方括号槽上的事实才用 `kind: slot`，并按 §3.1 登记 `slot_registry`。`ref` 必须是可解析定位符，散文不接受。
 3. 回填前先判 `answer_kind`：`fact` 才进本表；若写出来的是判断（含「会／应／风险」），按 schema §4.1 拆成「事实 + 判断」两条，事实进本表、判断进 `assessments`。
 4. 只有**同时满足** §5 四条验收判据才允许回填；否则不得用方向性陈述降格填充。
 
@@ -64,11 +64,11 @@
 
 仓库自举场景（如本仓）没有部署实例，这一栏**填不了真值**，但不允许留空或编造。按三态回落：
 
-| 情况 | `answer` | `source` | `verified` | 义务 |
+| 情况 | `answer` | `provenance.ref` | `verified` | 义务 |
 |---|---|---|---|---|
 | 有注册表实例 | 主批准人＋备选链＋时限 | 注册表 ID＋版本 | `true` | 无 |
-| 有真实责任人但无注册表 | 角色＋姓名，写明「无注册表实例」 | 人名来源（会议纪要／邮件 ID） | `true`（人名事实为真） | 登记「补部署实例声明」到 `open_obligations`，并在 `deployment_instance.status=absent` 下把相关决策标 `provisional` |
-| 无人可署 | 字面 `unknown` | `null` ＋ `not_applicable_reason: null` 不适用 | `unknown` | 登记「升级到可署人」 |
+| 有真实责任人但无注册表 | 角色＋姓名，写明「无注册表实例」 | 人名来源（会议纪要／邮件 ID） | `true`（人名事实为真） | 登记「补部署实例声明」到 `open_obligations`；`approval_status` 仍可为 `approved`（可指认的批准人即可），实例缺由 `deployment_instance.status=absent` 表达 |
+| 无人可署 | 字面 `unknown` | `null` ＋ `not_applicable_reason: null` 不适用 | `unknown` | 登记「升级到可署人」；此时 `approval_status` 不得为 `approved` |
 
 **硬约定**：`unknown` ≠ 留空。留空是填写遗漏，评审打回；`unknown` 是已确认取不到，必须挂义务。禁止用「领导／架构组／按公司流程／相关方」充数，出现即判凭空填写。
 
@@ -97,22 +97,16 @@
 ## 7. 空白填写表（复制即用）
 
 ```yaml
-- slot_ref: PRJ-001/delivery_space/1
-  slot_id: SLOT-PRJ-001-delivery_space-1        # 临时代号，登记入 selection_log.slot_registry
-  anchor: "<槽内原文，逐字取>"                    # 与 slot_id 同生同灭
-  question: 谁组织评审
+- question: 谁组织评审
+  provenance: {kind: slot, ref: "PRJ-001/delivery_space/1", slot_id: SLOT-PRJ-001-delivery_space-1, anchor: "<槽内原文，逐字取>"}
   answer_kind: fact                              # fact 才进本表；assessment 拆到 assessments
-  answer: <组织/角色＋来源>
-  source: <文档名＋条款/ID＋日期> | null
+  answer: <组织/角色＋出处定位符>
   verified: true | false | unknown               # unknown 必须配 open_obligations 一条
   not_applicable_reason: null                     # answer 为 null 时必填一句
-- slot_ref: PRJ-001/delivery_space/2
-  slot_id: SLOT-PRJ-001-delivery_space-2
-  anchor: "<槽内原文，逐字取>"
-  question: 评审人能力门槛
+- question: 评审人能力门槛
+  provenance: {kind: person, ref: "person:架构组负责人@2026Q4轮值表", anchor: "<原话片段>"}
   answer_kind: fact
   answer: <角色＋人数＋资格形式>
-  source: <名单 ID＋版本> | null
   verified: true | false | unknown
   not_applicable_reason: null
 ```
