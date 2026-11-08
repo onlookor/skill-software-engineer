@@ -12128,6 +12128,7 @@ gaps:
     impact: "PRJ-001…PRJ-011 的 applicability.delivery_space 均为 [待勘察：…] 显式勘察义务（不空、不伪造、不登记 N-A）→ M2 判待补属预期的诚实状态；不影响 seed 资格（字段在案、非空、显式义务），但投影的勘察义务清单新增 22 项（11 条 × 2 项）。"
     affected: "PRJ-001…PRJ-011 共 11 条"
     route: "0.18 S0 交付空间勘察（评审组织事实、能力与角色注册表），填实后由 M15 关闭 → 登记 SO-18。不得以 10.3 的方向性陈述冒充逐条事实（0.4 出处门槛）。"
+    debt_kind: genuine_debt         # DATA-SPEC D3.15：无注册面且母本未给出交付空间可判定事实，保留悬空仍属本仓欠账
     status: open
 
   - gap_id: G-PRJ-2
@@ -13526,6 +13527,7 @@ survey_obligations:
     gap_ref: G-STY-1
     consumer: "0.18.2 S1（applicability 求值；unknown ≠ false → 候选保留）"
     trigger_rule: "M15 + FM-1（必需事实缺失且无勘察登记 = 证据缺口）"
+    debt_kind: pending_grounding     # DATA-SPEC D3.15：回填事实在 0.18.2 S0／S1 使用期完成，本仓无交付物
     status: open
 
   - obligation_id: SO-2
@@ -13605,6 +13607,7 @@ survey_obligations:
     evidence:
       - "枚举面已由 project.py 承接：projections/勘察义务清单.md Part A 按字段类别给出槽分布（applicability 三空间／anti_patterns.detection_predicate／cost_profile／envelope.bound_expr），并单列事实占位与 0.12 可信度标注"
       - "本义务为决策期常驻义务（选型时逐条求值并记入 selection_log），不因工具已生成枚举而关闭；status 保持 open 表示尚未在任何一次选型中履行"
+    debt_kind: pending_grounding     # DATA-SPEC D3.15：决策期汇总义务，选型时逐条求值，非本仓交付
     status: open
 
   - obligation_id: SO-7
