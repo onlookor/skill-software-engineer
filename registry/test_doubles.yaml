@@ -1,0 +1,41 @@
+# 测试替身使用登记表（C-15）：schema ＋ 空表
+#
+# 母本义务锚点（逐字）：8.2.2 @3338 测试替身〔test double：以假对象替换真实依赖的技术总称〕
+#   的使用**必须登记**（替身掩盖的契约差异是幻觉源）。
+#
+# 本文件只定义条目 schema，**不含任何实例**：本仓无替身使用实例，验证留待项目侧。
+# 空表 ≠ 已核对无问题；entries 为 0 只表示尚未登记，不表示「已查无问题」。
+#
+# status 取值：沿用 0.17.2 条目状态枚举（同一词汇表，不另立枚举）；
+# 可消费状态按《编译规范》2.3(a) 取 {active, seed}（seed 限 bootstrap 期）。
+# 适用子集 {seed, active, retired}，逐值理由：
+#   - 无 draft：本表登记的是**既成使用事实**（替身已替换某真实依赖），不是待起草的骨架；
+#     造不出「用了但状态是 draft」的条目。
+#   - 无 deprecated：替身在使用中或已移除，中间没有「仍可读但禁止新增引用」的过渡态；
+#     移除时直接退役，历史记录由本表条目本身承担。
+#   - retired：替身已移除，记录保留以供回溯（掩盖过的契约差异仍须可查）。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    source_type: clause_id
+    value: "8.2.2"
+    line: 3338
+    quote: "测试替身〔test double：以假对象替换真实依赖的技术总称〕的使用必须登记（替身掩盖的契约差异是幻觉源）"
+    verified: true
+  schema_status: schema-only          # 只有 schema，没有实例
+  instance_state: none                # 本仓无实例；验证留待项目侧
+  status_domain: [seed, active, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+  consumption_states: [active, seed]  # 《编译规范》2.3(a)；seed 限 bootstrap 期
+
+entry_fields:
+  - {name: use_case_id, type: string, required: true, note: 使用用例唯一标识}
+  - {name: double_type, type: string, required: true, note: 替身类型（stub／mock／fake／spy／dummy 等）}
+  - {name: replaced_dependency, type: string, required: true, note: 被替换的真实依赖}
+  - {name: masked_contract_delta, type: string, required: true, note: 替身掩盖的契约差异（@3338 幻觉源）}
+  - {name: registered_at, type: string, required: true, note: 登记时刻（ISO 8601）}
+  - {name: status, type: "enum: seed|active|retired", required: true}
+
+entries: []
