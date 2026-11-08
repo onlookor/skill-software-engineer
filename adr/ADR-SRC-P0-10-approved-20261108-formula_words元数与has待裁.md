@@ -284,3 +284,55 @@
 | `软件工程元框架成文法-changlog.md` | 续 37 |
 
 **母本 0 行 diff；零豁免／零白名单／零新 gap；词表未改（`timeout_budget` arity 仍为 2）。**
+
+## §12 续批三：`compatible: 2` 登记与三处造词改写方案（2026-11-08）
+
+### §12.1 `compatible` 登记（已落地）
+
+用户裁定：2.3 已明定二元，**登记只是把既有规范抄进词表、让机器可校，不产生新语义**；数据侧 0 调用，无风险。
+
+| 项 | 内容 |
+|---|---|
+| 改动 | `registry/predicate_vocabulary.yaml` `formula_words`：`compatible` 增 `arity: 2`（`source` 仍为 `编译规范 2.3`，`verified: true`） |
+| 依据 | 编译规范 2.3：`compatible` 二元（母本 Y4／7.x 实例均 `compatible(A, B)` 二实参） |
+| 影响 | 四个扫描面内 `compatible(` 调用 **0 处** → S-12 结果不变、硬／软仍 0；仅把「未覆盖」的潜在盲区收为「可判」 |
+| 不做 | `now` **不登记 `arity`**：常量无实参，登记 0 会把 `now` 当成可调用的零元谓词，与 2.3「公式约定词／常量」定位相背；若出现 `now(...)` 仍按未覆盖单列（当前 0 处）。理由已写入 `DATA-SPEC` D3.10「续批三」 |
+
+### §12.2 三处造词的共同定性（暂不入册）
+
+三处都**没有母本签名**，与「未定义概念不得发入册身份证」一致：
+
+| 名字 | 母本出现形态 | 是否可入册 |
+|---|---|---|
+| `shared_data_access` | 仅 X6 属性公式的**量词域**（`∀ shared_data_access: …`），无签名（@2016 一带） | 否 |
+| `depth` | 仅作槽名（`escalation_depth(chain, depth)` 中的 `depth`），无独立谓词 | 否 |
+| `batch_window` | 母本 **0 出现**；仅作 DFL-004 的参数槽名 `[batch_window]` | 否 |
+
+### §12.3 逐条改写方案（待批准后落地，本批不改）
+
+| # | 位置 | 原串 | 拟改串 | 是否同一命题 | 影响面 |
+|---|---|---|---|---|---|
+| 1 | STY-001 `detection_predicate`（@96） | `∃ path: interaction_flow(path, ·, sync_chain) ∧ timeout_budget(path, ·) ∧ [depth(path) 超过 timeout_budget 可容纳的层级数]` | `∃ path: interaction_flow(path, ·, sync_chain) ∧ timeout_budget(path, ·) ∧ [该 path 的跳数超过其超时预算可容纳的层级数]` | **是**。「`depth(path)`」即该 path 的链路跳数（Z4 @2595 用法）；「timeout_budget 可容纳的层级数」仍指同一预算换算的上限，比较关系不变；括号内重复的 `timeout_budget(path, ·)` 收归括号外已有合取项，不丢约束 | 仅 STY-001 一条检测式。`bound_expr`（@69／@72／@78）里的 `depth(path)` 处于**值位**、不抽名、不判元数，本批不动 |
+| 2 | CTR-005 `anti_patterns[1].detection_predicate`（@4194） | `∃ a: [shared_data_access(a)] ∧ (¬[a 满足 3.2.3 四条件] ∨ ¬declared(a))` | **B（建议）**：`∃ D: dataset(D) ∧ ∃ u: access_path(D, u, ·, ·) ∧ [该访问路径为共享数据接入（X6 量词域）] ∧ (¬[该路径满足 3.2.3 四条件] ∨ ¬declared(该路径))`<br>**A（最小改）**：`∃ a: [a 为共享数据接入（X6 量词域）] ∧ (¬[a 满足 3.2.3 四条件] ∨ ¬declared(a))` | **B：是**（量词域由「共享数据接入」改写为「访问路径 ∧ 该路径为共享数据接入」，X6 的 `∀ shared_data_access` 本就作用于共享数据的访问路径；见证拆成 `D`＋`u` 与同族 AP1 同形）。**A：是**（仅把伪调用换成同义条件槽，见证与两支析取不变） | 仅 CTR-005 AP2。B 与 AP1 的 `access_path(D, u, ·, ·)` 同形；`declared` 主体由「接入点 a」变为「该路径」——若视为超语义，退 A |
+| 3 | DFL-004 `anti_patterns[0].detection_predicate`（@5564） | `∃ D: data_flow(D, ·, ·, [batch]) ∧ [D 的消费方新鲜度要求 < batch_window(D)] ∧ ¬has_approved_exception(·, ·, ·)` | `∃ D: data_flow(D, ·, ·, [batch]) ∧ [D 的消费方新鲜度要求 < D 的批窗口长度] ∧ ¬has_approved_exception(·, ·, ·)` | **是**。`batch_window(D)` 即 D 的批窗口长度（DFL-004 自身参数槽 `[batch_window]`），同一比较式与同一不等式关系 | 仅 DFL-004 AP1。`bound_expr` 的 `[batch_window]` 是单 token 参数槽，无调用，不动 |
+
+**结论：三条均可在不改语义下改写，无一条需要新谓词。** 故不触发「补母本出处（D3.6）」那一步。
+
+### §12.4 同族一致性核对（用户要求）
+
+| 概念 | 分布 | 同义位置是否另有写法 | 方案处理 |
+|---|---|---|---|
+| 共享数据接入 | **仅 CTR-005**（`anti_patterns` 1 处 + 注释／`formal_anchor` 2 处）；CTR 之外 0 处 | CTR 族内 **AP1 已用 `access_path(D, u, ·, ·)`** 指同一访问点集合 | 取 **B**，令 AP2 与 AP1 同名同形，避免一族一名 |
+| 链深 | 仅 STY-001（检测式 1 处）＋ STY 值位 3 处 | 词表已有 `sync_chain_depth(F)`，但取 **flow** 而非 **path**，换成它会把见证类型从 path 改到 flow，属语义改动 | 用中文「跳数」表述，不引入第二个名字 |
+| 批窗口 | 仅 DFL-004（检测式 1 处＋`bound_expr` 1 处） | 无 | 用「批窗口长度」表述，与既有参数槽 `[batch_window]` 同名同义 |
+
+反例排除：`QAT-010` 适用面的「共享数据库」属**隐式依赖通道**（反射／共享库／共享数据库／配置注入），与 `shared_data_access`（共享数据接入的契约约束）不是同义位置，不并入。
+
+### §12.5 落地后的预期数字（未落地，仅预估）
+
+三条改写后：准入调用 47→**46**（CTR-005 的 `shared_data_access(a)` 消失）；不在册 info 行 **1→0**（`shared_data_access` 不再计入；`depth`／`batch_window` 本在混合段，不计准入）；豁免段 29→**28**（CTR-005 那段变成纯散文槽，不再计入「含 `(` 的豁免段」）；顶层调用 469、无调用串 888、硬／软 0 均不变。
+
+### §12.6 本批不落地的边界声明
+
+- 本批**只落实 §12.1**；§12.3 三条检测式**未改**（用户要求「先给方案、暂不入册」）。
+- 不改母本；不加豁免／白名单／新 gap；硬 0／软 0。
