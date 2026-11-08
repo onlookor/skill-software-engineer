@@ -7072,7 +7072,7 @@ entries:
         signal_level: P1               # 登记义务已履行而登记内容不完整 → @2515 判别无基准、5.5 @2576 flag 四槽的作用域/级别/生命周期三槽无从构造（Z6 量词域依赖之）；属登记纪律偏离而非性质违例 → P1（MJ-4 判据）
       - pattern_id: CFG-001-AP3
         description: "级别槽一律填 parameter（以级别错填规避行为级判定，使 Z6 的量词域空真）"
-        detection_predicate: "∃ 键: has(parameter) ∧ [该键切换改变任一 Z 系列谓词取值](键)"
+        detection_predicate: "∃ 键: [parameter 级](键) ∧ [该键切换改变任一 Z 系列谓词取值](键)"
         signal_level: P0               # 触及 Z6 的硬性质（@2600-2601「行为级开关治理闭合 —— 硬」）：级别槽错填使量词域空真即治理闭合被规避；@2517 明文「规避行为 = 纪律违例，按硬约束阻塞」→ 定 P0（依 9.2.1 @3600「违例触及硬性质」；分级纪律 @3604 不许运行时即兴改级）
       - pattern_id: CFG-001-AP4
         description: "注册表与实际配置长期不比对（8.2.4 @3357 的静态验证未常态化）"
@@ -7169,7 +7169,7 @@ entries:
         signal_level: P0               # @2515 括注逐字「登记入注册表，不允许运行时即兴判断」＝本条定义性义务；9.2.1 @3604 分级纪律「不许运行时即兴改级」同轴；即兴判别使 @2517 的机器可查面失效 → 触及硬性质（MJ-4 判据）
       - pattern_id: CFG-002-AP2
         description: "以参数级变更之名行行为级变更之实（快照比对不一致却记为 parameter）"
-        detection_predicate: "∃ 变更: has(parameter) ∧ [变更前后 Z 谓词快照不一致](变更)"
+        detection_predicate: "∃ 变更: [parameter 级](变更) ∧ [变更前后 Z 谓词快照不一致](变更)"
         signal_level: P0               # @2517 逐字「规避行为 = 纪律违例，按硬约束阻塞」；9.2.1 @3600 P0 定义「违例触及硬性质」＋0.10 权力条款第一条（Agent 不获得豁免批准的权力）→ P0（MJ-4 判据）
       - pattern_id: CFG-002-AP3
         description: "判据在册但不可求值（Z 谓词无采集面或无快照，判别退化为人工声称）"
@@ -7181,7 +7181,7 @@ entries:
         signal_level: P1               # Z4 @2596「超时预算闭合 —— 条件硬」：未复核即无从判定是否须升格为行为级 → 触及条件硬性质 → P1（9.2.1 @3601；MJ-4 判据）
       - pattern_id: CFG-002-AP5
         description: "参数级变更未留痕（@2515 义务下限『记录留痕即可』未履行）"
-        detection_predicate: "∃ 变更: has(parameter) ∧ ¬[判别留痕在案](变更)"
+        detection_predicate: "∃ 变更: [parameter 级](变更) ∧ ¬[判别留痕在案](变更)"
         signal_level: P2               # 留痕缺失属可追溯性漂移，单独出现不行动 → 9.2.1 @3602 P2＋阈值/趋势双判据；与 CFG-001-AP5 同型（MJ-4 判据）
     formal_anchor:
       - {property_id: Z4, role: consumed_by}   # @2515 括注逐字「超时值变更若影响 Z4 预算闭合则升为行为级」→ 本条判据读入 Z4 的成立与否以决定是否升格；role 取 consumed_by（ENUM_ROLE 三值中，本条既不实现 Z4 也不触发 Z4，而是把 Z4 作为判据输入消费）。Z4 计息 7→8（严格口径 `- {property_id: Z4`）。**不取 Z6**：Z6 的量词域是 flag 实例的治理闭合，implements 侧归 CFG-003、consumed_by 侧归 CFG-004 → 同批内不重复计息（MJ-25 (iv) 第④条：计数主张须显式声明口径）。**不取空列表**：与 CFG-001 不同，本条有母本明文的性质绑定（@2515 括注直指 Z4）→ 块头 formal_anchor 判读段的 (a)(b)(c) 三条依据在本条均不成立
@@ -7289,7 +7289,7 @@ entries:
         signal_level: P0               # Z6 @2600 的第一支 approved(ADR(G)) 失败（硬性质）；同时触及 0.10 权力条款第一条 @m:235「凡 0.5 分级中的高影响决策…一律走批准路径」与 @2537「行为级配置变更（触及 Z 谓词者）属高影响或按级别升格，走批准路径」→ @3600 P0；R1「批准闭环破坏」同型（@3600 例举第四项）
       - pattern_id: CFG-003-AP4
         description: "非行为级开关长期滞留未清理（僵尸开关的泛指面：参数级/实验类/灰度类）"
-        detection_predicate: "∃ G: [开关超期未清理](G) ∧ ¬has(behavior)"
+        detection_predicate: "∃ G: [开关超期未清理](G) ∧ ¬[behavior 级](G)"
         signal_level: P2               # @2516 逐字「到期未清理 → **P2 漂移信号**（僵尸开关 = 隐式架构分支，腐化源）」＋@3602 P2 列明「僵尸开关（Z6）」＋@3633「**其余 P2**」→ 三处一致取 P2（监测级：单独出现不行动，记录 + 阈值/趋势双判据监测，积累后聚合分析）；量词域排除 behavior 级以免与 AP2 双计（MJ-25 (iv) 同型：同一事实不在两级重复计息）
       - pattern_id: CFG-003-AP5
         description: "反复顺延 expiry 以规避清理（改期不改物，且顺延未走注册表变更）"
@@ -7379,7 +7379,7 @@ entries:
     anti_patterns:
       - pattern_id: CFG-004-AP1
         description: "以参数级变更之名行行为级变更之实，且未被硬约束阻塞（规避行为成形）"
-        detection_predicate: "∃ 变更: has(parameter) ∧ [变更前后 Z 谓词快照不一致](变更) ∧ ¬[已按硬约束阻塞](变更)"
+        detection_predicate: "∃ 变更: [parameter 级](变更) ∧ [变更前后 Z 谓词快照不一致](变更) ∧ ¬[已按硬约束阻塞](变更)"
         signal_level: P0               # @2517 逐字「规避行为 = 纪律违例，按硬约束阻塞」＋9.2.1 @3600 P0「即时阻塞：相关变更冻结、升级裁决启动（CH-C(2)）；不允许带病发布」。与 CFG-002-AP2 的分工：彼者登**规避事实**（声称 parameter 而快照不一致），本 AP 登**规避未被阻塞**（联动面失效）→ 两支不同轴，不重复计息（MJ-25 (iv)）；本 AP 命中时 CFG-002-AP2 必已命中，反之不必然（检测面可捕获而阻塞面缺失）
       - pattern_id: CFG-004-AP2
         description: "Agent 自行批准行为级配置变更（批准闭环由被约束方自身闭合）"

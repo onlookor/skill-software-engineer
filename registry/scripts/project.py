@@ -228,24 +228,16 @@ def strip_anchor_subscripts(s: str) -> str:
     return ANCHOR_KEY_TOKEN_RE.sub(lambda m: re.sub(r'\[\d+\]', '', m.group(0)), s)
 
 
-def outside_brackets(s: str) -> str:
-    """剔除方括号内文本（占位符内容不参与谓词名提取）。"""
-    depth, res = 0, []
-    for ch in s:
-        if ch == '[':
-            depth += 1
-        elif ch == ']':
-            depth = max(0, depth - 1)
-        elif depth == 0:
-            res.append(ch)
-    return ''.join(res)
-
-
 PRED_CALL_RE = re.compile(r'([A-Za-z_][A-Za-z0-9_]*)\s*\(')
 
 
 def predicate_names(s: str) -> list[str]:
-    return PRED_CALL_RE.findall(outside_brackets(s))
+    """谓词名抽取：方括号内文本剔除、`[`／`]` 边界保留（与 S-12 实参计数同源）。
+
+    不用「删除括号与内容」的旧口径：那会把 `a[b]c(` 拼成幻名 `ac`、并让
+    `foo[bar](x)` 在 M4 可见而 S-12 不可见（D3.10 口径统一）。
+    """
+    return PRED_CALL_RE.findall(mask_bracket_contents(s))
 
 
 def expr_of(item) -> str:
@@ -329,7 +321,8 @@ def mask_bracket_contents(s: str) -> str:
     """把方括号内文本替换为等长空格，保留 `[`／`]` 边界。
 
     用于 S-12 实参计数：方括号整体占位是**一个实参位**（`registered([契约])`
-    记 argc=1），而 M4 的谓词名提取仍用 outside_brackets（不引入括号内名字）。
+    记 argc=1）；M4 的谓词名提取同用本函数（D3.10 口径统一：括号内文本不抽取、
+    `[`／`]` 边界保留，避免跨括号拼接幻名与两套扫描面不一致）。
     """
     depth, res = 0, []
     for ch in s:
