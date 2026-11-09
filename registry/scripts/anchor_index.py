@@ -64,6 +64,20 @@ LIVE = [
     '参考资料缺口核对报告.md',
 ]
 
+# 0.22.2 承诺四：文件三分。LIVE／FROZEN 为显式清单，其余为 sandbox。
+def classify(rel: str) -> str:
+    in_live, in_frozen = rel in LIVE, rel in FROZEN
+    if in_live and in_frozen:
+        return 'conflict'
+    if in_live:
+        return 'live'
+    if in_frozen:
+        return 'frozen'
+    return 'sandbox'
+
+SCOPE_DENOM = ('live',)
+
+
 TARGETS = {  # prefix -> (相对路径, kind)
     'm': ('软件工程元框架成文法.md', 'mother'),
     'r': ('registry/method_registry.yaml', 'registry'),
@@ -162,6 +176,68 @@ class Doc:
         hits = [ln for (ln, _lvl, num) in self.headings if num == clause]
         return hits[0] if len(hits) == 1 else (None if not hits else -1)
 
+    # ── 结构地址解析（ADR-ANCHOR-01 §3）──────────────────────────
+    def clause_span(self, clause: str):
+        """(标题行, 结束行[不含])；条款号不唯一或不存在返回 None。"""
+        hits = [(ln, lvl) for (ln, lvl, num) in self.headings if num == clause]
+        if len(hits) != 1:
+            return None
+        ln, lvl = hits[0]
+        end = len(self.lines) + 1
+        for (l2, lvl2, _n2) in self.headings:
+            if l2 > ln and lvl2 <= lvl:
+                end = l2
+                break
+        return ln, end
+
+    def para_lines(self, clause: str):
+        """条款内正文段落首行（非标题/表格/列表/围栏/空行），1-based 序位。"""
+        span = self.clause_span(clause)
+        if not span:
+            return []
+        start, end = span
+        out, fence = [], False
+        for i in range(start + 1, end):
+            s = self.lines[i - 1].strip()
+            if s.startswith('```'):
+                fence = not fence
+                continue
+            if fence or not s or s.startswith('#') or s.startswith('|') or set(s) <= set('-|: '):
+                continue
+            if re.match(r'^(?:[-*+]|\d+[.)])\s', s):
+                continue
+            out.append(i)
+        return out
+
+    def list_item_paths(self, clause: str):
+        """条款内列表项 {路径: 行号}；路径形如 `1`／`2.3`（按缩进层级）。"""
+        span = self.clause_span(clause)
+        if not span:
+            return {}
+        start, end = span
+        out, counters, fence = {}, [], False
+        for i in range(start + 1, end):
+            raw = self.lines[i - 1]
+            s = raw.strip()
+            if s.startswith('```'):
+                fence = not fence
+                continue
+            if fence or not re.match(r'^(?:[-*+]|\d+[.)])\s', s):
+                continue
+            indent = len(raw) - len(raw.lstrip(' '))
+            level = min(indent // 2, 5)
+            while len(counters) <= level:
+                counters.append(0)
+            counters[level] += 1
+            del counters[level + 1:]
+            out['.'.join(str(c) for c in counters)] = i
+        return out
+
+    def heading_line(self, label: str):
+        hits = [ln for (ln, _lvl, num) in self.headings if num == label]
+        return hits[0] if len(hits) == 1 else (None if not hits else -1)
+
+
 
 # ── 台账装载（只读）─────────────────────────────────────────────
 def load_registry():
@@ -208,10 +284,104 @@ LABEL_CLASSES = ('formula_label', 'field_label')
 
 # 新式文档/剖面锚：@d:<路径>#<sub>、@p:<KIND>#<sub>
 DOC_ANCHOR_RE = re.compile(r'@(?P<prefix>[dp]):(?P<loc>[^\s#，。；|）（：、／]+)')
+# 结构地址锚（ADR-ANCHOR-01）：@m:<条款>[#sub]、@r:<entry>[#field-…]、@v:<term>、@c:<节>
+STRUCT_RE = re.compile(
+    r'@(?P<prefix>[mrv]):(?P<loc>[A-Za-z0-9_.\-]+)(?:#(?P<sub>[^\s，。；|）（：、／]+))?')
 # 规范 §2 新增两式（2026-11-05 裁定）：key- 点路径（下标必须保留）／sec- 逐字标题
 SUB_KEY_RE = re.compile(r'#key-(?P<path>[A-Za-z0-9_.\[\]-]+)')
 SUB_FN_RE = re.compile(r'#fn-(?P<name>[A-Za-z_][A-Za-z0-9_]*)')
 PY_SUFFIXES = ('.py',)
+
+
+def build_rowkey_map(rowkey_rows):
+    """{(doc, clause, '#row-…'): [行号]}，供结构地址解析。"""
+    out = defaultdict(list)
+    for r in rowkey_rows:
+        out[(r['doc'], r['clause'], r['key'])].append(r['line'])
+    return out
+
+
+def vocab_terms() -> set:
+    d = yaml.safe_load(read(VOCAB_YAML)) or {}
+    out = set()
+    for key in ('vocab', 'terms', 'predicates'):
+        val = d.get(key)
+        if isinstance(val, list):
+            for it in val:
+                if isinstance(it, dict):
+                    for k in ('name', 'term', 'id'):
+                        if it.get(k):
+                            out.add(str(it[k]))
+                elif isinstance(it, str):
+                    out.add(it)
+        elif isinstance(val, dict):
+            out.update(str(k) for k in val)
+    return out
+
+
+def resolve_struct(prefix: str, loc: str, sub: str, docs: dict,
+                   rowkey_map, reg, terms: set) -> dict:
+    """解析结构地址；返回落点与候选取数（>1 由 F-9 报冲突）。"""
+    empty = dict(landing_line='', landing_form='', clause='', resolvable_to='none',
+                 struct_candidates=0, struct_unit='')
+    if prefix == 'm':
+        doc = docs.get('软件工程元框架成文法.md')
+        if not doc or not doc.exists or not re.fullmatch(r'\d+(?:\.\d+)+', loc):
+            return empty
+        span = doc.clause_span(loc)
+        if not span:
+            return empty
+        if not sub or sub == 'head':
+            return dict(landing_line=span[0], landing_form='heading', clause=loc,
+                        resolvable_to='clause_head', struct_candidates=1,
+                        struct_unit=f'm:{loc}:head')
+        if sub.startswith('p-') and sub[2:].isdigit():
+            lines = doc.para_lines(loc)
+            n = int(sub[2:])
+            if 1 <= n <= len(lines):
+                return dict(landing_line=lines[n - 1], landing_form='paragraph', clause=loc,
+                            resolvable_to='para', struct_candidates=1,
+                            struct_unit=f'm:{loc}:{sub}')
+            return empty
+        if sub.startswith('li-'):
+            path = sub[3:]
+            if not re.fullmatch(r'\d+(?:\.\d+)*', path):
+                return empty
+            hit = doc.list_item_paths(loc).get(path)
+            if hit:
+                return dict(landing_line=hit, landing_form='list_item', clause=loc,
+                            resolvable_to='list_item', struct_candidates=1,
+                            struct_unit=f'm:{loc}:{sub}')
+            return empty
+        if sub.startswith('row-'):
+            cand = rowkey_map.get(('软件工程元框架成文法.md', loc, '#' + sub), [])
+            if len(cand) == 1:
+                return dict(landing_line=cand[0], landing_form='table_row', clause=loc,
+                            resolvable_to='row_id', struct_candidates=1,
+                            struct_unit=f'm:{loc}:{sub}')
+            return dict(empty, struct_candidates=len(cand), struct_unit=f'm:{loc}:{sub}')
+        return empty
+    if prefix == 'r':
+        if not re.match(r'^[A-Za-z][A-Za-z0-9]*-[A-Za-z0-9]+$', loc):
+            return empty
+        e = entry_by_id(reg, loc)
+        if e is None:
+            return empty
+        if not sub:
+            return dict(landing_line='', landing_form='entry', clause='',
+                        resolvable_to='entry', struct_candidates=1, struct_unit=f'r:{loc}')
+        if sub.startswith('field-'):
+            ok = has_path(e, sub[6:])
+            return dict(landing_line='', landing_form='field', clause='',
+                        resolvable_to='entry_field' if ok else 'none',
+                        struct_candidates=1 if ok else 0, struct_unit=f'r:{loc}:{sub}')
+        return empty
+    if prefix == 'v':
+        ok = loc in terms
+        return dict(landing_line='', landing_form='term', clause='',
+                    resolvable_to='term' if ok else 'none',
+                    struct_candidates=1 if ok else 0, struct_unit=f'v:{loc}')
+    return empty
 
 
 def _split_dotted(path: str):
@@ -453,7 +623,9 @@ def assign_target(rel: str, num: int, prefix, ctx: str, docs: dict) -> tuple[str
     return ('软件工程元框架成文法.md', 'mother', 'default')
 
 
-def scan(docs: dict, reg, row_ids: set) -> dict:
+def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
+    rowkey_map = rowkey_map or {}
+    terms = terms or set()
     rows = []
     for rel in sorted(docs):
         doc = docs[rel]
@@ -464,7 +636,33 @@ def scan(docs: dict, reg, row_ids: set) -> dict:
                 continue
             if doc.path.suffix == '.py' and esc(line):
                 continue
+            # 结构地址锚优先（@m:条款[#sub]／@r:entry[#field-]／@v:term）
+            for m in STRUCT_RE.finditer(line):
+                prefix, loc = m.group('prefix'), m.group('loc')
+                sub = m.group('sub') or ''
+                if re.fullmatch(r'\d{1,5}', loc):      # 纯数字 = 旧式行锚，交给 LINE_RE
+                    continue
+                res = resolve_struct(prefix, loc, sub, docs, rowkey_map, reg, terms)
+                tgt_rel = {'m': '软件工程元框架成文法.md',
+                           'r': 'registry/method_registry.yaml',
+                           'v': 'registry/predicate_vocabulary.yaml'}[prefix]
+                tgt_kind = {'m': 'mother', 'r': 'registry', 'v': 'vocab'}[prefix]
+                claimed.append((m.start(), m.end()))
+                rows.append(dict(
+                    file=rel, line=i, col=m.start() + 1, token=m.group(0), form='struct',
+                    in_code_span=in_backticks(line, m.start()), in_comment=esc(line),
+                    in_yaml_value=rel.endswith('.yaml') and bool(line.strip()) and not esc(line),
+                    target_file=tgt_rel, target_kind=tgt_kind, assign_basis='explicit',
+                    landing_form=res['landing_form'], landing_line=res['landing_line'],
+                    clause=res['clause'], resolvable_to=res['resolvable_to'],
+                    row_key='', row_registered='', range='0', drift='n/a', drift_delta='',
+                    sub_kind=(sub.split('-')[0] if sub else 'head'), sub_value=sub,
+                    struct_candidates=res['struct_candidates'], struct_unit=res['struct_unit'],
+                    label_class='',
+                ))
             for m in LINE_RE.finditer(line):
+                if any(s <= m.start() < e for s, e in claimed):
+                    continue
                 a = int(m.group('a')); b = m.group('b')
                 range_end = ''
                 range_note = ''
@@ -779,57 +977,45 @@ def classify_mixed(rows):
     return mixed_live, frozen_only, occ
 
 
-# ── 断言 F-1～F-8 ───────────────────────────────────────────────
-def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids) -> list[dict]:
+# ── 断言 F-1～F-10（ADR-ANCHOR-01 §6）──────────────────────────
+def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids, f10=None) -> list[dict]:
     out = []
-    live_rows = [r for r in rows if r['file'] in LIVE and r['form'] in ('legacy', 'prefix')]
-    live_all = [r for r in rows if r['file'] in LIVE]
-    frozen_rows = [r for r in rows if r['file'] in FROZEN and r['form'] in ('legacy', 'prefix')]
-    if mode == 'prefix_id':
-        bare = [r for r in live_all if r['form'] == 'key_at' or r['resolvable_to'] in ('line_only', 'none')]
-        desc = 'F-1（prefix_id）：活跃锚点必须解析到条款/row_id/字段'
-    elif mode == 'prefix':
-        bare = [r for r in live_all if r['form'] in ('legacy', 'key_at')]
-        desc = 'F-1（prefix）：活跃锚点必须带目标前缀'
-    else:
-        bare = [r for r in live_rows if r['form'] == 'legacy']
-        desc = 'F-1（none，现状度量）：活跃文件内的裸行号数量'
-    out.append(dict(id='F-1', desc=desc, status='fail' if bare else 'pass', count=len(bare),
-                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in bare[:10])))
-    # F-2
-    miss = [r for r in live_all if r['form'] in ('prefix_doc', 'prefix_field')
+    live_all = [r for r in rows if classify(r['file']) == 'live']
+    live_line = [r for r in live_all if r['form'] in ('legacy', 'prefix')]
+    frozen_line = [r for r in rows if classify(r['file']) == 'frozen'
+                   and r['form'] in ('legacy', 'prefix')]
+    conflict = sorted({r['file'] for r in rows if classify(r['file']) == 'conflict'})
+    out.append(dict(id='CFG-01', desc='同一文件不得同时命中 LIVE 与 FROZEN',
+                    status='fail' if conflict else 'pass', count=len(conflict),
+                    examples=' | '.join(conflict[:10])))
+    # F-1：LIVE 内非结构地址锚（裸行号＋带前缀行号）
+    out.append(dict(id='F-1', desc='F-1：LIVE 内非结构地址锚数（裸行号＋带前缀行号）＝0',
+                    status='fail' if live_line else 'pass', count=len(live_line),
+                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in live_line[:10])))
+    # F-2：结构地址必须解析到恰一结构单元；@!GAP: 不在扫描面内
+    miss = [r for r in live_all if r['form'] in ('struct', 'prefix_doc', 'prefix_field')
             and r['resolvable_to'] == 'none']
-    if mode != 'none':
-        miss += [r for r in live_all if r['form'] == 'key_at']
-    miss += [r for r in live_all if r['form'] in ('legacy', 'prefix')
-             and (r['resolvable_to'] == 'none' or int(r['landing_line'] or 0) < 1
-                  or (r['target_kind'] in ('mother', 'registry', 'profiles', 'vocab', 'compile')
-                      and int(r['landing_line'] or 0) > len(docs.get(r['target_file'], Doc(r['target_file'])).lines))
-                  or (mode == 'prefix_id' and r['target_kind'] in ('mother', 'registry')
-                      and r['resolvable_to'] not in ('clause_id', 'row_id')))]
-    out.append(dict(id='F-2', desc='每条锚点可解析（文件/条款/子锚）',
+    out.append(dict(id='F-2', desc='F-2：结构地址解析到恰一结构单元（0 个即失败）',
                     status='fail' if miss else 'pass', count=len(miss),
                     examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}->{r['target_file']}" for r in miss[:10])))
-    # F-3 漂移：hard（超界/目标缺失/反向）+ soft（邻接条款号不一致，启发式）
-    drift_hard = [r for r in live_rows if r['drift'] in ('out_of_range', 'target_missing')]
-    drift_soft = [r for r in live_rows if r['drift'] == 'suspect_clause_mismatch']
-    out.append(dict(id='F-3', desc='漂移例外归零（hard：超界/目标缺失）',
+    # F-3：hard＝旧式行锚超界/目标缺失；soft＝邻接条款号不符（启发式）
+    drift_hard = [r for r in live_line if r['drift'] in ('out_of_range', 'target_missing')]
+    drift_soft = [r for r in live_line if r['drift'] == 'suspect_clause_mismatch']
+    out.append(dict(id='F-3', desc='F-3：漂移例外归零（hard：超界/目标缺失）',
                     status='fail' if drift_hard else 'pass', count=len(drift_hard),
                     examples=' | '.join(f"{r['file']}:{r['line']} {r['token']} {r['drift']}({r['drift_delta']})" for r in drift_hard[:10]) +
                              f' || soft_suspect={len(drift_soft)}'))
-    # F-4 跨目标类歧义串（忽略 unknown，unknown 归 F-2/F-3）
-    # 口径按规范 §8：冻结文件只做快照复算，不计入 F-1～F-6 的失败计数。
+    # F-4：跨目标类歧义串（冻结侧只做快照，见 INFO-1）
     mixed, frozen_only, frozen_occ = classify_mixed(rows)
-    out.append(dict(id='F-4', desc='同一锚点串不跨目标类',
+    out.append(dict(id='F-4', desc='F-4：同一锚点串不跨目标类',
                     status='fail' if mixed else 'pass', count=len(mixed),
                     examples=' | '.join(f'{k}:{"/".join(sorted(v))}' for k, v in list(mixed.items())[:10])))
-    # INFO-1：仅因冻结文件才成 mixed 的串，info 级，不计入 F-4 分母、不计失败
     out.append(dict(id='INFO-1', desc='frozen_only_mixed（仅冻结侧致歧义；info，不计入 F-4 分母）',
                     status='info', count=len(frozen_only),
                     examples=f'live_occurrences={frozen_occ} | ' +
                              ' | '.join(f'{k}:{"/".join(sorted(v))}' for k, v in
                                         list(frozen_only.items())[:10])))
-    # F-5 行键唯一性：表标识＋（必要时）次级键，同条款内必须唯一（规范 §3.1）
+    # F-5 行键唯一性
     dup_keys = Counter((r['doc'], r['clause'], r['key']) for r in rowkeys)
     dups = sum(v - 1 for v in dup_keys.values() if v > 1)
     out.append(dict(id='F-5', desc='行键式 row 子锚在同条款内唯一（表标识＋次级键）',
@@ -837,13 +1023,12 @@ def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids) -> list[dict]:
                     count=dups + len(unresolved_ids),
                     examples=' | '.join(f'{c}/{k}×{v}' for (d_, c, k), v in dup_keys.items() if v > 1)[:300] +
                              (f' || unresolved_table_id={unresolved_ids}' if unresolved_ids else '')))
-    # F-6 区间反向（短式已按首位补全；仍反向者记失败）
-    bad = [f"{r['file']}:{r['line']} {r['token']}" for r in live_rows if r['range_note'] == 'reversed']
-    raw_rev = len(bad)
-    out.append(dict(id='F-6', desc='区间起止有序，无反向',
-                    status='fail' if raw_rev else 'pass', count=raw_rev,
+    # F-6 区间反向
+    bad = [f"{r['file']}:{r['line']} {r['token']}" for r in live_line if r['range_note'] == 'reversed']
+    out.append(dict(id='F-6', desc='F-6：区间起止有序，无反向',
+                    status='fail' if bad else 'pass', count=len(bad),
                     examples=' | '.join(bad[:10])))
-    # F-7 台账计数守恒（内部一致性）
+    # F-7 台账计数守恒
     entries = reg.get('entries') or []
     meta_n = (reg.get('meta') or {}).get('entry_count')
     seed_n = sum(1 for e in entries if e.get('status') == 'seed')
@@ -852,6 +1037,19 @@ def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids) -> list[dict]:
                     status='pass' if ok7 else 'fail', count=0 if ok7 else 1,
                     examples=f'entries={len(entries)} meta.entry_count={meta_n} seed={seed_n} '
                              f'gaps={len(reg.get("gaps") or [])} SO={len(reg.get("survey_obligations") or [])}'))
+    # F-9 地址唯一性：(clause, sub) 解析到 >1 个单元即冲突
+    amb = [r for r in live_all if r['form'] == 'struct' and int(r.get('struct_candidates') or 0) > 1]
+    out.append(dict(id='F-9', desc='F-9：结构地址 (clause, sub) 唯一性冲突＝0',
+                    status='fail' if amb else 'pass', count=len(amb),
+                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in amb[:10])))
+    # F-10 重排稳定性：与本文件基线比对（B−1 后由 B0 冻结）
+    f10 = f10 or dict(status='info', count=0, examples='baseline not frozen', diff={})
+    out.append(dict(id='F-10', desc='F-10：重排前后结构地址变化集＝本批声明清单',
+                    status=f10['status'], count=f10['count'], examples=f10['examples']))
+    # INFO-2 冻结侧行号锚快照（只观测）
+    out.append(dict(id='INFO-2', desc='冻结侧行号锚快照（as-of 豁免，只观测）',
+                    status='info', count=len(frozen_line),
+                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in frozen_line[:5])))
     return out
 
 
@@ -874,6 +1072,10 @@ def main(argv=None) -> int:
     ap.add_argument('--out', default=str(REG / 'anchor_index'), help='输出目录（默认 registry/anchor_index）')
     ap.add_argument('--target-mode', choices=('none', 'prefix', 'prefix_id'), default='none',
                     help='none=现状; prefix=全部带目标前缀; prefix_id=前缀+ID+子锚')
+    ap.add_argument('--freeze-baseline', action='store_true',
+                    help='把本次结构地址解析结果写为 registry/anchor_baseline.json（供 F-10）')
+    ap.add_argument('--expected-changes', default='',
+                    help='本批声明的变化清单 JSON（key 数组）；F-10 只允许清单内的变化')
     args = ap.parse_args(argv)
 
     rels = target_files()
@@ -882,17 +1084,50 @@ def main(argv=None) -> int:
                 'registry/predicate_vocabulary.yaml', '编译规范.md'] + LIVE + FROZEN:
         docs.setdefault(rel, Doc(rel))
     reg, row_ids = load_registry()
-
-    rows, label_rows = split_labels(scan(docs, reg, row_ids))
     rowkey_rows, unresolved_ids, affected = derive_row_keys(docs)
-    assert_rows = assertions(rows, docs, reg, args.target_mode, rowkey_rows, unresolved_ids)
-    targets_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'form', 'sub_kind', 'sub_value',
+    rowkey_map = build_rowkey_map(rowkey_rows)
+    terms = vocab_terms()
+
+    rows, label_rows = split_labels(scan(docs, reg, row_ids, rowkey_map, terms))
+    for r in rows:
+        r['scope'] = classify(r['file'])
+
+    def struct_map(all_rows):
+        occ, out = Counter(), {}
+        for r in all_rows:
+            if r['form'] != 'struct':
+                continue
+            k = (r['file'], r['token'], occ[(r['file'], r['token'])])
+            occ[(r['file'], r['token'])] += 1
+            out['%s|%s|%d' % k] = r['struct_unit']
+        return out
+
+    cur_map = struct_map(rows)
+    base_path = REG / 'anchor_baseline.json'
+    if args.freeze_baseline:
+        base_path.write_text(json.dumps(cur_map, ensure_ascii=False, indent=1, sort_keys=True),
+                             encoding='utf-8')
+        f10 = dict(status='info', count=0, examples=f'baseline frozen: {len(cur_map)} structural anchors')
+    elif not base_path.exists():
+        f10 = dict(status='info', count=0, examples='baseline not frozen', diff={})
+    else:
+        base_map = json.loads(base_path.read_text(encoding='utf-8'))
+        diff = {k: (base_map.get(k), cur_map.get(k)) for k in set(base_map) | set(cur_map)
+                if base_map.get(k) != cur_map.get(k)}
+        allowed = set()
+        if args.expected_changes and Path(args.expected_changes).exists():
+            allowed = set(json.loads(Path(args.expected_changes).read_text(encoding='utf-8')))
+        unexpected = {k: v for k, v in diff.items() if k not in allowed}
+        f10 = dict(status='fail' if unexpected else 'pass', count=len(diff), diff=diff,
+                   examples=' | '.join(f'{k}:{v[0]}->{v[1]}' for k, v in list(diff.items())[:10]))
+    assert_rows = assertions(rows, docs, reg, args.target_mode, rowkey_rows, unresolved_ids, f10)
+    targets_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'form', 'scope', 'sub_kind', 'sub_value',
                                        'target_file', 'target_kind', 'assign_basis', 'in_yaml_value',
                                        'in_comment', 'in_code_span')} for r in rows]
-    resolv_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'landing_form', 'landing_line',
+    resolv_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'scope', 'landing_form', 'landing_line',
                                       'clause', 'row_key', 'row_registered', 'resolvable_to', 'range')}
                    for r in rows]
-    drift_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'target_file', 'target_kind',
+    drift_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'scope', 'target_file', 'target_kind',
                                      'landing_line', 'drift', 'drift_delta')} for r in rows]
 
     out = Path(args.out)
@@ -934,7 +1169,9 @@ def main(argv=None) -> int:
     (out / 'anchor_index.json').write_text(json.dumps(index, ensure_ascii=False, indent=1), encoding='utf-8')
 
     # F-8 幂等：再扫一次比较哈希
-    rows2, _label2 = split_labels(scan(docs, reg, row_ids))
+    rows2, _label2 = split_labels(scan(docs, reg, row_ids, rowkey_map, terms))
+    for r in rows2:
+        r['scope'] = classify(r['file'])
     h1 = hashlib.sha256(json.dumps(targets_rows, ensure_ascii=False, sort_keys=True).encode()).hexdigest()
     h2 = hashlib.sha256(json.dumps([{k: r[k] for k in targets_rows[0]} for r in rows2], ensure_ascii=False,
                                    sort_keys=True).encode()).hexdigest()
@@ -969,8 +1206,10 @@ def main(argv=None) -> int:
         'comment_anchors': sum(1 for r in rows if r['in_comment']),
         'code_span_anchors': sum(1 for r in rows if r['in_code_span']),
         'ranges': sum(1 for r in rows if r['range'] == '1'),
-        'live_anchors': sum(1 for r in rows if r['file'] in LIVE and r['form'] in ('legacy', 'prefix')),
-        'frozen_anchors': sum(1 for r in rows if r['file'] in FROZEN and r['form'] in ('legacy', 'prefix')),
+        'live_anchors': sum(1 for r in rows if r['scope'] == 'live' and r['form'] in ('legacy', 'prefix')),
+        'frozen_anchors': sum(1 for r in rows if r['scope'] == 'frozen' and r['form'] in ('legacy', 'prefix')),
+        'struct_anchors': sum(1 for r in rows if r['form'] == 'struct'),
+        'by_scope': dict(Counter(r['scope'] for r in rows)),
         'label_refs_total': len(label_rows),
         'label_refs_by_class': dict(Counter(r['label_class'] for r in label_rows)),
         'label_refs_by_file': dict(Counter(r['file'] for r in label_rows)),
