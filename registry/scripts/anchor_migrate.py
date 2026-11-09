@@ -374,37 +374,48 @@ def main() -> int:
         else:
             note = f'未处理 target_kind={kind}'
 
+        # 逐字引文豁免（0.22.2 承诺四）：冻结文本 #sec- 引文正文内的锚串属引文，不迁移
+        sdoc = docs.get(r['file']) or A.Doc(r['file'])
+        curline = sdoc.lines[int(r['line']) - 1] if sdoc.exists else ''
+        qf = A.quoted_frozen_spans(curline, docs) if curline else []
+        in_qf = any(s <= int(r['col']) - 1 < e for s, e in qf)
+        if in_qf:
+            token = r['token']
+            note = '引文正文逐字保留（0.22.2 承诺四；INFO-3）'
+
         # row-/code- 子锚禁用字符转义（ADR-ANCHOR-01 §3.7）；转义后须与原行键可逆
-        if token and token.startswith('@m:') and '#' in token:
+        if not in_qf and token and token.startswith('@m:') and '#' in token:
             _c, _, _s = token[3:].partition('#')
             if _s.startswith(('row-', 'code-')):
                 token = f'@m:{_c}#{A.escape_sub(_s)}'
 
-        ok, landing = validate(token, docs, rkm_cur, reg, terms, funcs, syms)
+        ok, landing = validate(token, docs, rkm_cur, reg, terms, funcs, syms) if not in_qf else (True, '')
         if token and not ok:
             cat = 'manual'
             note = (note + '; ' if note else '') + '新地址不可解析'
         if not token:
             cat = 'manual' if form in ('out_of_range', 'blank') or kind == 'profiles' else cat
-        if form == 'out_of_range' or (kind == 'doc' and tf.endswith('.py') and not token):
+        if not in_qf and (form == 'out_of_range' or (kind == 'doc' and tf.endswith('.py') and not token)):
             token = '@!GAP:' + (r['token'].replace('@', 'stale-') if form == 'out_of_range' else 'project-no-unit')
             cat, note = 'manual', note or 'R-2 登记 GAP'
         fp = ''
-        if kind == 'mother' and form in ('heading', 'paragraph', 'list_item', 'table_row', 'code') and ok:
+        if in_qf:
+            fp = 'exempt'                    # 引文正文不迁移，无落点比对
+        elif kind == 'mother' and form in ('heading', 'paragraph', 'list_item', 'table_row', 'code') and ok:
             f_old = A.landing_fingerprint(doc_snap, line, form if form != 'heading' else 'heading')
             f_new = A.landing_fingerprint(docs[MOTHER], landing, 'table_row' if form == 'table_row' else form)
             fp = 'match' if f_old == f_new else 'diff'
         # 后接字符决定是否补一个空格，防止 sub 正则吞入尾文
-        nxt, sdoc = '', docs.get(r['file']) or A.Doc(r['file'])
-        if sdoc.exists and token:
-            ln = sdoc.lines[int(r['line']) - 1]
+        nxt = ''
+        if sdoc.exists and token and not in_qf:
             e = int(r['col']) - 1 + len(r['token'])
-            nxt = ln[e] if e < len(ln) else ''
+            nxt = curline[e] if e < len(curline) else ''
         pad = needs_pad(token, nxt)
         rows.append(dict(src=r['file'], line=r['line'], col=r['col'], old_token=r['token'],
                          form=r['form'], target_kind=kind, target_file=tf,
                          old_landing_line=line, old_form=rr['landing_form'],
                          new_token=token or '', category=cat, note=note, fp_match=fp,
+                         scan_domain='quoted_frozen' if in_qf else 'active',
                          pad='1' if pad else '0'))
 
     for r in targets:
@@ -413,7 +424,8 @@ def main() -> int:
                              form=r['form'], target_kind=r['target_kind'],
                              target_file=r['target_file'], old_landing_line='', old_form='struct',
                              new_token=r['token'], category='auto',
-                             note='存量已清（F-2 清理批）', fp_match='n/a', pad='0'))
+                             note='存量已清（F-2 清理批）', fp_match='n/a',
+                             scan_domain='active', pad='0'))
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)

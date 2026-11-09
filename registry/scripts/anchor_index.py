@@ -679,6 +679,31 @@ def assign_target(rel: str, num: int, prefix, ctx: str, docs: dict) -> tuple[str
     return ('软件工程元框架成文法.md', 'mother', 'default')
 
 
+def quoted_frozen_spans(line: str, docs: dict):
+    """冻结文本 `#sec-` 逐字引文的正文区间（0.22.2 承诺四；ADR-ANCHOR-01 §7.8）。
+
+    `@d:<冻结文件>#sec-<标题>` 的标题字符区间 [start, end) 内字节即引文正文；
+    区间内出现的锚串按 as-of 逐字保留、不迁移、不计入 F-1（INFO-3 单列）。
+    """
+    spans = []
+    for m in DOC_ANCHOR_RE.finditer(line):
+        if m.group('prefix') != 'd':
+            continue
+        loc = m.group('loc')
+        if loc not in FROZEN:
+            continue
+        rest = line[m.end():]
+        if not rest.startswith('#sec-'):
+            continue
+        tdoc = docs.get(loc) or Doc(loc)
+        if not tdoc.exists:
+            continue
+        best, n = sec_match(tdoc, rest[5:])
+        if best and n == 1:
+            spans.append((m.end() + 5, m.end() + 5 + len(best)))
+    return spans
+
+
 def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
     rowkey_map = rowkey_map or {}
     terms = terms or set()
@@ -692,6 +717,13 @@ def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
                 continue
             if doc.path.suffix == '.py' and esc(line):
                 continue
+            qf = quoted_frozen_spans(line, docs)
+
+            def qf_at(pos):
+                for s, e in qf:
+                    if s <= pos < e:
+                        return s
+                return -1
             # 结构地址锚优先（@m:条款[#sub]／@r:entry[#field-]／@v:term）
             for m in STRUCT_RE.finditer(line):
                 prefix, loc = m.group('prefix'), m.group('loc')
@@ -714,7 +746,8 @@ def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
                     row_key='', row_registered='', range='0', drift='n/a', drift_delta='',
                     sub_kind=(sub.split('-')[0] if sub else 'head'), sub_value=sub,
                     struct_candidates=res['struct_candidates'], struct_unit=res['struct_unit'],
-                    label_class='',
+                    label_class='', scan_domain=('quoted_frozen' if qf_at(m.start()) >= 0 else 'active'),
+                    qf_span=str(qf_at(m.start())),
                 ))
             for m in LINE_RE.finditer(line):
                 if any(s <= m.start() < e for s, e in claimed):
@@ -800,6 +833,8 @@ def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
                     range='1' if b else '0', range_end=range_end, range_note=range_note,
                     drift=drift, drift_delta=delta,
                     sub_kind='', sub_value='',
+                    scan_domain=('quoted_frozen' if qf_at(m.start()) >= 0 else 'active'),
+                    qf_span=str(qf_at(m.start())),
                 ))
                 claimed.append((m.start(), m.end()))
             # 条款式（@1.2.3）单列
@@ -816,6 +851,8 @@ def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
                     resolvable_to='clause_id', row_key='', row_registered='',
                     range='0', drift='n/a', drift_delta='',
                     sub_kind='', sub_value='',
+                    scan_domain=('quoted_frozen' if qf_at(m.start()) >= 0 else 'active'),
+                    qf_span=str(qf_at(m.start())),
                 ))
             for m in DOC_ANCHOR_RE.finditer(line):
                 if any(s <= m.start() < e for s, e in claimed):
@@ -884,6 +921,8 @@ def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
                     landing_form='', landing_line='', clause='', resolvable_to=resolvable,
                     row_key='', row_registered='', range='0', drift='n/a', drift_delta='',
                     label_class='',
+                    scan_domain=('quoted_frozen' if qf_at(m.start()) >= 0 else 'active'),
+                    qf_span=str(qf_at(m.start())),
                 ))
             for m in KEY_AT_RE.finditer(line):
                 if any(s <= m.start() < e for s, e in claimed):
@@ -1040,10 +1079,19 @@ def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids, f10=None, f3=None
     out.append(dict(id='CFG-01', desc='同一文件不得同时命中 LIVE 与 FROZEN',
                     status='fail' if conflict else 'pass', count=len(conflict),
                     examples=' | '.join(conflict[:10])))
-    # F-1：LIVE 内非结构地址锚（裸行号＋带前缀行号）
-    out.append(dict(id='F-1', desc='F-1：LIVE 内非结构地址锚数（裸行号＋带前缀行号）＝0',
-                    status='fail' if live_line else 'pass', count=len(live_line),
-                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in live_line[:10])))
+    # F-1：LIVE 内非结构地址锚（裸行号＋带前缀行号）；冻结文本逐字引文正文按 0.22.2 承诺四豁免
+    live_line_f1 = [r for r in live_line if r.get('scan_domain') != 'quoted_frozen']
+    out.append(dict(id='F-1', desc='F-1：LIVE 内非结构地址锚数（裸行号＋带前缀行号）＝0'
+                                  '（扫描域不含冻结文本逐字引文正文，见 INFO-3）',
+                    status='fail' if live_line_f1 else 'pass', count=len(live_line_f1),
+                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in live_line_f1[:10])))
+    # INFO-3：冻结文本逐字引文正文内的锚串（as-of 豁免，只观测；不计入 F-1）
+    qf_rows = [r for r in live_all if r.get('scan_domain') == 'quoted_frozen']
+    qf_spans = {(r['file'], r['line'], r.get('qf_span', '')) for r in qf_rows}
+    out.append(dict(id='INFO-3', desc='冻结文本逐字引文正文内的锚串（as-of 豁免，只观测；不计入 F-1）',
+                    status='info', count=len(qf_spans),
+                    examples=f'spans={len(qf_spans)} anchors={len(qf_rows)} | ' +
+                             ' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in qf_rows[:10])))
     # F-2：结构地址必须解析到恰一结构单元；@!GAP: 不在扫描面内
     miss = [r for r in live_all if r['form'] in ('struct', 'prefix_doc', 'prefix_field')
             and r['resolvable_to'] == 'none']

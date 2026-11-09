@@ -518,6 +518,34 @@ wc -l 软件工程元框架成文法.md
 sed -n '4467,4470p' 软件工程元框架成文法.md
 ```
 
+### 7.8 冻结文本逐字引文的扫描域（2026-11-10，B−1 实测新增；D12 同提交）
+
+**事实（字节级）**：`registry/method_registry.yaml:13146` 内有一条 `@d:软件工程元框架成文法-changlog.md#sec-…`，其标题共 **326 字符**，与冻结 `软件工程元框架成文法-changlog.md:1023` 的标题**逐字节相同**（比对结果 `True`）。该标题区间内含 **3 条锚**：`@2829-2832`、`@400`、`@592`。全库同类只有这 1 处。
+
+**裁定**：该区间是**引文正文**，不是登记表自述。区间内锚串按 as-of 逐字保留、不迁移。原因是引文改了就不是引文（内容损坏），不能用「迁移」当理由。
+
+**定义变更**：F-1 的扫描域明确为「LIVE 文件内、且**不落在冻结文本逐字引文正文区间内**的非结构地址锚」。区间识别规则：`@d:<FROZEN 文件>#sec-<标题>` 中 `sec_match` 命中的标题字节范围 `[start, end)`。**F-1＝0 只在上述扫描域下成立**。
+
+**计数**：新增 `INFO-3`（info，只观测）单列；实测 **spans=1／anchors=3**。检测器不静默跳过——INFO-3 输出条数与明细；迁移台账保留这 3 行（`new_token == old_token`、`scan_domain=quoted_frozen`）。
+
+**反向自测（必须保留）**：把该引文正文改掉一个**非锚**字节，`sec_match` 即失配，外层 `@d:` 落 F-2（`resolvable_to=none`）——证明豁免只覆盖锚串，不放宽到「大致相同」。复现：
+
+```bash
+# 正向：引文未改，F-2=0、INFO-3 spans=1 anchors=3
+python3 registry/scripts/anchor_index.py --out /tmp/ai-qf-ok
+# 反向：改一个非锚字节（如把「质量战术」改为「质量战法」）后复扫，F-2 必须 fail 1
+python3 - <<'PY'
+import re, pathlib
+p = pathlib.Path('registry/method_registry.yaml'); s = p.read_text(encoding='utf-8')
+lines = s.split('\n'); i = 13145
+assert '质量战术' in lines[i]
+lines[i] = lines[i].replace('质量战术', '质量战法', 1)
+p.with_name('.qf_selftest.yaml').write_text('\n'.join(lines), encoding='utf-8')
+PY
+```
+
+**同提交**：`anchor_index.py`（`quoted_frozen_spans()`、F-1 过滤、INFO-3）与 `anchor_migrate.py`（引文区间跳过、`scan_domain` 列）随本 ADR 同批落地；0.22.2 承诺四同步追加「逐字引文豁免」明文条款。
+
 ## 8. 与 0.22.1／0.22.2 的关系
 
 | 问题 | 回答 |
