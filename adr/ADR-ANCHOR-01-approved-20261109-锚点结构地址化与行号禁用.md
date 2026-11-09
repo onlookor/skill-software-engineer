@@ -133,7 +133,7 @@ end       ::= anchor | clause_id | ordinal
 | 列表项 | `@m:<clause>#li-<N>` | 条款内 1-based；嵌套写 `li-2.3` |
 | 正文段落 | `@m:<clause>#p-<N>` | 条款内非表格、非列表、非围栏的正文段落 1-based |
 | 围栏内代码行 | `@m:<clause>#code-<id>`／`#code-<N>` | 语义优先：取该行首列唯一标识；无标识或同条款重名时退序位 N |
-| 注册表条目字段 | `@r:<entry_id>#field-<path>` | 如 `@r:STY-021#field-provenance.source_class` |
+| 注册表条目字段 | `@r:<entry_id>#field-<path>` | 如 `@r:STY-021#field-provenance.source_class`；序列下标写 `[n]`（0-based），如 `@r:CTR-010#field-anti_patterns[2].signal_level` |
 | 代码符号 | `@d:<path>#fn-<name>` | 与现有 `#fn-` 一致 |
 | 缺口 | `@!GAP:<id>` | D4 既有形态；不参与解析失败计数 |
 
@@ -506,6 +506,18 @@ PY
 | 是否计入 8,840 | **计入总数**：裸行号 8,681 内含它。但分档表把它记在 registry（清理前 1,388／清理后 1,387），母本行 7,373 不含它。按人工清理项处理时：registry 1,388→1,387、人工 51→52；叠加 6 个模块级符号按 9 锚计（+3），最终 **registry 1,387／人工 55**，**总数仍 8,840** |
 
 旁证：同一条 `judgment` 里的 `@4254-4257`（现落点=参考文献，非 P1 注）与 `@4543-4546`（仍越界，归 `no_clause`）同样是陈旧行号。**处置**：迁移时不得把「当前数字在范围内」当成有效落点；按 §7.1ter R-2 登记 `@!GAP:`，或重锚到 CTR-010-AP3 的 P1 注真实所在单元，并记入迁移台账的人工确认列。
+
+**重锚决议（2026-11-10 补，取代本条初判的 `@!GAP:`）**：
+
+| 项 | 实测／裁定 |
+|---|---|
+| 原意 | 指 **CTR-010-AP3 的 P1 注**——`registry/method_registry.yaml` 条目 CTR-010 的 `anti_patterns[2].signal_level` 行内注（`pattern_id: CTR-010-AP3`，`signal_level: P1`，注文「级别待 W3/X3 条件硬裁决口（s5h 既有）落定后复核（MJ-4 判据）」） |
+| 复活成因 | B−1 步骤 1 在 0.22 追加 8 行后母本达 4,471 行，`@4467-4470` 形式上落入范围；但落点是 10.6 示例清单，语义仍错。**未把「数字在范围内」当有效落点** |
+| 新地址 | `@r:CTR-010#field-anti_patterns[2].signal_level`（`[2]` = AP3 在 `anti_patterns` 序列中的 0-based 下标；`#field-` 点路径支持 `[n]`，检测器 `has_path` 同批实装） |
+| 判据同批 | `resolve_struct` 的 `field-` 分支由 `has_path` 判定；本次把 `has_path` 从「仅字典键」扩为「字典键＋序列下标」，判据与代码同提交（D12）。反向自测：`anti_patterns[9]` → `resolvable_to=none`，F-2 报失败 |
+| 人工项统计 | **GAP 1 → 0**；55 条人工项 = 重锚 55／GAP 0 |
+
+GAP 的语义是「不知道它指哪儿」；本条原意已知，故不成立。迁移台账保留原 token `@4467-4470` 与 `old_landing_line=4467`，`new_token` 记为上述重锚地址，`note` 记原意与重锚依据。
 
 复现命令（只读）：
 

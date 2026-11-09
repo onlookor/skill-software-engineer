@@ -6737,7 +6737,7 @@ registry/method_registry.yaml,13441,2409,@2006-2012,legacy,mother,软件工程�
 registry/method_registry.yaml,13441,2681,@2006-2012,legacy,mother,软件工程元框架成文法.md,2006,table_row,@m:3.5#code-1,auto,,match,active,1
 registry/method_registry.yaml,13441,2698,@2015-2026,legacy,mother,软件工程元框架成文法.md,2015,paragraph,@m:3.5#p-2,auto,,match,active,0
 registry/method_registry.yaml,13441,4342,@4254-4257,legacy,mother,软件工程元框架成文法.md,4254,blank,@m:10.8#row-幻觉更正表-2,auto,,match,active,1
-registry/method_registry.yaml,13441,4366,@4467-4470,legacy,mother,软件工程元框架成文法.md,4467,list_item,@!GAP:stale-4467-4470,manual,越界陈旧锚,,active,0
+registry/method_registry.yaml,13441,4366,@4467-4470,legacy,mother,软件工程元框架成文法.md,4467,list_item,@r:CTR-010#field-anti_patterns[2].signal_level,manual,越界陈旧锚；原意=CTR-010-AP3 的 P1 注，重锚到条目字段（ADR §7.7bis）,,active,0
 registry/method_registry.yaml,13441,4390,@4543-4546,legacy,registry,registry/method_registry.yaml,4543,paragraph,@r:CTR-010#field-provenance.source_class,semi,yaml 字段 provenance.source_class,,active,0
 registry/method_registry.yaml,13441,4884,@1982,legacy,mother,软件工程元框架成文法.md,1982,blank,@m:3.4,semi,,,active,0
 registry/method_registry.yaml,13441,6152,@1996,legacy,mother,软件工程元框架成文法.md,1996,table_row,@m:3.4#row-目标方面-5~p~行为协调~q~,auto,,match,active,1
