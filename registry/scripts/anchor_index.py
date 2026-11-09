@@ -237,6 +237,24 @@ class Doc:
         hits = [ln for (ln, _lvl, num) in self.headings if num == label]
         return hits[0] if len(hits) == 1 else (None if not hits else -1)
 
+    # ── 代码块锚（ADR-ANCHOR-01 §3.6 `code-`）────────────────────
+    def code_lines(self, clause: str):
+        """条款内围栏代码块的正文行（不含 ``` 分隔行），文档序 1-based。"""
+        span = self.clause_span(clause)
+        if not span:
+            return []
+        start, end = span
+        return [i for i in range(start + 1, end)
+                if i in self.fence_lines and not self.lines[i - 1].lstrip().startswith('```')]
+
+    def code_ids(self, clause: str):
+        """{标识: [行号]}；标识取代码行首个「大写字母＋至少一位数字」token。"""
+        out = defaultdict(list)
+        for i in self.code_lines(clause):
+            m = CODE_LINE_ID_RE.match(self.lines[i - 1].strip())
+            if m:
+                out[m.group(1)].append(i)
+        return out
 
 
 # ── 台账装载（只读）─────────────────────────────────────────────
@@ -291,6 +309,28 @@ STRUCT_RE = re.compile(
 SUB_KEY_RE = re.compile(r'#key-(?P<path>[A-Za-z0-9_.\[\]-]+)')
 SUB_FN_RE = re.compile(r'#fn-(?P<name>[A-Za-z_][A-Za-z0-9_]*)')
 PY_SUFFIXES = ('.py',)
+
+# 行键转义（ADR-ANCHOR-01 §3.11）：子锚字符集不含全角括注与顿号，正文一律转义
+ESC_MAP = {'（': '~p~', '）': '~q~', '、': '~d~'}
+ESC_REV = {v: k for k, v in ESC_MAP.items()}
+FORBIDDEN_SUB = '（）：、，；／'
+
+
+def escape_sub(s: str) -> str:
+    for ch, code in ESC_MAP.items():
+        s = s.replace(ch, code)
+    return s
+
+
+def unescape_sub(s: str) -> str:
+    for code, ch in ESC_REV.items():
+        s = s.replace(code, ch)
+    return s
+
+
+# 代码块行首标识：FM-13／GS-03／T1／E3／M34 等（大写字母＋至少一位数字）
+# 注意：不得与下方 table_ids 用的 CODE_ID_RE（表标识）重名，否则后者会覆盖前者
+CODE_LINE_ID_RE = re.compile(r'^[^\w]*([A-Z]{1,4}-?\d{1,4}[A-Z]?)(?![A-Za-z0-9])')
 
 
 def build_rowkey_map(rowkey_rows):
@@ -354,10 +394,26 @@ def resolve_struct(prefix: str, loc: str, sub: str, docs: dict,
                             struct_unit=f'm:{loc}:{sub}')
             return empty
         if sub.startswith('row-'):
-            cand = rowkey_map.get(('软件工程元框架成文法.md', loc, '#' + sub), [])
+            cand = rowkey_map.get(('软件工程元框架成文法.md', loc, '#' + unescape_sub(sub)), [])
             if len(cand) == 1:
                 return dict(landing_line=cand[0], landing_form='table_row', clause=loc,
                             resolvable_to='row_id', struct_candidates=1,
+                            struct_unit=f'm:{loc}:{sub}')
+            return dict(empty, struct_candidates=len(cand), struct_unit=f'm:{loc}:{sub}')
+        if sub.startswith('code-'):
+            rest = sub[5:]
+            if rest.isdigit():
+                lines = doc.code_lines(loc)
+                n = int(rest)
+                if 1 <= n <= len(lines):
+                    return dict(landing_line=lines[n - 1], landing_form='code', clause=loc,
+                                resolvable_to='code_ordinal', struct_candidates=1,
+                                struct_unit=f'm:{loc}:{sub}')
+                return empty
+            cand = doc.code_ids(loc).get(rest, [])
+            if len(cand) == 1:
+                return dict(landing_line=cand[0], landing_form='code', clause=loc,
+                            resolvable_to='code_id', struct_candidates=1,
                             struct_unit=f'm:{loc}:{sub}')
             return dict(empty, struct_candidates=len(cand), struct_unit=f'm:{loc}:{sub}')
         return empty
@@ -729,12 +785,8 @@ def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
                 elif a > tlen:
                     drift = 'out_of_range'
                     delta = str(a - tlen)
-                else:
-                    # 邻接条款号（≤15 字）与落点条款不符 → 疑似漂移
-                    pre = line[max(0, m.start() - 15):m.start()]
-                    cm = re.search(r'(\d+(?:\.\d+){1,})(?![\d.])', pre)
-                    if cm and clause and cm.group(1) != clause:
-                        drift = 'suspect_clause_mismatch'
+                # 邻条款号启发式已废弃（ADR-ANCHOR-01 §7.7）：1,041/1,052 是正常交叉引用，
+                # 不是漂移。漂移只由 F-3 的落点指纹比对判定。
                 rows.append(dict(
                     file=rel, line=i, col=m.start() + 1, token=m.group(0),
                     form='legacy' if not prefix else 'prefix',
@@ -978,7 +1030,7 @@ def classify_mixed(rows):
 
 
 # ── 断言 F-1～F-10（ADR-ANCHOR-01 §6）──────────────────────────
-def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids, f10=None) -> list[dict]:
+def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids, f10=None, f3=None) -> list[dict]:
     out = []
     live_all = [r for r in rows if classify(r['file']) == 'live']
     live_line = [r for r in live_all if r['form'] in ('legacy', 'prefix')]
@@ -998,13 +1050,21 @@ def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids, f10=None) -> list
     out.append(dict(id='F-2', desc='F-2：结构地址解析到恰一结构单元（0 个即失败）',
                     status='fail' if miss else 'pass', count=len(miss),
                     examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}->{r['target_file']}" for r in miss[:10])))
-    # F-3：hard＝旧式行锚超界/目标缺失；soft＝邻接条款号不符（启发式）
-    drift_hard = [r for r in live_line if r['drift'] in ('out_of_range', 'target_missing')]
-    drift_soft = [r for r in live_line if r['drift'] == 'suspect_clause_mismatch']
-    out.append(dict(id='F-3', desc='F-3：漂移例外归零（hard：超界/目标缺失）',
-                    status='fail' if drift_hard else 'pass', count=len(drift_hard),
-                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']} {r['drift']}({r['drift_delta']})" for r in drift_hard[:10]) +
-                             f' || soft_suspect={len(drift_soft)}'))
+    # F-3：只做落点内容指纹比对（邻条款号启发式已废弃，ADR-ANCHOR-01 §7.7）
+    # 基线未冻结时 status=info 且 coverage=0——不得当作通过（ADR §11 挡板）。
+    f3 = f3 or dict(status='info', count=0, coverage=0, examples='fingerprint baseline not frozen')
+    out.append(dict(id='F-3', desc='F-3：结构锚落点首句/首列指纹与基线一致',
+                    status=f3['status'], count=f3['count'], coverage=f3['coverage'],
+                    examples=f3['examples']))
+    # ESC-01：row-/code- 子锚禁用字符必须转义（ADR-ANCHOR-01 §3.7）
+    esc_bad = [(r, esc_errors(r, docs)) for r in live_all if r['form'] == 'struct']
+    esc_bad = [(r, e) for r, e in esc_bad if e]
+    out.append(dict(id='ESC-01', desc='ESC-01：row-/code- 子锚无未转义禁用字符',
+                    status='fail' if esc_bad else 'pass', count=len(esc_bad),
+                    coverage=sum(1 for r in live_all if r['form'] == 'struct'
+                                 and (r.get('sub_value') or '').startswith(('row-', 'code-'))),
+                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']} {','.join(e)}"
+                                        for r, e in esc_bad[:10])))
     # F-4：跨目标类歧义串（冻结侧只做快照，见 INFO-1）
     mixed, frozen_only, frozen_occ = classify_mixed(rows)
     out.append(dict(id='F-4', desc='F-4：同一锚点串不跨目标类',
@@ -1063,6 +1123,50 @@ def fingerprint(line: str) -> str:
     return re.sub(r'\s+', ' ', line.strip())[:60]
 
 
+def landing_fingerprint(doc, line, form: str) -> str:
+    """落点指纹：表行取首列，正文/围栏取首句（≤60 字），其余取整行规范化。"""
+    try:
+        n = int(line)
+    except (TypeError, ValueError):
+        return ''
+    if doc is None or not getattr(doc, 'exists', False) or not (1 <= n <= len(doc.lines)):
+        return ''
+    s = doc.lines[n - 1].strip()
+    if form == 'table_row':                        # 首列
+        return norm_cell(s.strip('|').split('|')[0])[:60]
+    t = re.sub(r'\s+', ' ', s)
+    if form in ('paragraph', 'code'):              # 首句
+        t = re.split(r'[。；]', t)[0]
+    return t[:60]
+
+
+def esc_errors(row, docs) -> list[str]:
+    """ESC-01：row-/code- 子锚内出现未转义禁用字符，或 `~` 不是合法转义码。"""
+    sub = row.get('sub_value') or ''
+    if not (sub.startswith('row-') or sub.startswith('code-')):
+        return []
+    errs = []
+    if any(ch in FORBIDDEN_SUB for ch in sub):
+        errs.append('forbidden_in_sub')
+    # 正则会在禁用字符处截断：token 后紧跟的字符即被截掉的原文
+    doc = docs.get(row['file'])
+    if doc and doc.exists:
+        ln = doc.lines[int(row['line']) - 1]
+        end = int(row['col']) - 1 + len(row['token'])
+        if end < len(ln) and ln[end] in FORBIDDEN_SUB:
+            errs.append('truncated_at_forbidden')
+    i = 0
+    while i < len(sub):
+        if sub[i] == '~':
+            if sub[i:i + 3] not in ESC_REV:
+                errs.append('bad_escape')
+                break
+            i += 3
+        else:
+            i += 1
+    return errs
+
+
 def write_csv(path: Path, rows: list[dict]):
     if not rows:
         path.write_text('', encoding='utf-8')
@@ -1084,7 +1188,9 @@ def main(argv=None) -> int:
     ap.add_argument('--target-mode', choices=('none', 'prefix', 'prefix_id'), default='none',
                     help='none=现状; prefix=全部带目标前缀; prefix_id=前缀+ID+子锚')
     ap.add_argument('--freeze-baseline', action='store_true',
-                    help='把本次结构地址解析结果写为 registry/anchor_baseline.json（供 F-10）')
+                    help='把本次结构地址解析结果写为 registry/anchor_baseline.json（供 F-3／F-10）')
+    ap.add_argument('--baseline', default='',
+                    help='基线文件路径（默认 registry/anchor_baseline.json；自测时可指向 /tmp）')
     ap.add_argument('--expected-changes', default='',
                     help='本批声明的变化清单 JSON（key 数组）；F-10 只允许清单内的变化')
     args = ap.parse_args(argv)
@@ -1103,26 +1209,37 @@ def main(argv=None) -> int:
     for r in rows:
         r['scope'] = classify(r['file'])
 
-    def struct_map(all_rows):
-        occ, out = Counter(), {}
+    def struct_snapshot(all_rows):
+        """{(file|token|occ): 结构单元} 与 {(file|token|occ): 落点指纹}。"""
+        occ, units, fps = Counter(), {}, {}
         for r in all_rows:
-            if r['form'] != 'struct':
+            if r['form'] != 'struct' or classify(r['file']) != 'live':
                 continue
             k = (r['file'], r['token'], occ[(r['file'], r['token'])])
             occ[(r['file'], r['token'])] += 1
-            out['%s|%s|%d' % k] = r['struct_unit']
-        return out
+            key = '%s|%s|%d' % k
+            units[key] = r['struct_unit']
+            tdoc = docs.get(r['target_file']) if r['target_file'] else None
+            fps[key] = landing_fingerprint(tdoc, r['landing_line'], r['landing_form'])
+        return units, fps
 
-    cur_map = struct_map(rows)
-    base_path = REG / 'anchor_baseline.json'
+    cur_map, cur_fps = struct_snapshot(rows)
+    base_path = Path(args.baseline) if args.baseline else (REG / 'anchor_baseline.json')
     if args.freeze_baseline:
-        base_path.write_text(json.dumps(cur_map, ensure_ascii=False, indent=1, sort_keys=True),
+        base_path.parent.mkdir(parents=True, exist_ok=True)
+        base_path.write_text(json.dumps({'units': cur_map, 'fps': cur_fps},
+                                        ensure_ascii=False, indent=1, sort_keys=True),
                              encoding='utf-8')
-        f10 = dict(status='info', count=0, examples=f'baseline frozen: {len(cur_map)} structural anchors')
+        f10 = dict(status='info', count=0,
+                   examples=f'baseline frozen: {len(cur_map)} structural anchors, {len(cur_fps)} fingerprints')
+        f3 = dict(status='info', count=0, coverage=0, examples='baseline just frozen; re-run to compare')
     elif not base_path.exists():
         f10 = dict(status='info', count=0, examples='baseline not frozen', diff={})
+        f3 = dict(status='info', count=0, coverage=0, examples='fingerprint baseline not frozen')
     else:
-        base_map = json.loads(base_path.read_text(encoding='utf-8'))
+        base = json.loads(base_path.read_text(encoding='utf-8'))
+        base_map = base.get('units') if isinstance(base, dict) and 'units' in base else base
+        base_fps = base.get('fps') if isinstance(base, dict) else None
         diff = {k: (base_map.get(k), cur_map.get(k)) for k in set(base_map) | set(cur_map)
                 if base_map.get(k) != cur_map.get(k)}
         allowed = set()
@@ -1131,7 +1248,22 @@ def main(argv=None) -> int:
         unexpected = {k: v for k, v in diff.items() if k not in allowed}
         f10 = dict(status='fail' if unexpected else 'pass', count=len(diff), diff=diff,
                    examples=' | '.join(f'{k}:{v[0]}->{v[1]}' for k, v in list(diff.items())[:10]))
-    assert_rows = assertions(rows, docs, reg, args.target_mode, rowkey_rows, unresolved_ids, f10)
+        if not base_fps:
+            f3 = dict(status='info', count=0, coverage=0,
+                      examples='基线无 fps（旧格式）；F-3 不得计入通过')
+        else:
+            keys = [k for k in base_fps if k in cur_fps and base_fps[k] and cur_fps[k]]
+            mism = [(k, base_fps[k], cur_fps[k]) for k in keys if base_fps[k] != cur_fps[k]]
+            gone = [k for k in base_fps if base_fps[k] and k not in cur_fps]
+            if not keys and not gone:
+                f3 = dict(status='info', count=0, coverage=0,
+                          examples='coverage 0：空测，不计通过')
+            else:
+                f3 = dict(status='fail' if (mism or gone) else 'pass',
+                          count=len(mism) + len(gone), coverage=len(keys),
+                          examples=f'checked={len(keys)} mismatch={len(mism)} missing={len(gone)} | ' +
+                                   ' | '.join(f'{k}:{a[:24]}≠{b[:24]}' for k, a, b in mism[:8]))
+    assert_rows = assertions(rows, docs, reg, args.target_mode, rowkey_rows, unresolved_ids, f10, f3)
     targets_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'form', 'scope', 'sub_kind', 'sub_value',
                                        'target_file', 'target_kind', 'assign_basis', 'in_yaml_value',
                                        'in_comment', 'in_code_span')} for r in rows]
