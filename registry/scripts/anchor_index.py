@@ -1053,8 +1053,9 @@ def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids, f10=None, f3=None
     # F-3：只做落点内容指纹比对（邻条款号启发式已废弃，ADR-ANCHOR-01 §7.7）
     # 基线未冻结时 status=info 且 coverage=0——不得当作通过（ADR §11 挡板）。
     f3 = f3 or dict(status='info', count=0, coverage=0, examples='fingerprint baseline not frozen')
-    out.append(dict(id='F-3', desc='F-3：结构锚落点首句/首列指纹与基线一致',
+    out.append(dict(id='F-3', desc='F-3：结构锚落点首句/首列指纹与基线一致（按 struct_unit 归并根因）',
                     status=f3['status'], count=f3['count'], coverage=f3['coverage'],
+                    roots=f3.get('roots', 0), affected=f3.get('affected', f3['count']),
                     examples=f3['examples']))
     # ESC-01：row-/code- 子锚禁用字符必须转义（ADR-ANCHOR-01 §3.7）
     esc_bad = [(r, esc_errors(r, docs)) for r in live_all if r['form'] == 'struct']
@@ -1218,9 +1219,14 @@ def main(argv=None) -> int:
             k = (r['file'], r['token'], occ[(r['file'], r['token'])])
             occ[(r['file'], r['token'])] += 1
             key = '%s|%s|%d' % k
-            units[key] = r['struct_unit']
             tdoc = docs.get(r['target_file']) if r['target_file'] else None
-            fps[key] = landing_fingerprint(tdoc, r['landing_line'], r['landing_form'])
+            fp = landing_fingerprint(tdoc, r['landing_line'], r['landing_form'])
+            if not fp:
+                # 无行落点（如 @r:...#field- 的 YAML 点路径锚）不属 F-3 覆盖面：
+                # F-3 是「行落点指纹」比对，字段锚的稳定性由 F-2 解析承担（ADR §7.7）。
+                continue
+            units[key] = r['struct_unit']
+            fps[key] = fp
         return units, fps
 
     cur_map, cur_fps = struct_snapshot(rows)
@@ -1256,13 +1262,24 @@ def main(argv=None) -> int:
             mism = [(k, base_fps[k], cur_fps[k]) for k in keys if base_fps[k] != cur_fps[k]]
             gone = [k for k in base_fps if base_fps[k] and k not in cur_fps]
             if not keys and not gone:
-                f3 = dict(status='info', count=0, coverage=0,
+                f3 = dict(status='info', count=0, coverage=0, roots=0, affected=0,
                           examples='coverage 0：空测，不计通过')
             else:
+                # 按根因归并：同一 struct_unit 下的落点指纹变化/缺失只算一处根因，
+                # 影响面另记 affected（一次编辑只报一条根因＋影响面计数；ADR §7.7）。
+                groups = defaultdict(list)
+                for k, a, b in mism:
+                    groups[base_map.get(k) or cur_map.get(k) or k].append((k, a, b))
+                for k in gone:
+                    groups[base_map.get(k) or k].append((k, base_fps[k], None))
+                affected = len(mism) + len(gone)
+                roots = len(groups)
                 f3 = dict(status='fail' if (mism or gone) else 'pass',
-                          count=len(mism) + len(gone), coverage=len(keys),
-                          examples=f'checked={len(keys)} mismatch={len(mism)} missing={len(gone)} | ' +
-                                   ' | '.join(f'{k}:{a[:24]}≠{b[:24]}' for k, a, b in mism[:8]))
+                          count=affected, coverage=len(keys), roots=roots, affected=affected,
+                          examples=f'checked={len(keys)} mismatch={len(mism)} missing={len(gone)} '
+                                   f'roots={roots} affected={affected} | ' +
+                                   ' | '.join(f'{u}×{len(v)}' for u, v in
+                                              sorted(groups.items(), key=lambda kv: -len(kv[1]))[:8]))
     assert_rows = assertions(rows, docs, reg, args.target_mode, rowkey_rows, unresolved_ids, f10, f3)
     targets_rows = [{k: r[k] for k in ('file', 'line', 'col', 'token', 'form', 'scope', 'sub_kind', 'sub_value',
                                        'target_file', 'target_kind', 'assign_basis', 'in_yaml_value',
