@@ -1038,10 +1038,16 @@ def assertions(rows, docs, reg, mode, rowkeys, unresolved_ids, f10=None) -> list
                     examples=f'entries={len(entries)} meta.entry_count={meta_n} seed={seed_n} '
                              f'gaps={len(reg.get("gaps") or [])} SO={len(reg.get("survey_obligations") or [])}'))
     # F-9 地址唯一性：(clause, sub) 解析到 >1 个单元即冲突
+    # 覆盖数＝实际参与判定的不同结构地址数（struct_unit 去重）；0 表示空测，不等于通过。
     amb = [r for r in live_all if r['form'] == 'struct' and int(r.get('struct_candidates') or 0) > 1]
+    covered = {r['struct_unit'] for r in live_all
+               if r['form'] == 'struct' and int(r.get('struct_candidates') or 0) >= 1}
     out.append(dict(id='F-9', desc='F-9：结构地址 (clause, sub) 唯一性冲突＝0',
                     status='fail' if amb else 'pass', count=len(amb),
-                    examples=' | '.join(f"{r['file']}:{r['line']} {r['token']}" for r in amb[:10])))
+                    coverage=len(covered),
+                    examples=f'checked_pairs={len(covered)} conflicts={len(amb)} | ' +
+                             ' | '.join(f"{r['file']}:{r['line']} {r['token']}->{r['struct_unit']}"
+                                        for r in amb[:10])))
     # F-10 重排稳定性：与本文件基线比对（B−1 后由 B0 冻结）
     f10 = f10 or dict(status='info', count=0, examples='baseline not frozen', diff={})
     out.append(dict(id='F-10', desc='F-10：重排前后结构地址变化集＝本批声明清单',
@@ -1061,8 +1067,13 @@ def write_csv(path: Path, rows: list[dict]):
     if not rows:
         path.write_text('', encoding='utf-8')
         return
+    fields = []
+    for r in rows:
+        for k in r:
+            if k not in fields:
+                fields.append(k)
     with path.open('w', encoding='utf-8', newline='') as fh:
-        w = csv.DictWriter(fh, fieldnames=list(rows[0].keys()))
+        w = csv.DictWriter(fh, fieldnames=fields, restval='')
         w.writeheader()
         w.writerows(rows)
 
@@ -1233,6 +1244,7 @@ def main(argv=None) -> int:
         'key_path_ok': sum(1 for r in rows if r['sub_kind'] == 'key' and r['resolvable_to'] == 'key_path'),
         'sec_title_ok': sum(1 for r in rows if r['sub_kind'] == 'sec' and r['resolvable_to'] == 'sec_title'),
         'assertions': {a['id']: a['status'] for a in assert_rows},
+        'f9_checked_pairs': next((a.get('coverage') for a in assert_rows if a['id'] == 'F-9'), None),
         'failures': [a for a in assert_rows if a['status'] == 'fail'],
     }
     (out / 'summary.json').write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding='utf-8')
