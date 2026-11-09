@@ -2382,7 +2382,12 @@ def _cut(text, limit: int) -> tuple:
 
 def _trunc(text, limit: int) -> str:
     out, more = _cut(text, limit)
-    return out + ('…' if more else '')
+    if not more:
+        return out
+    # 截断点恰好落在锚尾时，… 前补一个空格，避免「…」被读入锚点子锚
+    if re.search(r'@[0-9mrpvcd!][^\s]*$', out):
+        out += ' '
+    return out + '…'
 
 
 def _first_sentence(text, limit: int = 90) -> str:
