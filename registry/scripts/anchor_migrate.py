@@ -31,6 +31,23 @@ MOTHER = '软件工程元框架成文法.md'
 SKIP_SRC = {'registry/scripts/anchor_index.py', 'registry/scripts/anchor_migrate.py'}
 LEDGER = Path('registry/anchor_index/b1_migration_ledger.csv')
 
+# 结构地址子锚正则的天然终止符：后接这些字符时不会被吞入 sub
+SAFE_TAIL = set('，。；|）（：、／')
+
+
+def needs_pad(token: str, nxt: str) -> bool:
+    """新地址后若无空白，正则会把后续字符吞进 sub（F-2）或触发 ESC-01 截断。
+
+    row-/code- 子锚对任何非空白后接字符都补一个空格（FORBIDDEN_SUB 会触发 ESC-01 ②）；
+    其余子锚只在后接「非终止符」时补，终止符本身就会截断匹配。
+    """
+    if not token or not nxt or nxt.isspace():
+        return False
+    sub = token.partition('#')[2]
+    if sub.startswith(('row-', 'code-')):
+        return True
+    return nxt not in SAFE_TAIL
+
 
 def ensure_snapshot(outdir: Path) -> None:
     t = outdir / 'targets.csv'
@@ -215,7 +232,6 @@ def validate(token, docs, rkm, reg, terms, funcs, syms):
     if token.startswith('@r:'):
         body = token[3:]
         ent, _, sub = body.partition('#')
-        sub = 'field-' + sub if sub else ''
         r = A.resolve_struct('r', ent, sub, docs, rkm, reg, terms)
         return r['resolvable_to'] != 'none', ''
     if token.startswith('@v:'):
@@ -265,6 +281,9 @@ def main() -> int:
             targets_all.add(r['target_file'])
     docs = {rel: A.Doc(rel) for rel in targets_all}
     docs[MOTHER] = A.Doc(MOTHER)
+    for _r in targets:                      # 源文件也要载入（判断锚点后接字符用）
+        if _r['scope'] == 'live' and _r['file'] not in docs:
+            docs[_r['file']] = A.Doc(_r['file'])
     rowkey_cur, _u2, _a2 = A.derive_row_keys(docs)
     rkm_cur = A.build_rowkey_map(rowkey_cur)
     reg, _ids = A.load_registry()
@@ -302,7 +321,7 @@ def main() -> int:
                 p = path
                 while p and not A.has_path(e, p):
                     p = p.rsplit('.', 1)[0] if '.' in p else ''
-                token = f'@r:{ent}#{p}' if p else f'@r:{ent}'
+                token = f'@r:{ent}#field-{p}' if p else f'@r:{ent}'
                 note = f'yaml 字段 {p or "(entry)"}'
             cat = 'semi'
         elif kind == 'profiles':
@@ -355,6 +374,12 @@ def main() -> int:
         else:
             note = f'未处理 target_kind={kind}'
 
+        # row-/code- 子锚禁用字符转义（ADR-ANCHOR-01 §3.7）；转义后须与原行键可逆
+        if token and token.startswith('@m:') and '#' in token:
+            _c, _, _s = token[3:].partition('#')
+            if _s.startswith(('row-', 'code-')):
+                token = f'@m:{_c}#{A.escape_sub(_s)}'
+
         ok, landing = validate(token, docs, rkm_cur, reg, terms, funcs, syms)
         if token and not ok:
             cat = 'manual'
@@ -369,10 +394,18 @@ def main() -> int:
             f_old = A.landing_fingerprint(doc_snap, line, form if form != 'heading' else 'heading')
             f_new = A.landing_fingerprint(docs[MOTHER], landing, 'table_row' if form == 'table_row' else form)
             fp = 'match' if f_old == f_new else 'diff'
+        # 后接字符决定是否补一个空格，防止 sub 正则吞入尾文
+        nxt, sdoc = '', docs.get(r['file']) or A.Doc(r['file'])
+        if sdoc.exists and token:
+            ln = sdoc.lines[int(r['line']) - 1]
+            e = int(r['col']) - 1 + len(r['token'])
+            nxt = ln[e] if e < len(ln) else ''
+        pad = needs_pad(token, nxt)
         rows.append(dict(src=r['file'], line=r['line'], col=r['col'], old_token=r['token'],
                          form=r['form'], target_kind=kind, target_file=tf,
                          old_landing_line=line, old_form=rr['landing_form'],
-                         new_token=token or '', category=cat, note=note, fp_match=fp))
+                         new_token=token or '', category=cat, note=note, fp_match=fp,
+                         pad='1' if pad else '0'))
 
     for r in targets:
         if r['scope'] == 'live' and r['form'] == 'struct' and r['target_kind'] == 'registry':
@@ -380,7 +413,7 @@ def main() -> int:
                              form=r['form'], target_kind=r['target_kind'],
                              target_file=r['target_file'], old_landing_line='', old_form='struct',
                              new_token=r['token'], category='auto',
-                             note='存量已清（F-2 清理批）', fp_match='n/a'))
+                             note='存量已清（F-2 清理批）', fp_match='n/a', pad='0'))
 
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -413,7 +446,8 @@ def main() -> int:
             if lines[i][c:c + len(old)] != old:
                 print('ABORT mismatch', rel, r['line'], r['col'], old, repr(lines[i][c:c + len(old)]))
                 return 2
-            lines[i] = lines[i][:c] + new + lines[i][c + len(old):]
+            repl = new + (' ' if r.get('pad') == '1' else '')
+            lines[i] = lines[i][:c] + repl + lines[i][c + len(old):]
         p.write_text('\n'.join(lines), encoding='utf-8')
         print('applied', rel, len(rs))
     return 0
