@@ -278,11 +278,20 @@ def entry_by_id(d, eid):
 
 
 def has_path(obj, dotted: str) -> bool:
+    """点路径 presence 判定；序列下标写 `[n]`（如 `anti_patterns[2].signal_level`）。"""
+    parts = _split_dotted(dotted)
+    if not parts:
+        return False
     cur = obj
-    for part in dotted.split('.'):
-        if not isinstance(cur, dict) or part not in cur:
-            return False
-        cur = cur[part]
+    for kind, val in parts:
+        if kind == 'key':
+            if not isinstance(cur, dict) or val not in cur:
+                return False
+            cur = cur[val]
+        else:
+            if not isinstance(cur, list) or not (0 <= val < len(cur)):
+                return False
+            cur = cur[val]
     return cur is not None
 
 
@@ -1320,12 +1329,12 @@ def main(argv=None) -> int:
                     groups[base_map.get(k) or cur_map.get(k) or k].append((k, a, b))
                 for k in gone:
                     groups[base_map.get(k) or k].append((k, base_fps[k], None))
-                affected = len(mism) + len(gone)
+                f3_affected = len(mism) + len(gone)
                 roots = len(groups)
                 f3 = dict(status='fail' if (mism or gone) else 'pass',
-                          count=affected, coverage=len(keys), roots=roots, affected=affected,
+                          count=f3_affected, coverage=len(keys), roots=roots, affected=f3_affected,
                           examples=f'checked={len(keys)} mismatch={len(mism)} missing={len(gone)} '
-                                   f'roots={roots} affected={affected} | ' +
+                                   f'roots={roots} affected={f3_affected} | ' +
                                    ' | '.join(f'{u}×{len(v)}' for u, v in
                                               sorted(groups.items(), key=lambda kv: -len(kv[1]))[:8]))
     assert_rows = assertions(rows, docs, reg, args.target_mode, rowkey_rows, unresolved_ids, f10, f3)
