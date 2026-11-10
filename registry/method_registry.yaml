@@ -9043,7 +9043,7 @@ entries:
         - {source_type: row_id, value: "8.2.1-T-01", verified: true}   # 行内标记（8.2.1-T-01）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @m:8.2.1#p-1 三方面输入反向生成＋@m:8.2.1#li-1 三输入＋@m:8.2.1#p-2 手段映射注册表六类（本条骨架源）＋计划矩阵五元组形态
         - {source_type: clause_id, value: "8.2.4", verified: true}   # @m:8.2.4#li-1 四行＝本条的四类检查面：依赖规则检查／DSM 通道二全量消费／schema 契约静态比对／配置注册表比对
-        - {source_type: clause_id, value: "8.2", verified: true}     # @m:8.2#p-1 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
+        - {source_type: clause_id, value: "8.2", verified: true}     # @m:0.2#p-2 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
         - {source_type: clause_id, value: "8.1", verified: true}     # @m:8.1#p-1 方面 8 的驱动问题＋@m:8.1#p-2 「执行引擎」定位与反幻觉主题词「叙事性验证」
         - {source_type: clause_id, value: "8.3", verified: true}     # @m:8.3#p-1 /@m:8.3#p-2 /@m:8.3#p-3 三空间驱动＋@m:8.3#p-4 双使用者条款＝applicability 交叉表源
         - {source_type: clause_id, value: "8.4", verified: true}     # @m:8.4#p-1 接收约束九行＋@m:8.4#row-目标方面-全部方面 施加约束五行＝constraints_imposed 源
@@ -9139,7 +9139,7 @@ entries:
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @m:8.2.1#p-1 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源）＋计划矩阵五元组（自动化级别/触发点/证据形态三槽即本条的登记面）
         - {source_type: clause_id, value: "8.2.5", verified: true}   # @m:8.2.5#p-1 三项形式化触发 T-F1/T-F2/T-F3（定稿）＋@m:8.2.5#p-2 三分「T-F1 管判定权，T-F2 管重跑权，T-F3 管引用权」＝本条的义务源
         - {source_type: clause_id, value: "8.2.6", verified: true}   # @m:8.2.6#li-1 证据保全机制（定稿）：七要素／可重放性／保存期限／双使用者同义务＝本条的产出面
-        - {source_type: clause_id, value: "8.2", verified: true}     # @m:8.2#p-1 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
+        - {source_type: clause_id, value: "8.2", verified: true}     # @m:0.2#p-2 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
         - {source_type: clause_id, value: "8.1", verified: true}     # @m:8.1#p-1 方面 8 的驱动问题＋@m:8.1#p-2 「执行引擎」定位与反幻觉主题词「叙事性验证」
         - {source_type: clause_id, value: "8.3", verified: true}     # @m:8.3#p-1 /@m:8.3#p-2 /@m:8.3#p-3 三空间驱动＋@m:8.3#p-4 双使用者条款（末句「自动化级别 ≠ 形式化程度——人工执行的形式化检查程序同样满足 T-F1」＝本条不要求自动化的依据）
         - {source_type: clause_id, value: "8.4", verified: true}     # @m:8.4#p-1 接收约束九行＋@m:8.4#row-目标方面-全部方面 施加约束五行＝constraints_imposed 源
@@ -9232,7 +9232,7 @@ entries:
         - {source_type: row_id, value: "8.2.1-T-03", verified: true}   # 行内标记（8.2.1-T-03）
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @m:8.2.1#p-1 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源）＋@m:8.2.1#p-2 末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」＝本条对状态机硬性质的独占义务源
         - {source_type: clause_id, value: "5.5", verified: true}     # @m:5.5#p-1 方面 5 形式化锚点：Z3 @m:5.5#code-Z3 （step_class ∈ {compensable, retriable, pivot} ∧ pivot_ordering_valid）与 Z8 @m:5.5#code-Z8 （orchestrator_state durable ∧ recoverable）＝@m:8.2.1#p-2 括注所举的两例性质；Z4 @m:5.5#code-Z4 （Σ timeout_budget ≤ sla_bound ∧ 相邻级严格递减）为本条可穷举判定的第三例
-        - {source_type: clause_id, value: "8.2", verified: true}     # @m:8.2#p-1 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
+        - {source_type: clause_id, value: "8.2", verified: true}     # @m:0.2#p-2 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
         - {source_type: clause_id, value: "8.1", verified: true}     # @m:8.1#p-1 方面 8 的驱动问题＋@m:8.1#p-2 「执行引擎」定位与反幻觉主题词「叙事性验证」
         - {source_type: clause_id, value: "8.3", verified: true}     # @m:8.3#p-1 /@m:8.3#p-2 /@m:8.3#p-3 三空间驱动＋@m:8.3#p-4 双使用者条款（Agent 自主面含「检查程序编写与执行」，本条的模型构造与穷举属该面）
         - {source_type: clause_id, value: "8.4", verified: true}     # @m:8.4#p-1 接收约束九行（方面 5 行 @m:8.4#row-来源-方面5 「卡片 failure_modes → 注入用例；事件驱动 → 回放/乱序必备」为本条与 VFM-004 的分界面）＋@m:8.4#row-目标方面-全部方面 施加约束五行＝constraints_imposed 源
@@ -9335,7 +9335,7 @@ entries:
         - {source_type: clause_id, value: "3.5", verified: true}     # @m:3.5 方面 3 形式化锚点：@m:3.5#code-5 谓词 cdc_suite(C)、@m:3.5#code-X4 X4「∀C ∈ high_risk: cdc_suite(C) // 高风险契约 CDC —— 软（微服务风格下升硬）」＝T6 @m:8.5#code-T6 括注「含 X4 的 CDC 要求」的取值源；@m:3.5#code-1 contract(… lifecycle_state) 槽＝T6 量词域 lifecycle=published 的登记面
         - {source_type: clause_id, value: "5.2.5", verified: true}   # @m:5.2.5 质量影响卡片五槽：@m:5.2.5#code-3 failure_modes[] ＝T7 @m:8.5#code-T7 的 ⊇ 右侧与 @m:8.2.3#li-5 条件准入 (i) 的判据源；@m:5.2.5#code-5 observability_requires[] ＝本条 cost_profile 同名字段的槽位源；@m:5.2.5#p-3 Σ latency_budget_delta 消费路径＝本条 latency_budget_delta 省略的理由面（验证手段不进入请求路径，不产生附加延迟项）
         - {source_type: clause_id, value: "0.14", verified: true}    # @m:0.14#li-1 P0/P1/P2 三级定义与响应义务（@m:0.14#li-2 「违例须限期整改（时限为硬约束）。超期未整改自动升级为 P0 处置」）＝本条 AP1–AP4 的 signal_level 取值域；9.2.1 @m:9.2.1#row-级别-P0~p~阻塞级~q~ 为方面 9 侧的同源分级表
-        - {source_type: clause_id, value: "8.2", verified: true}     # @m:8.2#p-1 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
+        - {source_type: clause_id, value: "8.2", verified: true}     # @m:0.2#p-2 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
         - {source_type: clause_id, value: "8.1", verified: true}     # @m:8.1#p-1 方面 8 的驱动问题＋@m:8.1#p-2 「执行引擎」定位与反幻觉主题词「叙事性验证」（"我们测过了，没问题"——无工件、不可重放、不可引用的结论）＝本条最直接的反面形态
         - {source_type: clause_id, value: "8.3", verified: true}     # @m:8.3#p-1 /@m:8.3#p-2 /@m:8.3#p-3 三空间驱动＋@m:8.3#p-4 双使用者条款（Agent 自主面含「回放与注入套件的生成运行」，人类面含「验证计划发布」）
         - {source_type: clause_id, value: "8.4", verified: true}     # @m:8.4#p-1 接收约束九行中四行直接落在本条（方面 2 @m:8.4#row-来源-方面2 「W1/W2：每单元 seam + 独立可验证」硬、方面 3 @m:8.4#row-来源-方面3 「已发布契约集 + CDC 要求（X4 分级）」、方面 5 @m:8.4#row-来源-方面5 「卡片 failure_modes → 注入用例；事件驱动 → 回放/乱序必备」、方面 6 @m:8.4#row-来源-方面6 「六要素场景 → 测试判据；三值判定 → 验证目标源」硬）＋@m:8.4#row-目标方面-全部方面 施加约束五行＝constraints_imposed 源
@@ -9459,7 +9459,7 @@ entries:
         - {source_type: clause_id, value: "8.2.1", verified: true}   # @m:8.2.1#p-1 验证计划反向生成三输入＋手段映射注册表六类（本条骨架源，第五项）＋@m:8.2.1#p-2 末句「无手段覆盖的硬性质 = T1 违例 = 阻塞」——本条是「须人类作实质判断」族性质的唯一合法 means，故该族硬性质的 T1 义务由本条独占承载
         - {source_type: clause_id, value: "8.2.7", verified: true}   # @m:8.2.7 ＝本条的**主体源**：@m:8.2.7#p-1 「以下评审点是验证计划的**不可自动化删减项**（T8 硬性质）」＋@m:8.2.7#li-1 五评审点（设计评审／简记包抽查／材料性抽查／验证计划评审／例外-Waiver 评审）＋@m:8.2.7#p-2 存在的理由（批准与问责的结构需要）与裁剪纪律（通道保留 ≠ 通道加重）
         - {source_type: clause_id, value: "8.2.6", verified: true}   # @m:8.2.6 证据保全机制：@m:8.2.6#li-1 七要素（本条产出的评审记录同样须齐备）、@m:8.2.6#li-2 可重放性、@m:8.2.6#li-3 保存期限、@m:8.2.6#li-4 **双使用者同义务**逐字「人类抽查评审的记录（8.2.7）同样是证据工件（执行者 = 人类署名）」＝本条受 T3 约束的明文据
-        - {source_type: clause_id, value: "8.2", verified: true}     # @m:8.2#p-1 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
+        - {source_type: clause_id, value: "8.2", verified: true}     # @m:0.2#p-2 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
         - {source_type: clause_id, value: "8.1", verified: true}     # @m:8.1#p-1 方面 8 的驱动问题＋@m:8.1#p-2 「执行引擎」定位与反幻觉主题词「叙事性验证」——本条是该主题词的最敏感面：评审结论若无工件即落回叙事性验证（@m:8.2.5#li-1 T-F1 双禁）
         - {source_type: clause_id, value: "8.3", verified: true}     # @m:8.3#p-1 /@m:8.3#p-2 /@m:8.3#p-3 三空间驱动＋@m:8.3#p-4 **双使用者条款**逐字「Agent 自主完成计划生成、检查程序编写与执行、证据保全、失真信号计算、回放与注入套件的生成运行；**验证计划发布、Waiver 评审、五个评审点属人类**（8.2.7）」＝本条与其余五类的职责分界权威源
         - {source_type: clause_id, value: "8.4", verified: true}     # @m:8.4#p-1 接收约束九行（方面 7 行 @m:8.4#row-来源-方面7 「证据保全义务（T-F3/R7 联动）；**评审点登记**」为本条独占的接收面）＋@m:8.4#row-目标方面-全部方面 施加约束五行＝constraints_imposed 源（@m:8.4#row-目标方面-方面7 方面 7 行「评审记录 → 简记包/材料性抽查材料」为本条的下游消费面）
@@ -9560,7 +9560,7 @@ entries:
         - {source_type: clause_id, value: "2.2.4", verified: true}   # @m:2.2.4 DSM 双通道执行：@m:2.2.4#li-6 逐字「**告警治理**（防噪声淹没信号）：P2 信号采用**阈值 + 趋势窗口**双判据——指标绝对值越阈**且**连续 N 个窗口呈同向漂移才告警；单点越阈只记录不告警。阈值、窗口长度 N、漂移速率判据均为方面 9 守护规则参数，按 0.13 注册治理」＝AP2 的立论据；@m:8.2.2#p-2 金字塔失真信号逐字「同 2.2.4 告警治理」与 @m:9.2.1#row-级别-P2~p~监测级~q~ P2 行「记录 + 阈值/趋势双判据监测（2.2.4 告警治理）」→ 该纪律是全框架共用而非本条私有
         - {source_type: clause_id, value: "5.2.5", verified: true}   # @m:5.2.5 行为模式质量影响卡片：@m:5.2.5#code-1 卡片六槽中 `observability_requires[]` 逐字「该模式可运维的前提（分布式追踪、流程实例可视化、对账报表……）」＋@m:5.2.5#p-3 逐字「observability_requires 未满足而模式已选用 = 『**选了但养不起**』，按 0.4 证据门槛审查交付空间出处后降软或阻塞」＝本条 envelope 第三项与 AP1 的权威据
         - {source_type: clause_id, value: "0.14", verified: true}    # @m:0.14 守护规则分级（内联冻结定义）：@m:0.14#li-3 逐字「**P2**：监测预警级…P2 信号须配**阈值 + 趋势窗口**双判据（见方面 2 的 DSM 通道一），**防告警疲劳**」＝AP2 的冻结定义源；@m:0.14#p-1 「方面 9 定稿可细化、不得改变语义」→ 本条以 9.2.1 为细化权威而以 0.14 为语义下界
-        - {source_type: clause_id, value: "8.2", verified: true}     # @m:8.2#p-1 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
+        - {source_type: clause_id, value: "8.2", verified: true}     # @m:0.2#p-2 表格性质（种子数据源视图，非决策权威）＋六类手段的种属归属
         - {source_type: clause_id, value: "8.1", verified: true}     # @m:8.1#p-1 方面 8 的驱动问题＋@m:8.1#p-2 「执行引擎」定位与反幻觉主题词「叙事性验证」——本条是该主题词在生产侧的对治面：生产结论若无注册判据即落回叙事（@m:9.2.5#row-策略-金丝雀发布 「人工『看着还行』」）
         - {source_type: clause_id, value: "8.3", verified: true}     # @m:8.3#p-1 /@m:8.3#p-2 /@m:8.3#p-3 三空间驱动（@m:8.3#p-1 「SLA 合同条款 → 端到端层判据的强制集」与 @m:8.3#p-2 「**现状基线是验证判据的锚**（6.3 同源纪律：基线来自观测非文档）」为本条的两项主收益面）＋@m:8.3#p-4 双使用者条款（Agent 自主面含「失真信号计算」，本条的信号产出属该面；人类面为 Waiver 评审与五评审点）
         - {source_type: clause_id, value: "8.4", verified: true}     # @m:8.4#p-1 接收约束九行＋@m:8.4#row-目标方面-全部方面 施加约束五行＝constraints_imposed 源（@m:8.4#row-目标方面-方面9 施加方面 9 行「失真信号、幻觉套件清单、长期失败用例 → 腐化监测输入」为本条的主要下游消费面）
