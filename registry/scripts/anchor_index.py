@@ -120,6 +120,7 @@ CLAUSE_RE = re.compile(r'@(?:(?P<prefix>[mrpvcd]):)?(?P<clause>\d+(?:\.\d+){1,})
 KEY_AT_RE = re.compile(r'(?<![@\w])(?P<key>[A-Za-z_][A-Za-z0-9_.]*)\s*@(?P<a>\d{1,5})(?![\d.])')
 
 HEAD_RE = re.compile(r'^(#{2,6})\s+((?:\d+\.)+\d*|\d+)\s')
+APPX_RE = re.compile(r'^(#{2,6})\s+(附录[一二三四五六七八九十]+)')
 
 
 def read(p: Path) -> str:
@@ -139,6 +140,8 @@ class Doc:
         self.headings = []          # (line, level, clause)
         self.all_heads = []         # (line, level, 逐字标题)：含非数字标题（表标识取用）
         self.titles = []            # (line, 逐字标题)：所有 Markdown 标题（`#sec-` 的匹配集）
+        self.appendix = []          # (line, level, '附录一'…)：无编号 H2 附录，独立 span
+        self.appendix_dups = {}
         self.clause_dups = []
         self.fence_lines = set()    # 代码围栏内行号（规范 R5：围栏内不视为锚点）
         if self.exists:
@@ -157,15 +160,25 @@ class Doc:
                     num = m.group(2).strip()
                     self.headings.append((i, len(m.group(1)), num))
                     seen[num].append(i)
+                else:
+                    am = APPX_RE.match(ln)
+                    if am:
+                        self.appendix.append((i, len(am.group(1)), am.group(2)))
                 tm = re.match(r'^#{1,6}\s+(.*\S)\s*$', ln)
                 if tm:
                     self.titles.append((i, tm.group(1)))
                     self.all_heads.append((i, ln.index(' '), tm.group(1)))
             self.clause_dups = {k: v for k, v in seen.items() if len(v) > 1}
+            aseen = defaultdict(list)
+            for (aln, _alvl, alab) in self.appendix:
+                aseen[alab].append(aln)
+            self.appendix_dups = {k: v for k, v in aseen.items() if len(v) > 1}
+        # 结构地址命名空间 = 编号条款 ∪ 附录（同一 (label, sub) 空间；附录不计入条款号集合）
+        self.span_heads = sorted(self.headings + self.appendix)
 
     def clause_at(self, line: int):
         best = None
-        for (ln, lvl, num) in self.headings:
+        for (ln, lvl, num) in self.span_heads:
             if ln <= line:
                 best = (ln, lvl, num)
             else:
@@ -173,18 +186,18 @@ class Doc:
         return best
 
     def line_of_clause(self, clause: str):
-        hits = [ln for (ln, _lvl, num) in self.headings if num == clause]
+        hits = [ln for (ln, _lvl, num) in self.span_heads if num == clause]
         return hits[0] if len(hits) == 1 else (None if not hits else -1)
 
     # ── 结构地址解析（ADR-ANCHOR-01 §3）──────────────────────────
     def clause_span(self, clause: str):
         """(标题行, 结束行[不含])；条款号不唯一或不存在返回 None。"""
-        hits = [(ln, lvl) for (ln, lvl, num) in self.headings if num == clause]
+        hits = [(ln, lvl) for (ln, lvl, num) in self.span_heads if num == clause]
         if len(hits) != 1:
             return None
         ln, lvl = hits[0]
         end = len(self.lines) + 1
-        for (l2, lvl2, _n2) in self.headings:
+        for (l2, lvl2, _n2) in self.span_heads:
             if l2 > ln and lvl2 <= lvl:
                 end = l2
                 break
@@ -234,7 +247,7 @@ class Doc:
         return out
 
     def heading_line(self, label: str):
-        hits = [ln for (ln, _lvl, num) in self.headings if num == label]
+        hits = [ln for (ln, _lvl, num) in self.span_heads if num == label]
         return hits[0] if len(hits) == 1 else (None if not hits else -1)
 
     # ── 代码块锚（ADR-ANCHOR-01 §3.6 `code-`）────────────────────
@@ -313,7 +326,7 @@ LABEL_CLASSES = ('formula_label', 'field_label')
 DOC_ANCHOR_RE = re.compile(r'@(?P<prefix>[dp]):(?P<loc>[^\s#，。；|）（：、／]+)')
 # 结构地址锚（ADR-ANCHOR-01）：@m:<条款>[#sub]、@r:<entry>[#field-…]、@v:<term>、@c:<节>
 STRUCT_RE = re.compile(
-    r'@(?P<prefix>[mrv]):(?P<loc>[A-Za-z0-9_.\-]+)(?:#(?P<sub>[^\s，。；|）（：、／]+))?')
+    r'@(?P<prefix>[mrv]):(?P<loc>(?:\d+(?:\.\d+)*[A-Za-z]*|附录[一二三四五六七八九十]+|[A-Za-z][A-Za-z0-9_.\-]*))(?:#(?P<sub>[^\s，。；|）（：、／]+))?')
 # 规范 §2 新增两式（2026-11-05 裁定）：key- 点路径（下标必须保留）／sec- 逐字标题
 SUB_KEY_RE = re.compile(r'#key-(?P<path>[A-Za-z0-9_.\[\]-]+)')
 SUB_FN_RE = re.compile(r'#fn-(?P<name>[A-Za-z_][A-Za-z0-9_]*)')
@@ -375,7 +388,9 @@ def resolve_struct(prefix: str, loc: str, sub: str, docs: dict,
                  struct_candidates=0, struct_unit='')
     if prefix == 'm':
         doc = docs.get('软件工程元框架成文法.md')
-        if not doc or not doc.exists or not re.fullmatch(r'\d+(?:\.\d+)+', loc):
+        if not doc or not doc.exists or not (
+                re.fullmatch(r'\d+(?:\.\d+)+', loc)
+                or re.fullmatch(r'附录[一二三四五六七八九十]+', loc)):
             return empty
         span = doc.clause_span(loc)
         if not span:
