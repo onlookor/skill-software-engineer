@@ -123,7 +123,7 @@
 
 ## 7. 影响面
 
-- **目标 kind**：GRD／PRJ／GOV 三件；`profiles.yaml` 行数增加（8+7+8 项 N-A + 3 条豁免），@466 之后所有行号位移。
+- **目标 kind**：GRD／PRJ／GOV 三件；`profiles.yaml` 行数增加（8+7+8 项 N-A + 3 条豁免），@471 之后所有行号位移。
 - **既有条目**：`method_registry.yaml` 中 GRD／PRJ／GOV 条目为 **0**；其余 110 条不受影响（其 kind 剖面的物化列表不变）。
 - **既有豁免**：STY-020…024 的 `C-ENV` 豁免 @98-103 保留；R2 只是给它更一般的依据，不回写。
 - **既有 optional**：DEC／OWN／CFG／VFM 的 `cost_profile.latency_budget_delta` optional 不受影响。
