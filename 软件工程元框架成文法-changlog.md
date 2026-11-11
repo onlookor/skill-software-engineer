@@ -2759,3 +2759,122 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **实测**：书目索引键 81→81（1..81），扫描书目行 87→81，重号 `[1..6]`→`[]`；消失的 6 条为 10.2.5 验收清单第 1–6 项（4561–4566 行），2.9 真书目 1–27 全在。`project.py --check` 的 PTR 由 1 条硬失败降为 0。
 - **反向自测**：在 10.2.5 清单再插入一条重号 1，修复后不报 PTR（硬失败仍 22，全为 PRJ 欠账）；恢复后同。
 - **探针「记录」1,219→1,218 的 +1 来路**：不是新增键或新文件，而是 `check_bib_sanity` 的失败分支未 return——重号时同时落 1 条 PTR fail 与 1 条 PTR ok；B7/S2 之前 PTR 只落 1 条 ok。复现：`git worktree add /tmp/b6 layer-B6 && cd /tmp/b6/registry && python3 scripts/project.py --check` 得 1,218／0；对 `layer-B7` 同法得 1,219／1。
+
+## 2026-11-11：R-1 丙第三步——删 SRC／GRD 14 条 `cost_profile.*` NA，基线下调至 7,407
+
+- **性质**：R-1 丙的必然收尾。第二步给 SRC／GRD 判 `participates: false`（依据见上一节逐 kind 行），`false` 在 0.17.2 p-2 新句下意味着 `cost_profile` 整段合法缺省、**不填也不登记 `not_applicable`**；故这 14 条 NA 失去登记理由，删除。删的是机制，不是记录——原文见下。
+- **覆盖面**：删 14 条 NA，落在 11 条条目上（SRC-001…SRC-008 八条＋GRD-001…GRD-003 三条）。PRJ 7 条 NA、GOV 7 条 NA 原样保留（前者判 `true` 走欠账，后者未判定）；SRC／GRD 的 `envelope`／`signals` NA 不动。
+
+### 代价登记：被删 14 行 `not_applicable` 原文（逐字）
+
+**GRD（`kind_profile_GRD`，条目 GRD-001…GRD-003；7 条，`reason` 全同）**：
+
+```yaml
+      - field: cost_profile.latency_budget_delta
+        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.failure_modes
+        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.consistency_impact
+        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.observability_requires
+        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.ops_cost
+        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.skill_prerequisites
+        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.aggregation_semantics
+        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+```
+
+**SRC（`kind_profile_SRC`，条目 SRC-001…SRC-008；7 条，`reason` 前半同、后半各异）**：
+
+```yaml
+      - field: cost_profile.latency_budget_delta
+        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不被选择，无延迟预算影响面。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.failure_modes
+        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不是可选方法，无失败模式卡片。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.consistency_impact
+        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不改变一致性级别。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.observability_requires
+        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；观测能力在 GRD／9.2.5 侧登记。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.ops_cost
+        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；消费成本在 GRD 侧卡片。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.skill_prerequisites
+        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不要求新技能前提。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+      - field: cost_profile.aggregation_semantics
+        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源无跨条目聚合语义。"
+        provenance: compiled
+        source: {source_type: clause_id, value: "0.17.2", verified: true}
+```
+
+**原文如此，已由 `participates: false` 承担同一事实**：被删的 14 行陈述的是同一件事（这些 kind 的 `cost_profile` 不适用），现在该事实由剖面 `selection_profile.participates: false` 一次性承载，0.17.2 p-2 新句并明确禁止 `false` 者再登记 `not_applicable`。上列原文逐字留档于此，记录不丢。
+
+### 重冻三条件
+
+**① 逐单元列因（7 键）**——每键均为 `registry/profiles.yaml|@m:0.17.2#p-2|<occ>`，单元 `m:0.17.2:p-2`：
+
+| # | 键 | 单元 | 因由 |
+|---|---|---|---|
+| 1 | `registry/profiles.yaml\|@m:0.17.2#p-2\|23` | `m:0.17.2:p-2` | 该 token 在 profiles.yaml 的 occ 序号压缩：30 次→23 次，尾端 7 键消失 |
+| 2 | `registry/profiles.yaml\|@m:0.17.2#p-2\|24` | 同上 | 同上 |
+| 3 | `registry/profiles.yaml\|@m:0.17.2#p-2\|25` | 同上 | 同上 |
+| 4 | `registry/profiles.yaml\|@m:0.17.2#p-2\|26` | 同上 | 同上 |
+| 5 | `registry/profiles.yaml\|@m:0.17.2#p-2\|27` | 同上 | 同上 |
+| 6 | `registry/profiles.yaml\|@m:0.17.2#p-2\|28` | 同上 | 同上 |
+| 7 | `registry/profiles.yaml\|@m:0.17.2#p-2\|29` | 同上 | 同上 |
+
+因由展开：GRD 7 条 NA 的 `reason` 首句各含一次 `@m:0.17.2#p-2`（见上「GRD」块），删除即减 7 次出现；被删块位于文件中段，其后各次出现 occ 序号整体前移 7，故基线尾端 7 键（23–29）在现行快照中不再存在。**这 7 条 NA 原文与所属 kind＋条目 ID 即上「GRD（`kind_profile_GRD`，条目 GRD-001…GRD-003）」块**，逐行对应 `latency_budget_delta`／`failure_modes`／`consistency_impact`／`observability_requires`／`ops_cost`／`skill_prerequisites`／`aggregation_semantics`。
+
+**② 基线 diff 恰 7 键（只减不增）**：
+
+| 部分 | 旧 | 新 | added | removed | changed |
+|---|---|---|---|---|---|
+| `units` | 7,414 | **7,407** | 0 | 7 | 0 |
+| `fps` | 7,414 | **7,407** | 0 | 7 | 0 |
+
+文件 1,634,988→1,633,504 字节；重冻后 `anchor_index` 15 项断言全 pass／info，`failures: []`。
+
+**③ 反向自测（实测方向）**：把一条 GRD NA（`cost_profile.failure_modes`，4 行）临时加回 → **F-10 fail count=1**，`registry/profiles.yaml|@m:0.17.2#p-2|23:None->m:0.17.2:p-2`（与预期同向）；**F-3 未变**：pass，`checked=7407 mismatch=0 missing=0`——该前缀全部落点指纹相同（都指向母本 p-2 同一段），新增一次出现只多出一个 occ 键，不产生指纹差异。此项与「F-3 相应变化」的预期不同，**照实记，不改判据**。恢复后 `failures: []`，F-3 pass（checked 7,407）、F-10 pass。
+
+### 同批探针变化（删 NA 前后，同一 HEAD）
+
+| 项 | 前 | 后 |
+|---|---|---|
+| 记录 | 1,218 | 1,218 |
+| 硬通过／失败／skip | 947／22／66 | 947／22／66 |
+| 软记录／警告 | 138／0 | 138／0 |
+| info | 33＋12 | 33＋12 |
+| 条目 | 138 | 138 |
+| 种子资格 | 127 成立／11 不成立 | 127 成立／11 不成立 |
+| 指针／miss | 2,410／0 | **2,396／0**（−14，＝每删块少 1 次 `@m:0.17.2#p-2`） |
+| 占位符 | 1,481＝1＋1,480 | 1,481＝1＋1,480 |
+| 基线 units／fps | 7,414／7,414 | **7,407／7,407** |
+
+- **同步**：施工单 §2.3 锚点索引行、总账 §6.1／§6.2、ADR-ANCHOR-01 三处 as-of 追加「2026-11-11 R-1 丙重冻后 7,407」，历史数字保留不重写。
+- **回退**：单独 `git revert` 本提交即可恢复 14 条 NA 与 7 键基线；`participates: false` 保留则 M2 仍会按新句跳过 `cost_profile`，故回退只恢复登记面、不恢复检查行为。
