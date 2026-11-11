@@ -2908,3 +2908,11 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **SCH／CFG 括注（registry 文本改动）**：仅在 `variant` 句末追加括注、原文未删改——SCH 39→113 字，CFG 29→96 字；括注指明后半句「时间语义入白板 time_semantics」「flag 谓词入白板（5.5）」在母本 0.18.4 无对应原文，前半与方面 5 行「协调模式（5）」同源。
 - **影响面**：两行均无 `@m:` 锚；`anchor_index` 15 项全 pass／info、`failures: []`；基线 `units`／`fps` 仍 7,407／7,407（未重冻）。`project.py --check` 红项不变（PRJ 22：M2 11＋C-ST 11）。母本 sha 仍 `d6829e70…`。
 
+## 2026-11-11：登记——GRD／SRC／GOV 的「缺口」注记改为非缺口／待裁
+
+- **GRD／SRC（已判 `false`）**：`registry/profiles.yaml` L586／L774 的 `selection_profile.variant` 原句保留，句末追加「（注：本 kind 已判 participates: false，0.18.4 无对应行属正当缺省，不构成缺口，勿补表）」；GRD 70→130 字，SRC 69→129 字。
+- **GOV（未判定）**：同文件 L702 原句保留，句末追加「（注：本 kind 尚未判定 participates，是否构成缺口待 R-9 裁定；裁定前勿补表）」；57→107 字。
+- **性质**：三处均为注记——不改 `source`、不改 `participates`、不含 `@m:` 锚。`project.py --check` 红项不变（22）；`anchor_index` 15 项全 pass／info、`failures: []`；`units`／`fps` 仍 7,407／7,407，未重冻；母本 sha 仍 `d6829e70…`。
+- **登记**：施工单 §1bis R-10「待批清单」A1–A3；PRJ 的过期注记已有括注纠正，保持现状不再加注。
+
+
