@@ -247,8 +247,8 @@ profiles:
       entry_id_range: "STP-001…STP-004（表序，MJ-13 (iv) 同型）"
     selection_profile:
       participates: true
-      source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
+      source: {source_type: clause_id, value: "0.18.8", verified: false}
+      variant: "待补登记（未经 0.18.4 核验）：逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
     required_extra: []
     optional: []
     not_applicable:
@@ -312,8 +312,8 @@ profiles:
       entry_id_range: "DFL-001…DFL-005（表序，MJ-13 (iv) 同型）"
     selection_profile:
       participates: true
-      source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
+      source: {source_type: clause_id, value: "0.18.8", verified: false}
+      variant: "待补登记（未经 0.18.4 核验）：逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
     required_extra: []
     optional: []
     not_applicable:
@@ -378,8 +378,8 @@ profiles:
       entry_id_range: "RLP-001…RLP-007（分块序＝5.2.3 @m:5.2.3#p-1 清单序：幂等=001、收件箱（inbox）=002、发件箱（outbox）=003、重试 + 指数退避 + 抖动=004、超时预算=005、断路器=006、舱壁=007；非表源无行序可依，取清单序，CRD-001…008 分块序判读同型，裁决见 README §4.6）"
     selection_profile:
       participates: true
-      source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "S4 卡片聚合最重（Z7 联动）"
+      source: {source_type: clause_id, value: "0.18.8", verified: false}
+      variant: "待补登记（未经 0.18.4 核验）：S4 卡片聚合最重（Z7 联动）"
     required_extra: []
     optional: []
     not_applicable:
@@ -411,8 +411,8 @@ profiles:
       entry_id_range: "SCH-001…SCH-003（分块序＝5.2.4 @m:5.2.4#p-1 分号列举序：定时器/截止期/cron 的登记=001、事件时间 vs 处理时间的显式选择=002、调度冲突与资源竞争的归属声明=003；name 取子命题引导词原形，半角斜杠与拉丁缩写 vs 一律不改写为顿号或中文『对比』，判读见 MJ-25 (i)；非表源无行序可依，取分号序，RLP-001…007 分块序判读同型，裁决见 README §4.7）"
     selection_profile:
       participates: true
-      source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics（注：本句后半「时间语义入白板 time_semantics」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
+      source: {source_type: clause_id, value: "0.18.8", verified: false}
+      variant: "待补登记（未经 0.18.4 核验）：S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics（注：本句后半「时间语义入白板 time_semantics」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
     required_extra: []
     optional: []
     not_applicable:
@@ -443,8 +443,8 @@ profiles:
       entry_id_range: "CFG-001…CFG-004（分块序＝5.2.6 @m:5.2.6#li-1 行内加粗清单列举序：配置 schema 注册=001、决策/参数判别谓词=002、开关生命周期=003、与 0.10 权力条款的联动=004；name 一律取加粗引导词逐字并去粗体标记——CFG-002 原形即含半角斜杠『决策/参数判别谓词』、CFG-004 原形即含条款号『与 0.10 权力条款的联动』→ 按 MJ-21 (iii) 原形登记，不改写为『权力条款联动』（与 RLP-004 同理），判读见 MJ-26 (i)；非表源无行序可依，取清单序，SCH-001…003／RLP-001…007 分块序判读同型，裁决见 README §4.8）"
     selection_profile:
       participates: true
-      source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "S5 先验权重消费风格默认；flag 谓词入白板（5.5）（注：本句后半「flag 谓词入白板（5.5）」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
+      source: {source_type: clause_id, value: "0.18.8", verified: false}
+      variant: "待补登记（未经 0.18.4 核验）：S5 先验权重消费风格默认；flag 谓词入白板（5.5）（注：本句后半「flag 谓词入白板（5.5）」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
     required_extra: []
     optional:
       - field: cost_profile.latency_budget_delta
@@ -693,14 +693,15 @@ profiles:
         - {source_type: clause_id, value: "0.17.3", verified: true}
         - {source_type: clause_id, value: "0.5", verified: true}
         - {source_type: clause_id, value: "7.2.3", verified: true}
+        - {source_type: clause_id, value: "7.2.4", verified: true}
     seed_source:
-      clause_id: "0.5/7.2.3"
+      clause_id: "0.5/7.2.3/7.2.4"
       table_rows: "0.5（6 行：完整 ADR／接受约束 ADR／张力承认 ADR／保守假设 ADR／权衡承认 ADR／重审提议）"
       entry_id_range: "GOV-001…GOV-006（表行序 @m:0.5#row-类型-完整ADR ；7.2.3 简记格式不单列条目，作 note 内格式约束）"
     selection_profile:
       participates: false
-      source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "[缺口：0.18.4 未登记治理模板的规程变体——GOV 由 0.13/方面 7 消费（0.17.4 消费者四）]（注：本 kind 已判 participates: false（R-9，2026-11-11），0.18.4 无对应行属正当缺省，不构成缺口，勿补表）"
+      source: {source_type: clause_id, value: "0.18.8", verified: false}
+      variant: "待补登记（未经 0.18.4 核验）：[缺口：0.18.4 未登记治理模板的规程变体——GOV 由 0.13/方面 7 消费（0.17.4 消费者四）]（注：本 kind 已判 participates: false（R-9，2026-11-11），0.18.4 无对应行属正当缺省，不构成缺口，勿补表）"
     required_extra: []
     optional: []
     not_applicable:
