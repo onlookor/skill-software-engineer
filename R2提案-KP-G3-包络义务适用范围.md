@@ -5,7 +5,7 @@
 | 提案编号 | R2-KP-G3-01（草案） |
 | 状态 | 草案；待人类责任方批准；本轮**不执行**母本改动 |
 | 日期 | 2026-11-03 |
-| 触发 | `profiles.yaml` `KP-G3` @569-574；0.17.6 (c) @458 |
+| 触发 | `profiles.yaml` `KP-G3` @574-579；0.17.6 (c) @463 |
 | 关联 | `KP-G1` @562-567、`KP-G4` @580-584；`registry/README.md` @260 `C-ST`；`todo.md` @143 |
 | 拟改 | 母本 `软件工程元框架成文法.md` @381（**同行追加**一句） |
 | 本轮不改 | `profiles.yaml`／`method_registry.yaml`／`predicate_vocabulary.yaml`／四件投影 |
