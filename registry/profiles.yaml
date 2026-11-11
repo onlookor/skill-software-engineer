@@ -15,6 +15,8 @@
 #      provenance.origin = manual 仅适用于字段取值与 optional 判定；not_applicable 属完备性判定，
 #      须有母本明文依据，不得以 manual 替代（2026-11-03 用户裁定；与 GOV 剖面 note 并存，不再两读）。
 #   4. status=draft 的剖面表示其字段适用性缺母本依据，缺口已登记于 gaps，不得用于放行 seed 条目。
+#   5. verified 语义（2026-11-11 裁定取甲）：verified: true 表示「该条款存在且其规范内容适用于本 kind」，
+#      不表示「该条款逐字点名了本 kind」；verified: false 表示该条引用未经核验，不得据以放行判定。
 
 meta:
   law_file: ../软件工程元框架成文法.md
