@@ -1544,7 +1544,7 @@ entries:
       latency_budget_delta: "不适用（元方法不进入运行时路径，无延迟项）；运行时延迟面由本方法产出的风格条目（STY-001…STY-019）的 latency_budget_delta 承载"   # MJ-11
       failure_modes: ["适用条件不满足即执行：质量属性未量化 → 属性到风格特征的映射退化为主观判断，产出无出处（0.4 门槛失败 → FM-1）", "属性间冲突未求交即取单属性最优 → 可行集偏窄或为空（FM-4 全候选排除）", "以属性优先级替代包络判定：跳过 bound_expr 代入场景参数 → 目标可达性无据，V4 不可校验（假精确）"]   # 三项人工判断（源自过程定义的三个操作环节：映射、求交、可达性判定）
       consistency_impact: "不适用（无运行时一致性面）；产出的部署/通信风格决定一致性形态，属方面 4 输入"   # MJ-11
-      observability_requires: ["属性 → 风格特征映射表逐条可查且带出处（0.4）", "求交过程留痕：可行集、被排除的属性/候选及依据（0.18.3 纪律 2 步骤日志）", "逐候选三值判定（reachable / reachable_with_cost / unreachable）与 cost_ledger 可查（S4 输出）"]
+      observability_requires: ["属性 → 风格特征映射表逐条可查且带出处（0.4）", "求交过程留痕：可行集、被排除的属性/候选及依据（0.18.3 纪律 2 步骤日志）", "逐候选三值判定（reachable / reachable_with_cost / unreachable）与代价清单可查（S4 输出）"]
       ops_cost: "[无独立运维面；成本落在属性量化（6.2 六要素场景编写）与映射表的维护/复核]"
       skill_prerequisites: ["质量属性场景量化（6.2 六要素）", "属性 → 风格特征映射的判据能力（须用 6.2.1 封闭指标词汇，禁自造属性族）", "包络判定与三值裁决（0.18.2 S4）＋不可达时的升级处置（FM-5 → CH-D）"]
       aggregation_semantics: itemwise
@@ -7673,7 +7673,7 @@ entries:
       - pattern_id: QAT-002-AP3
         description: "有代价可达而代价未量化未入 ADR（以副本数换 SLO 而不记账单）"
         detection_predicate: "∃ 判定: verdict(·, reachable_with_cost) ∧ ¬cost_ledger(·, ·)"
-        signal_level: P1               # Q4 @m:6.5#code-Q4 逐字「∀ verdict=reachable_with_cost: ∃ cost_ledger(quantified) ∧ recorded_in(ADR) // 代价必量化必留痕 —— 硬」→ 本 AP 系该硬性质的直接违例面；未取 P0 因 cost_ledger 缺项属留痕面缺口而非运行时正确性缺口，且 Q4 在 @m:6.5#code-Q6 同级序列中列为硬但本条只承载其触发（formal_anchor role=triggers），定级判读入 MJ-27 (vii)
+        signal_level: P1               # Q4 @m:6.5#code-Q4 逐字「∀ verdict=reachable_with_cost: recorded_in(ADR) // 代价必留痕 —— 硬」→ 本 AP 系该硬性质的直接违例面；未取 P0 因代价清单缺项属留痕面缺口而非运行时正确性缺口，且 Q4 在 @m:6.5#code-Q6 同级序列中列为硬但本条只承载其触发（formal_anchor role=triggers），定级判读入 MJ-27 (vii)
       - pattern_id: QAT-002-AP4
         description: "复制滞后无观测面（陈旧读不可归因，滞后长期累积）"
         detection_predicate: "∃ 副本集: tactic(·, QAT-002) ∧ ¬[复制滞后可观测](副本集)"
@@ -7681,11 +7681,11 @@ entries:
     formal_anchor:
       - {property_id: Q6, role: implements}   # @m:6.5#code-Q6 目标-手段闭合：本条为性能族与可用性族两族目标的共同映射实例（@m:6.2.5#li-1 与 @m:6.2.5#li-2 共享副本底座）。计息：Q6 本批 15 项之一
       - {property_id: Q5, role: triggers}     # @m:6.2.5#p-2 卡片义务 → Q5 @m:6.5#code-Q5 的 card 量词域。计息：Q5 本批 15 项之一
-      - {property_id: Q4, role: triggers}     # @m:6.2.5#p-2 逐字「多副本 → 一致性负担 + 成本」系母本明文的**有代价可达**实例 → 触发 Q4 @m:6.5#code-Q4 「∀ verdict=reachable_with_cost: ∃ cost_ledger(quantified) ∧ recorded_in(ADR)」；role 取 triggers（本条不实现 Q4，Q4 的实现面在判定与 ADR 留痕侧）。计息：Q4 0→2（本条与 QAT-004，块头定案：只取 @m:6.2.5#p-2 明文两例，不类推）
+      - {property_id: Q4, role: triggers}     # @m:6.2.5#p-2 逐字「多副本 → 一致性负担 + 成本」系母本明文的**有代价可达**实例 → 触发 Q4 @m:6.5#code-Q4 「∀ verdict=reachable_with_cost: recorded_in(ADR)」；role 取 triggers（本条不实现 Q4，Q4 的实现面在判定与 ADR 留痕侧）。计息：Q4 0→2（本条与 QAT-004，块头定案：只取 @m:6.2.5#p-2 明文两例，不类推）
     references: []                     # 同 QAT-001（块头 references 段）：文献 56 系尾注非独立著录行，书目 12 的 compile_usage 归 1.2.4 → 行级面不下探；不以不承载主张的文献充当出处（0.17.7 门槛 6）
     narrative:
-      benefit_cost_analysis: "收益：本条是 6.2.5 中唯一同时服务性能族与可用性族的手段——@m:6.2.5#li-1 把它列于性能族（就近副本降低读延迟、副本分担读容量），@m:6.2.5#li-2 的恢复战术（主动冗余/被动冗余/ spare）又以副本底座为前提，故一次拓扑投入可支撑 Q6 @m:6.5#code-Q6 的两个映射实例。收益的第二面是错误预算：单副本失效不再等同服务失效 → 预算消耗率下降，该面由 6.4 @m:6.4#row-目标方面-9~p~架构守护~q~ 施加给方面 9 作守护信号参数。代价：@m:6.2.5#p-2 是母本对本条的**明文**代价登记「多副本 → 一致性负担 + 成本」，两项都不可摊薄——一致性负担表现为 4.2.3 级别声明的实际可达性下降与写路径延迟上升（envelope 第一项的两路径不同单调方向即此），成本表现为资源占用的线性下界（envelope 第三项）。此外还有两项母本未明文、属人工判断的代价：故障域共享使收益归零（AP1，形式冗余），以及运维面按副本数 × 故障域组合扩张（ops_cost，@m:6.3#p-3 以「复杂多活」为不可运维示例）。净判读：本条的收益高度依赖副本间故障独立性，故勘察故障域是先决步骤而非事后检查；在一致性级别已声明为强一致且业务语义不容降级的场合，本条的写路径代价可能吞没读路径收益 → 应先经 Q4 的 cost_ledger 量化再裁决，不得以「多副本总是更好」充当依据（@m:6.2.5#p-2 明文有代价，@m:6.2.5#p-1 禁止即兴发明亦禁止即兴宣称）。"
-      typical_scenarios: "读多写少且可接受有界陈旧读的服务（就近副本降低 P99，envelope 第一项读路径）；单副本构成可用性缺口且已有 SLO 与错误预算登记者（可用性族目标，@m:6.2.5#li-2 恢复战术的共同底座）；跨可用区容灾要求来自合同 SLA 或监管条文者（6.4 @m:6.4#row-来源-外部强加 外部强加行：硬，带出处，权威最高，不带默认带宽）；读容量缺口经 @m:6.3#p-2 基线测量确认、且 QAT-003 增加资源已达上界者；运维能力经 @m:6.3#p-3 过滤器确认可承载副本集日常操作者（否则本条属「无人能运维的战术…不可选，无论包络多漂亮」）；有代价可达的判定须走 cost_ledger 量化 + ADR 留痕（Q4）并把代价入 ADR（6.4 @m:6.4#row-目标方面-1~p~风格~q~ 施加于方面 1 的 V4 消费端）。"
+      benefit_cost_analysis: "收益：本条是 6.2.5 中唯一同时服务性能族与可用性族的手段——@m:6.2.5#li-1 把它列于性能族（就近副本降低读延迟、副本分担读容量），@m:6.2.5#li-2 的恢复战术（主动冗余/被动冗余/ spare）又以副本底座为前提，故一次拓扑投入可支撑 Q6 @m:6.5#code-Q6 的两个映射实例。收益的第二面是错误预算：单副本失效不再等同服务失效 → 预算消耗率下降，该面由 6.4 @m:6.4#row-目标方面-9~p~架构守护~q~ 施加给方面 9 作守护信号参数。代价：@m:6.2.5#p-2 是母本对本条的**明文**代价登记「多副本 → 一致性负担 + 成本」，两项都不可摊薄——一致性负担表现为 4.2.3 级别声明的实际可达性下降与写路径延迟上升（envelope 第一项的两路径不同单调方向即此），成本表现为资源占用的线性下界（envelope 第三项）。此外还有两项母本未明文、属人工判断的代价：故障域共享使收益归零（AP1，形式冗余），以及运维面按副本数 × 故障域组合扩张（ops_cost，@m:6.3#p-3 以「复杂多活」为不可运维示例）。净判读：本条的收益高度依赖副本间故障独立性，故勘察故障域是先决步骤而非事后检查；在一致性级别已声明为强一致且业务语义不容降级的场合，本条的写路径代价可能吞没读路径收益 → 应先经 Q4 的代价清单登记再裁决，不得以「多副本总是更好」充当依据（@m:6.2.5#p-2 明文有代价，@m:6.2.5#p-1 禁止即兴发明亦禁止即兴宣称）。"
+      typical_scenarios: "读多写少且可接受有界陈旧读的服务（就近副本降低 P99，envelope 第一项读路径）；单副本构成可用性缺口且已有 SLO 与错误预算登记者（可用性族目标，@m:6.2.5#li-2 恢复战术的共同底座）；跨可用区容灾要求来自合同 SLA 或监管条文者（6.4 @m:6.4#row-来源-外部强加 外部强加行：硬，带出处，权威最高，不带默认带宽）；读容量缺口经 @m:6.3#p-2 基线测量确认、且 QAT-003 增加资源已达上界者；运维能力经 @m:6.3#p-3 过滤器确认可承载副本集日常操作者（否则本条属「无人能运维的战术…不可选，无论包络多漂亮」）；有代价可达的判定须走代价清单 + ADR 留痕（Q4）并把代价入 ADR（6.4 @m:6.4#row-目标方面-1~p~风格~q~ 施加于方面 1 的 V4 消费端）。"
       common_misuse: "副本同故障域而宣称可用性提升（AP1，形式冗余；故障域勘察是先决步骤）；上线多副本而不复核一致性级别声明（AP2，@m:6.2.5#p-2 明文代价未入账、6.4 @m:6.4#row-目标方面-4~p~数据~q~ 的方面 4 预算上界失去输入）；以副本数换 SLO 而不记代价账单（AP3，Q4 @m:6.5#code-Q4 硬性质的直接违例）；复制滞后又无观测面（AP4，陈旧读不可归因，且持续不满足即 5.2.5 @m:5.2.5#p-3 「选了但养不起」）；把本条与 CSL-001 的 tension 读作禁止并用（tension 系代价登记而非 hard_conflict，母本未禁止，处置面是量化 + 留痕）；把 consistency_impact 的母本明文（@m:6.2.5#p-2）与故障域共因失效的人工判断混为一谈（前者有母本据、后者入 MJ-27，0.18.6 M15 unknown ≠ false）；把副本数的取值写进注册表（母本未给数值 → 0.4 禁假精确，取值属实例侧按 0.9 注册）；以「复杂多活」形态绕过 @m:6.3#p-3 交付空间过滤器（母本逐字以之为不可运维示例，包络漂亮不构成豁免）。"
 
   - entry_id: QAT-003
@@ -7872,12 +7872,12 @@ entries:
     formal_anchor:
       - {property_id: Q6, role: implements}   # @m:6.5#code-Q6 目标-手段闭合：本条为性能族目标的映射实例（@m:6.2.5#li-1 列举序第四）。计息：Q6 本批 15 项之一
       - {property_id: Q5, role: triggers}     # @m:6.2.5#p-2 卡片义务 → Q5 @m:6.5#code-Q5 的 card 量词域（observability_requires 五项即本条的卡片消费面）。计息：Q5 本批 15 项之一
-      - {property_id: Q4, role: triggers}     # @m:6.2.5#p-2 逐字「缓存 → 新鲜度条款」系母本明文的**有代价可达**实例（以陈旧换开销）→ 触发 Q4 @m:6.5#code-Q4 「∀ verdict=reachable_with_cost: ∃ cost_ledger(quantified) ∧ recorded_in(ADR)」；role 取 triggers（本条不实现 Q4，实现面在判定与 ADR 留痕）——与 QAT-002 同型，本批仅此二条（只取 @m:6.2.5#p-2 明文两例、不类推，MJ-9）
+      - {property_id: Q4, role: triggers}     # @m:6.2.5#p-2 逐字「缓存 → 新鲜度条款」系母本明文的**有代价可达**实例（以陈旧换开销）→ 触发 Q4 @m:6.5#code-Q4 「∀ verdict=reachable_with_cost: recorded_in(ADR)」；role 取 triggers（本条不实现 Q4，实现面在判定与 ADR 留痕）——与 QAT-002 同型，本批仅此二条（只取 @m:6.2.5#p-2 明文两例、不类推，MJ-9）
     references: []                     # 同 QAT-001 @r:CFG-004#field-anti_patterns（块头 references 段 @r:CFG-003#field-compatibility）：文献 56 系尾注非独立著录行、书目 12 的 compile_usage 归 1.2.4 → 行级面不下探；不以不承载主张的文献充当出处（0.17.7 门槛 6）
     narrative:
       benefit_cost_analysis: "收益：本条是 6.2.5 性能族列举序中唯一以**消除或摊薄既有开销**为手段的战术（前四条分别改结构、改拓扑、改资源、改并行度），故其收益上界由现状开销占比直接决定——占比高则收益大，占比低则本条不在可行集内，这一判据可实测（6.3 @m:6.3#p-2），使 Q6 @m:6.5#code-Q6 的目标-手段闭合在本条上最易被客观检验。两形态的收益轴不同：批处理摊薄每请求固定成本（协议往返、序列化、小 IO），其代价是引入等待窗口；缓存消除重复成本，其代价是引入陈旧窗口。代价面：@m:6.2.5#p-2 只把「新鲜度条款」明文挂在缓存上，故本条的代价入账以该条款为核心（AP1 定为 P0）——新鲜度条款不是一句免责声明，而是把陈旧窗口映射到 4.2.3 已声明级别并给出业务语义论证（consistency_rationale）；批处理形态的代价（半成品批次、时延抖动）母本未明文 → 归卡片五字段（5.2.5 @m:5.2.5#code-1 ）承载而不入 compatibility。第二重代价是资源轴：缓存容量与批量缓冲都占用资源，本条与 QAT-003 在资源轴上同向叠加而非互相替代（envelope 第三项已明文）。第三重代价是可修改性：缓存把「一处取数」扩展为「取数 + 失效 + 陈旧判定」三面，触达单元数单调不减（envelope 第四项），这是 6.4 @m:6.4#row-目标方面-2~p~分解~q~ 施加于方面 2 的可测试性冻结约束的直接消费端。"
       typical_scenarios: "每请求固定开销占比高且可摊薄的调用路径（小 IO、逐条远端调用 → 批处理形态）；重复计算或重复取数比例经实测确认者（缓存形态，收益上界有实测据）；读多写少且业务可接受有界陈旧读者（陈旧窗口可映射到 CSL-004 最终一致，compatibility 已登记 tension）；热点数据集中且失效可预测者（击穿与雪崩防护面可控）；后端能力已近上界而不宜再增容者（QAT-003 的成本轴不可承载时，本条为可行集内替代）；可修改性目标与性能目标并存者（须同时核算 envelope 第四项的触达面增量，否则性能收益被变更成本抵消）。反例场合：开销占比低而归因错误者（应先走 QAT-001 或 QAT-003）；写多读少者（命中率无收益上界）；陈旧窗口不可声明者（强一致场合本条与 CSL-001 的张力超出 @m:6.2.5#p-2 明文范围 → 不得类推登记，改走 Q6 判定「不可达 → 候选重审」）。"
-      common_misuse: "缓存上线而不声明新鲜度条款（AP1，@m:6.2.5#p-2 母本明文义务，陈旧窗口未映射到 4.2.3 级别）；把「加了缓存」当作性能改善证据而不实测命中率与开销占比（AP3，@m:6.2.1#p-2 禁止裸陈述、@m:6.3#p-2 基线测量优先于文档）；缓存无失效路径而依赖自然过期（AP2，陈旧不可界、分歧不可检测）；命中率长期下降而无告警（AP4，收益消失不可归因，须按趋势窗口判定）；批处理无补偿路径即上线（半成品批次不可回退，联动 5.2.3）；以批量大小单调放大为吞吐优化而不核等待窗口（envelope 第二项已明文吞吐与延迟的方向冲突）；把本条与 QAT-002 的 consistency_impact 混同登记（@m:6.2.5#p-2 列为两例独立代价 → compatibility 不同据，不得类推）；把新鲜度条款写成免责声明而非级别映射（Q4 @m:6.5#code-Q4 的 cost_ledger(quantified) 面失据）。"
+      common_misuse: "缓存上线而不声明新鲜度条款（AP1，@m:6.2.5#p-2 母本明文义务，陈旧窗口未映射到 4.2.3 级别）；把「加了缓存」当作性能改善证据而不实测命中率与开销占比（AP3，@m:6.2.1#p-2 禁止裸陈述、@m:6.3#p-2 基线测量优先于文档）；缓存无失效路径而依赖自然过期（AP2，陈旧不可界、分歧不可检测）；命中率长期下降而无告警（AP4，收益消失不可归因，须按趋势窗口判定）；批处理无补偿路径即上线（半成品批次不可回退，联动 5.2.3）；以批量大小单调放大为吞吐优化而不核等待窗口（envelope 第二项已明文吞吐与延迟的方向冲突）；把本条与 QAT-002 的 consistency_impact 混同登记（@m:6.2.5#p-2 列为两例独立代价 → compatibility 不同据，不得类推）；把新鲜度条款写成免责声明而非级别映射（Q4 @m:6.5#code-Q4 的代价清单面失据）。"
 
   - entry_id: QAT-005
     kind: QAT
@@ -10341,6 +10341,14 @@ entries:
 
   - entry_id: PRJ-001
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "1.4 架构评审：系统整体组织原则"
     version: {major: 1, minor: 1, patch: 0}
     status: seed                       # draft→seed 简记见顶层 status_transitions（ST-PRJ-01，M3 落盘）
@@ -10399,6 +10407,14 @@ entries:
 
   - entry_id: PRJ-002
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "2.4 分解评审：单元边界与依赖"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10457,6 +10473,14 @@ entries:
 
   - entry_id: PRJ-003
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "4.4 数据评审：数据所有权与流动"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10515,6 +10539,14 @@ entries:
 
   - entry_id: PRJ-004
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "5.4 流程评审：行为与协调的时序、事件流与流程状态"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10573,6 +10605,14 @@ entries:
 
   - entry_id: PRJ-005
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "8.4 验证评审入口：验证计划与证据索引"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10633,6 +10673,14 @@ entries:
 
   - entry_id: PRJ-006
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "9.4 守护评审：守护台账与健康度"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10693,6 +10741,14 @@ entries:
 
   - entry_id: PRJ-007
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "8.2.7 评审点一 × 0.5：高影响决策该不该批"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10753,6 +10809,14 @@ entries:
 
   - entry_id: PRJ-008
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "8.2.7 评审点二：低影响决策是否免于留痕"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10812,6 +10876,14 @@ entries:
 
   - entry_id: PRJ-009
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "8.2.7 评审点三：材料性判定是否被机械适用"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10872,6 +10944,14 @@ entries:
 
   - entry_id: PRJ-010
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "8.2.7 评审点四：验证边界是否成立"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
@@ -10933,6 +11013,14 @@ entries:
 
   - entry_id: PRJ-011
     kind: PRJ
+    cost_profile:
+      latency_budget_delta: "未评估（无设计层代价口径）"
+      failure_modes: ["未评估（无设计层代价口径）"]
+      consistency_impact: "未评估（无设计层代价口径）"
+      observability_requires: ["未评估（无设计层代价口径）"]
+      ops_cost: "未评估（无设计层代价口径）"
+      skill_prerequisites: ["未评估（无设计层代价口径）"]
+      aggregation_semantics: itemwise
     name: "8.2.7 评审点五：Waiver 该不该给"
     version: {major: 1, minor: 1, patch: 0}
     status: seed
