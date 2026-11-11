@@ -249,7 +249,7 @@ profiles:
     selection_profile:
       participates: true
       source: {source_type: clause_id, value: "0.18.1", verified: true}
-      variant: "待补登记（未经 0.18.4 核验）：逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
+      variant: "待补登记（本 kind 尚无自有变体；以下文本逐字抄自 0.18.4 第 4 行「所有权/一致性（4）」，非本 kind 变体）：逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
     required_extra: []
     optional: []
     not_applicable:
@@ -313,7 +313,7 @@ profiles:
     selection_profile:
       participates: true
       source: {source_type: clause_id, value: "0.18.1", verified: true}
-      variant: "待补登记（未经 0.18.4 核验）：逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
+      variant: "待补登记（本 kind 尚无自有变体；以下文本逐字抄自 0.18.4 第 4 行「所有权/一致性（4）」，非本 kind 变体）：逐数据集合迭代执行；S6 恒为高影响（批准注册类目）"
     required_extra: []
     optional: []
     not_applicable:
@@ -378,7 +378,7 @@ profiles:
     selection_profile:
       participates: true
       source: {source_type: clause_id, value: "0.18.1", verified: true}
-      variant: "待补登记（未经 0.18.4 核验）：S4 卡片聚合最重（Z7 联动）"
+      variant: "待补登记（本 kind 尚无自有变体；以下文本逐字抄自 0.18.4 第 5 行「协调模式（5）」，非本 kind 变体）：S4 卡片聚合最重（Z7 联动）"
     required_extra: []
     optional: []
     not_applicable:
@@ -410,7 +410,7 @@ profiles:
     selection_profile:
       participates: true
       source: {source_type: clause_id, value: "0.18.1", verified: true}
-      variant: "待补登记（未经 0.18.4 核验）：S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics（注：本句后半「时间语义入白板 time_semantics」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
+      variant: "待补登记（本 kind 尚无自有变体；以下文本逐字抄自 0.18.4 第 5 行「协调模式（5）」，非本 kind 变体）：S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics（注：本句后半「时间语义入白板 time_semantics」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
     required_extra: []
     optional: []
     not_applicable:
@@ -441,7 +441,7 @@ profiles:
     selection_profile:
       participates: true
       source: {source_type: clause_id, value: "0.18.1", verified: true}
-      variant: "待补登记（未经 0.18.4 核验）：S5 先验权重消费风格默认；flag 谓词入白板（5.5）（注：本句后半「flag 谓词入白板（5.5）」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
+      variant: "待补登记（本 kind 尚无自有变体；以下文本逐字抄自 0.18.4 第 5 行「协调模式（5）」，非本 kind 变体）：S5 先验权重消费风格默认；flag 谓词入白板（5.5）（注：本句后半「flag 谓词入白板（5.5）」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
     required_extra: []
     optional:
       - field: cost_profile.latency_budget_delta
