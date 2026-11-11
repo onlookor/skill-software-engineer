@@ -412,7 +412,7 @@ profiles:
     selection_profile:
       participates: true
       source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics"
+      variant: "S4 卡片聚合最重（Z7 联动）；时间语义入白板 time_semantics（注：本句后半「时间语义入白板 time_semantics」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
     required_extra: []
     optional: []
     not_applicable:
@@ -444,7 +444,7 @@ profiles:
     selection_profile:
       participates: true
       source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "S5 先验权重消费风格默认；flag 谓词入白板（5.5）"
+      variant: "S5 先验权重消费风格默认；flag 谓词入白板（5.5）（注：本句后半「flag 谓词入白板（5.5）」在母本 0.18.4 无对应原文，来源不明；前半与方面 5 行「协调模式（5）」同源）"
     required_extra: []
     optional:
       - field: cost_profile.latency_budget_delta
