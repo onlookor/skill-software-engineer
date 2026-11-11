@@ -593,34 +593,6 @@ profiles:
         reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：GRD 守护规则模板不以质量属性为选择判据，0.8 包络义务按本剖面登记为 not_applicable；显式豁免而非省略。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.latency_budget_delta
-        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.failure_modes
-        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.consistency_impact
-        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.observability_requires
-        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.ops_cost
-        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.skill_prerequisites
-        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.aggregation_semantics
-        reason: "R2 澄清（0.17.2 @m:0.17.2#p-2 末句）：cost_profile 随 envelope 一并 N-A；本子字段无独立质量影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
       - field: signals
         reason: "本 kind 的条目是被 0.18 选型消费的设计方法／模板，不承载 9.2.3 的漂移／腐化信号源语义；signals 的逐子信号登记仅适用于 kind SRC（0.17.2 signals 条＋0.17.3 SRC 行），本 kind 按 not_applicable 显式登记，非省略。信号源职责已由 0.17.3 的表（@m:0.17.3）闭合给 SRC：该表 `| SRC | 漂移/腐化信号源 | 方面 9 · 9.2.3 |` 是漂移／腐化信号源的唯一承载 kind（9.2.3 非部署八行逐行立条），故非 SRC kind 不设 signals 不构成字段缺失。"
         provenance: compiled
@@ -805,34 +777,6 @@ profiles:
     not_applicable:
       - field: envelope
         reason: "R2 澄清（0.17.2 末句；R2-KP-G3-01／R2-SRC-01）：SRC 漂移／腐化信号源不以质量属性为选择判据，0.8 包络义务按本剖面登记为 not_applicable；显式豁免而非省略。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.latency_budget_delta
-        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不被选择，无延迟预算影响面。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.failure_modes
-        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不是可选方法，无失败模式卡片。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.consistency_impact
-        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不改变一致性级别。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.observability_requires
-        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；观测能力在 GRD／9.2.5 侧登记。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.ops_cost
-        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；消费成本在 GRD 侧卡片。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.skill_prerequisites
-        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源不要求新技能前提。"
-        provenance: compiled
-        source: {source_type: clause_id, value: "0.17.2", verified: true}
-      - field: cost_profile.aggregation_semantics
-        reason: "R2 澄清（0.17.2 末句）：cost_profile 随 envelope 一并 N-A；信号源无跨条目聚合语义。"
         provenance: compiled
         source: {source_type: clause_id, value: "0.17.2", verified: true}
     undecided_fields: []
