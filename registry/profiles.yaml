@@ -583,7 +583,7 @@ profiles:
     selection_profile:
       participates: false
       source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "[缺口：0.18.4 未登记方面 9 守护规则模板的规程变体——GRD 由方面 9 消费而非 0.18 选型规程（0.17.4 消费者二）]"
+      variant: "[缺口：0.18.4 未登记方面 9 守护规则模板的规程变体——GRD 由方面 9 消费而非 0.18 选型规程（0.17.4 消费者二）]（注：本 kind 已判 participates: false，0.18.4 无对应行属正当缺省，不构成缺口，勿补表）"
     required_extra:
       - anti_patterns            # 规则体：detection_predicate + signal_level（0.17.4 消费者二「直接播种 G 规则」）
       - formal_anchor            # 0.14/9.2.1 分级锚点
@@ -699,7 +699,7 @@ profiles:
       entry_id_range: "GOV-001…GOV-006（表行序 @m:0.5#row-类型-完整ADR ；7.2.3 简记格式不单列条目，作 note 内格式约束）"
     selection_profile:
       source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "[缺口：0.18.4 未登记治理模板的规程变体——GOV 由 0.13/方面 7 消费（0.17.4 消费者四）]"
+      variant: "[缺口：0.18.4 未登记治理模板的规程变体——GOV 由 0.13/方面 7 消费（0.17.4 消费者四）]（注：本 kind 尚未判定 participates，是否构成缺口待 R-9 裁定；裁定前勿补表）"
     required_extra: []
     optional: []
     not_applicable:
@@ -771,7 +771,7 @@ profiles:
     selection_profile:
       participates: false
       source: {source_type: clause_id, value: "0.18.4", verified: true}
-      variant: "[缺口：0.18.4 未登记信号源 kind 的规程变体——SRC 不参与 0.18 选型（0.18.2 S1 排除），由方面 9 消费]"
+      variant: "[缺口：0.18.4 未登记信号源 kind 的规程变体——SRC 不参与 0.18 选型（0.18.2 S1 排除），由方面 9 消费]（注：本 kind 已判 participates: false，0.18.4 无对应行属正当缺省，不构成缺口，勿补表）"
     required_extra: [signals]
     optional: []
     not_applicable:
