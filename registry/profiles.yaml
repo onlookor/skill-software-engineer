@@ -239,7 +239,6 @@ profiles:
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
-        - {source_type: clause_id, value: "0.18.4", verified: true}
         - {source_type: clause_id, value: "4.2.2", verified: true}
     seed_source:
       clause_id: "4.2.2"
@@ -304,7 +303,6 @@ profiles:
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
-        - {source_type: clause_id, value: "0.18.4", verified: true}
         - {source_type: clause_id, value: "4.2.4", verified: true}
     seed_source:
       clause_id: "4.2.4"
@@ -370,7 +368,6 @@ profiles:
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
-        - {source_type: clause_id, value: "0.18.4", verified: true}
         - {source_type: clause_id, value: "5.2.3", verified: true}
     seed_source:
       clause_id: "5.2.3"
@@ -402,7 +399,6 @@ profiles:
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
-        - {source_type: clause_id, value: "0.18.4", verified: true}
         - {source_type: clause_id, value: "5.2.4", verified: true}
         - {source_type: clause_id, value: "5.5", verified: true}
     seed_source:
@@ -435,7 +431,6 @@ profiles:
       source_pointers:
         - {source_type: clause_id, value: "0.17.2", verified: true}
         - {source_type: clause_id, value: "0.17.3", verified: true}
-        - {source_type: clause_id, value: "0.18.4", verified: true}
         - {source_type: clause_id, value: "5.2.6", verified: true}
     seed_source:
       clause_id: "5.2.6"
