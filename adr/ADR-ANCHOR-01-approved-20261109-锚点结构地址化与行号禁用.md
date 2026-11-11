@@ -570,6 +570,53 @@ PY
 
 **同提交**：`anchor_index.py`（`quoted_frozen_spans()`、F-1 过滤、INFO-3）与 `anchor_migrate.py`（引文区间跳过、`scan_domain` 列）随本 ADR 同批落地；0.22.2 承诺四同步追加「逐字引文豁免」明文条款。
 
+### 7.9 F-3 的已实测盲区：同文本重复增加／减少（2026-11-11，R-1 丙重冻时实测）
+
+**盲区陈述**：**同一锚点串在同一目标上多出现（或少出现）一次，落点不变，F-3 不报**。F-3 只比对「结构单元 → 落点行指纹」，而 `occ` 序号是**源文件侧**的出现次序，不参与指纹；因此重复增加／减少只改变键的个数，不改变任何落点行。
+
+**本次复现（不改检测器，只改数据后还原）**：
+
+```bash
+# 1) 基线态：units/fps 均为 7,407
+python3 registry/scripts/anchor_index.py --out /tmp/ai-ref
+# 2) 在 GRD 剖面临时加回一条 cost_profile.failure_modes not_applicable（4 行，含 reason 里的 @m:0.17.2#p-2）
+#    该锚的 occ 由 23 增至 24
+python3 registry/scripts/anchor_index.py --out /tmp/ai-addback
+# 3) 还原该 4 行后再跑，全绿
+```
+
+实测数字（`/tmp/ai-addback/assertions.csv`）：
+
+```
+F-2 pass  count=0
+F-3 pass  coverage=7407 checked=7407 mismatch=0 missing=0 roots=0 affected=0
+F-9 pass  coverage=986  conflicts=0
+F-10 fail count=1  registry/profiles.yaml|@m:0.17.2#p-2|23:None->m:0.17.2:p-2
+```
+
+**覆盖归属**：这类变化（同一串多一次／少一次，`occ` 键增删）**只由 F-10 报告**。F-3 全绿是判据本身的边界，不是数据无变化；重冻时若 F-10 的差异集与声明清单对不上，仍必须停。
+
+**F-2 在同类情形下的表现（已实测，别混为一谈）**：F-2 判的是「锚点解析到恰好一个结构单元」（0 个＝F-2，≥2 个＝F-9），**不是源文件里出现几次**。若重复发生在**目标文件**并导致同一地址命中多个单元（例如把 `@m:0.18.7#code-OWN-01` 对应的代码块整块复制一份），则三项同时报：
+
+```
+F-2 fail count=1  @m:0.18.7#code-OWN-01->软件工程元框架成文法.md
+F-9 fail count=1  conflicts=1
+F-3 fail count=1  missing=1 roots=1 affected=1 | m:0.18.7:code-OWN-01×1
+F-10 fail count=1
+```
+
+（该实验临时复制母本 433–444 行后即恢复，母本 sha 仍为 `d6829e70…`。）
+
+**结论（覆盖矩阵上的一条须知）**：
+
+| 变化形态 | F-2 | F-3 | F-9 | F-10 |
+|---|---|---|---|---|
+| 源文件同一串多／少一次（`occ` 变），落点不变 | 不报 | **不报** | 不报 | **报**（唯一） |
+| 目标文件同一地址命中 ≥2 个单元 | 报（计 0 个候选） | 报（missing） | 报（冲突） | 报 |
+| 目标文件同一地址落点内容改变 | 不报 | 报（指纹不符） | 不报 | 视键变化 |
+
+第一行即本 ADR 承认的**单点覆盖**：同文本重复增删只有 F-10 一个检测器兜底；第二行是 F-2／F-9 已覆盖的情形，故不得把「F-2 不报」误读为重复增删无检测。
+
 ## 8. 与 0.22.1／0.22.2 的关系
 
 | 问题 | 回答 |
