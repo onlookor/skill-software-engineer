@@ -500,7 +500,7 @@ class Index:
     def _bib_index(lines):
         """母本参考文献分节分布（每方面一节 + 总纲节）→ 聚合成全局书目索引。
         节定位：标题含「参考文献」且不含「治理条款」（0.12 是治理条款，非文献表）。
-        节终止：遇到同级或更高级标题。行形态：^{1..3 位数字}. """
+        节终止：遇到任意编号条款标题（LAW_HEAD_RE）或同级/更高级标题。行形态：^{1..3 位数字}. """
         secs = []
         for i, ln in enumerate(lines):
             m = ANY_HEAD_RE.match(ln)
@@ -511,7 +511,7 @@ class Index:
             j = start + 1
             while j < len(lines):
                 m2 = ANY_HEAD_RE.match(lines[j])
-                if m2 and len(m2.group(1)) <= lvl:
+                if LAW_HEAD_RE.match(lines[j]) or (m2 and len(m2.group(1)) <= lvl):
                     break
                 m3 = BIB_LINE_RE.match(lines[j])
                 if m3:
