@@ -2726,3 +2726,28 @@ v1.0 = JSON 存档（`archieve/软件设计元框架重构讨论-20260909145614.
 - **F-10**：本批是引用基础设施替换，结构锚 53→7,414；「重排不变」判据不适用于本批（B−1.6 未列），变化集＝迁移台账。B−1 末重冻 `registry/anchor_baseline.json`（units/fps 53→7,414，提交 `34e82e4`），重冻后 F-10=pass（0）；反向自测改 1 条锚 → fail count=1，恢复后 pass 0。
 - **冻结侧**：2,937 条行号锚未改写，只入 INFO-2。
 - **回退**：`git revert <B−1-sha>`；旧锚、旧检测器、旧基线一并恢复。
+
+## 2026-11-11：R-1 丙落地——`cost_profile` 必填按 kind 参与选型（0.17.2／5.2）＋ profiles `participates`
+
+- **母本**（`8a56d94`）：0.17.2 p-2 首句保留，其后改为 `selection_profile.participates` 布尔判据——`true` 者 `cost_profile` 必填、子字段按 `optional` 区分，`false` 者整段合法缺省且不登记 `not_applicable`；`envelope` 的 NA 机制保留。5.2 p-1 删「全注册表通用」，限定为参与质量属性选型的 kind。声明集合 `p-N`／`li-N`／`row-`／`code-` 均 0，未重冻，条款号 214。
+- **participates 逐 kind 判定**（一条一行，依据均为现有 `variant` 原文或母本明文）：
+  - STY `true`：variant「S2 最重（compatibility 矩阵 + 冲突对检验）；S4 消费风格包络」直接引用 S2／S4。
+  - DEC `true`：variant「S1 候选 = DEC 条目；S4 加跑 W 系列」直接引用 S1／S4。
+  - CTR `true`：variant「S2 消费风格硬约束；S4 检验 X 系列」直接引用 S2／S4。
+  - OWN `true`：variant「逐数据集合迭代执行；S6 恒为高影响」直接引用 S6。
+  - STP `true`：variant「逐数据集合迭代执行；S6 恒为高影响」直接引用 S6。
+  - CSL `true`：variant「逐数据集合迭代执行；一致性级别选择 S5 前强制『业务语义论证』工件」直接引用 S5。
+  - DFL `true`：variant「逐数据集合迭代执行；S6 恒为高影响」直接引用 S6。
+  - CRD `true`：variant「S5 先验权重消费风格默认；S4 卡片聚合最重」直接引用 S4／S5。
+  - RLP `true`：variant「S4 卡片聚合最重（Z7 联动）」直接引用 S4。
+  - SCH `true`：variant「S4 卡片聚合最重（Z7 联动）；时间语义入白板」直接引用 S4。
+  - CFG `true`：variant「S5 先验权重消费风格默认；flag 谓词入白板」直接引用 S5。
+  - QAT `true`：variant「S1 候选 = QAT 条目按目标属性过滤；S4 = 战术卡片 vs 剩余预算」直接引用 S1／S4。
+  - VFM `true`：variant「S3 主导（CI/测试能力过滤）；T1 悬置禁令…」直接引用 S3。
+  - DPS `true`：variant「S3 主导（on-call/观测能力）；G3 注册完整性在 S6 检验」直接引用 S3／S6。
+  - PRJ `true`：母本 0.18.4 已登记「投影词汇（10）｜S3 现状空间主导（既有文档生态，0.11）；受众纪律（10.2.1）在 S0 的 DP 声明中强制填写」；其 `variant` 的「缺口：0.18.4 未登记方面 10 的规程变体」为过期陈述，已就地标注「原文如此，已被 0.18.4 覆盖」，原文未删。
+  - SRC `false`：variant「SRC 不参与 0.18 选型（0.18.2 S1 排除），由方面 9 消费」原文直述不参与。
+  - GRD `false`：variant「GRD 由方面 9 消费而非 0.18 选型规程（0.17.4 消费者二）」原文直述不参与。
+  - GOV **未判定**：variant「GOV 由 0.13/方面 7 消费（0.17.4 消费者四）」只说明消费方，未说明是否参与质量属性选型；不写布尔，其 6 条 `not_applicable` 原样保留，待裁定登记于施工单 §1bis。
+- **PRJ 欠账清单（11 条）**：PRJ-001…PRJ-011。性质：`participates: true` 但条目无 `cost_profile`，M2 应按每条第 7 个 `cost_profile.*` 缺失报红；依据为 0.18.4 投影词汇（10）的 S3 变体。本批不回填，登记为待回填欠账。
+- **profiles 数字**：18 个 kind 剖面中 17 个新增 `participates`（15 `true`／2 `false`），GOV 未给；YAML 解析通过。
