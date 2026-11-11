@@ -603,6 +603,17 @@ def materialize_profile(common_required: dict, prof: dict) -> dict:
     opt = [o['field'] for o in (prof.get('optional') or [])]
     na = [o['field'] for o in (prof.get('not_applicable') or [])]
     extra = list(prof.get('required_extra') or [])
+    # 0.17.2 p-2：kind 是否参与质量属性选型由 selection_profile.participates 布尔判定。
+    # false = cost_profile 整段合法缺省，既不进 required 也不进 NA 排查；
+    # true = cost_profile 必填，剖面遗留的 cost_profile NA 不得抵扣（欠账须由 M2 暴露）；
+    # 无布尔（GOV）= 沿用现有 NA 逻辑，不按 false 放行。
+    participates = (prof.get('selection_profile') or {}).get('participates')
+    if participates is False:
+        base = [f for f in base if not f.startswith('cost_profile')]
+        opt = [f for f in opt if not f.startswith('cost_profile')]
+        na = [f for f in na if not f.startswith('cost_profile')]
+    elif participates is True:
+        na = [f for f in na if not f.startswith('cost_profile')]
     required = [f for f in base if f not in opt and f not in na]
     for e in extra:
         if e not in required:
