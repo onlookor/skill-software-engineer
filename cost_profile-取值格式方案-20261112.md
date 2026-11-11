@@ -1,0 +1,278 @@
+# `cost_profile` 取值格式方案（2026-11-12）
+
+> 状态：**提案，未落地**。未改母本、未改 `registry/`、未写实现、未提交。等裁。
+> 接续材料：`立项-代价字段可算性与PRJ回填.md` §3（依赖关系与判据）与 §4（选项 ①／②）；`口径冲突说明与方案-R1-R2-R6.md` §1.8（已作废重述的现状数）。
+> 基线口径沿用上述两份：**机器可读率 = 带量纲 `ops_cost` 条目数 ÷ 有 `cost_profile` 条目数 = 0/110 = 0%**（本次实测复现，见 §5）。
+
+## 0. 地址订正（据实）
+
+任务书写「`registry/profiles.yaml` 现有 110 条 `cost_profile`」。实测：`profiles.yaml` 是 18 条 kind 剖面，**无** `cost_profile`；110 条数据在 `registry/method_registry.yaml` 的 `entries`（共 138 条，110 条带 `cost_profile`，28 条无）。下文一律指 `method_registry.yaml`。
+
+## 1. 现状普查
+
+### 1.1 子字段出现／缺失
+
+| 子字段 | 有值条目 | 缺失或空 | 结构类型 |
+|---|---|---|---|
+| `latency_budget_delta` | 101 | 9 | 字符串 |
+| `failure_modes` | 110 | 0 | 列表 |
+| `consistency_impact` | 110 | 0 | 字符串 |
+| `observability_requires` | 110 | 0 | 列表 |
+| `ops_cost` | 110 | 0 | 字符串 |
+| `skill_prerequisites` | 110 | 0 | 列表 |
+| `aggregation_semantics` | 110 | 0 | 枚举字符串 |
+
+缺 `latency_budget_delta` 的 9 条为 CFG-001…CFG-004、VFM-001…VFM-005；与 `口径冲突说明与方案-R1-R2-R6.md` §1.8「4 个剖面登记为 `optional`」一致。PRJ-001…PRJ-011 共 11 条**整条无 `cost_profile`**，11×7＝77 格空白。
+
+### 1.2 取值形态分布（主判定，互斥；规则见下）
+
+判定优先级：空值 → 数字＋量纲（严格：`数字`紧邻单位，单位限 ms／秒／分钟／小时／人日／人月／% 等）→ 「未量化」明示 → 条款号（`N.N[.N]` 或「第 N 条」）→ 区间／不等式 → 定性短语。**互斥主判定**，故每行合计 110（`latency` 行为 110＝101 有值＋9 缺）。
+
+| 子字段 | 数字＋量纲 | 区间／不等式 | 条款号 | 定性无数字 | 「未量化」明示 | 空／缺 |
+|---|---|---|---|---|---|---|
+| `latency_budget_delta` | 1 | 1 | 27 | 37 | 35 | 9 |
+| `failure_modes` | 0 | 9 | 72 | 25 | 4 | 0 |
+| `consistency_impact` | 0 | 3 | 69 | 35 | 3 | 0 |
+| `observability_requires` | 1 | 7 | 62 | 39 | 1 | 0 |
+| `ops_cost` | **0** | 1 | 30 | 48 | 31 | 0 |
+| `skill_prerequisites` | 0 | 7 | 73 | 26 | 4 | 0 |
+| `aggregation_semantics` | 0 | 0 | 0 | 0 | 0 | 0（枚举 110：itemwise 101／additive 9） |
+
+多标签补充（同一值可同时命中，不与上表相加）：`ops_cost` 109/110 以方括号开始（`[` 占位散文）；`ops_cost` 81/110 含数字但多为条款号；`latency` 16/110 含数字；`aggregation_semantics` 是唯一 110/110 机器可读的枚举字段。
+
+代表样本（kind ＋ 字段 ＋ 原文逐字）：
+
+- `ops_cost`／STY-001（定性）：`[随同步链深度与端点数量上升；无独立中介运维项]`
+- `ops_cost`／STY-020（条款号）：`[无独立运维面；成本落在属性量化（6.2 六要素场景编写）与映射表的维护/复核]`
+- `ops_cost`／CTR-005（未量化）：`[服务目录（内部检索）与数据契约注册面的运维项（3.2.2 发现与注册）→ 运维项随数据集数与消费方数上升；母本未给单位运维成本 → 方括号占位（MJ-20 (iii) 同型）]`
+- `ops_cost`／CSL-002（区间／序关系，非量纲区间）：`[随实现手段上升：粘性会话 < 写后读路由主副本 < 版本向量（4.3 交付空间驱动：DBA 能力限定版本向量类机制的可行集）]`
+- `latency_budget_delta`／STY-005（定性）：`+ 中介转发跳（每交互固定增加 1 跳路由/转换开销）`
+- `latency_budget_delta`／DFL-005（唯一含 `ms`，但整句不可解析）：`Δlatency(视图可见) = P99_view_fresh − P99_source_commit ≥ Δrefresh > 0，且随刷新链路滞后单调不减；6.6 示例四的既有实例为 P99 界 = 800ms（出处＝现状消息基础设施基线测量）→ 本字段只登记界形、符号与单调性，数值由现状基线补入（0.4）。与 DFL-004 的差异：刷新为连续/近连续而非窗口粒度 → 陈旧读窗口可按滞后阈值观测，不以批窗口长度为下界`
+- `failure_modes`／STY-005（列表，定性）：`['中介单点故障（全局不可用）', '中介成为吞吐瓶颈', '业务逻辑沉积导致中介变更频繁且高风险']`
+
+### 1.3 `ops_cost` 的量纲
+
+- **量纲齐全（`数值+单位` 且整值可解析）：0 条**；缺量纲：**110 条**。
+- 量纲写法：**0 种**（没有任何一条出现带单位的运维量值；`元`／`次`不作为独立单位出现）。
+- 109 条为方括号散文；1 条无方括号：CTR-001 原文逐字 `无独立运维面——进程内接口不产生独立部署/独立监控单元，运维成本随所属单元计入（0.8 包络不重复计项）`。
+- 误判提示：若用宽正则（把「单元」「单位」里的「元」当单位），会虚报 34 条「含量纲」；严格正则下为 0。本方案一律用严格口径。
+
+### 1.4 `cost_ledger` 的出现与消费
+
+| 位置 | 次数 | 用途 |
+|---|---|---|
+| 母本 `软件工程元框架成文法.md` | 6 | 6.5 Q4 公式、6.2.4 流程延迟聚合、0.18.2 S4 聚合说明等叙述 |
+| `registry/method_registry.yaml` | 23 | 条目叙述、QAT 批缺口说明与人工判断台账文本 |
+| `registry/predicate_vocabulary.yaml` | 6 | `cost_ledger` 谓词登记（`source: 6.5`、`verified: true`）及 `recorded_in` 组合式引用 |
+| `编译规范.md` | 0 | — |
+| `registry/scripts/*.py` | 0 | — |
+
+实际消费：**代码 0 处**（无聚合实现、无校验实现）；母本内唯一计算性出现为 6.5 Q4 `∃ cost_ledger(quantified) ∧ recorded_in(ADR)` 与 6.2.4 第 2 条「流程延迟预算 = Σ 步骤 `latency_budget_delta` + 业务耗时」。`aggregation_semantics` 只被枚举校验，不被求和消费（与 §1.8 实测一致）。
+
+### 1.5 PRJ 11 条
+
+- 每条的 7 个子字段**全部缺失**（`cost_profile` 整体不存在），合计 77 格空白。
+- 形态：无值可分类（不是空串，是键不存在）。
+- 由此产生 22 红：M2 11 条（缺 7 项）＋C-ST 11 条（因 M2 未过回落 `draft`）；`立项-代价字段可算性与PRJ回填.md` §3 已逐条列出。
+
+## 2. 候选方案
+
+### 方案 A：严格量纲语法（白名单两字段＋四值域）
+
+**取值语法**（本处新拟；区间语义挂靠 0.17.2 第 3,789 行原文 `latency_budget_delta,      // 参数化公式或区间`）：
+
+```
+<值>      ::= <标量> | <标量>..<标量> | qual:<短语> | unknown[(<理由>)] | na
+<标量>    ::= [+-]?数字[.数字] 单位 "/" 基准
+单位      ::= ms | s | 分钟 | 小时 | 人日 | 人月 | %
+基准      ::= req | 请求 | 服务 | 实例 | 条目 | 千次调用
+```
+
+- 示例 1：`+50ms/req`
+- 示例 2：`+30ms/req..+80ms/req`
+- 示例 3：`qual:随服务数线性上升`（语法合法、不计入可算率）
+- 量纲缺失＝错（`+50/req` 判 `INVALID`）；缺基准＝错（`50ms` 判 `INVALID`）；区间两端单位／基准不一致＝错（`+30ms/req..+80s/req` 判 `INVALID`）；定性＝必须带 `qual:` 前缀；未量化＝`unknown(理由)`；不适用＝`na`（与 `unknown` 必须可区分）。
+
+**可算性判据**（本处新拟）：
+
+```
+可算率 = #{条目 ∈ 110 : ops_cost 与 latency_budget_delta 均判定为 computed 或 na}
+         ÷ 110
+反自欺指标 = #{条目 : 两字段中有 unknown} ÷ 110 ≤ 20%
+```
+
+当前基线 **0/110＝0%**（严格解析整值）；目标：可算率 100%、反自欺 ≤ 20%。判据实现只需一个正则＋分组比对，见 §5 自测。
+
+**对母本的影响**：0.17.2 第 3,789／3,793 行两条注释改为语法说明；0.17.7 门槛 2 追加「量纲与基准齐全」（现文为「无出处的性能宣称 = 假精确，拒绝准入」，追加同旨）；6.2.4 第 2 条对 Σ 的输入加「同基准」。预计改 3 处、5 行文本；若只在注释／段末追加、不改首句，动锚 0 条；若原地改 0.17.2 代码块行，落到该块的锚最坏 29 条（`code-` 锚）＋47 条（`p-` 锚）受影响，F-3 会报 mismatch，**不采纳原地改法**。若实际首句变化，按纪律不重冻则须停在报数；方案按「append-only、零锚、不重冻」设计。
+
+**对 registry 的影响**：改 110 条 `ops_cost` ＋101 条 `latency_budget_delta`＝211 格；PRJ 11 条新增 `cost_profile`，77 格全部可填，但无设计层代价数据，**77/77 只能填 `unknown(...)`／`na`**，真实数值 0 格。PRJ 22 红预期转 0（见 §3 推论第 2 条）。
+
+**对 `cost_ledger` 的影响**：保留并实现；Q4 首次有源，S4 聚合可求和。
+
+**收益（可验证）**：211 格可被机器求值（当前 0 格）；`cost_ledger` 聚合从 0 处实现变为可对 2 个维度求和；PRJ 22 红→0（若 M2 仅查在案）。
+
+**代价（实数）**：改 110＋101＋77＝288 格；按每格平均 40 字符约 11.5k 字符；新增 kind 每条多写 2 个带量纲字段（约 60 字符）；锚 0 条；不重冻；真实数值仍 0/77。
+
+### 方案 B：双档（两个字段量化，其余五字段明标人读）
+
+**取值语法**：同 A，仅用于 `ops_cost` 与 `latency_budget_delta`；其余五字段头部统一加 `human_read: true`（本处新拟），值仍为散文／列表；`aggregation_semantics` 保持枚举。
+
+示例：`ops_cost: "+0.5人日/条目"`；`latency_budget_delta: "+30ms/req..+80ms/req"`；`skill_prerequisites: ["抽象层级切分与依赖规则设计"]`（不作语法校验）。
+
+**可算性判据**（本处新拟）：
+
+```
+可算率(2) = #{条目 : ops_cost ∧ latency 均为 computed|na} ÷ 110
+人读率(5) = #{条目 : 五字段非空且未标 unknown} ÷ 110
+```
+
+基线 0/110；目标：可算率(2) 100%、反自欺 ≤ 20%。
+
+**对母本的影响**：只改 0.17.2 两条注释＋0.17.7 门槛 2 一句；6.5 Q4 与 6.2.4 不改。3 处、3 行；append-only 动锚 0；不重冻。
+
+**对 registry 的影响**：211 格改写；PRJ 77 格同样只能 `unknown`／`na`／散文；能填 77、真实数值 0。
+
+**对 `cost_ledger` 的影响**：保留，但聚合只覆盖 2 个维度；`aggregation_semantics` 的 `additive` 9 条需声明参与维度。
+
+**收益**：211 格可算；PRJ 22→0；新增 kind 只多写 2 字段（约 60 字符）。
+
+**代价**：211＋77＝288 格、约 9k 字符；5 个字段仍是散文，跨条目比较仍不可能；锚 0；不重冻。
+
+### 方案 C：撤承诺（`立项` 文档的选项 ②）
+
+**取值语法**：不定义格式。`cost_profile` 明标人读字段；`unknown` 仅作叙述用词，不作判据。示例：`ops_cost: "随同步链深度与端点数量上升；无独立中介运维项"`；`latency_budget_delta: "≈ +1 跳/交互（未量化）"`；PRJ 填 `"未评估（无设计层代价口径）"`。
+
+**可算性判据**（本处新拟，替换为承诺判据）：
+
+```
+承诺残量 = 母本 grep -c cost_ledger 的每一处是否已改为非量化语义（目标 0 处旧语义）
+PRJ 完备 = 11 条 × 7 字段在案（值可为散文）→ 22 红 → 0
+```
+
+机器可读率按定义不再统计（恒 0%），不得再对外声称可算。
+
+**对母本的影响**：6.5 Q4 删除 `∃ cost_ledger(quantified)` 或改为「代价评估已留痕」；6.2.4 第 2 条 Σ 限定为「有人读数值时可用」；0.18.2 S4 的「聚合 `cost_profile`」改为「汇总代价说明」；0.17.4 消费表述同步。改 4 处、约 6 行；6.5 Q4 有 20 条 `code-Q4` 锚，若原地改行则 20 条 mismatch，故按「Q4 保留行、在其后追加说明句」可零锚；`0.17.2#p` 47 条不动；不重冻。
+
+**对 registry 的影响**：只补 PRJ 77 格散文；110 条存量**不改**；`cost_ledger` 谓词条目降级为 `narrative_only` 或删除（需一次谓词表变更，走 0.13）。
+
+**对 `cost_ledger` 的影响**：撤（或标注不实现）；母本 6 处、谓词表 6 处需逐处改写。
+
+**收益**：PRJ 22→0；消除「公式要求量化、字段只有散文」的悬空（母本 6 处＋谓词 6 处有明确去向）；零迁移成本。
+
+**代价**：改 77 格散文（约 2.3k 字符）；丢失 S4／S5 的数值比较能力；以后新增 kind 每条多写 0 字符；锚 0（append-only）；不重冻。
+
+## 3. 交叉对比与推荐
+
+### 3.1 对比表
+
+| 项 | A 严格量纲 | B 双档 | C 撤承诺 |
+|---|---|---|---|
+| 可读率（目标） | 100%（2 字段） | 100%（2 字段） | 0%（不再承诺） |
+| 当前基线 | 0/110 | 0/110 | 0/110（不统计） |
+| PRJ 22 红 | →0（77 格 `unknown`/`na`） | →0（同） | →0（77 格散文） |
+| PRJ 真实数值格 | 0/77 | 0/77 | 0/77 |
+| registry 改动格 | 288 | 288 | 77 |
+| 母本改动 | 3 处／5 行 | 3 处／3 行 | 4 处／6 行 |
+| 锚代价（append-only） | 0 | 0 | 0 |
+| 锚代价（原地改） | 最坏 29＋47（0.17.2）＋20（Q4） | 29＋47 | 20（Q4） |
+| 重冻 | 否 | 否 | 否 |
+| `cost_ledger` | 保留并实现 | 保留、限 2 维 | 撤／降级 |
+| 新增 kind 增量 | 2 字段约 60 字符 | 2 字段约 60 字符 | 0 |
+
+### 3.2 推荐
+
+**推荐 C（撤承诺），并把 B 作为升级路径**。可验证理由：`cost_ledger` 代码消费 0 处、`ops_cost` 带量纲 0/110、PRJ 真实数值可填 0 格；A／B 的 211 格「合规」实质是批量 `unknown`，反自欺指标会顶到上限，收益只剩「格式存在」。C 的收益（22→0、消除 12 处悬空语义）不依赖任何未落地数据。
+
+**失效分岔**：
+
+1. 若外部评审要求 Q4 保持「代价必量化」（母本 6.5 Q4 现为硬性质），C 失效 → 转 B。
+2. 若出现可核验的代价基线（如 DFL-005 的 800ms 类测量），B 的可算率可从 0 起算真实值，C 会让该基线无法被聚合 → 转 B。
+3. 若选 B／A 而 `unknown` 占比 >20%（无数据硬填），方案自败，应回落 C。
+4. 若选 A 且要「2 字段之外也量化」，需再为 `failure_modes` 等列表定义元素级语法；本方案未定义，属未覆盖面。
+
+### 3.3 靠推论得出、母本无原文的判断点（单列，不混入正文）
+
+1. 「M2 只查 7 字段是否在案」：来自 `registry/scripts/project.py` 的实现口径，不是母本原文；母本 0.17.7 门槛 1 只写「schema 完备」。
+2. 「PRJ 22 红中 C-ST 11 条随 M2 转绿」：来自 `立项…md` §3 的观察记录，不是母本判据。
+3. 「填 `unknown` 后 M2 会通过」：依赖 `project.py` 不把 `unknown` 视为空；未实测。
+4. 「append-only 改法锚代价为 0」：依据 F-3 只比较 LIVE struct 锚落点指纹；本方案未实际改文，未实测。
+5. 「原地改 0.17.2 代码块最坏 29＋47 条」：由 `targets.csv` 的 `@m:0.17.2#code-`／`#p-` 计数推得，未实际制造 mismatch。
+6. 「`aggregation_semantics` 是机器可读枚举」：本次普查的判断，母本只给枚举值域，未声明可读性等级。
+7. 「PRJ 77 格真实数值可填 0 格」：以现有条目无任何带量纲代价为据的外推，若设计层另有台账则失效。
+8. 「C 的收益 22→0」：同第 2、3 条，依赖实现口径。
+
+## 4. 新拟内容标记
+
+- 语法 `<值> ::= …`、判据「可算率」「反自欺指标」「承诺残量」「人读率(5)」「`human_read: true`」均**本处新拟**。
+- 挂靠母本原文的只有三处：0.17.2 第 3,789 行 `// 参数化公式或区间`；0.17.7 门槛 2「无出处的性能宣称 = 假精确，拒绝准入」；6.5 Q4 逐字 `Q4: ∀ verdict=reachable_with_cost: ∃ cost_ledger(quantified) ∧ recorded_in(ADR)` 及其注释「代价必量化必留痕 —— 硬」。
+- 6.2.4 第 2 条逐字：「行为级校验消费卡片：流程延迟预算 = Σ 步骤 `latency_budget_delta` + 业务耗时（Z7 的实现端）。」
+
+## 5. 复现与反向自测
+
+复现（在 `software-engineering/` 下执行）：
+
+```
+python3 - <<'EOF'
+import yaml,re,collections
+E=yaml.safe_load(open('registry/method_registry.yaml',encoding='utf-8'))['entries']
+cp=[e for e in E if isinstance(e.get('cost_profile'),dict) and e['cost_profile']]
+F=['latency_budget_delta','failure_modes','consistency_impact','observability_requires','ops_cost','skill_prerequisites','aggregation_semantics']
+for f in F:
+    print(f, sum(1 for e in cp if f in e['cost_profile'] and e['cost_profile'][f] not in (None,'','[]')))
+print('items',len(E),'with_cp',len(cp))
+print('prj_with_cp',sum(1 for e in E if e['kind']=='PRJ' and e.get('cost_profile')))
+EOF
+grep -o 'cost_ledger' 软件工程元框架成文法.md | wc -l
+grep -o 'cost_ledger' registry/method_registry.yaml | wc -l
+grep -o 'cost_ledger' registry/predicate_vocabulary.yaml | wc -l
+grep -c 'cost_ledger' 编译规范.md
+grep -rn 'cost_ledger' registry/scripts/*.py | wc -l
+```
+
+本次实测输出：`items 138 / with_cp 110`；`prj_with_cp 0`；`latency 101`，其余 110；`cost_ledger` 6／23／6／0／0。
+
+反向自测（判据故意喂坏值；实现脚本为临时 `/tmp/costfmt_check.py`，未入仓）：
+
+| 输入 | 判定 |
+|---|---|
+| `+50ms/req` | `computed` |
+| `+30ms/req..+80ms/req` | `computed` |
+| `qual:随服务数线性上升` | `qual` |
+| `na` | `unknown/na` |
+| `+50/req` | `INVALID`（缺量纲） |
+| `50ms` | `INVALID`（缺基准） |
+| `+30ms/req..+80s/req` | `INVALID(unit/basis mismatch)` |
+| `+30ms/req..+80ms/服务` | `INVALID(unit/basis mismatch)` |
+
+结论：判据能报出缺量纲、缺基准、区间量纲不一致三类不合格；对现有 110 条按严格语法全判 `INVALID`（与 0/110 基线一致）。
+
+## 6. 订正（2026-11-12）
+
+本节只加不删；上文（§0–§5）原文保留不动，凡与本节冲突者以本节为准。
+
+### 6.1 作废：C 支「PRJ 77 格填『未评估（无设计层代价口径）』→ 22 红转 0」
+
+**这是方案错误，不是执行错误。** §2 方案 C 的「对 registry 的影响」与 §3.1 对比表中「PRJ 22 红 →0（77 格散文）」两处结论作废。
+
+实测（`/tmp` 副本，仅给 PRJ-001 按该句逐字填 7 格，其余 10 条不动）：
+
+```
+自检：1226 条记录｜硬失败 29｜软警告 0
+✗ [M2] PRJ-001: aggregation_semantics='未评估（无设计层代价口径）' ∉ ['additive','grouped_max','itemwise','weighted_avg']（0.17.2）
+✗ [M2] PRJ-001: cost_profile.failure_modes 应为列表（0.17.2），实为 str
+✗ [M2] PRJ-001: cost_profile.observability_requires 应为列表（0.17.2），实为 str
+✗ [M2] PRJ-001: cost_profile.skill_prerequisites 应为列表（0.17.2），实为 str
+```
+
+基线 22 → 照填后 **29**（每条新增 4 项 M2×2 遍＝8，减该条原 1 项缺失）。错因两条：`aggregation_semantics` 是封闭枚举（`project.py:64`／`810-812`），散文不合法；`failure_modes`／`observability_requires`／`skill_prerequisites` 是列表（`project.py:815-817`），散文判类型错。
+
+补齐类型后（三个列表字段包成单元素列表、`aggregation_semantics: itemwise`）该条转绿，硬失败 22→20；全量组合实测见 v2 清单。
+
+### 6.2 补漏：母本 `cost_ledger` 实为 6 行，§2 方案 C 只覆盖 5 处
+
+`grep -n 'cost_ledger' 软件工程元框架成文法.md` 实测 6 行：**358／360／365／639／2432／2447**。§2 方案 C 的「4 处／约 6 行」只涵盖 0.18.2 三处、6.5 两处（另以 6.2.4 第 2 条为配套改动，该行不含 `cost_ledger`），**漏 L639**——6.6／FM 表中的 FM-5 行「升级声明＋verdict_table＋（如涉误标）cost_ledger」。
+
+### 6.3 由此连带作废的两条推论
+
+- §3.3 第 3 条「填 `unknown` 后 M2 会通过」：不成立，枚举字段与列表字段的类型面先于空值面拦截。
+- §3.1 对比表 C 列的「PRJ 22 红 →0（77 格散文）」：不成立，见 6.1。
