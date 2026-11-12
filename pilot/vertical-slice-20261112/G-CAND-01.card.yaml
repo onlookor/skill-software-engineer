@@ -18,7 +18,7 @@ source_anchors:
   - "0.17.4"
   - "0.6"
   - "0.20.2"
-artifact_version: "pilot-20261112.4"
+artifact_version: "pilot-20261112.5"
 
 trigger:
   # 0.18.2 S0 输入形态：决策点声明 {DP_id, aspect, question, affected_predicates}

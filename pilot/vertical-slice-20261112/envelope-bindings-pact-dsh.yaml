@@ -7,19 +7,21 @@
 # 性质：部署实例输入（pilot），**不修改**框架级 method_registry.yaml。
 #   框架条目只给符号式与方向，部署实参属于本文件。
 # 依据：母本 0.18.2 S4（envelope.bound_expr 代入场景参数）、6.2.4（三值判定 + Q4 代价入 ADR）、
-#   目标集 TS-PACT-DSH-001 v1.1.0。
+#   目标集 TS-PACT-DSH-001 v1.2.0。
 # 所有数值均为**预算/假设**，不是实测；每条 binding 附可推翻指标（falsifier）。
 # v1.1.0（2026-11-12，D-14-A）：path 拆为 path_lat（同步段序列）与 path_f（独立故障域集合），
 #   与 method_registry 1.1.0 / MJ-30 同步；verdict 未变。
+# v1.2.0（2026-11-12，D-18-B）：G-CON-01 拆为 G-CON-01a（硬，单库）与 G-CON-01b（软，跨服务）；
+#   01b 不再参与 S4 判定，改列 soft_targets。verdict 未变。
 envelope_bindings:
   id: "EB-PACT-DSH-STY-001"
-  version: "1.1.0"
+  version: "1.2.0"
   updated_at: "2026-11-12"
   deployment: "pact-dsh"
   decision_point: "DP-1-STYLE"
   entry_id: "STY-001"
   entry_version: "0.1.0"
-  target_set: "TS-PACT-DSH-001 v1.1.0"
+  target_set: "TS-PACT-DSH-001 v1.2.0"
   method_registry:
     file: "registry/method_registry.yaml"
     sha256: "aaa8361eb14694813c2cd7a29673afaa350a5596cfb6e0859cdb1e5b6a435ffd"
@@ -98,21 +100,28 @@ envelope_bindings:
         - "变更只涉及一个可部署单元（dsh-plugin-pact）"
       falsifier: "变更需要跨单元协同发布 → 按 max 重算，本 binding 失效"
       basis_note: "公式只给下界；本 binding 以『单单元时路径值=该单元值』取等，属 [自定] 补齐"
-    - goal: "G-CON-01"
-      metric: "数据一致性"
+    - goal: "G-CON-01a"
+      metric: "数据一致性（单库）"
       bound_expr: "（STY-001 envelope 未提供一致性 metric）"
       substitution:
         single_store: "进程内 Map（backend token store）"
         strong_consistency: "单线程 JS，读己之写成立"
-        cross_service: "n/a（本切片无跨服务复制路径）"
-      target: "单库强一致；跨服务最终一致（≤ 5 s）"
+      target: "单库强一致：读己之写"
       verdict: "reachable_with_cost"
       cost_items:
-        - "跨服务子句按 n/a 处理（TS-OPEN-2）"
+        - "无额外代价：单进程单写者使读己之写天然成立（结构事实，非预算）"
       assumptions:
         - "单进程单写者，无副本"
-      falsifier: "引入远端 backend 或第二写者 → 一致性无包络可依，S4 无法判定"
-      basis_note: "STY-001 无一致性包络；本判定属 [自定] 外推（D-19）。S4 三值无 n/a（D-18），故以『单库强一致成立 + 跨服务 n/a』记 reachable_with_cost"
+      falsifier: "引入第二写者或副本 → 单库强一致不再结构性成立，本 binding 失效"
+      basis_note: "STY-001 无一致性包络；本判定属 [自定] 外推（D-19）。0.4 重判后只保留单库子句为硬目标（D-18-B）"
+
+  soft_targets:
+    - goal: "G-CON-01b"
+      target: "跨服务最终一致，≤ 5 s 收敛"
+      grade: "soft"
+      reason: "0.4 条件二不成立：本部署无跨服务路径，判定程序不可执行 → 不得登记为硬（D-18-B）"
+      handling: "不参与 S4 verdict；保守假设与可推翻指标见 ADR-TS-CON-01b.md；TS-OPEN-2 保持 open"
+      falsifier: "首条跨服务路径出现 → 按 0.4 重评是否升回硬目标并重跑 S4"
 
   cross_cutting_gaps:
     - id: "D-14"
@@ -121,6 +130,8 @@ envelope_bindings:
       resolution: "D-14-A：条目 bound_expr 拆为 path_lat / path_f（method_registry 1.1.0 / MJ-30）；本文件 decomposition 节代入实参"
     - id: "D-18"
       statement: "S4 三值 verdict ∈ {reachable, reachable_with_cost, unreachable} 无 n/a；某硬目标在本部署无对应制品（无跨服务复制）时没有合法赋值"
+      status: "resolved"
+      resolution: "D-18-B：不改三值域，改用 0.4 在登记阶段把跨服务子句降为软目标（G-CON-01b）；硬目标集合只含可验证项"
     - id: "D-19"
       statement: "STY-001 envelope 无一致性 metric，而目标集含一致性硬目标；方面 6 的输入要求包络覆盖全部硬目标"
     - id: "D-21"
