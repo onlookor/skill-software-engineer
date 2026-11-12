@@ -2397,17 +2397,23 @@ _ANCHOR_HEAD_RE = re.compile(r'@(?=[0-9mrpvcd!])')
 
 
 def _cut(text, limit: int) -> tuple:
-    """按 limit 截断；切点若落在 @ 锚点 token 内，延到该 token 末尾（不得切断锚点）。"""
+    """按 limit 截断；切点若落在 @ 锚点 token 内，延到该 token 末尾（不得切断锚点）；
+    若切点之后还有锚点，延到最后一个锚点末尾（不得整段丢弃锚点引用）。"""
     s = str(text or '')
     if len(s) <= limit:
         return s, False
     cut = limit
+    last_end = None
     for m in _ANCHOR_HEAD_RE.finditer(s):
         end = m.start() + 1
         while end < len(s) and (s[end].isalnum() or s[end] in ':._-#~'):
             end += 1
         if m.start() < cut < end:
             cut = end
+        if m.start() >= limit:
+            last_end = end
+    if last_end is not None:
+        cut = max(cut, last_end)
     return s[:cut], True
 
 

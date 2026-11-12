@@ -1,0 +1,317 @@
+{
+  "F1": [
+    {
+      "level": "pass",
+      "msg": "步骤序列 S0–S6 连续、无跳步/增步/改序"
+    },
+    {
+      "level": "pass",
+      "msg": "每步 source_anchor 均可在母本中定位"
+    }
+  ],
+  "F2": [
+    {
+      "level": "pass",
+      "msg": "R1 registry_refs 全部存在且 status ∈ {active, seed}（138 条在册）"
+    },
+    {
+      "level": "escalate",
+      "msg": "R2 谓词名在母本正文出现但未入谓词清单（甲类缺口线索）：selection_context"
+    },
+    {
+      "level": "pass",
+      "msg": "R2 谓词名在册：selection_procedure"
+    },
+    {
+      "level": "pass",
+      "msg": "R2 谓词名在册：step_log"
+    },
+    {
+      "level": "pass",
+      "msg": "R2 谓词名在册：exclusion_record"
+    },
+    {
+      "level": "pass",
+      "msg": "R2 谓词名在册：has_six_elements"
+    },
+    {
+      "level": "pass",
+      "msg": "R2 谓词名在册：verdict_table"
+    },
+    {
+      "level": "pass",
+      "msg": "R2 谓词名在册：style"
+    },
+    {
+      "level": "pass",
+      "msg": "R2 谓词名在册：constraints_materialized"
+    },
+    {
+      "level": "pass",
+      "msg": "R3 性质 ID 在母本中登记：M10"
+    },
+    {
+      "level": "pass",
+      "msg": "R3 性质 ID 在母本中登记：M11"
+    },
+    {
+      "level": "pass",
+      "msg": "R3 性质 ID 在母本中登记：M12"
+    },
+    {
+      "level": "pass",
+      "msg": "R3 性质 ID 在母本中登记：M14"
+    },
+    {
+      "level": "pass",
+      "msg": "R3 性质 ID 在母本中登记：M15"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S0 路由闭合：CH-B"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S0 路由闭合：FM-1"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S1 路由闭合：FM-3"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S2 路由闭合：FM-4"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S3 路由闭合：FM-4"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S3 路由闭合：CH-B"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S4 路由闭合：FM-5"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S5 路由闭合：CH-B"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S5 路由闭合：CH-C"
+    },
+    {
+      "level": "pass",
+      "msg": "R4 S6 路由闭合：FM-2"
+    },
+    {
+      "level": "pass",
+      "msg": "R5 无上游卡片引用（空集，闭合）"
+    }
+  ],
+  "F3": {
+    "registry_hard_properties": 39,
+    "covered": [
+      "M10",
+      "M11",
+      "M12",
+      "M14",
+      "M15"
+    ],
+    "missing_count": 34,
+    "missing_sample": [
+      "M20",
+      "M22",
+      "M23",
+      "M24",
+      "M25",
+      "V1",
+      "V2",
+      "V5",
+      "W1",
+      "W2",
+      "W4",
+      "W7"
+    ],
+    "full_verdict": "fail",
+    "scoped_properties": [
+      "M10",
+      "M11",
+      "M12",
+      "M14",
+      "M15"
+    ],
+    "scoped_verdict": "pass",
+    "note": "F3 的规范判据是全量硬性质覆盖；scoped 判读是本试跑自定的切片口径，不属规范。"
+  },
+  "arity": [
+    {
+      "name": "selection_procedure",
+      "arity": 3,
+      "argc": 3,
+      "level": "pass",
+      "expr": "selection_procedure(DP, S0, C0)"
+    },
+    {
+      "name": "step_log",
+      "arity": 7,
+      "argc": 7,
+      "level": "pass",
+      "expr": "step_log(DP, S1, In, Evals, candidate_set, T, Executor)"
+    },
+    {
+      "name": "exclusion_record",
+      "arity": 3,
+      "argc": 3,
+      "level": "pass",
+      "expr": "exclusion_record(DP, E, P)"
+    },
+    {
+      "name": "step_log",
+      "arity": 7,
+      "argc": 7,
+      "level": "pass",
+      "expr": "step_log(DP, S2, In, Evals, survivor_set, T, Executor)"
+    },
+    {
+      "name": "exclusion_record",
+      "arity": 3,
+      "argc": 3,
+      "level": "pass",
+      "expr": "exclusion_record(DP, E, P)"
+    },
+    {
+      "name": "step_log",
+      "arity": 7,
+      "argc": 7,
+      "level": "pass",
+      "expr": "step_log(DP, S3, In, Evals, feasible_set, T, Executor)"
+    },
+    {
+      "name": "has_six_elements",
+      "arity": 1,
+      "argc": 1,
+      "level": "pass",
+      "expr": "has_six_elements(G)"
+    },
+    {
+      "name": "step_log",
+      "arity": 7,
+      "argc": 7,
+      "level": "pass",
+      "expr": "step_log(DP, S4, In, Evals, verdicts, T, Executor)"
+    },
+    {
+      "name": "verdict_table",
+      "arity": 4,
+      "argc": 4,
+      "level": "pass",
+      "expr": "verdict_table(DP, c, g, v)"
+    },
+    {
+      "name": "verdict_table",
+      "arity": 4,
+      "argc": 4,
+      "level": "pass",
+      "expr": "verdict_table(DP, c, g, v)"
+    },
+    {
+      "name": "step_log",
+      "arity": 7,
+      "argc": 7,
+      "level": "pass",
+      "expr": "step_log(DP, S5, In, Evals, selected_entry, T, Executor)"
+    },
+    {
+      "name": "selection_procedure",
+      "arity": 3,
+      "argc": 3,
+      "level": "pass",
+      "expr": "selection_procedure(DP, S5, C5)"
+    },
+    {
+      "name": "step_log",
+      "arity": 7,
+      "argc": 7,
+      "level": "pass",
+      "expr": "step_log(DP, S5, In, Evals, selected_entry, T, Executor)"
+    },
+    {
+      "name": "selection_procedure",
+      "arity": 3,
+      "argc": 3,
+      "level": "pass",
+      "expr": "selection_procedure(DP, S6, C6)"
+    },
+    {
+      "name": "style",
+      "arity": 2,
+      "argc": 2,
+      "level": "pass",
+      "expr": "style(Scope, S)"
+    },
+    {
+      "name": "sourced",
+      "arity": 1,
+      "argc": 1,
+      "level": "pass",
+      "expr": "∀f∈F: sourced(f)"
+    },
+    {
+      "name": "constraints_materialized",
+      "arity": 1,
+      "argc": 1,
+      "level": "pass",
+      "expr": "constraints_materialized(C)"
+    },
+    {
+      "name": "selection_procedure",
+      "arity": 3,
+      "argc": 3,
+      "level": "pass",
+      "expr": "[决策点声明：DP_id, aspect=1, kind=STY, question, affected_predicates] ∧ ¬selection_procedure(DP, ·, ·)"
+    },
+    {
+      "name": "sourced",
+      "arity": 1,
+      "argc": 1,
+      "level": "pass",
+      "expr": "∀f∈F: sourced(f)"
+    },
+    {
+      "name": "constraints_materialized",
+      "arity": 1,
+      "argc": 1,
+      "level": "pass",
+      "expr": "constraints_materialized(C)"
+    },
+    {
+      "name": "has_six_elements",
+      "arity": 1,
+      "argc": 1,
+      "level": "pass",
+      "expr": "has_six_elements(G)"
+    }
+  ],
+  "summary": {
+    "fail_count": 1,
+    "escalate_names": [
+      "selection_context"
+    ],
+    "exit_code": 1
+  },
+  "F2_verdict": "escalate",
+  "F1_verdict": "pass",
+  "E4": {
+    "card_artifact_version": "pilot-20261112.1",
+    "artifact_label": "pilot-20261112.1",
+    "registry_version": {
+      "major": 1,
+      "minor": 0,
+      "patch": 0
+    },
+    "match": true
+  }
+}
