@@ -170,3 +170,12 @@ todo.md 3.7 剩余部分完成：丙类九项全部起草，全文档仅余 #9�
 - **效果**：`registered(配置项键)` 由「无可套判据」变为「判据可求值」；本仓无配置注册表实例，实例求值仍为 `unknown`（批 A 步 4 逐条记录）。
 - **自检**：`--check` 1,218 条｜硬 0｜软 0｜占位符 1,485（编译规范非检查器输入，无数字变化）。
 - **回退**：对本提交 `git revert <sha>`；单行内改写，无数据联动。
+
+## 2026-11-12：新增 5.7 选中条目 → 白板谓词实例投影规则（R-1）
+
+- **上游缺口**：0.18.2 S6(iii) 要求写「所涉方面谓词 diff」，但 0.17.2 条目 schema 无承载 S 四子维度取值的字段；试点 `pact-dsh`／`G-CAND-01` 在 entry → `style(scope,S)` 处停手（`SO-PILOT-2`）。
+- **改动**：第五章新增 **5.7**（不改既有 5.1–5.6、不重编号）。定义 P1 scope 解析（决策点已绑定常量 → S0 事实唯一 system 候选 → 白板 deployment 兜底 → escalate）、P2 `row_id` → 四槽映射（1.2.4 元方法不生成 style）、P3 部分元组 `style(scope,(…,·,…))`、P4 失败路由与 `pending_projection`／`committed` 区分、P5 适用范围、P6 STY-001 工作例。
+- **标注**：`[规范原文已有]` = `style(scope,S)` 签名与 S 语义（母本 1.5）、四子维度（1.2）、条目字段集（0.17.2）、S6(iii) 义务（0.18.2）、2.3 嵌套 term_list、三值 unknown；`[自定]` = scope 解析顺序、row_id 前缀→槽位、`·` 部分元组语义、1.2.4 排除、pending/committed 区分。
+- **未动**：成文法母本任何一行、0.17.2 条目 schema、2.3 谓词 BNF、1.5 谓词签名、`registry/` 数据。
+- **重跑**：同一切片 `pact-dsh`／`G-CAND-01`／`STY-001`，生成 `style(pact-dsh, (·, ·, 同步请求-响应, ·))`；S6(iii) 由 blocked 转 pass，仍卡 (v) 批准不可达（`SO-PILOT-3`）。证据见 `pilot/vertical-slice-20261112/run-log.md` §11。
+- **回退**：对本提交 `git revert <sha>`；5.7 为独立新增节，删除不影响既有章节。
