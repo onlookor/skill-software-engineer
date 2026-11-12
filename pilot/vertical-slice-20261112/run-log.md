@@ -434,3 +434,56 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 - 10.2.5 判据一/二/四仍 fail；ADR-DP1-STYLE 仍 `provisional`。
 - 未推送；本地 commit 见下一行记录。
 
+---
+
+## 15 第 2 批：0.4 重判硬目标集合（D-18-B）＋ S4 证明强度注解（D-21-B）
+
+### 15.1 D-18-B：G-CON-01 拆分
+
+- 依据母本 0.4 三条件逐条求值：可观测 ✓、有出处 ✓、**可验证 ✗**（本部署无跨服务路径，判定程序不可执行）。
+- 处置：原复合目标拆为 **G-CON-01a**（单库强一致，硬，三条件全成立）与 **G-CON-01b**（跨服务 ≤5 s，**软**）。
+- 这是**对已批准输入的追溯修改**；目标集 `revision` 记明改了什么、为什么、谁批的（wgz，2026-11-12 会话指令即重新签字）。
+- 保守假设 ADR：`ADR-TS-CON-01b.md`（类型＝conservatism-proof；可推翻指标＝首条跨服务路径出现／远端 backend／第二写者）。
+- `TS-OPEN-2` 保持 `open`：约束本身未消失，只是不再作为硬目标参与 S4 判定。
+
+### 15.2 D-21-B：proof_strength 注解
+
+- 编译规范：`proof_strength // {analytic_upper_bound, measured_baseline}`，并新增一段明确"**不是第三个值域**，不得替代 three_value，不得据此把 reachable 读成已证明"。
+- S4 verdict 每行新增 `proof_strength: analytic_upper_bound`（本切片全部是解析上界／结构事实，无实测基线）。
+- **边界**：成文法 > 编译规范，本字段只加注解，不改 `reachable` 语义；母本层面的澄清留给第 3 批 D-21-A。
+
+### 15.3 版本推进
+
+| 文件 | 版本 | sha256（新） |
+|---|---|---|
+| `target-set-pact-dsh.yaml` | 1.1.0 → **1.2.0** | `7a37e340…fa2990` |
+| `envelope-bindings-pact-dsh.yaml` | 1.1.0 → **1.2.0**（`soft_targets` 节） | `3bfb3f89…0fc6ac` |
+| `s4-verdict-pact-dsh.yaml` | 1.1.0 → **1.2.0**（`target_grades`／`not_judged`／`proof_strength`） | `11e82e3f…0f76ae` |
+| `编译规范.md` | 未版本化（文本变更） | `6b4e485a…52cee9c` |
+| `artifact.yaml` | `pilot-20261112.4` → **`.5`**（seq 5；registry 仍 1.1.0） | — |
+| 卡片／白板 | `artifact_version` → `pilot-20261112.5` | — |
+
+### 15.4 S4 重跑结果
+
+| 目标 | 级别 | 代入 | verdict | proof_strength |
+|---|---|---|---|---|
+| G-LAT-01 | 硬 | 450 ms ≤ 500 ms | `reachable_with_cost` | `analytic_upper_bound` |
+| G-AVL-01 | 硬 | 99.5% ≥ 99.0% | `reachable_with_cost` | `analytic_upper_bound` |
+| G-LT-01 | 硬 | 0.5 ≤ 1 工作日 | `reachable_with_cost` | `analytic_upper_bound` |
+| G-CON-01a | 硬 | 单线程单写者，读己之写成立 | `reachable_with_cost` | `analytic_upper_bound` |
+| G-CON-01b | **软** | 无路径、不可判定 | **不判定**（`not_judged`） | — |
+
+判定谓词 `pass`（对 4 条硬目标）；`aggregate_verdict=reachable_with_cost`。三条原 verdict 逐条不变；一致性行由复合目标改写为单库子句，verdict 仍为 `reachable_with_cost`。
+
+### 15.5 检查结果
+
+- `check-card.py`：F1 pass／F2 escalate／F3(full) fail 34／F3(scoped) pass／**E4 match=True**（`pilot-20261112.5`）；exit 1 由 F3 全量 fail 所致。
+- 本批未改注册表，未触发 `project.py` 的 F-11；registry_version 仍 1.1.0。
+- 10.2.5 仍不重跑（对 `.5` 过期），待第 3 批。
+
+### 15.6 未闭合
+
+- D-19（无一致性包络）：G-CON-01a 判定仍属 `[自定]` 外推。
+- D-21 母本语义、D-20 备选链空值：第 3 批。
+- 10.2.5 判据一/二/四仍 fail；ADR-DP1-STYLE 仍 `provisional`。
+
