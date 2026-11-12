@@ -207,3 +207,33 @@ cat fidelity.json
 | `check-card.py` | F1/F2/F3/E4 检查器 |
 | `fidelity.json` | 检查器输出 |
 | `run-log.md` | 本记录 |
+
+## 11 R-1 重跑：S5→S6（2026-11-12，编译规范 5.7 生效后）
+
+**输入不变**：`DP-1-STYLE`、`G-CAND-01`、`selected_entry=STY-001 v0.1.0`、同一白板与事实集。
+
+**投影执行**（按 5.7 P1–P3 机械执行）：
+
+| 步 | 结果 | 依据 |
+|---|---|---|
+| P1 scope | `pact-dsh` | S0 事实绝对指针 `system:pact-dsh/src/govern.js#L79-L90`、`system:pact-dsh/package.json#L27-L29` 给出唯一 system 候选；`system:src/pact-backend.js#L52` 无 system 段，按相对路径记 warning **C-R1-1**（原文保留） |
+| P2 S | `(·, ·, 同步请求-响应, ·)` | `STY-001.provenance.source_pointers` 的 `row_id=1.2.3-同步请求-响应` → 槽 1.2.3；其余槽 `·` |
+| P3 实例 | `style(pact-dsh, (·, ·, 同步请求-响应, ·))` | 2.3 嵌套 term_list；部分组合，`·` 槽下游求值 unknown |
+
+**S6 逐步对照**：
+
+| 步 | 上次（2026-11-12 首跑） | 本次（R-1 重跑） | 说明 |
+|---|---|---|---|
+| (i) 影响分级 | pass | pass | `impact_scope={2,6,10}`、`reversibility=costly` |
+| (ii) 路由 | 完整 ADR（批准链未实例化） | 完整 ADR（批准链未实例化） | 高影响；批准角色仍缺 |
+| (iii) 谓词 diff | **blocked：entry→style 映射缺失** | **pass：实例可生成** | 仅写 `pending_projection`，不写 `committed`（(ii) 未批准；0.7 禁裸写） |
+| (iv) 回归触发 | 未达 | 未达 | 依赖 (iii) committed |
+| (v) 批准不可达 | blocked | **blocked（当前唯一卡点）** | FM-2 → 0.10；SM-DR=`blocked` |
+
+**结论**：
+
+1. S6 不再卡在 (iii)。5.7 的投影规则足以从 `STY-001` 的既有字段生成 `style(pact-dsh, (·, ·, 同步请求-响应, ·))`，语法（2.3 嵌套 term_list）与语义（1.5 四子维度部分组合）均成立。
+2. S6 仍 **blocked**，当前卡在 **(v) 批准不可达**（FM-2 → 0.10）。这是 `SO-PILOT-3`（0.5 批准角色实例缺失），不是投影规则缺口；本次不自行补批准角色。
+3. 「能写出」≠「允许写入」：实例只进 `pending_projection`；`committed` 须待 (ii) 批准，版本向量不动。
+4. 新增证据缺陷 **C-R1-1**：`system:src/pact-backend.js#L52` 缺 system 段。不阻断本次投影（唯一绝对 system 候选已定），登记为 `SO-PILOT-5`。
+5. `SO-PILOT-2` 关闭；`SO-PILOT-1`（S4 目标集）与 `SO-PILOT-3`（批准角色）仍开放。
