@@ -10,10 +10,12 @@
 # v1.2.0（2026-11-12，第 2 批重跑）：目标集 v1.2.0（D-18-B）把 G-CON-01 拆为 G-CON-01a（硬）
 #   与 G-CON-01b（软）；verdict_table 记 3 条硬目标 + G-CON-01a，01b 移入 not_judged。
 #   每行新增 proof_strength（D-21-B，编译规范伴随注解，不改 three_value 语义）。结果仍 pass。
+# v1.3.0（2026-11-12，第 3 批）：母本 0.8 已明文「包络是上界式断言，覆盖只证明未被反驳」（D-21-A）；
+#   本 verdict 的语义由部署级 caveat 升格为母本依据。verdict 未变。
 s4_verdict:
   id: "S4-DP-1-STYLE-20261112"
-  version: "1.2.0"
-  executed_at: "2026-11-12（第 2 批重跑）"
+  version: "1.3.0"
+  executed_at: "2026-11-12（第 3 批）"
   executor: "agent（本会话）；批准与裁定归 wgz"
   decision_point: "DP-1-STYLE"
   step: "S4"
@@ -109,4 +111,4 @@ s4_verdict:
     - "本结论不改变目标集；若目标或路径模型变化，须重跑 S4（0.7 回归触发）"
     - "v1.1.0 重跑的唯一动因是输入口径变更（D-14-A 路径分解、D-15-A 可用性窗口），不是新证据；四行 verdict 与判定谓词逐条比对无变化"
     - "v1.2.0 重跑的唯一动因是硬目标集合变更（D-18-B）；三条原 verdict 逐条不变，G-CON-01 的单库子句改写为 G-CON-01a 后 verdict 仍 reachable_with_cost"
-    - "`proof_strength` 是编译规范侧的伴随注解（D-21-B），不是 three_value 的第四值，也不改变 reachable 的语义；母本层面的语义澄清留待第 3 批（D-21-A）"
+    - "`proof_strength` 是编译规范侧的伴随注解（D-21-B），不是 three_value 的第四值，也不改变 reachable 的语义；母本 0.8 已明文该语义（D-21-A），本注解是其部署级投影"

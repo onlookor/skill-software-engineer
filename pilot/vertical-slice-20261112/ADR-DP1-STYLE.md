@@ -39,7 +39,7 @@ style(pact-dsh, (·, ·, 同步请求-响应, ·))
 
 | 项 | 位置 | 指纹 |
 |---|---|---|
-| 母本（框架版本） | `软件工程元框架成文法.md` | `sha256:6d4b0100c7a87ee2d4b18c9d20840ad2600095dd32901aa2bf17cf4f792c34f0` |
+| 母本（框架版本） | `软件工程元框架成文法.md`（第 3 批加 0.8／0.5.1 两句后） | `sha256:413e3ac483db0a4262c8801363916501e030716d3e8be3229fa4e22b2521c535` |
 | 方法注册表 STY-001 v0.1.0 | `registry/method_registry.yaml` | `sha256:c235265add5ca6ea3fc626c3d328a4d861c05bfffd6a27d91d4c4af1900ffa7b` |
 | 目标集 | `pilot/vertical-slice-20261112/target-set-pact-dsh.yaml` | `sha256:3cf0433cfbb79b37c741279e3e378cfa704ce586e8c5c081f94fb89266074a23` |
 | 包络实参绑定 | `pilot/vertical-slice-20261112/envelope-bindings-pact-dsh.yaml` | `sha256:93bc90cfcb64f145ad8016e2c9061a0368651e6420c56614bca21bcf571a0d8c` |
@@ -109,7 +109,7 @@ style(pact-dsh, (·, ·, 同步请求-响应, ·))
 | D-18 | S4 三值 verdict 无 `n/a` | **已闭合（D-18-B）**：不改值域，用 0.4 把跨服务子句降为软目标（G-CON-01b） |
 | D-19 | STY-001 envelope 无一致性 metric | G-CON-01 判定标 `[自定]` 外推 |
 | D-20 | 0.5.1 未规定备选批准链是否允许为空 | 按"已声明空链、穷尽即不可达"执行，记 `GOV-PACT-002` |
-| D-21 | 上界式包络下 `reachable_with_cost` 只能读作"未被反驳" | 已在 S4 逐行加 `proof_strength` 注解（D-21-B）；母本语义澄清待第 3 批（D-21-A） |
+| D-21 | 上界式包络下 `reachable_with_cost` 只能读作"未被反驳" | **已闭合（D-21-A／B）**：母本 0.8 明文「包络是上界式断言，覆盖只证明未被反驳」；S4 逐行加 `proof_strength` 注解 |
 
 ## 10 结论三元组
 

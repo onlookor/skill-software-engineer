@@ -7,7 +7,7 @@
 > **编号纪律**：按成文法 0.22 承诺一（编号稳定性），新增工作项追加编号而不重排既有条目；执行优先级以各项标注为准。
 
 <!-- STATUS:BEGIN -->
-当前状态：条目 138｜母本 4811 行 / 591285 字节｜ADR 35 份｜tag 12 个：anchor-B-1、cost-C-20261112、layer-B0、layer-B1、layer-B2、layer-B3a、layer-B3b、layer-B4、layer-B5、layer-B6、layer-B7、layer-close-20261111｜--check 硬失败 0
+当前状态：条目 138｜母本 4811 行 / 591753 字节｜ADR 35 份｜tag 12 个：anchor-B-1、cost-C-20261112、layer-B0、layer-B1、layer-B2、layer-B3a、layer-B3b、layer-B4、layer-B5、layer-B6、layer-B7、layer-close-20261111｜--check 硬失败 0
 <!-- STATUS:END -->
 
 > 上块由 `registry/scripts/project.py --project` 按事实重写，`--check` 逐项比对；块内数值不得手改。

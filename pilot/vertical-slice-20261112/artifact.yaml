@@ -1,12 +1,13 @@
-# 编译产物清单（试跑切片，非发布）——2026-11-12 第 2 批
+# 编译产物清单（试跑切片，非发布）——2026-11-12 第 3 批
 compilation_artifact:
   version:
-    label: "pilot-20261112.5"   # 卡片 artifact_version 指向此标签；三元组见下
-    framework_version: "sha256:6d4b0100c7a87ee2d4b18c9d20840ad2600095dd32901aa2bf17cf4f792c34f0"
+    label: "pilot-20261112.6"   # 卡片 artifact_version 指向此标签；三元组见下
+    framework_version: "sha256:413e3ac483db0a4262c8801363916501e030716d3e8be3229fa4e22b2521c535"
     registry_version: {major: 1, minor: 1, patch: 0}
-    artifact_seq: 5
+    artifact_seq: 6
   # 编译规范 8.1：version = (framework_version, registry_version, artifact_seq)
   # framework_version 用母本内容哈希：母本未声明语义版本号（见 run-log §6 D-3）。
+  # .6：第 3 批按 D-21-A 在母本 0.8 加一句、按 D-20-A 在 0.5.1 加一句（均为同段追加，行数 4811 不变）。
   cards:
     - {card_id: G-CAND-01, version: "0.2.0"}
   dependency_graph:
@@ -18,13 +19,13 @@ compilation_artifact:
     profiles: {file: registry/profiles.yaml, kinds: 18, sha256: "623af138471e2e140d5fd8663dfd25f6537e96c56147cf48b3d202b4f5c4679d"}
   deployment_inputs:
     target_set: {file: pilot/vertical-slice-20261112/target-set-pact-dsh.yaml, id: TS-PACT-DSH-001, version: "1.2.0", sha256: "7a37e340af73538dd53a3f76400451c8c68fcd4686fcd5333782dfd33afa2990"}
-    envelope_bindings: {file: pilot/vertical-slice-20261112/envelope-bindings-pact-dsh.yaml, id: EB-PACT-DSH-STY-001, version: "1.2.0", sha256: "3bfb3f899b2362fb1b549baaaa00e77092dadbee294cad8fd6b6d0479f0fc6ac"}
+    envelope_bindings: {file: pilot/vertical-slice-20261112/envelope-bindings-pact-dsh.yaml, id: EB-PACT-DSH-STY-001, version: "1.3.0", sha256: "6449cbe46019cb1d312ddf59b042e4d1deb1479dde05f8151fe23727b877b230"}
     adr_inputs:
       - {file: pilot/vertical-slice-20261112/ADR-STY-ENV-01.md, id: ADR-STY-ENV-01, decision_state: approved}
       - {file: pilot/vertical-slice-20261112/ADR-TS-CON-01b.md, id: ADR-TS-CON-01b, decision_state: approved}
   verdicts:
-    s4: {file: pilot/vertical-slice-20261112/s4-verdict-pact-dsh.yaml, id: S4-DP-1-STYLE-20261112, version: "1.2.0", aggregate: reachable_with_cost, sha256: "11e82e3f4be9d9592514bbfb8d2e2bf907f77e8f843a5ec968d810eea80f76ae"}
+    s4: {file: pilot/vertical-slice-20261112/s4-verdict-pact-dsh.yaml, id: S4-DP-1-STYLE-20261112, version: "1.3.0", aggregate: reachable_with_cost, sha256: "5e55ca7523acf65e11fa38d8eb9184f7cc9060f3c6b1163d4b3bff2bf3b6cd2c"}
     adr: {file: pilot/vertical-slice-20261112/ADR-DP1-STYLE.md, id: ADR-DP1-STYLE, decision_state: provisional}
-    grounding: {file: pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml, id: GA-PACT-DSH-20261112-3, version: "1.1.0", pass: 3, fail: 3}
+    grounding: {file: pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml, id: GA-PACT-DSH-20261112-4, version: "1.2.0", pass: 3, fail: 3}
   fidelity_record: "fidelity.json（由 check-card.py 生成）"
-  scope_note: "本产物只含 1 张卡，不覆盖全部方面全部硬性质；F3 全量判为 fail（见 run-log §5）。10.2.5 为 3/6，判据一/二/四未闭合，决策记录仍为 provisional；该 3/6 记录针对 pilot-20261112.3，对 .5 已过期，待第 3 批完成后重跑。硬目标为 4 条（含 G-CON-01a），G-CON-01b 为软目标不参与 S4 判定。"
+  scope_note: "本产物只含 1 张卡，不覆盖全部方面全部硬性质；F3 全量判为 fail（见 run-log §5）。10.2.5 为 3/6（判据三/五/六 pass，一/二/四 fail），决策记录仍为 provisional。硬目标 4 条（G-LAT-01／G-AVL-01／G-LT-01／G-CON-01a），G-CON-01b 为软目标不参与 S4 判定。母本已于第 3 批按 D-21-A／D-20-A 各加一句（同段追加，行数 4811 不变）。"

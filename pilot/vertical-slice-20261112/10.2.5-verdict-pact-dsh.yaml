@@ -1,18 +1,20 @@
-# 10.2.5 接地编译验收判据：pact-dsh（2026-11-12 第三轮）
+# 10.2.5 接地编译验收判据：pact-dsh（2026-11-12 第四轮）
 #
 # 依据：母本 10.2.5 六判据；判据六字段形态见 0.17.4 grounding_status（母本 @3497）；
 #   0.5.1（批准角色注册表）；7.3/8.3/9.3（三处部署可行性勘察）。
 # 性质：pilot 验收记录，不是母本条款。
-# 本轮变更（v1.0.0 → v1.1.0）：按人类批准，补齐判据五五个评审点触发点与判据六 P0 的 deadline；
-#   判据一/二/四维持 fail，未改口径。
+# 三轮沿革：
+#   v1.0.0 → v1.1.0（第三轮）：补齐判据五五个评审点触发点与判据六 P0 的 deadline；判据一/二/四维持 fail。
+#   v1.1.0 → v1.2.0（本轮，第 3 批后重跑）：产物升 pilot-20261112.6（母本 413e3ac4…、注册表 1.1.0、
+#     S4 v1.3.0）；六判据全量复核，**无判据转号**，仍 3/6。上一份 3/6 记录（id ...-3）针对 .3 产物，已归档。
 grounding_acceptance:
-  id: "GA-PACT-DSH-20261112-3"
-  version: "1.1.0"
+  id: "GA-PACT-DSH-20261112-4"
+  version: "1.2.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-12T21:43:13+08:00"
+  executed_at: "2026-11-12T23:10:00+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.3"
-  not_in_scope_this_round: [1, 2, 4]
+  artifact: "pilot-20261112.6"
+  not_in_scope_this_round: []
 
   criteria:
     - id: 1
@@ -28,12 +30,12 @@ grounding_acceptance:
       name: "方法注册表、批准注册表、守护规则注册表、FVR、投影规则五个注册表非空且版本在案"
       verdict: "fail"
       evidence:
-        - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.0.0 → 成立"
-        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.0.0（第二轮新建）→ 成立"
+        - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.1.0 → 成立"
+        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.0.0 → 成立"
         - "守护规则注册表：仓库无该文件；DATA-SPEC 附录 C 记 C-12『缺 status、降叙述、不进词表』→ 不成立"
         - "FVR：pilot/vertical-slice-20261112/fvr-G-CAND-01.yaml 存在，但无注册表版本，且仅 5 条硬性质 → 不成立（版本在案）"
         - "投影规则：编译规范 5.7 有条款，但无带版本的投影规则注册表文件 → 不成立（版本在案）"
-      reason: "严格口径 2/5（方法＋批准）。把 FVR 文件与 5.7 条款按『非空』计则 4/5，但判据要求『非空且版本在案』，二者均无版本。"
+      reason: "严格口径 2/5（方法＋批准）。把 FVR 文件与 5.7 条款按『非空』计则 4/5，但判据要求『非空且版本在案』，二者均无版本。本轮只有方法注册表从 1.0.0 升到 1.1.0，计数不变。"
       count: "2/5"
       gap_refs: ["D-13"]
 
@@ -41,10 +43,10 @@ grounding_acceptance:
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
       verdict: "pass"
       evidence:
-        - "G-CAND-01.card.yaml artifact_version = pilot-20261112.3"
-        - "artifact.yaml version.label = pilot-20261112.3；registry_version = 1.0.0；framework_version = sha256:6d4b0100…c34f0"
+        - "G-CAND-01.card.yaml artifact_version = pilot-20261112.6"
+        - "artifact.yaml version.label = pilot-20261112.6；registry_version = 1.1.0；framework_version = sha256:413e3ac4…21c535"
         - "check-card.py E4: match=true（见 fidelity.json）"
-      reason: "卡片↔产物标签一致；framework_version 仍用母本内容哈希（母本无语义版本号，D-3 延续）。"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。母本第 3 批加两句后哈希变为 413e3ac4…，三处（artifact／卡片／ADR）同步更新。"
       gap_refs: ["D-3"]
 
     - id: 4
@@ -116,18 +118,18 @@ grounding_acceptance:
         - dimension: "approval_role_instances"
           state: "confirmed_present"
           declared_by: "wgz"
-          declared_at: "2026-11-12T21:43:13+08:00"
+          declared_at: "2026-11-12T23:10:00+08:00"
           evidence: "registry/approval_registry.yaml（sha256 a0457a4e3b8f197f29cee2051ae91b8a5a93827766b831493c94c4926a529013），pact-dsh v1.0.0，4 类决策，主批准人 wgz"
           source: "人类用户 wgz 于 2026-11-12 裁定"
           conversion_event: null
           deadline: null
           confirmed_by: "wgz"
-          confirmed_at: "2026-11-12T21:43:13+08:00"
+          confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "approval_registry 1.0.0"
         - dimension: "p0_response"
           state: "undetermined"
           declared_by: "wgz"
-          declared_at: "2026-11-12T21:43:13+08:00"
+          declared_at: "2026-11-12T23:10:00+08:00"
           evidence: "仓库勘察：无值班表、无 pager/on-call 配置、无告警通道登记"
           source: "仓库勘察（本会话）"
           conversion_event: "首次生产部署前"
@@ -139,13 +141,13 @@ grounding_acceptance:
         - dimension: "ci_capability"
           state: "confirmed_present"
           declared_by: "wgz"
-          declared_at: "2026-11-12T21:43:13+08:00"
+          declared_at: "2026-11-12T23:10:00+08:00"
           evidence: ".github/workflows/ci.yml#L18-L19（npm run check；npm test，Node 20/22 矩阵）"
           source: "仓库文件"
           conversion_event: null
           deadline: null
           confirmed_by: "wgz"
-          confirmed_at: "2026-11-12T21:43:13+08:00"
+          confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "ci.yml（未版本化）"
       gap_refs: ["D-16"]
       gap_status: "本轮以人类批准的具体 deadline 闭合记录缺口；『无生产排期』这一事实未消除，deadline 为决策日期而非排期日期。"
@@ -156,19 +158,18 @@ grounding_acceptance:
     pass_ids: [3, 5, 6]
     fail_ids: [1, 2, 4]
     grounding: "未接地（判据一/二/四未闭合）"
-    delta: "1/6 → 3/6（判据五、判据六转 pass；判据三维持 pass；判据一/二/四维持 fail）"
+    delta: "3/6 → 3/6（第 3 批后全量复核，无判据转号；判据三证据随产物 .6 更新）"
     consequence: "按 10.2.5 末段：未过验收判据而产出的设计决策全部标 provisional；ADR-DP1-STYLE 仍为 provisional。"
 
   evaluability_conclusion:
     card_evaluable: true
-    basis: "S4 有逐目标 verdict（4×reachable_with_cost）；S6 有批准（wgz）与完整 ADR；E4 一致。卡片可评估。"
+    basis: "S4 v1.3.0 有逐目标 verdict（4×reachable_with_cost，逐行 proof_strength=analytic_upper_bound）；S6 有批准（wgz）与完整 ADR；E4 一致。卡片可评估。"
     decision_effective: false
     basis_2: "10.2.5 为 3/6；判据一（白板模式版本号无定义）、判据二（注册表 2/5）、判据四（FVR 5/39）仍 fail，决策只能以 provisional 存在。"
-    closed_this_round:
-      - "判据五：五点触发点齐全，责任人 wgz；点一明示为追溯评审"
-      - "判据六：P0 保持 undetermined，deadline 2026-12-31，conversion_event 首次生产部署前"
+    closed_this_round: []
     still_pending: []
     caveats:
       - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；2026-12-31 到期未转则强制转 confirmed_absent 并按 9.3 判部署形态可行性缺陷"
-      - "判据五点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
+      - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
       - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"
+      - "判据三 pass 只证明卡片与产物标签一致；本产物是切片（1 张卡），F3 全量仍 fail（判据四）"
