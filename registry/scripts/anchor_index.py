@@ -132,9 +132,9 @@ def norm_cell(s: str) -> str:
 
 
 class Doc:
-    def __init__(self, rel: str):
+    def __init__(self, rel: str, root: Path | None = None):
         self.rel = rel
-        self.path = ROOT / rel
+        self.path = (root or ROOT) / rel
         self.exists = self.path.is_file()
         self.lines = read(self.path).split('\n') if self.exists else []
         self.headings = []          # (line, level, clause)
@@ -728,11 +728,13 @@ def quoted_frozen_spans(line: str, docs: dict):
     return spans
 
 
-def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None) -> dict:
+def scan(docs: dict, reg, row_ids: set, rowkey_map=None, terms=None, only=None) -> dict:
     rowkey_map = rowkey_map or {}
     terms = terms or set()
     rows = []
     for rel in sorted(docs):
+        if only is not None and rel not in only:
+            continue
         doc = docs[rel]
         txt_lines = doc.lines
         for i, line in enumerate(txt_lines, 1):
@@ -1255,6 +1257,56 @@ def write_csv(path: Path, rows: list[dict]):
         w.writerows(rows)
 
 
+# 投影文件（F-11 的参照物与比对对象都只限这四个生成物）
+PROJECTIONS = [
+    'registry/projections/STY.md', 'registry/projections/索引.md',
+    'registry/projections/勘察义务清单.md', 'registry/projections/自检报告.md',
+]
+
+
+def struct_snapshot(all_rows, docs) -> tuple:
+    """{(file|token|occ): 结构单元} 与 {(file|token|occ): 落点指纹}。
+
+    F-3／F-10 与 F-11 共用同一口径：只纳入 form=struct、文件属 live、且有行落点指纹的锚。
+    """
+    occ, units, fps = Counter(), {}, {}
+    for r in all_rows:
+        if r['form'] != 'struct' or classify(r['file']) != 'live':
+            continue
+        k = (r['file'], r['token'], occ[(r['file'], r['token'])])
+        occ[(r['file'], r['token'])] += 1
+        key = '%s|%s|%d' % k
+        tdoc = docs.get(r['target_file']) if r['target_file'] else None
+        fp = landing_fingerprint(tdoc, r['landing_line'], r['landing_form'])
+        if not fp:
+            # 无行落点（如 @r:...#field- 的 YAML 点路径锚）不属行落点指纹覆盖面：
+            # 字段锚的稳定性由 F-2 解析承担（ADR §7.7）。
+            continue
+        units[key] = r['struct_unit']
+        fps[key] = fp
+    return units, fps
+
+
+def projection_snapshot(root, rels=None) -> tuple:
+    """只扫描 root 下的指定投影文件，目标文档仍从真实 ROOT 解析。
+
+    root 默认为仓库根；F-11 用两个 root 分别取「已提交投影」与「暂存生成物」的快照。
+    锚点基线 anchor_baseline.json 不参与本函数。
+    """
+    rels = list(rels or PROJECTIONS)
+    docs = {rel: Doc(rel) for rel in target_files()}
+    for rel in LIVE + FROZEN:
+        docs.setdefault(rel, Doc(rel))
+    reg, row_ids = load_registry()
+    rowkey_rows, _unresolved, _affected = derive_row_keys(docs)
+    rowkey_map = build_rowkey_map(rowkey_rows)
+    terms = vocab_terms()
+    for rel in rels:
+        docs[rel] = Doc(rel, root=Path(root))
+    rows, _label_rows = split_labels(scan(docs, reg, row_ids, rowkey_map, terms, only=set(rels)))
+    return struct_snapshot(rows, docs)
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--out', default=str(REG / 'anchor_index'), help='输出目录（默认 registry/anchor_index）')
@@ -1282,26 +1334,7 @@ def main(argv=None) -> int:
     for r in rows:
         r['scope'] = classify(r['file'])
 
-    def struct_snapshot(all_rows):
-        """{(file|token|occ): 结构单元} 与 {(file|token|occ): 落点指纹}。"""
-        occ, units, fps = Counter(), {}, {}
-        for r in all_rows:
-            if r['form'] != 'struct' or classify(r['file']) != 'live':
-                continue
-            k = (r['file'], r['token'], occ[(r['file'], r['token'])])
-            occ[(r['file'], r['token'])] += 1
-            key = '%s|%s|%d' % k
-            tdoc = docs.get(r['target_file']) if r['target_file'] else None
-            fp = landing_fingerprint(tdoc, r['landing_line'], r['landing_form'])
-            if not fp:
-                # 无行落点（如 @r:...#field- 的 YAML 点路径锚）不属 F-3 覆盖面：
-                # F-3 是「行落点指纹」比对，字段锚的稳定性由 F-2 解析承担（ADR §7.7）。
-                continue
-            units[key] = r['struct_unit']
-            fps[key] = fp
-        return units, fps
-
-    cur_map, cur_fps = struct_snapshot(rows)
+    cur_map, cur_fps = struct_snapshot(rows, docs)
     base_path = Path(args.baseline) if args.baseline else (REG / 'anchor_baseline.json')
     if args.freeze_baseline:
         base_path.parent.mkdir(parents=True, exist_ok=True)

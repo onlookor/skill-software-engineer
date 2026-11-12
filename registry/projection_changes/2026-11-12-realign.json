@@ -1,0 +1,986 @@
+{
+ "batch": "2026-11-12-realign",
+ "note": "首批（2026-11-12）：04d424d 手写重写 + a550579 定向改锚的已提交投影，对齐到当前生成器输出。anchors 63 条均为 None→x（_cut 锚点保留行为的既有结果，见裁定：不退回、不改切点）；lines 110 条×124 行 = 截断边界 60＋数据来源层注释 14＋ops_cost 未评估行 11＋kind_profile 计数 4＋MJ/SO 表行 31＋源哈希脚注 3＋词形 值守/值班 1。",
+ "anchors": [
+  {
+   "key": "registry/projections/STY.md|@m:1.2.4#row-元方法-领域驱动|0",
+   "from": null,
+   "to": "m:1.2.4:row-元方法-领域驱动"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:2.2.4#li-6|0",
+   "from": null,
+   "to": "m:2.2.4:li-6"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:4.5#code-21|0",
+   "from": null,
+   "to": "m:4.5:code-21"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:5.2.3#p-1|11",
+   "from": null,
+   "to": "m:5.2.3:p-1"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:5.2.6#li-1|2",
+   "from": null,
+   "to": "m:5.2.6:li-1"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:5.2.6#li-2|3",
+   "from": null,
+   "to": "m:5.2.6:li-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:5.2.6#li-3|2",
+   "from": null,
+   "to": "m:5.2.6:li-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:5.2.6#li-4|1",
+   "from": null,
+   "to": "m:5.2.6:li-4"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:5.5#p-2|0",
+   "from": null,
+   "to": "m:5.5:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.2.1#row-属性族-可观测性|5",
+   "from": null,
+   "to": "m:6.2.1:row-属性族-可观测性"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.2.1#row-属性族-安全|2",
+   "from": null,
+   "to": "m:6.2.1:row-属性族-安全"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.3#p-2|1",
+   "from": null,
+   "to": "m:6.3:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.3#p-2|2",
+   "from": null,
+   "to": "m:6.3:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.3#p-2|3",
+   "from": null,
+   "to": "m:6.3:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.3#p-3|0",
+   "from": null,
+   "to": "m:6.3:p-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.3#p-3|1",
+   "from": null,
+   "to": "m:6.3:p-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.3#p-3|2",
+   "from": null,
+   "to": "m:6.3:p-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.5#code-Q6|1",
+   "from": null,
+   "to": "m:6.5:code-Q6"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.5#code-Q6|2",
+   "from": null,
+   "to": "m:6.5:code-Q6"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:6.5#code-Q6|3",
+   "from": null,
+   "to": "m:6.5:code-Q6"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.1#p-2|10",
+   "from": null,
+   "to": "m:8.2.1:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.1#p-2|8",
+   "from": null,
+   "to": "m:8.2.1:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.1#p-2|9",
+   "from": null,
+   "to": "m:8.2.1:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.2#row-层-单元|1",
+   "from": null,
+   "to": "m:8.2.2:row-层-单元"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.2#row-层-端到端|1",
+   "from": null,
+   "to": "m:8.2.2:row-层-端到端"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.3#li-5|1",
+   "from": null,
+   "to": "m:8.2.3:li-5"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.6#li-2|3",
+   "from": null,
+   "to": "m:8.2.6:li-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.6#li-3|3",
+   "from": null,
+   "to": "m:8.2.6:li-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.6#li-3|4",
+   "from": null,
+   "to": "m:8.2.6:li-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.6#li-3|5",
+   "from": null,
+   "to": "m:8.2.6:li-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.7#p-2|2",
+   "from": null,
+   "to": "m:8.2.7:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.2.7#p-2|3",
+   "from": null,
+   "to": "m:8.2.7:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.3#p-2|1",
+   "from": null,
+   "to": "m:8.3:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.3#p-4|1",
+   "from": null,
+   "to": "m:8.3:p-4"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.6#p-1|2",
+   "from": null,
+   "to": "m:8.6:p-1"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.6#p-2|8",
+   "from": null,
+   "to": "m:8.6:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.6#p-2|9",
+   "from": null,
+   "to": "m:8.6:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:8.6#p-3|0",
+   "from": null,
+   "to": "m:8.6:p-3"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.1#p-2|0",
+   "from": null,
+   "to": "m:9.1:p-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.2.1#row-级别-P0~p~阻塞级~q~|2",
+   "from": null,
+   "to": "m:9.2.1:row-级别-P0~p~阻塞级~q~"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.2.1#row-级别-P0~p~阻塞级~q~|3",
+   "from": null,
+   "to": "m:9.2.1:row-级别-P0~p~阻塞级~q~"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.2.2#code-1|0",
+   "from": null,
+   "to": "m:9.2.2:code-1"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.2.2#li-1|0",
+   "from": null,
+   "to": "m:9.2.2:li-1"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.2.2#li-2|0",
+   "from": null,
+   "to": "m:9.2.2:li-2"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.2.2#li-4|0",
+   "from": null,
+   "to": "m:9.2.2:li-4"
+  },
+  {
+   "key": "registry/projections/STY.md|@m:9.2.2#p-2|0",
+   "from": null,
+   "to": "m:9.2.2:p-2"
+  },
+  {
+   "key": "registry/projections/勘察义务清单.md|@m:2.9#li-12|0",
+   "from": null,
+   "to": "m:2.9:li-12"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:0.17.3#row-kind前缀-CFG|0",
+   "from": null,
+   "to": "m:0.17.3:row-kind前缀-CFG"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:0.17.3#row-kind前缀-QAT|0",
+   "from": null,
+   "to": "m:0.17.3:row-kind前缀-QAT"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:0.17.3#row-kind前缀-VFM|0",
+   "from": null,
+   "to": "m:0.17.3:row-kind前缀-VFM"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:0.23.11#code-E3|0",
+   "from": null,
+   "to": "m:0.23.11:code-E3"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:10.5#code-E2|0",
+   "from": null,
+   "to": "m:10.5:code-E2"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:5.2.6#li-1|1",
+   "from": null,
+   "to": "m:5.2.6:li-1"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:5.2.6#li-3|0",
+   "from": null,
+   "to": "m:5.2.6:li-3"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:5.5#code-10|0",
+   "from": null,
+   "to": "m:5.5:code-10"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:5.5#p-2|0",
+   "from": null,
+   "to": "m:5.5:p-2"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:5.6#code-100|0",
+   "from": null,
+   "to": "m:5.6:code-100"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:5.6#code-44|0",
+   "from": null,
+   "to": "m:5.6:code-44"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:5.6#code-89|0",
+   "from": null,
+   "to": "m:5.6:code-89"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:6.2.5#p-1|1",
+   "from": null,
+   "to": "m:6.2.5:p-1"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:6.2.5#p-2|0",
+   "from": null,
+   "to": "m:6.2.5:p-2"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:9.2.1#row-级别-P2~p~监测级~q~|0",
+   "from": null,
+   "to": "m:9.2.1:row-级别-P2~p~监测级~q~"
+  },
+  {
+   "key": "registry/projections/索引.md|@m:9.2.3#row-信号-僵尸开关~p~expiry超期~q~~d~隐式时序假设再现|0",
+   "from": null,
+   "to": "m:9.2.3:row-信号-僵尸开关~p~expiry超期~q~~d~隐式时序假设再现"
+  }
+ ],
+ "fingerprints": [],
+ "lines": [
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "",
+   "new_sha1": "4689324ebd01934ebd02e7f3fdf06bb4f016b9c0",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "",
+   "new_sha1": "c10363138bebfa48717f846a682cca29d00661f9",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "",
+   "new_sha1": "e059d474f5a0d97f1f11a9a9ed61f13f4b6708f4",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "",
+   "new_sha1": "e08adf1e0ac77c110d168cdd847751e66c043a93",
+   "count": 11
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "",
+   "new_sha1": "f639845140833c0799382efbe90bda00d3c8890a",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "006b4cd310bf9a795aedc3a3fc86439a8d022d8d",
+   "new_sha1": "3d4c2dd94fdb971513d199535b47103d5889f5a3",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "059328c3773319ebd63c0547d3ab2b32f15a410f",
+   "new_sha1": "26ed75ae3b44ad2820ae3328f17fe9b0e803bfbe",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "06d37d54969b2c33a7bef514f24c5d07854985c2",
+   "new_sha1": "bbc8ceb89a5aee751a78b9ef244c279f57aa0233",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "0b294a62b77d9326b0fb7a01c26fed84b319c8ec",
+   "new_sha1": "0e96d653b05bf0bb36d51bba3c0c9723dca62858",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "0c4da368bd7dc09b2fc8fbf16efde928fe492d28",
+   "new_sha1": "3fc085eaab4276110c83ecd4fae7f9e7d20bef53",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "101005087f8ccc5ebfef28039ba903140610a5b4",
+   "new_sha1": "5af98fa8b54c487de736ab08105b29db04397190",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "11aee3227fedc5410b4a0dcc5ba7d7e5b6ea55a0",
+   "new_sha1": "8474aee54ffc7320c92b268e51a8ed339c826f10",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "12f242f0482e763ff10405a1a60e89ecbf7ccfcb",
+   "new_sha1": "5cfdf4f9205e805111f5205adbce4eab9cfdefb5",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "1438543c3e73c9a750a52631d6056b5cd0fe4741",
+   "new_sha1": "9a62dc1148f0febd80b53154d26799c9899ae227",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "1eca1abcf3186f6fee9cf8a4be1627a6988634b9",
+   "new_sha1": "b06cd2a77f98471f0b717b7e735535994b9dca40",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "210beca7c9d8a70dabcb1bf66ae5593d6c8a597d",
+   "new_sha1": "6e8980a653f06e2e0a8819dc530626c87aa7c90c",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "25ac713a184977e35f32abdbda4d0b271217f13b",
+   "new_sha1": "ba544ddb40f7b7f186f829bf697f1e8368382b82",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "2627a09394de5d067bb237af7b8f40020358abe1",
+   "new_sha1": "83af3a6cf5e9d37e16625bd0186de9085eb1b5f2",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "28da6cc26f8fc4950a015d7a6957126b7e479f35",
+   "new_sha1": "0a67b5013f3eb46ef4f63a3816e74c23b7315d1c",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "34f5b414b66e86613d511cd4fb180f5c90cc9fb8",
+   "new_sha1": "1e1d9c7ea09938417e87fb28fd6b25fc077dc0d5",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "36a53f81e54bff90e9eb715828f199db0da233df",
+   "new_sha1": "a1b4dc77df56489a36f8d69f89fd9740f304691b",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "400a8b5c854add0385697478f7783c756dd563ff",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "403109d1a2dc0f2f6003fb716a0d6e70cbf0da3c",
+   "new_sha1": "d72132354f69126df8753ed62ce4cc71de8aa5b9",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "42a58bace8c1ec182ba42f9cab27ffed48989842",
+   "new_sha1": "166b40131c11390bedb0df7aba80e30c7466ded3",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "488b6893c1665b1ed68075c5fa837b08f4275a5b",
+   "new_sha1": "65de9296c590bf3085b8be6263669508a2e6e8c3",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "4b15dfeb7191f65c4db57fddb33d6536ee69cecb",
+   "new_sha1": "79dc0b55016338eccccf80e51a2a3df282dce271",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "4f4c96ef9303b476251aa2164f5ecc9079a1cddf",
+   "new_sha1": "ed79029d343eae0ff9d695dbc88402153ad188ea",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "51fd011b359d56efce4ebe3bf07a694325f02dfe",
+   "new_sha1": "70f3d04b65c0db037e03ab158cb5f261720feaa4",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "55d4b982c139ee6d4c98e2e3e2a37345b7aed1b4",
+   "new_sha1": "146ab06ec1dd0fb81b4e2defc20f2168ee1b8d21",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "55d4b982c139ee6d4c98e2e3e2a37345b7aed1b4",
+   "new_sha1": "a54c4e3399cdfed26b8a3f3a841403e3b1e7360e",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "55d4b982c139ee6d4c98e2e3e2a37345b7aed1b4",
+   "new_sha1": "ad2349e363e0ad032f4816bb28476910bd50cb1b",
+   "count": 5
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "55d4b982c139ee6d4c98e2e3e2a37345b7aed1b4",
+   "new_sha1": "b2ee933c14583738aa14bd0fd489799a1238b80e",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "55d4b982c139ee6d4c98e2e3e2a37345b7aed1b4",
+   "new_sha1": "b378293e9f5bb015913b80455a053535c81c39bc",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "5a422c9aff95d553d5928be0a02492dacb230464",
+   "new_sha1": "bc80d5a07e20ec5845f4600844f5326253709b47",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "5b6abbf77774adac4859d20c26a80988cf127368",
+   "new_sha1": "6cb1c6ecb890fe3773489d2fa7fc5afdb91d3024",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "5c4f3b9120e1a20af6ee30df3f5d07de9386e73d",
+   "new_sha1": "945a4e70d4d32c260a6c41005e535145522bdf5c",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "5d35dbcc8efa06241f706bbb2f3d8795995457af",
+   "new_sha1": "dbacf193ec0e52041257eb14045ec58308ba53fc",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "602e9696bff35ede66e771716d7cac963637c937",
+   "new_sha1": "8d61612e8246f4c9ea4adf49b6fb9f4bc19fa6ee",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "65f76d0d85576b2bfa4cb2761e379cfdc85c1ce7",
+   "new_sha1": "885dd76a1cb5d38b9b9195c2accdfe0f6a7cd26a",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "7f74e35c63f828a7e382c6f2139eb72938c2d984",
+   "new_sha1": "0bac38fc4fa53ca0b73b713685c72ece910a12e8",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "805089df85820903edba387a365d889a8de212f6",
+   "new_sha1": "070f6557ed0305cf5d4c7864f07a47bdf2064fda",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "8319e61f57002e326dbf23fbfc7f41796e96bed5",
+   "new_sha1": "5fddda4c3e63f2634e16b68e919038f797883eca",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "842a4b99269908b502a456cb98bea87ba039fbc1",
+   "new_sha1": "d24e40a0fb8633e90aecec900792abe4b6a856e7",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "8c33cf8dcce8bb1f4e4a2ec93cfad6ee506b34d1",
+   "new_sha1": "550706f67bfe7a28c8f24478ce40fd0eae41ba3a",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "8d3c68a439be3414e68c1dcbb0413e46846abe97",
+   "new_sha1": "ffdef2ca0b8db94c6e4c98ce3df971c744405507",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "95964624e7b861e4e996c0c5ef26df1526881e00",
+   "new_sha1": "c57dbea9cea93656e6c84cc26b4827867adf9f3c",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "9b84d42844ed4c7802d2a7b77bc46da00f5052c3",
+   "new_sha1": "951d7f6dea6c0cbc1ea71f76e377a9953a1f7b66",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "9c4efc825096a407a9cc96e767203b5a8848f481",
+   "new_sha1": "402c9bd6bdb7c805f8285d016177c2ea8cc3933c",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "9cad490f7d7a9e24977520d80570d4c989c07635",
+   "new_sha1": "596505aaf20c3e31c9f710f7feb105e1016c1af5",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "9ee347e36b05b97b4f37575e4c08976862eadde6",
+   "new_sha1": "e54e03ff3dfdd74c2d127271486e31bbb640af4a",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "a17d106080b4b6415cacdf10f97f69663e1fe6d2",
+   "new_sha1": "b3534e62e4882c3bee4405d08dca0643318d095c",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "a42d8b3b1eac5a891b3f22831ce26976bb0bcebc",
+   "new_sha1": "5e214666b4d92389ad39ef5613447c07fd68cb1f",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "a65b14257d99f79958951927341a7ceeebd50803",
+   "new_sha1": "0d0567955aa272ca8ade6257f71d86d2d8a6304f",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "a6bc387920825dbb5e9acb3484226df680300309",
+   "new_sha1": "dd1b0c264685b978a3fc995a4f0b478cfa7d8ab4",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "b50210cd652ae0913439a0fbeabe5b8e0164c923",
+   "new_sha1": "0ab480e430760ceff8ca2b18ed56edbb39c49396",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "b59ef7f334c3262128e13ef1cda17b8d7efa7bab",
+   "new_sha1": "ff49bfd12f3c5f5afa15bfd47e7432fd8bf26aef",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "b8970daae401124299799f2007169d0221898816",
+   "new_sha1": "f6c9a859a46afdb9a8597ce969d1a91d9c4b95b3",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "c033ae095f4ddb40c04ad5eeb64b68c3cc65d321",
+   "new_sha1": "c3be1a744d62636e292469826682f4389adba1ae",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "c63272f4504682d17e38831e3ca41c926bd45ce6",
+   "new_sha1": "03ed8a21bdd1077f26cf7deb3d9340d17c1cb00f",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "c7ab0d65923f8614e80309acc53dbbe90caf261c",
+   "new_sha1": "5702f9a615a00ef37e9064669103447f0d8a5ae3",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "c8eea765d56ca5db0c9370896bfd81f6832df03a",
+   "new_sha1": "da0da6b12cb18e9953a9daba39479c47d4606da1",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "d7032bfaa9ba96019ca2dd210a66d39d40e465f6",
+   "new_sha1": "a12d2c047a25470c97ab042c564d8340b86e9a96",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "d7448a6cfb6e9ce3a5a9bdf0ec229defcb138b36",
+   "new_sha1": "af4aa46dfbad31365db466d74db95c1b0bd5b798",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "d92d7cc318d50f270f53572b411d7b51ab5158b6",
+   "new_sha1": "642dd4a1a9bf7442133b02f8e938f7cf6dbc9b98",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "ddf2ec243524a444123d044f1305f9cb5b503dc5",
+   "new_sha1": "f61fe2000bbd42fbc6c2ede684d6f7fc4b1181cd",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "dfa5382167c6199e51024b8afabffd5d13d71310",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "e21a2b1ce7314b052a3e404f16bc60af77c1427e",
+   "new_sha1": "f4c57776abbfe9dcd91d157de7fc1b7a5ddee997",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "ecad165187e0d5ac2a0d93cef1be52017c423b74",
+   "new_sha1": "8dc2d279a43ebed14d7a3cbccfedb6c31f3fbcc7",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "ee75876a56680b96cbaed5d7fb945df1ac7f4b98",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "f5ef99246bf37969516518f2c937a57c230789b5",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "fafcad077032d50fcbaf16df9ddff368d16dc843",
+   "new_sha1": "be988e3ff609006e05df03c4867daf987e0d1336",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "ff7d4b0e6fd7d4d4c83e47eea5d6eddfe32067f2",
+   "new_sha1": "283fc7f437a3c67f9cbceab95f4a630aef7772e6",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/STY.md",
+   "old_sha1": "ffd5cb9b1d21f89ce5568d52fd64be90124e2cb5",
+   "new_sha1": "589b03797e482dfb84eb68093c97e868ed302707",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "",
+   "new_sha1": "229acc33d17a2ff90aefda6d2bb1ea13b6bf390f",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "3c50fbc118bfb96a424d411fb67c02566d403294",
+   "new_sha1": "4e5ba1d176366b3991e48e545e45e88c0d54ff21",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "3f655ad85650167205e38c63a0c66996de513404",
+   "new_sha1": "1e7ac097c2a4be238ed21eac31183c65f7876048",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "43998e7beefb58837c51ab0d23bcf72e8c89d98a",
+   "new_sha1": "ee7229b5425b7e881574d737df5fa94856764887",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "5e44ffbe14bfd5fe793f37089de379fabc4d9e23",
+   "new_sha1": "05884dfc97623f5aecbbb87fb65fb130cce891b9",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "5ec9d3950801e633fdbda1946aa76cc4f12ddff3",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "68d7427ac82b2a5e94f0c78c3715b62cfa55df05",
+   "new_sha1": "661a53a7889f0431218ce23b439c1c42976df935",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "75f8d4701cc8ea4745c30103739f79e176dca640",
+   "new_sha1": "aa5022de413ef7fad19b48215ff346ef7d9bcef2",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "81309312c51337f5bd8013d74f700789985e1260",
+   "new_sha1": "7f5663d4231c0674bd1fe39b71da42384dbab16a",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "d7032bfaa9ba96019ca2dd210a66d39d40e465f6",
+   "new_sha1": "a12d2c047a25470c97ab042c564d8340b86e9a96",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "e04ec128afeb5f877b6a5a68aeb40012df39c848",
+   "new_sha1": "83584a48d708fd20f1012c1dbacce090230bc8c9",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/勘察义务清单.md",
+   "old_sha1": "f0ead1a71812ecc08f2331f71ac508c4d990d118",
+   "new_sha1": "3d81b9b5adbf4d4e7f4feed73f0acde2daf2fdaf",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "",
+   "new_sha1": "6014bca58b4a9ad8ca5a5e00fe959140f0989652",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "",
+   "new_sha1": "7398428c8691f791a755862a5a67fb74d86c2cfb",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "",
+   "new_sha1": "cdacef05e6e097b92009200e3c8fdb789d8acc5f",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "",
+   "new_sha1": "e1bafe591f110c6061a79b69ddb494092fb59b3c",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "102f046722e4ee55df067d628612003c0cb5a14d",
+   "new_sha1": "a43753ebb29938b8e3a8ca2deac2ac24bb12bd18",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "1c6677f0cccc480216a25d41c7bcb20a0fa1c44e",
+   "new_sha1": "0a38a34fa8b0e98712174ec3d55e2f2304f7284a",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "36be709db374cf6cdddcf031ea06605192b789d6",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "3a511ce5d29e795553a52c14eaf1dd2908f464c7",
+   "new_sha1": "dca8de1a8aff94e80ec1a076f2fe48c0b5312552",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "47948c4b108f167f8b409e470c78d3fe58e1d158",
+   "new_sha1": "f5ca10b40ef4ba7c7bafa7318b5b3230aa613c25",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "50798964a7d87568a37ddfb6b7c918eedd6c9a15",
+   "new_sha1": "bbd2875367d9143ee341201b66aacc44c9a66439",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "5156c887267c53e1fd5c2679487be97196cc8425",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "5a875a52d652d31af3eb6370e7b6bddb6e744280",
+   "new_sha1": "41a51b256262ef177eceb3f4ef1559b67b23013f",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "5e8b71c5a647a0a80ca68ba41f09076ca438da0d",
+   "new_sha1": "2fb6554dd24f9a812be9fbb918daca6acc9b2886",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "5f2d83c2189ad0ac5bdbfb17de02f978a8809de0",
+   "new_sha1": "45795e76d118974eb4c92c218e7caa5095dee692",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "5f6613e117297adb4348de8642631d64545e1985",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "741b805dec143759a2d8bd7fb680984a1511b613",
+   "new_sha1": "81f7ddb69085c9f0b5891c302ef8e50db2700135",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "7e8f38a2aed01d6af49af2b804e644fec369d78d",
+   "new_sha1": "6bb5a7d05951bd78a9c0ce07f9e310ec6f56f162",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "7fea570c3d2596f513c0245f3e2ed6637041f458",
+   "new_sha1": "9520886278caf85dc36e17e3c7b29bef7bda91c4",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "866ed39eb1e71a6d5925972b50f7ddb88718b81a",
+   "new_sha1": "",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "91360cd112f68ac840712fd2bdaf857695535874",
+   "new_sha1": "2386f23bb7c8a0742f821d1c6ea1369ee0ac3ef0",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "ab71165cf196c750592c97b16c294f1b0f3b5071",
+   "new_sha1": "ddb682c7eb6c7f17e754d9e32b1a8f8681bdccf2",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "ac25cf959a1d1572ec1778afc5c91eb0c0e212bf",
+   "new_sha1": "523e4a8652699b3992af57a473691d2b572f13c6",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "d7032bfaa9ba96019ca2dd210a66d39d40e465f6",
+   "new_sha1": "a12d2c047a25470c97ab042c564d8340b86e9a96",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "e0dac9ce67c6b024eaab2a986b2f56bb4566c2ca",
+   "new_sha1": "04251d1b78ffa31107d0b73ef032f5c9d8eee459",
+   "count": 1
+  },
+  {
+   "file": "registry/projections/索引.md",
+   "old_sha1": "f44264abe3cecdaedfe5af0c407296ea19d5c8c9",
+   "new_sha1": "ffc32c1b232f55399f078eb13566c60cf3896d2c",
+   "count": 1
+  }
+ ],
+ "file_bulk": [],
+ "decided_by": "用户裁定 2026-11-12（_cut 保留现状；04d424d 按生成器输出重新对齐）"
+}
