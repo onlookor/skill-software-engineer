@@ -1,10 +1,16 @@
 # todo（后续工作）
 
-> 依据本目录 AGENTS.MD：后续工作记录于本文件。本文件承接《软件工程元框架成文法》原附录三（后续工作指引），条目编号 3.1–3.9 续用；《编译规范》的起草顺序建议附于 3.7 之后。所涉文档均为定稿文本：各项工作项是对定稿的登记在案后续任务，每项注明性质与治理路径。
+> 依据本目录 AGENTS.MD：后续工作记录于本文件。本文件承接《软件工程元框架成文法》原附录三（后续工作指引），条目编号续用；《编译规范》的起草顺序建议附于 3.7 之后。所涉文档均为定稿文本：各项工作项是对定稿的登记在案后续任务，每项注明性质与治理路径。
 >
 > **本文件只记当前任务与状态**：各项的履行批次、过程明细与自我修正记录一律在对应变更历史文件（`软件工程元框架成文法-changlog.md`／`编译规范-changlog.md`），不在本文件累积；文件自身的演进由 git 历史承载。
 >
 > **编号纪律**：按成文法 0.22 承诺一（编号稳定性），新增工作项追加编号而不重排既有条目；执行优先级以各项标注为准。
+
+<!-- STATUS:BEGIN -->
+当前状态：条目 138｜母本 4811 行 / 591285 字节｜ADR 35 份｜tag 12 个：anchor-B-1、cost-C-20261112、layer-B0、layer-B1、layer-B2、layer-B3a、layer-B3b、layer-B4、layer-B5、layer-B6、layer-B7、layer-close-20261111｜--check 硬失败 0
+<!-- STATUS:END -->
+
+> 上块由 `registry/scripts/project.py --project` 按事实重写，`--check` 逐项比对；块内数值不得手改。
 
 ### 3.1 方面间约束全景矩阵（汇编任务）
 
@@ -41,7 +47,7 @@
 
 前置依赖 = 3.7（编译规范起草）。执行：选择一个真实项目，按编译规范将成文法编译为产物 → 装配 → 运行 → 收集编译忠实性缺陷与卡片可用性问题 → 回馈编译规范修订（修订权属人类责任方，E7）。试点验收 = 10.2.5 六判据全过 + 首批决策的 ADR 质量抽查（简记包抽查机制同权适用）。试点结论（含失败形态）按框架自身纪律记录——**试点失败也是三空间事实，进演化路线图，不进宣传材料。**
 
-> **状态：未启动。** 前置 3.7 单 Agent/人工种子阶段范围已闭合；本项等待第一个真实项目启动，无法自主推进。
+> **状态：已启动（2026-11-12）。** 垂直切片首次真实运行（`pilot/vertical-slice-20261112/`，commit `bdf4ba8`）：S0–S3 过、S4／S6 blocked、10.2.5 一过五 fail；运行记录与缺口清单见该目录 `run-log.md`。
 
 ### 3.6 部署规模裁剪模板（参数化任务）
 
@@ -148,7 +154,7 @@
 
 > **s5g 词汇表欠账收口（2026-11-03）**：`VG-06`／`VG-07` 两处历史预告已落盘，并执行两项用户裁决。**落盘**：`registry/predicate_vocabulary.yaml` 新增 `VG-06`（QAT 批 6.5 **十三词**：主组 Q4–Q6 六词 `consumed`／`mapped`／`recorded_in`／`approved_waiver`／`observability_requires`／`tactic_registry` ＋ 补充组 Q1–Q3／Q7 七词 `routed_to`／`weight_source`／`band`／`defined`／`monitored`／`human_ruling_pending`／`selected`）、`VG-07`（VFM 批 8.5 九机器层＋T 系列七公式侧＝**十六词**）；两条五字段（`id`／`missing_need`／`workaround`／`affected`／`route`）与 `VG-04`／`VG-05` 同型；编号 **VG-01…VG-08** 连续（`VG-08` 早批落盘、未改序）。**裁决一（`mapped` 并条）**：该词归 `VG-06`（母本唯一出处 6.5 @2901 Q6），`VG-07` 移除并留移出注＋`route` 编号注（8.5／T1–T9 @3417-3445 实测无此词），`VG-07` 覆盖词数 **十七→十六**；G-VFM-1 预告文本不改写（0.22 承诺一）。**裁决二（QAT 七词收进）**：按批次块头 @7279-7283 清单并入 `VG-06` 补充组，**不另立 `VG-09`**（字段／格式同型，扩写不破坏语义）；与 G-QAT-1 正式口径「Q4–Q6 六词」的差异在条内据实登记、G-QAT-1 文本不改写；`satisfied` 仍按关系词排除。**计数**：`vocabulary_gaps` **6→8**；在册谓词 **76**（predicates 59＋formula_words 7＋clause_defined_predicates 10）**未变**，两批 `detection_predicate`／`applicability` 未登记调用式仍 **0**。**实跑终值**：948 条记录｜硬失败 **0**｜软警告 **0**｜entries **110**｜占位符 **1165** 处／110 条｜指针 **1934**／miss **0**｜`ST` 14／`WV` 14／`MJ` 29／`gaps` 18／`SO` 16／`profiles.gaps` 4。**投影**：四件重生成，行数 **1741／1817／271／269** 不变（合计 4098）；源哈希 `predicate_vocabulary.yaml` `cbdf6da217fa`→`67a11b81cec1`→**`025b999d0251`**（两轮迭代终值）。**文档**：`registry/README.md` 新增 **§4.13**（§4.12 已由 KP-G3 R2 占用，本节编号顺延）；`软件工程元框架成文法-changlog.md` 末尾追加本批条。**本块不 commit／不 push。**
 
-> **KP-G3 剖面执行＋`manual` 口径收窄（2026-11-03）**：**已执行（仅 `registry/profiles.yaml`）**。①三件 `status` `draft`→`seed`，`undecided_fields`→`[]`；②`not_applicable` 每 kind **8 项**（`envelope`＋7 个 `cost_profile.*`，reason 引 0.17.2 @381 末句、`provenance: compiled`），`latency_budget_delta`（PRJ 原文保留）；③`entry_level_exemptions` 每 kind **1 条 `C-ENV` 全批豁免**（scope＝GRD-001…003／PRJ-001…011／GOV-001…006）；④`seed_source` 两占位符填实（GRD→9.2.1 三行／PRJ→10.2.2 十一行／GOV→0.5 六行）。**种子面裁决**：GRD 只取 9.2.1 主表 3 条（9.2.3 九信号源暂不收，部署类与 DPS 9.2.5 重叠须先分工）；PRJ 只取 10.2.2 义务表 11 条（C4／arc42 16 行实例表「实例级，非规范」不作种子）；GOV 只取 0.5 六行（7.2.3 简记格式不单列条目）。**头注收窄**：@13-14 后追加「`provenance.origin = manual` 仅适用于字段取值与 `optional` 判定；`not_applicable` 属完备性判定，须有母本明文依据，不得以 `manual` 替代」，GOV note 原文保留。**自检**：948 条记录｜硬失败 0｜软警告 0｜entries 110｜占位符 1165｜指针 1960／miss 0｜`vocabulary_gaps` 8；四件投影行数 1741／1817／271／269 不变。**未做**：`method_registry.yaml` 未动、s5e-10 M2 未启动；GRD 9.2.3 九信号源分工、PRJ `delivery_space` 逐条勘察、GOV 简记格式的条目化裁决待后续。**不 commit／不 push。**
+> **KP-G3 剖面执行＋`manual` 口径收窄（2026-11-03）**：**已执行（仅 `registry/profiles.yaml`）**。①三件 `status` `draft`→`seed`，`undecided_fields`→`[]`；②`not_applicable` 每 kind **8 项**（`envelope`＋7 个 `cost_profile.*`，reason 引 0.17.2 @381 末句、`provenance: compiled`），`latency_budget_delta`（PRJ 原文保留）；③`entry_level_exemptions` 每 kind **1 条 `C-ENV` 全批豁免**（scope＝GRD-001…003／PRJ-001…011／GOV-001…006）；④`seed_source` 两占位符填实（GRD→9.2.1 三行／PRJ→10.2.2 十一行／GOV→0.5 六行）。**种子面裁决**：GRD 只取 9.2.1 主表 3 条（9.2.3 九信号源暂不收，部署类与 DPS 9.2.5 重叠须先分工）；PRJ 只取 10.2.2 义务表 11 条（C4／arc42 16 行实例表「实例级，非规范」不作种子）；GOV 只取 0.5 六行（7.2.3 简记格式不单列条目）。**头注收窄**：@13-14 后追加「`provenance.origin = manual` 仅适用于字段取值与 `optional` 判定；`not_applicable` 属完备性判定，须有母本明文依据，不得以 `manual` 替代」，GOV note 原文保留。**自检**：948 条记录｜硬失败 0｜软警告 0｜entries 110｜占位符 1165｜指针 1960／miss 0｜`vocabulary_gaps` 8；四件投影行数 1741／1817／271／269 不变。**未做**：`method_registry.yaml` 未动、s5e-10 M2 未启动；GRD 9.2.3 九信号源分工、PRJ `delivery_space` 逐条勘察、GOV 简记格式的条目化裁决待后续。**不 commit／不 push。**（本条记录时未单独提交；后续入库 commit `870cea8`，原文保留。）
 
 > **KP-G3 闭合登记（2026-11-03）**：`registry/profiles.yaml: gaps/KP-G3` `status: open → closed`，并在同条目内追加 `closure` 块（`gap_ref`／`date`／`ruled_by`／`basis`／`evidence`／`preserved`）；`statement`／`impact` **原文逐字未动**（0.22 承诺一），`preserved.impact` 声明「三剖面 `status=draft`」系闭合前事实、已过期、以 `closure` 为准。**形态依据（工具实测）**：`project.py` @**1069-1073** 对 `profiles.yaml: gaps` 只做六键**要素齐备**检查、`status` 取值不参与任何硬／软判据；`--project` 缺口表只遍历 `method_registry.yaml`（@**1548-1552**），剖面缺口不进投影 → 改状态零检查增删；不另起 `KP-G3-closed`（否则 `profiles.gaps` 4→5 且原条目仍 `open`，台账自相矛盾）。**闭合依据**：R2-KP-G3-01 落于母本 **0.17.2 @381** 行末（单行本 @**363** 逐字一致）；ADR-KP-G3-01 已使 GRD／PRJ／GOV 三剖面 `status` @**477**／@**546**／@**611** 转 `seed`、`undecided_fields: []`、N-A 各 **8** 项、`C-ENV` 全批豁免各 **1** 条、`seed_source` 两占位符填实 → 原 `impact` 的 C-ST 阻断面不成立。**验证**：948 条记录｜硬检查通过 **807**／失败 **0**｜软警告 **0**｜entries **110**｜占位符 **1165**｜指针 **1960**／miss **0**｜`gaps` **18**／`SO` **16**／`VG` **8**｜`profiles.gaps` **4**（`open 3`／`closed 1`）；四件投影行数 1741／1817／271／269 不变（仅 footer 1/1）；`profiles.yaml` 前 12 位 `42de431a30db`→**`13f961d61ff1`**。**登记**：`registry/README.md` 新增 **§4.15**（§4.12／§4.13／§4.14 已占用，编号顺延）；`软件工程元框架成文法-changlog.md` **末尾追加**（历史零改写）。**边界**：`method_registry.yaml`（并行任务面，实测未动）、母本、单行本、`predicate_vocabulary.yaml` 零改动；**不 commit／不 push。**
 
