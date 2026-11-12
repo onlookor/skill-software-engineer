@@ -28,6 +28,7 @@ import argparse
 import datetime
 import hashlib
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -49,6 +50,25 @@ REG_PATH = REG_DIR / 'method_registry.yaml'
 PROFILES_PATH = REG_DIR / 'profiles.yaml'
 VOCAB_PATH = REG_DIR / 'predicate_vocabulary.yaml'
 PROJ_DIR = REG_DIR / 'projections'
+TODO_PATH = SE_DIR / 'todo.md'
+
+# ── todo 判据（门面纪律的机器化；判据不写进 todo 正文，避免自指）──
+TODO_STATUS_BEGIN = '<!-- STATUS:BEGIN -->'
+TODO_STATUS_END = '<!-- STATUS:END -->'
+TODO_LONG_LIMIT = 2000
+# 存量超限行按内容 sha1 前 12 位豁免为 soft：只报清单，不擅自重排历史；
+# 新增长行（含改动后的历史行）一律 hard。基线为 2026-11-12 判据落地时的 20 行。
+TODO_LONG_BASELINE = {
+    '688e48727811', '1ad95918202e', 'd7cd15bb93d3', 'fa13aa3db854',
+    '992b7027d161', '1a46caff4637', '7587e8da674c', '0b30c6d419d1',
+    '5a8a32842699', '66e48ac50b42', 'c6e89df8c182', 'd5620247e1f4',
+    'ba231f132c59', 'd45f96546b75', 'e0d0b46e70bf', '8cfc441559f5',
+    'ea3c732fbdad', '6bb70d0f957a', 'a1c213966306', 'c6cab7b8b1a8',
+}
+# 进度断言必须带 changelog 指针或 commit 记录；纯状态词单独出现即视为未核对。
+TODO_PROGRESS_POINTER_RE = re.compile(r'changlog|changelog|commit\s*[:：]?\s*`?[0-9a-f]{7,40}|@[0-9a-f]{7,40}|git ')
+TODO_PROGRESS_WORDS = ('尚未开工', '未开工', '未启动', '已启动', '已完成', '进行中',
+                       '待续批', '待真实项目')
 
 # ── 0.17.2 闭集值（逐字采用；不重定义、不扩展、不裁剪）──
 ENUM_STATUS = {'draft', 'seed', 'active', 'deprecated', 'retired'}
@@ -2797,7 +2817,129 @@ def render_index(ctx: dict) -> str:
 
 # ═══════════════════════════════ 8. 编排与 CLI ═══════════════════════════════
 
-def run_checks():
+# ── todo 状态块与门面判据（TODO-STATUS / TODO-LONG / TODO-PROGRESS）──
+
+def _git_tags() -> list[str] | None:
+    """读仓库 tag 全表；git 不可用时返回 None（状态块显式标注，不静默补零）。"""
+    try:
+        out = subprocess.run(['git', 'tag', '-l'], cwd=str(SE_DIR),
+                             capture_output=True, text=True, timeout=10)
+    except (OSError, subprocess.SubprocessError):
+        return None
+    if out.returncode != 0:
+        return None
+    return sorted(t.strip() for t in out.stdout.splitlines() if t.strip())
+
+
+def _adr_count() -> int:
+    adr_dir = SE_DIR / 'adr'
+    return len(list(adr_dir.glob('ADR-*.md'))) if adr_dir.is_dir() else 0
+
+
+def todo_facts(ctx: dict, hard_fail_count: int) -> dict:
+    """状态块的事实源：条目数、母本行/字节、ADR 份数、tag 全表、--check 硬失败数。"""
+    law_bytes = LAW_PATH.read_bytes()
+    tags = _git_tags()
+    return {
+        'entries': len(ctx['entries']),
+        'law_lines': len(law_bytes.decode('utf-8').splitlines()),
+        'law_bytes': len(law_bytes),
+        'adr': _adr_count(),
+        'tags': tags,
+        'hard': hard_fail_count,
+    }
+
+
+def render_todo_status(f: dict) -> str:
+    tags = '、'.join(f['tags']) if f['tags'] else ('（git 不可用）' if f['tags'] is None else '（无）')
+    n_tag = len(f['tags']) if f['tags'] is not None else 0
+    return (f'当前状态：条目 {f["entries"]}｜母本 {f["law_lines"]} 行 / {f["law_bytes"]} 字节｜'
+            f'ADR {f["adr"]} 份｜tag {n_tag} 个：{tags}｜--check 硬失败 {f["hard"]}')
+
+
+def _todo_lines() -> list[str]:
+    return read_text(TODO_PATH).splitlines()
+
+
+def _status_span(lines: list[str]) -> tuple[int, int] | None:
+    try:
+        return lines.index(TODO_STATUS_BEGIN), lines.index(TODO_STATUS_END)
+    except ValueError:
+        return None
+
+
+def check_todo_status(rep: Report, facts: dict, sync: bool = False) -> None:
+    """状态块与事实逐项比对；sync=True 时先按事实重写块内容（仅 --project）。"""
+    text = read_text(TODO_PATH)
+    lines = text.splitlines()
+    span = _status_span(lines)
+    if span is None:
+        rep.fail('TODO-STATUS', 'todo.md', f'缺少 {TODO_STATUS_BEGIN} / {TODO_STATUS_END} 块')
+        return
+    b, e = span
+    if e <= b:
+        rep.fail('TODO-STATUS', 'todo.md', 'STATUS 块起止标记顺序颠倒')
+        return
+    expected = render_todo_status(facts)
+    if sync and lines[b + 1:e] != [expected]:
+        lines[b + 1:e] = [expected]
+        TODO_PATH.write_text('\n'.join(lines) + ('\n' if text.endswith('\n') else ''),
+                             encoding='utf-8')
+        lines = _todo_lines()
+        b, e = _status_span(lines) or (b, e)
+    block = lines[b + 1:e]
+    if len(block) != 1:
+        rep.fail('TODO-STATUS', 'todo.md',
+                 f'「当前状态」块必须单行（现 {len(block)} 行）')
+        return
+    actual = block[0].strip()
+    if actual != expected:
+        rep.fail('TODO-STATUS', 'todo.md',
+                 f'状态块与事实不一致：块内「{actual}」≠ 事实「{expected}」')
+    else:
+        rep.ok('TODO-STATUS', 'todo.md', reason='状态块与事实一致')
+
+
+def check_todo_layout(rep: Report) -> None:
+    """体量判据：物理行 ≤ 2000 字符；存量超限行报 soft 清单，新增长行 hard。"""
+    for i, line in enumerate(_todo_lines(), 1):
+        if len(line) <= TODO_LONG_LIMIT:
+            continue
+        h = hashlib.sha1(line.encode('utf-8')).hexdigest()[:12]
+        if h in TODO_LONG_BASELINE:
+            rep.add('TODO-LONG', f'todo.md:{i}', 'soft', False,
+                    f'存量物理行 {len(line)} 字符 > {TODO_LONG_LIMIT}（待重排；基线 {h}）')
+        else:
+            rep.fail('TODO-LONG', f'todo.md:{i}',
+                     f'新增物理行 {len(line)} 字符 > {TODO_LONG_LIMIT}（须拆行）')
+
+
+def check_todo_progress(rep: Report) -> None:
+    """进度断言：状态只能来自状态块，或同行的 changelog/commit 记录。"""
+    fails = 0
+    in_status = False
+    for i, line in enumerate(_todo_lines(), 1):
+        s = line.strip()
+        if s == TODO_STATUS_BEGIN:
+            in_status = True
+            continue
+        if s == TODO_STATUS_END:
+            in_status = False
+            continue
+        if in_status:
+            continue
+        for w in TODO_PROGRESS_WORDS:
+            if w in line and not TODO_PROGRESS_POINTER_RE.search(line):
+                rep.fail('TODO-PROGRESS', f'todo.md:{i}',
+                         f'未经核对的进度断言「{w}」：缺少 changelog/commit 指针'
+                         '（状态只能来自状态块或带 commit 的记录）')
+                fails += 1
+                break
+    if not fails:
+        rep.ok('TODO-PROGRESS', 'todo.md', reason='进度断言均带 changelog/commit 指针或位于状态块')
+
+
+def run_checks(sync_todo: bool = False):
     """加载全部源 → 依序执行全部检查 → 返回 (rep, ctx)。ctx 供四个渲染器共用。"""
     rep = Report()
     reg_doc = load_yaml(REG_PATH)
@@ -2846,6 +2988,13 @@ def run_checks():
         'placeholders': census_placeholders(entries), 'trust_marks': census_trust_marks(entries),
         'seeds': seed_summary(rep, entries, prof_status), 'layers': extract_layers(reg_text),
     }
+    check_todo_layout(rep)
+    check_todo_progress(rep)
+    # 状态块报告的是「除 TODO-STATUS 自身以外的硬失败数」，避免自指；
+    # TODO-STATUS 通过时，全量硬失败数与块内数值相等。
+    hard_before = len(rep.failures('hard'))
+    ctx['todo_facts'] = todo_facts(ctx, hard_before)
+    check_todo_status(rep, ctx['todo_facts'], sync_todo)
     return rep, ctx
 
 
@@ -2860,7 +3009,7 @@ def main(argv=None) -> int:
         if not p.exists():
             sys.stderr.write(f'缺少必需文件：{p}\n')
             return 1
-    rep, ctx = run_checks()
+    rep, ctx = run_checks(sync_todo=args.project)
     write_text('自检报告.md', render_self_check(ctx))
     if args.project:
         write_text('STY.md', render_entry_cards(ctx))
