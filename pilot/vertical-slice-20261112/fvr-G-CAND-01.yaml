@@ -1,0 +1,75 @@
+# FVR 条目（试跑切片）：G-CAND-01 绑定的硬性质 + E4 接线
+# 权威 schema：母本 10.2.4 FVR_entry = {property_id, 检查程序, 静态/动态归属, 触发接线, 证据形态, 失败路由}
+# 说明：M 系列性质定义在母本 0.18.6；E4 在 10.2.3/编译规范 5.3、8.1。
+fvr_entries:
+  - property_id: M10
+    statement: "∀ 方法选型类决策: ∃ selection_log 符合规程 schema（完整或快速通道形态）"
+    check_program: "exists(selection_log, DP) ∧ matches_schema(selection_log, 0.18.2 S0–S6)"
+    static_dynamic: "动态（运行时记录）"
+    trigger_wiring: "S6 写入 selection_procedure(DP, S6, ·) 时；白板回归触发"
+    evidence_form: "8.2.6 七要素（step_log 全集）"
+    failure_route:
+      pass: "none"
+      fail: "阻塞事件（决策不得落地）"
+      escalate: "升级声明（FM-14 规程偏离嫌疑）"
+  - property_id: M11
+    statement: "step_log 完整 ∧ 无跳步 ∧ 无即兴步骤 ∧ 无规程外判据"
+    check_program: "step_sequence(selection_log) == [S0,S1,S2,S3,S4,S5,S6] ∧ each step has {inputs,evaluations,outputs,t,executor} ∧ no step introduces predicate outside 0.18.2"
+    static_dynamic: "静态（日志结构比对）"
+    trigger_wiring: "每次 step_log 写入后增量检查；S6 终检"
+    evidence_form: "8.2.6 七要素"
+    failure_route:
+      pass: "none"
+      fail: "阻塞事件"
+      escalate: "升级声明（FM-14）"
+  - property_id: M12
+    statement: "∀ step failure: routed_to(FM entry ∨ CH channel)；不可归类 → FM-0"
+    check_program: "for each failure in step_log: route ∈ {FM-0..FM-15} ∪ {CH-A..CH-E}"
+    static_dynamic: "静态"
+    trigger_wiring: "每个 failure_branch 触发时"
+    evidence_form: "8.2.6 七要素（含失败记录）"
+    failure_route:
+      pass: "none"
+      fail: "阻塞事件"
+      escalate: "升级声明（FM-0 未归类）"
+  - property_id: M14
+    statement: "快速通道使用 → 包复查重跑 impact_scope ∧ 聚合检测"
+    check_program: "if fast_track(DP): exists(recheck_record, DP) ∧ impact_scope_recomputed ∧ aggregation_split_detected == false"
+    static_dynamic: "静态（简记包复查）"
+    trigger_wiring: "0.18.5 快速通道出口"
+    evidence_form: "8.2.6 七要素"
+    failure_route:
+      pass: "none"
+      fail: "阻塞事件（摘出 + 补全流程）"
+      escalate: "升级声明"
+  - property_id: M15
+    statement: "unknown-valued applicability 谓词 → 候选保留 ∧ 勘察义务登记（禁沉默排除）"
+    check_program: "for each candidate E: (∃ p∈applicability(E): value(p)=unknown) → E ∈ candidate_set ∧ exists(open_obligation, E, p)"
+    static_dynamic: "静态（applicability 求值记录）"
+    trigger_wiring: "S1 求值记录写入时"
+    evidence_form: "8.2.6 七要素 + 勘察义务清单"
+    failure_route:
+      pass: "none"
+      fail: "阻塞事件（沉默排除）"
+      escalate: "升级声明"
+  - property_id: M13
+    statement: "中断规程: whiteboard state ∈ resumable ∧ ¬silent_restart"
+    severity: "软（P2）"
+    check_program: "if interrupted(DP): selection_procedure(DP, Sn, ·) present ∧ resume_record present"
+    static_dynamic: "动态"
+    trigger_wiring: "会话中断/恢复"
+    evidence_form: "8.2.6 七要素"
+    failure_route:
+      pass: "none"
+      fail: "记录警告（不阻断）"
+      escalate: "升级声明"
+  - property_id: E4
+    statement: "不得运行过期编译产物（装配入口版本一致）"
+    check_program: "current(framework_version) == artifact.framework_version ∧ current(registry_version) == artifact.registry_version"
+    static_dynamic: "静态（装配入口）"
+    trigger_wiring: "会话启动装配时（编译规范 8.2 检查点）"
+    evidence_form: "装配记录（拒绝事件/通过事件）"
+    failure_route:
+      pass: "none"
+      fail: "拒绝装配 + 触发重编译"
+      escalate: "升级声明（版本不可判定）"
