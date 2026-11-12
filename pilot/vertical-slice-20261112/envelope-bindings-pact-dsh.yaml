@@ -13,9 +13,10 @@
 #   与 method_registry 1.1.0 / MJ-30 同步；verdict 未变。
 # v1.2.0（2026-11-12，D-18-B）：G-CON-01 拆为 G-CON-01a（硬，单库）与 G-CON-01b（软，跨服务）；
 #   01b 不再参与 S4 判定，改列 soft_targets。verdict 未变。
+# v1.3.0（2026-11-12，第 3 批）：D-21 标 resolved（母本 0.8 已明文上界式语义，D-21-A）；verdict 未变。
 envelope_bindings:
   id: "EB-PACT-DSH-STY-001"
-  version: "1.2.0"
+  version: "1.3.0"
   updated_at: "2026-11-12"
   deployment: "pact-dsh"
   decision_point: "DP-1-STYLE"
@@ -136,3 +137,5 @@ envelope_bindings:
       statement: "STY-001 envelope 无一致性 metric，而目标集含一致性硬目标；方面 6 的输入要求包络覆盖全部硬目标"
     - id: "D-21"
       statement: "可用性包络是上界式（≤ Π），只能反驳不可达；S4 的 reachable_with_cost 在语义上只能读作『未被反驳』，母本未区分『证明可达』与『未被反驳』"
+      status: "resolved"
+      resolution: "D-21-A：母本 0.8 追加『包络是上界式断言，覆盖只证明未被反驳』；D-21-B：S4 verdict 加 proof_strength 注解（不改 three_value 语义）"

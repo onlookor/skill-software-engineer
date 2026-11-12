@@ -12,7 +12,7 @@ whiteboard:
     aspect_1: 1                  # +1：style(pact-dsh, …) 写入
     aspect_6: 1                  # +1：verdict_table 写入
     aspect_10: 0                 # 无投影物化（D-11）
-  artifact_version: "pilot-20261112.5"
+  artifact_version: "pilot-20261112.6"
 
   committed:                     # 已写入（有 step_log 指针）
     - expr: "selection_context(DP-1-STYLE, F, C)"

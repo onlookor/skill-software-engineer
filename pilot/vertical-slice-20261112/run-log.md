@@ -487,3 +487,61 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 - D-21 母本语义、D-20 备选链空值：第 3 批。
 - 10.2.5 判据一/二/四仍 fail；ADR-DP1-STYLE 仍 `provisional`。
 
+## 16 第 3 批：母本两处最小修订（D-21-A／D-20-A）与全套复检
+
+### 16.1 前置行号位移量化
+
+插入前实测（`anchor_index.py` → `targets.csv` 逐锚解析）：
+
+| 口径 | 冻结裸行号锚 | 指向母本 | 错位 |
+|---|---|---|---|
+| 全量 | **2,937**（legacy 2,928＋prefix 9） | **1,827** | — |
+| 变体 B（新增一行） | — | — | **1,562**（231–3702 段 +1＝1,323；≥3703 段 +2＝239）＋1 处区间锚跨 3703 需人工裁定 |
+| 变体 A（同段追加） | — | — | **0** |
+
+结论：取 **A**，错位 0，未触及「百处即停」闸门。按 ADR-ANCHOR-01 D3，frozen 侧不重写、不重算；行号未变，连漂移登记都不需要。
+
+### 16.2 母本改动（只加不改）
+
+| 条款 | 行 | 追加句 |
+|---|---|---|
+| 0.8 | 230（段尾） | 包络是上界式断言；「覆盖目标」只证明「未被反驳」，不构成可达性证明；S4 的可达／有代价可达按「当前证据下未被反驳」解释，须附可推翻指标（D-21-A） |
+| 0.5.1 | 3702（段尾） | 备选批准链允许为空但须 `backup_chain: []` 显式声明；空链＝升级链立即穷尽、批准不可达，按 0.10 第三条处置；不得跳过升级或默认通过（D-20-A） |
+
+母本 **4,811 行不变**、591,285→591,753 字节（+468）；`sha256 6d4b0100…`→**`413e3ac4…21c535`**；条款号仍 **214**。
+
+### 16.3 过渡注记撤销（D-21-C 收尾）
+
+- `ADR-STY-ENV-01.md §3.3`：删「本批保留过渡注记」，改指母本 0.8 已明文。
+- `ADR-DP1-STYLE.md §9` D-21 行：改为**已闭合（D-21-A／B）**。
+- `s4-verdict-pact-dsh.yaml` caveat：改为「母本 0.8 已明文，本注解是其部署级投影」。
+- `envelope-bindings-pact-dsh.yaml` `cross_cutting_gaps.D-21`：标 `resolved`，版本 1.2.0→**1.3.0**。
+
+### 16.4 版本推进
+
+| 文件 | 版本 | sha256（新） |
+|---|---|---|
+| 母本 | 内容哈希 | `413e3ac4…21c535` |
+| `envelope-bindings-pact-dsh.yaml` | 1.2.0 → **1.3.0** | `6449cbe4…77b230` |
+| `s4-verdict-pact-dsh.yaml` | 1.2.0 → **1.3.0** | `5e55ca75…b6cd2c` |
+| `artifact.yaml` | `.5` → **`.6`**（seq 6；framework 新哈希） | — |
+| 卡片／白板 | `artifact_version` → `pilot-20261112.6` | — |
+| `10.2.5-verdict-pact-dsh.yaml` | 1.1.0 → **1.2.0**（id `GA-PACT-DSH-20261112-4`） | — |
+
+### 16.5 检查结果
+
+- `anchor_index.py --freeze-baseline` 后复跑：15 项全 pass／info、`failures: []`、F-9 986；基线 units／fps **7,470／7,470**（重冻后内容未变）。
+- `project.py --check`：**硬失败 0**、软警告 20；`todo.md` 状态块由 `--project` 按事实同步（字节数 +468）。
+- `project.py --project`：F-11 **pass**；`file_bulk` 声明 `自检报告.md` Δlines 21（waiver `ADR-DP1-STYLE`——该 ADR §4 记录本次 framework_version 迁移）；其余三个投影 Δlines 0。
+- `check-card.py`：F1 pass／F2 escalate／F3(full) fail 34／F3(scoped) pass／**E4 match=True**（`pilot-20261112.6`）；exit 1 仍由 F3 全量 fail 所致。
+- 变更历史已按成文法配套文件约定追加至 `软件工程元框架成文法-changlog.md`（2026-11-12 第 3 批）。
+
+### 16.6 10.2.5 第四轮
+
+`GA-PACT-DSH-20261112-4` v1.2.0，针对 `.6` 全量复核：**3/6**，判据三/五/六 pass、一/二/四 fail，**无判据转号**。上一份 3/6 记录（`...-3`）针对 `.3` 产物，已归档。
+
+### 16.7 未闭合
+
+- D-19（STY-001 无一致性包络）：G-CON-01a 判定仍属 `[自定]` 外推。
+- 10.2.5 判据一/二/四仍 fail；ADR-DP1-STYLE 仍 `provisional`。
+- `approval_registry.yaml` 的 `GOV-PACT-002` 保留为历史登记（母本 0.5.1 已补空链语义，部署早已显式 `backup_chain: []`，未改该文件以避免无谓的版本级联）。
