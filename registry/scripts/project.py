@@ -26,10 +26,15 @@ from __future__ import annotations
 
 import argparse
 import datetime
+import difflib
 import hashlib
+import json
 import re
+import shutil
 import subprocess
 import sys
+import tempfile
+from collections import Counter
 from pathlib import Path
 
 try:
@@ -2383,14 +2388,185 @@ def src_hashes() -> dict:
             for p in (REG_PATH, PROFILES_PATH, VOCAB_PATH)}
 
 
-def write_text(name: str, text: str) -> Path:
-    PROJ_DIR.mkdir(parents=True, exist_ok=True)
-    path = PROJ_DIR / name
+def write_text(name: str, text: str, out_dir: Path | None = None) -> Path:
+    out = Path(out_dir) if out_dir else PROJ_DIR
+    out.mkdir(parents=True, exist_ok=True)
+    path = out / name
     hs = '；'.join(f'`{k}`→`{v}`' for k, v in src_hashes().items())
     footer = (f'\n---\n生成于 {datetime.datetime.now().isoformat(timespec="seconds")}｜'
               f'源哈希（sha256 前 12 位）：{hs}\n')
     path.write_text(text.rstrip('\n') + '\n' + footer, encoding='utf-8')
     return path
+
+
+# ── F-11 投影可复现（--project 的 fail-closed 闸）──────────────────────────
+# 参照物＝已提交投影；被测对象＝本次生成器的暂存产物；两者独立，
+# anchor_baseline.json 不参与本判定。
+PROJECTION_FILES = ('STY.md', '索引.md', '勘察义务清单.md', '自检报告.md')
+_TS_RE = re.compile(r'生成于 \d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}')
+
+
+def _proj_rel(name: str) -> str:
+    return f'registry/projections/{name}'
+
+
+def _norm_proj_line(s: str) -> str:
+    """生成时间戳不属于内容差异；源哈希与正文仍逐字比较。"""
+    return _TS_RE.sub('生成于 <TS>', s)
+
+
+def _sha1(s: str) -> str:
+    return hashlib.sha1(s.encode('utf-8')).hexdigest()
+
+
+def _pair_lines(old: list, new: list) -> list:
+    """replace 块按相似度配对，返回 [(old|None, new|None)]。"""
+    pairs, used = [], set()
+    for ol in old:
+        best, bj = -1.0, None
+        for j, nl in enumerate(new):
+            if j in used:
+                continue
+            r = difflib.SequenceMatcher(None, ol, nl).ratio()
+            if r > best:
+                best, bj = r, j
+        if bj is not None and best >= 0.5:
+            used.add(bj)
+            pairs.append((ol, new[bj]))
+        else:
+            pairs.append((ol, None))
+    for j, nl in enumerate(new):
+        if j not in used:
+            pairs.append((None, nl))
+    return pairs
+
+
+def _line_deltas(committed_dir: Path, staged_dir: Path) -> tuple:
+    """Δlines：规范化后逐行 sha1；返回 ({file:[(old_sha1,new_sha1)]}, {file: 行数})。"""
+    agg, per_file = {}, {}
+    for name in PROJECTION_FILES:
+        rel = _proj_rel(name)
+        a = [_norm_proj_line(x) for x in (committed_dir / name).read_text(encoding='utf-8').splitlines()]
+        b = [_norm_proj_line(x) for x in (staged_dir / name).read_text(encoding='utf-8').splitlines()]
+        rows, n = [], 0
+        sm = difflib.SequenceMatcher(None, a, b, autojunk=False)
+        for tag, i1, i2, j1, j2 in sm.get_opcodes():
+            if tag == 'equal':
+                continue
+            if tag == 'replace':
+                pairs = _pair_lines(a[i1:i2], b[j1:j2])
+            elif tag == 'delete':
+                pairs = [(x, None) for x in a[i1:i2]]
+            else:
+                pairs = [(None, x) for x in b[j1:j2]]
+            for ol, nl in pairs:
+                rows.append((_sha1(ol) if ol is not None else '',
+                             _sha1(nl) if nl is not None else ''))
+                n += 1
+        agg[rel] = rows
+        per_file[rel] = n
+    return agg, per_file
+
+
+def _anchor_deltas(committed_root: Path, staged_root: Path) -> tuple:
+    """Δkeys／Δfps；只比较投影文件内的结构锚，口径与 F-3／F-10 共用。"""
+    sys.path.insert(0, str(SCRIPT_DIR))
+    import anchor_index as ai
+    cu, cf = ai.projection_snapshot(committed_root)
+    su, sf = ai.projection_snapshot(staged_root)
+    keys = [{'key': k, 'from': cu.get(k), 'to': su.get(k)}
+            for k in sorted(set(cu) | set(su)) if cu.get(k) != su.get(k)]
+    fps = [{'key': k, 'from': cf[k], 'to': sf[k]}
+           for k in sorted(set(cf) & set(sf)) if cf[k] != sf[k]]
+    return keys, fps
+
+
+def _load_declarations(path: str) -> dict:
+    d = json.loads(Path(path).read_text(encoding='utf-8')) if path else {}
+    return {'anchors': d.get('anchors') or [], 'fingerprints': d.get('fingerprints') or [],
+            'lines': d.get('lines') or [], 'file_bulk': d.get('file_bulk') or []}
+
+
+def _waiver_ok(w: str) -> bool:
+    """file_bulk 必须挂 ADR 或可解析的 commit。"""
+    w = str(w or '').strip()
+    if re.match(r'^ADR-[A-Za-z0-9._-]+', w):
+        return True
+    m = re.match(r'^commit ([0-9a-f]{7,40})$', w)
+    if not m:
+        return False
+    r = subprocess.run(['git', 'cat-file', '-e', m.group(1) + '^{commit}'],
+                       cwd=str(SE_DIR), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    return r.returncode == 0
+
+
+def compare_projections(staged_root: Path, decl_path: str = '') -> dict:
+    """F-11：observed ⊆ declared → pass；任一未声明 → fail。"""
+    decl = _load_declarations(decl_path)
+    anchors, fps = _anchor_deltas(SE_DIR, staged_root)
+    line_agg, per_file = _line_deltas(PROJ_DIR, staged_root / 'registry' / 'projections')
+
+    def consume(entries, observed, keys):
+        pool = Counter(tuple(e.get(k) for k in keys) for e in entries)
+        left = []
+        for d in observed:
+            t = tuple(d[k] for k in keys)
+            if pool[t] > 0:
+                pool[t] -= 1
+            else:
+                left.append(d)
+        return left
+
+    undeclared_a = consume(decl['anchors'], anchors, ('key', 'from', 'to'))
+    undeclared_f = consume(decl['fingerprints'], fps, ('key', 'from', 'to'))
+
+    observed_lines = Counter((rel, o, n) for rel, rows in line_agg.items() for o, n in rows)
+    line_pool = Counter()
+    for e in decl['lines']:
+        line_pool[(e.get('file'), e.get('old_sha1', ''), e.get('new_sha1', ''))] += int(e.get('count', 1))
+    remaining = Counter()
+    for t, n in observed_lines.items():
+        take = min(n, line_pool.get(t, 0))
+        line_pool[t] -= take
+        if n - take:
+            remaining[t] = n - take
+    rem_by_file = Counter()
+    for (rel, _o, _n), n in remaining.items():
+        rem_by_file[rel] += n
+    bulk = {b.get('file'): b for b in decl['file_bulk'] if _waiver_ok(b.get('waiver'))}
+    undeclared_l = []
+    for (rel, old, new), n in sorted(remaining.items()):
+        b = bulk.get(rel)
+        if b and int(b.get('diff_lines', 0)) >= rem_by_file[rel]:
+            continue
+        undeclared_l.append({'file': rel, 'old_sha1': old, 'new_sha1': new, 'count': n})
+
+    return dict(ok=not (undeclared_a or undeclared_f or undeclared_l),
+                anchors=anchors, fps=fps, lines=line_agg, per_file=per_file,
+                undeclared=dict(anchors=undeclared_a, fingerprints=undeclared_f, lines=undeclared_l))
+
+
+def render_f11(res: dict) -> str:
+    a, f = res['anchors'], res['fps']
+    added = sum(1 for d in a if d['from'] is None)
+    deleted = sum(1 for d in a if d['to'] is None)
+    moved = len(a) - added - deleted
+    nline = sum(res['per_file'].values())
+    u = res['undeclared']
+    status = 'pass' if res['ok'] else 'fail'
+    out = [f'F-11 投影可复现：{status}｜Δkeys {len(a)}（None→x {added}／x→None {deleted}／x→y {moved}）'
+           f'｜Δfps {len(f)}｜Δlines {nline}']
+    out.append('  Δlines 按文件：' + '，'.join(f'{Path(k).name} {v}' for k, v in res['per_file'].items()))
+    for d in u['anchors'][:10]:
+        out.append(f'  ✗ 未声明锚点 {d["key"]}：{d["from"]} → {d["to"]}')
+    for d in u['fingerprints'][:10]:
+        out.append(f'  ✗ 未声明指纹 {d["key"]}：{d["from"]} → {d["to"]}')
+    for d in u['lines'][:10]:
+        out.append(f'  ✗ 未声明行差异 {d["file"]}：{d["old_sha1"][:8]} → {d["new_sha1"][:8]} ×{d["count"]}')
+    n_un = len(u['anchors']) + len(u['fingerprints']) + len(u['lines'])
+    if n_un > 30:
+        out.append(f'  …另 {n_un - 30} 条未声明差异')
+    return '\n'.join(out)
 
 
 _ANCHOR_HEAD_RE = re.compile(r'@(?=[0-9mrpvcd!])')
@@ -3009,29 +3185,63 @@ def main(argv=None) -> int:
         description='方法注册表自检 + 同源投影（registry/CHECK-SPEC C1／C3）')
     g = ap.add_mutually_exclusive_group(required=True)
     g.add_argument('--check', action='store_true', help='仅自检（写 projections/自检报告.md）')
-    g.add_argument('--project', action='store_true', help='自检 + 生成全部人类层投影')
+    g.add_argument('--project', action='store_true', help='自检 + 生成全部人类层投影（过 F-11 才落盘）')
+    ap.add_argument('--staging', default='', help='暂存目录：写入 <dir>/registry/projections/，不覆盖正式投影')
+    ap.add_argument('--dry-run', action='store_true', help='只生成到临时目录并报 F-11，不落盘')
+    ap.add_argument('--expected-changes', default='', help='F-11 声明 JSON（anchors/fingerprints/lines/file_bulk）')
     args = ap.parse_args(argv)
     for p in (LAW_PATH, COMPILE_PATH, REG_PATH, PROFILES_PATH, VOCAB_PATH):
         if not p.exists():
             sys.stderr.write(f'缺少必需文件：{p}\n')
             return 1
-    rep, ctx = run_checks(sync_todo=args.project)
-    write_text('自检报告.md', render_self_check(ctx))
-    if args.project:
-        write_text('STY.md', render_entry_cards(ctx))
-        write_text('勘察义务清单.md', render_survey(ctx))
-        write_text('索引.md', render_index(ctx))
+    offline = bool(args.staging or args.dry_run)
+    rep, ctx = run_checks(sync_todo=args.project and not offline)
     hard_f, soft_f = rep.failures('hard'), rep.failures('soft')
     ph = ctx['placeholders']
     print(f'自检：{len(rep.rows)} 条记录｜硬失败 {len(hard_f)}｜软警告 {len(soft_f)}｜'
           f'占位符 {ph["total"]} 处＝事实 {ph["fact_total"]}＋槽 {ph["slot_total"]}')
-    print(f'产物：{PROJ_DIR}/' + ('（四件）' if args.project else '（自检报告.md）'))
+
+    if not args.project:
+        write_text('自检报告.md', render_self_check(ctx))
+        print(f'产物：{PROJ_DIR}/（自检报告.md）')
+        if hard_f:
+            for r in hard_f[:20]:
+                print(f'  ✗ [{r.check}] {r.scope}: {r.reason}')
+            if len(hard_f) > 20:
+                print(f'  …另 {len(hard_f) - 20} 条，详见 projections/自检报告.md')
+        return 1 if hard_f else 0
+
+    tmp = None
+    if args.staging:
+        out_root = Path(args.staging)
+    else:
+        tmp = Path(tempfile.mkdtemp(prefix='project-staging-'))
+        out_root = tmp
+    out_dir = out_root / 'registry' / 'projections'
+    write_text('自检报告.md', render_self_check(ctx), out_dir)
+    write_text('STY.md', render_entry_cards(ctx), out_dir)
+    write_text('勘察义务清单.md', render_survey(ctx), out_dir)
+    write_text('索引.md', render_index(ctx), out_dir)
+
+    res = compare_projections(out_root, args.expected_changes)
+    print(render_f11(res))
+    ok = res['ok'] and not hard_f
+    if ok and not offline:
+        PROJ_DIR.mkdir(parents=True, exist_ok=True)
+        for name in PROJECTION_FILES:
+            shutil.copy2(out_dir / name, PROJ_DIR / name)
+        print(f'F-11 pass：已用暂存产物覆盖 {PROJ_DIR}/')
+    elif not ok:
+        print(f'F-11 fail：未落盘；暂存产物在 {out_dir}')
+    if tmp and ok and not args.dry_run:
+        shutil.rmtree(tmp, ignore_errors=True)
+
     if hard_f:
         for r in hard_f[:20]:
             print(f'  ✗ [{r.check}] {r.scope}: {r.reason}')
         if len(hard_f) > 20:
             print(f'  …另 {len(hard_f) - 20} 条，详见 projections/自检报告.md')
-    return 1 if hard_f else 0
+    return 1 if not ok else 0
 
 
 if __name__ == '__main__':
