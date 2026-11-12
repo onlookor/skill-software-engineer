@@ -1,0 +1,127 @@
+# STY-001 符号包络的部署级参数绑定（pact-dsh / DP-1-STYLE）
+#
+# 作用：把 registry/method_registry.yaml 中 STY-001 的符号包络
+#   （P99(path_lat)=Σ latency_i；availability(path_f)≤Π availability_i；lead_time≥max lead_time_i）
+#   代入 pact-dsh 同步请求-响应场景的实参，供 0.18.2 S4 逐候选×逐硬目标判定。
+#
+# 性质：部署实例输入（pilot），**不修改**框架级 method_registry.yaml。
+#   框架条目只给符号式与方向，部署实参属于本文件。
+# 依据：母本 0.18.2 S4（envelope.bound_expr 代入场景参数）、6.2.4（三值判定 + Q4 代价入 ADR）、
+#   目标集 TS-PACT-DSH-001 v1.1.0。
+# 所有数值均为**预算/假设**，不是实测；每条 binding 附可推翻指标（falsifier）。
+# v1.1.0（2026-11-12，D-14-A）：path 拆为 path_lat（同步段序列）与 path_f（独立故障域集合），
+#   与 method_registry 1.1.0 / MJ-30 同步；verdict 未变。
+envelope_bindings:
+  id: "EB-PACT-DSH-STY-001"
+  version: "1.1.0"
+  updated_at: "2026-11-12"
+  deployment: "pact-dsh"
+  decision_point: "DP-1-STYLE"
+  entry_id: "STY-001"
+  entry_version: "0.1.0"
+  target_set: "TS-PACT-DSH-001 v1.1.0"
+  method_registry:
+    file: "registry/method_registry.yaml"
+    sha256: "aaa8361eb14694813c2cd7a29673afaa350a5596cfb6e0859cdb1e5b6a435ffd"
+
+  path_model:
+    id: "PATH-PACT-DSH-SYNC-001"
+    description: "一次治理判定的同步调用路径（单进程内完成）"
+    segments:
+      - id: "SEG-HOOK"
+        node: "dsh-agent-loop → onPreStep / onPreTool"
+        kind: "in-process"
+        evidence: "system:/home/wgz/projects/pact-dsh/src/govern.js#L79-L116"
+      - id: "SEG-DECIDE"
+        node: "onPreStep/onPreTool → decide → enabledOrNull"
+        kind: "in-process"
+        evidence: "system:/home/wgz/projects/pact-dsh/src/govern.js#L64-L76"
+      - id: "SEG-BACKEND"
+        node: "enabledOrNull → backend.enabled（WASM / in-memory host）"
+        kind: "in-process"
+        evidence: "system:/home/wgz/projects/pact-dsh/src/wasm-backend.js#L59-L62; system:/home/wgz/projects/pact-dsh/src/pact-backend.js#L52-L61"
+    process_count: 1
+    independent_failure_domains: 1
+    decomposition:
+      path_lat: "SEG-HOOK → SEG-DECIDE → SEG-BACKEND（按执行序的同步段序列，depth=3，用于 Σ）"
+      path_f: "FD-PACT-DSH-1（单进程单故障域，count=1，用于 Π；同进程内多段不独立）"
+    note: "D-14 已按 D-14-A 闭合：延迟用 path_lat、可用性用 path_f，二者分解粒度不同且各自显式定义（method_registry 1.1.0 / MJ-30）。"
+
+  bindings:
+    - goal: "G-LAT-01"
+      metric: "延迟分位数 P99"
+      bound_expr: "P99(path_lat) = Σ_{i ∈ path_lat} latency_i"
+      substitution:
+        path_lat: "SEG-HOOK→SEG-DECIDE→SEG-BACKEND"
+        depth: 3
+        latency_i_p99_ms: 150
+        computed_path_p99_ms: 450
+      target: "P99 ≤ 500 ms"
+      verdict: "reachable_with_cost"
+      margin_ms: 50
+      cost_items:
+        - "三段各自的 P99 预算上界 150 ms（预算分配，不是实测）"
+      assumptions:
+        - "SEG-HOOK / SEG-DECIDE / SEG-BACKEND 三段各自 P99 ≤ 150 ms"
+      falsifier: "任一段实测 P99 > 150 ms → 本 binding 失效，S4 须重跑"
+      basis_note: "150 ms/段 = 500 ms 预算三分后取整并留 50 ms 余量；属 [自定] 预算，不主张为观测值"
+    - goal: "G-AVL-01"
+      metric: "可用性目标（SLO）"
+      bound_expr: "availability(path_f) ≤ Π_{f ∈ path_f} availability_f（串联上界）"
+      substitution:
+        path_f: "FD-PACT-DSH-1（单进程单故障域）"
+        fault_domain_count: 1
+        availability_i_pct: 99.5
+        computed_path_upper_bound_pct: 99.5
+      target: "≥ 99.0%"
+      verdict: "reachable_with_cost"
+      margin_pp: 0.5
+      cost_items:
+        - "单机可用性预算 99.5%（[自定]，不是实测）"
+      assumptions:
+        - "本切片路径只跨 1 个独立故障域（插件与 backend 同进程）"
+      falsifier: "出现第二个独立故障域（例如远端 backend）→ 必须按 Π 重算，且本 binding 失效"
+      basis_note: "包络是**上界式**：Π 只能反驳不可达，不能证明可达。verdict=reachable_with_cost 的含义是『未被上界反驳』，不是『已证明达标』（见 D-21）"
+    - goal: "G-LT-01"
+      metric: "可修改性：变更前置时间"
+      bound_expr: "lead_time(change) ≥ max_{i ∈ path} lead_time_i"
+      substitution:
+        unit_count: 1
+        max_lead_time_i_days: 0.5
+        computed_path_lead_time_days: 0.5
+      target: "≤ 1 工作日"
+      verdict: "reachable_with_cost"
+      margin_days: 0.5
+      cost_items:
+        - "单可部署单元 0.5 工作日（[自定] 预算）"
+      assumptions:
+        - "变更只涉及一个可部署单元（dsh-plugin-pact）"
+      falsifier: "变更需要跨单元协同发布 → 按 max 重算，本 binding 失效"
+      basis_note: "公式只给下界；本 binding 以『单单元时路径值=该单元值』取等，属 [自定] 补齐"
+    - goal: "G-CON-01"
+      metric: "数据一致性"
+      bound_expr: "（STY-001 envelope 未提供一致性 metric）"
+      substitution:
+        single_store: "进程内 Map（backend token store）"
+        strong_consistency: "单线程 JS，读己之写成立"
+        cross_service: "n/a（本切片无跨服务复制路径）"
+      target: "单库强一致；跨服务最终一致（≤ 5 s）"
+      verdict: "reachable_with_cost"
+      cost_items:
+        - "跨服务子句按 n/a 处理（TS-OPEN-2）"
+      assumptions:
+        - "单进程单写者，无副本"
+      falsifier: "引入远端 backend 或第二写者 → 一致性无包络可依，S4 无法判定"
+      basis_note: "STY-001 无一致性包络；本判定属 [自定] 外推（D-19）。S4 三值无 n/a（D-18），故以『单库强一致成立 + 跨服务 n/a』记 reachable_with_cost"
+
+  cross_cutting_gaps:
+    - id: "D-14"
+      statement: "STY-001 用同一个 path 同时承载延迟求和与可用性乘积，但两者分解粒度不同（同步段 vs 独立故障域）；母本未定义路径分解口径"
+      status: "resolved"
+      resolution: "D-14-A：条目 bound_expr 拆为 path_lat / path_f（method_registry 1.1.0 / MJ-30）；本文件 decomposition 节代入实参"
+    - id: "D-18"
+      statement: "S4 三值 verdict ∈ {reachable, reachable_with_cost, unreachable} 无 n/a；某硬目标在本部署无对应制品（无跨服务复制）时没有合法赋值"
+    - id: "D-19"
+      statement: "STY-001 envelope 无一致性 metric，而目标集含一致性硬目标；方面 6 的输入要求包络覆盖全部硬目标"
+    - id: "D-21"
+      statement: "可用性包络是上界式（≤ Π），只能反驳不可达；S4 的 reachable_with_cost 在语义上只能读作『未被反驳』，母本未区分『证明可达』与『未被反驳』"

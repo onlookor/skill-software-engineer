@@ -1,0 +1,70 @@
+# 批准角色注册表（0.5.1）：部署级声明
+#
+# 义务锚点（母本逐字）：
+#   0.5.1 @3702「框架每次实例化部署必须声明**批准角色注册表**——对每类高影响决策
+#   （风格定案、分解主策略、方法注册表变更、冲突矩阵例外覆盖等）指定：
+#   主批准人、备选批准链（有序）、批准时限。」
+#   同条：「时限届满未批准 → 沿备选链逐级升级；升级链穷尽即构成"批准不可达"
+#   （客观事件，非主观声称）」「未声明批准角色注册表的部署，所有高影响决策
+#   一律走阻塞路径」。
+#   运行规程见 7.2.5（状态迁移权限、超时链执行、不可达登记）。
+#
+# 性质：本文件是**部署实例登记**，不是母本条款；不改动母本。
+# 落点缺口：0.5.1 要求"声明"批准角色注册表，但母本未给该注册表的文件/字段规范，
+#   本文件按 registry/ 既有辅助注册表（schedules.yaml 等）的 meta/entries 惯例自建，
+#   登记为决策点 D-13（见 pilot/vertical-slice-20261112/run-log.md §12）。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  obligation_anchor:
+    source_type: clause_id
+    value: "0.5.1"
+    quote: "框架每次实例化部署必须声明批准角色注册表——对每类高影响决策指定：主批准人、备选批准链（有序）、批准时限"
+    verified: true
+  schema_status: schema+instances
+  instance_state: "1 个部署实例（pact-dsh）；本仓其余部署未声明"
+  declaration_absent_consequence: "未声明的部署，所有高影响决策一律走阻塞路径（0.5.1）"
+
+deployments:
+  - deployment: "pact-dsh"
+    version: "1.0.0"
+    registered_at: "2026-11-12"
+    registered_by: "wgz"
+    source: "人类用户 wgz 于 2026-11-12 裁定（单人项目，不虚构第二批准人）"
+    default_timeout_hours: 48
+    roles:
+      - decision_class: "风格定案"
+        applies_to: ["DP-1-STYLE", "DP-*-STYLE"]
+        main_approver: {id: "wgz", kind: "human", note: "人类用户本人"}
+        backup_chain: []            # 有序链；人类明示：无备份
+        timeout_hours: 48
+      - decision_class: "分解主策略"
+        applies_to: ["DP-*-DECOMP"]
+        main_approver: {id: "wgz", kind: "human", note: "人类用户本人"}
+        backup_chain: []
+        timeout_hours: 48
+      - decision_class: "方法注册表变更"
+        applies_to: ["registry/method_registry.yaml 的条目增改与状态迁移"]
+        main_approver: {id: "wgz", kind: "human", note: "人类用户本人"}
+        backup_chain: []
+        timeout_hours: 48
+      - decision_class: "冲突矩阵例外覆盖"
+        applies_to: ["CH-A / CH-C / CH-D 的例外覆盖裁决"]
+        main_approver: {id: "wgz", kind: "human", note: "人类用户本人"}
+        backup_chain: []
+        timeout_hours: 48
+    timeout_semantics:
+      rule: "时限届满未批准 → 沿 backup_chain 逐级升级；链为空即耗尽 → unreachable_event（0.5.1 / 7.2.5）"
+      agent_may_not: "不得以超时为由视批准为通过；不得自行缩短时限、跳过链级"
+    governance_notes:
+      - id: "GOV-PACT-001"
+        kind: "single_point_of_failure"
+        statement: "四个决策类的 backup_chain 均为空：主批准人不可用时无第二批准人，按 0.5.1 升级链立即穷尽，构成批准不可达（客观事件）"
+        ruling: "人类用户 wgz 于 2026-11-12 明示：单人项目，备选链同一人、无备份，不虚构第二人"
+        consequence: "主批准人不可用 → 高影响决策 blocked（SM-DR blocked）；reversibility=costly 下只许阻塞等待（0.10 权力条款第三条）"
+        classification: "risk（不是合规缺陷：注册表已声明、时限在案、链为空是明示选择）"
+      - id: "GOV-PACT-002"
+        kind: "registry_schema_gap"
+        statement: "0.5.1 未规定备选批准链是否允许为空，也未规定部署级注册表的文件与字段 schema；本条登记为决策点 D-20 / D-13，不改母本"
+        classification: "gap（待人类裁定是否补母本或补编译规范）"

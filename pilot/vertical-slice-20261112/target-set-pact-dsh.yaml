@@ -1,0 +1,83 @@
+# 方面 6 目标集（pact-dsh / DP-1-STYLE / 同步请求-响应）
+# 依据：母本 6.2.1 六要素质量场景；0.18.2 S4 输入；10.2.5 判据四/六。
+# 性质：部署实例输入（pilot），不是母本条款；本轮不改母本。
+target_set:
+  id: "TS-PACT-DSH-001"
+  version: "1.1.0"
+  updated_at: "2026-11-12"
+  revision:
+    - from: "1.0.0"
+      to: "1.1.0"
+      date: "2026-11-12"
+      change: "G-AVL-01 六要素补齐统计窗口与计划内维护口径（D-15-A，人类批准）；TS-OPEN-1 关闭。目标值未变。"
+      approved_by: "wgz"
+      approval_source: "2026-11-12 会话指令：批准 D-15-A 并打包执行"
+  deployment: "pact-dsh"
+  decision_point: "DP-1-STYLE"
+  aspect: 6
+  scenario_family: "同步请求-响应"
+  status: "registered"
+  source:
+    - "人类用户 wgz 于 2026-11-12 裁定"
+    - "pilot/vertical-slice-20261112/run-log.md §12"
+  goals:
+    - id: "G-LAT-01"
+      attribute: "延迟"
+      target: "P99 ≤ 500 ms"
+      unit: "ms"
+      hard: true
+      six_elements:
+        stimulus_source: "插件调用方（DSH agent loop）"
+        stimulus: "治理判定请求到达 onPreStep / onPreTool"
+        artifact: "pact-backend / govern 同步调用路径"
+        environment: "正常运行，单机，无过载"
+        response: "同步返回治理判定结果"
+        response_measure: "端到端 P99 延迟 ≤ 500 ms"
+    - id: "G-AVL-01"
+      attribute: "可用性"
+      target: "单机可用性 ≥ 99.0%"
+      unit: "%"
+      hard: true
+      notes: "统计窗口与计划内维护口径已于 v1.1.0 补齐（D-15-A）；不再使用月度默认值。"
+      six_elements:
+        stimulus_source: "外部请求"
+        stimulus: "持续治理判定请求"
+        artifact: "单机 pact-dsh 进程"
+        environment: "正常运行；统计窗口＝自然月；计划内维护不计入可用性分母，但须提前 ≥ 24 h 公告并单独登记"
+        response: "服务可用并返回判定"
+        response_measure: "单机可用性 ≥ 99.0%，按自然月计算：(总分钟 − 不可用分钟) / 总分钟 ≥ 99.0%；不可用＝健康探针连续失败 ≥ 1 min；计划内维护不计入但须单独登记"
+    - id: "G-LT-01"
+      attribute: "变更前置时间"
+      target: "≤ 1 个工作日"
+      unit: "工作日"
+      hard: true
+      six_elements:
+        stimulus_source: "人类变更请求"
+        stimulus: "代码/配置变更提交"
+        artifact: "pact-dsh 单可部署单元"
+        environment: "正常开发/发布"
+        response: "变更可发布到生产"
+        response_measure: "从提交到可发布的变更前置时间 ≤ 1 个工作日"
+    - id: "G-CON-01"
+      attribute: "数据一致性"
+      target: "单库强一致；跨服务最终一致（≤ 5 s 收敛）"
+      unit: "s"
+      hard: true
+      six_elements:
+        stimulus_source: "写请求"
+        stimulus: "数据写入"
+        artifact: "单库；跨服务同步路径"
+        environment: "正常"
+        response: "读请求读到已提交写；跨服务副本收敛"
+        response_measure: "单库强一致（读己之写）；跨服务收敛 ≤ 5 s"
+  open_items:
+    - id: "TS-OPEN-1"
+      statement: "可用性统计窗口（月度/季度）与计划内维护口径未指定"
+      status: "closed"
+      closed_in: "v1.1.0"
+      resolution: "窗口＝自然月；不可用＝探针连续失败 ≥ 1 min；计划内维护不计入但须提前 ≥ 24 h 公告并单独登记（D-15-A）"
+      affects: "G-AVL-01"
+    - id: "TS-OPEN-2"
+      statement: "跨服务 ≤5s 收敛在本切片没有实际路径；当前按 N/A 记录"
+      status: "open"
+      affects: "G-CON-01"

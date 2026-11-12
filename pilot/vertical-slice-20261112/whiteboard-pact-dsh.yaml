@@ -1,15 +1,19 @@
-# 白板状态（试跑：pact-dsh / DP-1-STYLE）
+# 白板状态（试跑：pact-dsh / DP-1-STYLE）——2026-11-12 第二轮
 #
 # 依据：母本 0.7（白板谓词集）＋0.21（五状态机）＋0.21.6（机器层谓词）
 # 性质：pilot 记录，不是部署实例的正式白板。
+# 本轮变更（相对 v1）：S4 首次产出 verdict_table；S6 取得批准并写入 style；
+#   因 10.2.5 未过，决策记录落 provisional（SM-DR * → provisional / grounding_fail）。
 whiteboard:
   deployment: "pilot-pact-dsh"
   schema_ref: "0.7 谓词集 / 0.21.6 sm_state 正名"
-  pattern_version: null          # [自定] 母本未声明白板模式版本号；10.2.5 判据一要求"版本匹配"，此处只能记 null
+  pattern_version: null          # 母本未定义白板模式版本号；10.2.5 判据一仍不可判定（D-10）
   version_vector:
-    aspect_1: 0                  # 通信/协调风格：无已提交谓词增量
-    aspect_6: 0                  # 质量目标：未登记
-    aspect_10: 0                 # 投影：未登记
+    aspect_1: 1                  # +1：style(pact-dsh, …) 写入
+    aspect_6: 1                  # +1：verdict_table 写入
+    aspect_10: 0                 # 无投影物化（D-11）
+  artifact_version: "pilot-20261112.4"
+
   committed:                     # 已写入（有 step_log 指针）
     - expr: "selection_context(DP-1-STYLE, F, C)"
       written_at: "S0"
@@ -30,42 +34,79 @@ whiteboard:
       written_at: "S3"
     - expr: "step_log(DP-1-STYLE, S3, In, Evals, feasible_set, T, Executor)"
       written_at: "S3"
+    - expr: "selection_procedure(DP-1-STYLE, S4, C4)"
+      written_at: "S4"
+      evidence: "s4-verdict-pact-dsh.yaml v1.0.0"
+    - expr: "step_log(DP-1-STYLE, S4, In, Evals, verdicts, T, Executor)"
+      written_at: "S4"
+      evidence: "s4-verdict-pact-dsh.yaml#step_log"
+    - expr: "verdict_table(DP-1-STYLE, STY-001, {G-LAT-01, G-AVL-01, G-LT-01, G-CON-01}, reachable_with_cost)"
+      written_at: "S4"
+      evidence: "s4-verdict-pact-dsh.yaml#verdict_table；目标集 TS-PACT-DSH-001 v1.0.0；包络绑定 EB-PACT-DSH-STY-001 v1.0.0"
     - expr: "selection_procedure(DP-1-STYLE, S5, C5)"
       written_at: "S5"
     - expr: "step_log(DP-1-STYLE, S5, In, Evals, selected_entry=STY-001, T, Executor)"
       written_at: "S5"
-      note: "选择成立，但质量 verdict 未定（S4 未产出 verdict_table）"
-  absent:                        # 按规程应写而未写
-    - expr: "verdict_table(DP-1-STYLE, c, g, v)"
-      reason: "S4 缺方面 6 目标集与场景参数；three_value 无 unknown，不能赋值"
-      route: "CH-B（0.6(a) 不决定性）"
     - expr: "selection_procedure(DP-1-STYLE, S6, C6)"
-      reason: "S6 现停在 (v) 批准不可达（原停在 (iii) 映射缺失）；决策落 SM-DR blocked"
-      route: "FM-2 → 0.10（costly → 只许阻塞等待）"
-  pending_projection:
+      written_at: "S6"
+      evidence: "ADR-DP1-STYLE.md；批准人 wgz 2026-11-12T21:29:21+08:00"
     - expr: "style(pact-dsh, (·, ·, 同步请求-响应, ·))"
+      written_at: "S6"
       derived_by: "编译规范 5.7 P1–P3（R-1）"
-      status: "candidate"
-      note: "S6(iii) 可生成；因 (v) 批准不可达，未写 committed（0.7 禁裸写）"
+      state: "provisional"
+      note: "决策记录为 provisional：10.2.5 未过（1/6）；下游消费只许软约束 + 张力承认 ADR（7.2.5）"
+
+  absent:                        # 按规程应写而未写
+    - expr: "（无）"
+      reason: "本轮 S4 verdict_table 与 S6 selection_procedure 均已写入；见 resolved_this_round"
+
+  resolved_this_round:
+    - expr: "verdict_table(DP-1-STYLE, c, g, v)"
+      resolved_at: "S4"
+      evidence: "s4-verdict-pact-dsh.yaml"
+      prev_reason: "S4 缺方面 6 目标集与场景参数"
+      resolution: "目标集 TS-PACT-DSH-001 v1.0.0 + 包络绑定 EB-PACT-DSH-STY-001 v1.0.0"
+    - expr: "selection_procedure(DP-1-STYLE, S6, C6)"
+      resolved_at: "S6"
+      evidence: "ADR-DP1-STYLE.md"
+      prev_reason: "S6 (v) 批准不可达"
+      resolution: "批准角色注册表 registry/approval_registry.yaml v1.0.0；主批准人 wgz 批准"
+
+  pending_projection:
+    - expr: "（无）"
+      status: "materialized"
+      note: "style 已写入 committed（state=provisional）；投影物化 aspect_10 未推进（D-11，非本轮目标）"
+
   state_machines:
     SM-DR:
       decision: "ADR-DP1-STYLE"
-      state: "blocked"
-      basis: "批准不可达 + reversibility=costly；母本 L2613：irreversible/costly → 只许阻塞等待"
+      state: "provisional"
+      transitions:
+        - {from: "blocked", to: "under_review", trigger: "re_review", actor: "human(wgz)", at: "2026-11-12T21:29:21+08:00", basis: "障碍消除：批准角色注册表已登记"}
+        - {from: "under_review", to: "approved", trigger: "approve", actor: "human(wgz)", at: "2026-11-12T21:29:21+08:00", basis: "R1 闭环：完整 ADR + 批准"}
+        - {from: "approved", to: "provisional", trigger: "grounding_fail", actor: "system", at: "2026-11-12T21:29:21+08:00", basis: "10.2.5 未过（1/6），母本 10.2.5 末段"}
+      governance_risk: "GOV-PACT-001（备选链为空）"
+
   open_obligations:
     - id: "SO-PILOT-1"
-      statement: "为 pact-dsh 登记方面 6 六要素目标集（至少 P99 延迟、可用性 SLO、变更前置时间）"
-      blocks: "S4 / 10.2.5 判据四"
+      statement: "为 pact-dsh 登记方面 6 六要素目标集"
+      status: "closed（target-set-pact-dsh.yaml v1.0.0，2026-11-12）"
+      blocks: "—"
     - id: "SO-PILOT-2"
       statement: "定义 selected_entry → style(scope, S) 的投影映射"
       status: "closed（编译规范 5.7，2026-11-12）"
       blocks: "—"
     - id: "SO-PILOT-3"
       statement: "登记 0.5 意义上的批准角色实例"
-      blocks: "S6(ii)(v) / 10.2.5 判据六"
+      status: "closed（registry/approval_registry.yaml v1.0.0，2026-11-12）"
+      blocks: "—（GOV-PACT-001 仍为风险）"
     - id: "SO-PILOT-4"
       statement: "明确 [既有平台/中间件提供同步端点能力] 的判定面（HTTP / 进程内 / RPC）"
+      status: "open"
       blocks: "S1 的可复核性"
     - id: "SO-PILOT-5"
       statement: "修正 S0 事实 source_ref `system:src/pact-backend.js#L52` 缺 system 段（C-R1-1）"
+      status: "open"
       blocks: "S0 证据可复核性（不阻断本次投影）"
+
+  grounding_status: "10.2.5-verdict-pact-dsh.yaml（3 pass / 3 fail；判据一/二/四未闭合，仍未接地）"

@@ -1,0 +1,174 @@
+# 10.2.5 接地编译验收判据：pact-dsh（2026-11-12 第三轮）
+#
+# 依据：母本 10.2.5 六判据；判据六字段形态见 0.17.4 grounding_status（母本 @3497）；
+#   0.5.1（批准角色注册表）；7.3/8.3/9.3（三处部署可行性勘察）。
+# 性质：pilot 验收记录，不是母本条款。
+# 本轮变更（v1.0.0 → v1.1.0）：按人类批准，补齐判据五五个评审点触发点与判据六 P0 的 deadline；
+#   判据一/二/四维持 fail，未改口径。
+grounding_acceptance:
+  id: "GA-PACT-DSH-20261112-3"
+  version: "1.1.0"
+  deployment: "pact-dsh"
+  executed_at: "2026-11-12T21:43:13+08:00"
+  executor: "agent（本会话）"
+  artifact: "pilot-20261112.3"
+  not_in_scope_this_round: [1, 2, 4]
+
+  criteria:
+    - id: 1
+      name: "白板存在且谓词模式与本文档一致（模式版本号匹配）"
+      verdict: "fail"
+      evidence:
+        - "pilot/vertical-slice-20261112/whiteboard-pact-dsh.yaml：白板存在"
+        - "同文件 pattern_version: null"
+      reason: "母本除 10.2.5 判据一外未定义『白板模式版本号』；机器层只有未定义取值的 schema_version(whiteboard, framework_doc)（母本 @3497-3498）。无版本号可匹配 → 不可判定，按 fail 记（不美化）。"
+      gap_refs: ["D-10"]
+
+    - id: 2
+      name: "方法注册表、批准注册表、守护规则注册表、FVR、投影规则五个注册表非空且版本在案"
+      verdict: "fail"
+      evidence:
+        - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.0.0 → 成立"
+        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.0.0（第二轮新建）→ 成立"
+        - "守护规则注册表：仓库无该文件；DATA-SPEC 附录 C 记 C-12『缺 status、降叙述、不进词表』→ 不成立"
+        - "FVR：pilot/vertical-slice-20261112/fvr-G-CAND-01.yaml 存在，但无注册表版本，且仅 5 条硬性质 → 不成立（版本在案）"
+        - "投影规则：编译规范 5.7 有条款，但无带版本的投影规则注册表文件 → 不成立（版本在案）"
+      reason: "严格口径 2/5（方法＋批准）。把 FVR 文件与 5.7 条款按『非空』计则 4/5，但判据要求『非空且版本在案』，二者均无版本。"
+      count: "2/5"
+      gap_refs: ["D-13"]
+
+    - id: 3
+      name: "技能卡片编译产物版本与注册表版本一致（E4）"
+      verdict: "pass"
+      evidence:
+        - "G-CAND-01.card.yaml artifact_version = pilot-20261112.3"
+        - "artifact.yaml version.label = pilot-20261112.3；registry_version = 1.0.0；framework_version = sha256:6d4b0100…c34f0"
+        - "check-card.py E4: match=true（见 fidelity.json）"
+      reason: "卡片↔产物标签一致；framework_version 仍用母本内容哈希（母本无语义版本号，D-3 延续）。"
+      gap_refs: ["D-3"]
+
+    - id: 4
+      name: "全部硬性质 FVR 接线完成且首轮全量执行有证据工件"
+      verdict: "fail"
+      evidence:
+        - "check-card.py F3：母本硬性质 39 条，卡片覆盖 5 条（M10/M11/M12/M14/M15），缺 34 条"
+        - "fvr-G-CAND-01.yaml：6 条硬性质接线（含软性质 M13 与 E4），无『首轮全量执行』证据工件"
+      reason: "本轮口径明确不追 39 条全认领（切片口径），故此项保持 fail；切片口径不是规范判据。"
+      count: "5/39"
+      gap_refs: ["D-9"]
+
+    - id: 5
+      name: "评审点集合（8.2.7 裁剪后）已排期且有责任人"
+      verdict: "pass"
+      evidence:
+        - "五点均有可判定触发点（见 review_points）；责任人统一为 wgz"
+        - "8.2.7 五评审点：设计评审、简记包抽查、材料性抽查、验证计划评审、例外/Waiver 评审"
+      field_convention: "母本只有硬性质谓词 scheduled(rp)，**没有字段 schema**，且 scheduled 不在谓词词表（method_registry.yaml#L8959）。本节 review_points / trigger_type / trigger / interval / owner 的字段形态是本轮部署级约定（D-17），**不是母本明文**。"
+      review_points:
+        - id: "RP-1"
+          name: "设计评审"
+          trigger_type: "日期（追溯评审）"
+          trigger: "2026-11-19"
+          retroactive: true
+          timing_status: "**批准前时序未满足**：ADR-DP1-STYLE 已于 2026-11-12 批准；本次 2026-11-19 评审是追溯评审，不得记为时序合规。"
+          owner: "wgz"
+        - id: "RP-2"
+          name: "简记包抽查"
+          trigger_type: "周期"
+          trigger: "2026-12-31"
+          interval: "每季度"
+          note: "首次 2026-12-31，此后每季度；可与 RP-3 同场。"
+          owner: "wgz"
+        - id: "RP-3"
+          name: "材料性抽查"
+          trigger_type: "周期"
+          trigger: "2026-12-31"
+          interval: "每季度"
+          note: "首次 2026-12-31，此后每季度；可与 RP-2 同场。"
+          owner: "wgz"
+        - id: "RP-4"
+          name: "验证计划评审"
+          trigger_type: "发布节点"
+          trigger: "2026-12-31"
+          fallback: true
+          note: "母本触发点是发布节点；当前无发布排期，2026-12-31 是**兜底日期，不是发布节点本身**。发布排期确定后以发布节点替换。"
+          owner: "wgz"
+        - id: "RP-5"
+          name: "例外/Waiver 评审"
+          trigger_type: "按需触发＋季度空检"
+          trigger: "2026-12-31"
+          interval: "每季度"
+          note: "当前无 Waiver；季度空检即『本期无 Waiver』的复核记录。借此避免额外的评审点裁剪 ADR。"
+          owner: "wgz"
+      reason: "五点均落到 8.2.1 四形态之一（日期/周期/发布节点/按需＋空检），scheduled(rp) 可判定；责任人齐全。点一为追溯评审，时序欠账在 timing_status 明示，不用『已排期』掩盖。"
+      gap_refs: ["D-17"]
+      gap_status: "触发点已补齐，判据成立；『母本无 scheduled(rp) schema』的缺口仍在，字段形态仍属本轮约定。"
+
+    - id: 6
+      name: "部署可行性勘察结论已登记（批准角色存在性、P0 响应能力、CI 能力）"
+      verdict: "pass"
+      evidence:
+        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.0.0）"
+        - "P0 响应：undetermined（仓库无值班/告警/pager 登记）"
+        - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
+      reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 为 undetermined，且已附 conversion_event 与 deadline（2026-12-31）→ 声明完整，判据成立。**pass 只代表声明完整，不代表 P0 响应能力存在。**"
+      grounding_status:
+        - dimension: "approval_role_instances"
+          state: "confirmed_present"
+          declared_by: "wgz"
+          declared_at: "2026-11-12T21:43:13+08:00"
+          evidence: "registry/approval_registry.yaml（sha256 a0457a4e3b8f197f29cee2051ae91b8a5a93827766b831493c94c4926a529013），pact-dsh v1.0.0，4 类决策，主批准人 wgz"
+          source: "人类用户 wgz 于 2026-11-12 裁定"
+          conversion_event: null
+          deadline: null
+          confirmed_by: "wgz"
+          confirmed_at: "2026-11-12T21:43:13+08:00"
+          version: "approval_registry 1.0.0"
+        - dimension: "p0_response"
+          state: "undetermined"
+          declared_by: "wgz"
+          declared_at: "2026-11-12T21:43:13+08:00"
+          evidence: "仓库勘察：无值班表、无 pager/on-call 配置、无告警通道登记"
+          source: "仓库勘察（本会话）"
+          conversion_event: "首次生产部署前"
+          deadline: "2026-12-31"
+          deadline_basis: "人类用户 wgz 于 2026-11-12 批准推荐值；不等于生产排期"
+          confirmed_by: null
+          confirmed_at: null
+          version: "n/a"
+        - dimension: "ci_capability"
+          state: "confirmed_present"
+          declared_by: "wgz"
+          declared_at: "2026-11-12T21:43:13+08:00"
+          evidence: ".github/workflows/ci.yml#L18-L19（npm run check；npm test，Node 20/22 矩阵）"
+          source: "仓库文件"
+          conversion_event: null
+          deadline: null
+          confirmed_by: "wgz"
+          confirmed_at: "2026-11-12T21:43:13+08:00"
+          version: "ci.yml（未版本化）"
+      gap_refs: ["D-16"]
+      gap_status: "本轮以人类批准的具体 deadline 闭合记录缺口；『无生产排期』这一事实未消除，deadline 为决策日期而非排期日期。"
+
+  summary:
+    pass: 3
+    fail: 3
+    pass_ids: [3, 5, 6]
+    fail_ids: [1, 2, 4]
+    grounding: "未接地（判据一/二/四未闭合）"
+    delta: "1/6 → 3/6（判据五、判据六转 pass；判据三维持 pass；判据一/二/四维持 fail）"
+    consequence: "按 10.2.5 末段：未过验收判据而产出的设计决策全部标 provisional；ADR-DP1-STYLE 仍为 provisional。"
+
+  evaluability_conclusion:
+    card_evaluable: true
+    basis: "S4 有逐目标 verdict（4×reachable_with_cost）；S6 有批准（wgz）与完整 ADR；E4 一致。卡片可评估。"
+    decision_effective: false
+    basis_2: "10.2.5 为 3/6；判据一（白板模式版本号无定义）、判据二（注册表 2/5）、判据四（FVR 5/39）仍 fail，决策只能以 provisional 存在。"
+    closed_this_round:
+      - "判据五：五点触发点齐全，责任人 wgz；点一明示为追溯评审"
+      - "判据六：P0 保持 undetermined，deadline 2026-12-31，conversion_event 首次生产部署前"
+    still_pending: []
+    caveats:
+      - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；2026-12-31 到期未转则强制转 confirmed_absent 并按 9.3 判部署形态可行性缺陷"
+      - "判据五点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
+      - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"

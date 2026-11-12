@@ -1,0 +1,91 @@
+# S4 包络校验结论（DP-1-STYLE / STY-001 / pact-dsh）
+#
+# 依据：母本 0.18.2 S4（输入 = feasible_set + 方面 6 目标集；操作 = envelope.bound_expr
+#   代入场景参数；判定谓词 = ∃c: verdict(c)=reachable ∨ reachable_with_cost，对全部硬目标；
+#   三值 verdict ∈ {reachable | reachable_with_cost | unreachable}，见 6.2.4）；
+#   编译规范 6.2 的判定记录形态。
+# 性质：pilot 运行证据，不是母本条款。
+# v1.1.0（2026-11-12，第 1 批重跑）：输入口径变更——目标集 v1.1.0（D-15-A 可用性窗口）、
+#   包络绑定 v1.1.0（D-14-A path_lat/path_f）。四行 verdict 与判定谓词**均未变**。
+s4_verdict:
+  id: "S4-DP-1-STYLE-20261112"
+  version: "1.1.0"
+  executed_at: "2026-11-12（第 1 批重跑）"
+  executor: "agent（本会话）；批准与裁定归 wgz"
+  decision_point: "DP-1-STYLE"
+  step: "S4"
+  source_anchor: "0.18.2-S4"
+
+  inputs:
+    feasible_set: ["STY-001"]
+    target_set: {id: "TS-PACT-DSH-001", version: "1.1.0", file: "target-set-pact-dsh.yaml", sha256: "d2c1338d8fcc6588bb8990d692dadc4e545f5e7e09fd8a62aa3c02dd23a54386"}
+    envelope_bindings: {id: "EB-PACT-DSH-STY-001", version: "1.1.0", file: "envelope-bindings-pact-dsh.yaml"}
+    excluded_before_s4:
+      - candidate: "STY-002"
+        at: "S1"
+        reason: "applicability=false（F3/F5/F6/F7 全为假，非 unknown）"
+
+  verdict_table:
+    - candidate: "STY-001"
+      goal: "G-LAT-01"
+      metric: "延迟 P99"
+      substituted_value: "450 ms"
+      bound: "≤ 500 ms"
+      verdict: "reachable_with_cost"
+      margin: "50 ms"
+      cost_items: ["三段各 150 ms 的 P99 预算上界（预算分配，非实测）"]
+      evidence: "envelope-bindings-pact-dsh.yaml#bindings[0]；system:pact-dsh/src/govern.js#L79-L116"
+    - candidate: "STY-001"
+      goal: "G-AVL-01"
+      metric: "可用性"
+      substituted_value: "99.5%（上界）"
+      bound: "≥ 99.0%"
+      verdict: "reachable_with_cost"
+      margin: "0.5 pp"
+      cost_items: ["单机可用性预算 99.5%（自定）"]
+      evidence: "envelope-bindings-pact-dsh.yaml#bindings[1]"
+      note: "上界式包络：verdict 读作『未被上界反驳』（D-21）。可用性口径已定：自然月窗口、探针连续失败 ≥1 min 计不可用、计划内维护不计入但须提前 ≥24 h 公告并单独登记（D-15-A；目标集 v1.1.0）"
+    - candidate: "STY-001"
+      goal: "G-LT-01"
+      metric: "变更前置时间"
+      substituted_value: "0.5 工作日"
+      bound: "≤ 1 工作日"
+      verdict: "reachable_with_cost"
+      margin: "0.5 工作日"
+      cost_items: ["单可部署单元 0.5 工作日（自定）"]
+      evidence: "envelope-bindings-pact-dsh.yaml#bindings[2]"
+    - candidate: "STY-001"
+      goal: "G-CON-01"
+      metric: "数据一致性"
+      substituted_value: "单库强一致成立；跨服务 n/a"
+      bound: "单库强一致；跨服务 ≤ 5 s"
+      verdict: "reachable_with_cost"
+      margin: "n/a（跨服务子句无制品）"
+      cost_items: ["跨服务子句按 n/a 处理（TS-OPEN-2）"]
+      evidence: "envelope-bindings-pact-dsh.yaml#bindings[3]；system:pact-dsh/src/pact-backend.js#L118-L132"
+      note: "STY-001 无一致性包络，本行属 [自定] 外推（D-19）；S4 三值无 n/a（D-18）"
+
+  judged_predicate:
+    expr: "∃c: verdict(c) = reachable ∨ reachable_with_cost（对全部硬目标）"
+    result: "pass"
+    witness: "STY-001 对 G-LAT-01 / G-AVL-01 / G-LT-01 / G-CON-01 均为 reachable_with_cost"
+  aggregate_verdict: "reachable_with_cost"
+  cost_ledger_ref: "ADR-DP1-STYLE.md §5（Q4：有代价可达必入 ADR）"
+
+  failure_routes:
+    FM-5: "未触发（不存在『全部候选对某硬目标 unreachable』）"
+    CH-B: "每条 binding 的假设与可推翻指标已随表登记；假设被推翻时重跑 S4"
+
+  step_log:
+    step: "S4"
+    inputs: ["feasible_set={STY-001}", "TS-PACT-DSH-001 v1.1.0", "EB-PACT-DSH-STY-001 v1.1.0"]
+    evaluations: "4 个硬目标 × 1 个候选；逐条代入 bound_expr（延迟 path_lat、可用性 path_f）并记录代价值"
+    outputs: ["verdict_table（4 行）", "aggregate_verdict=reachable_with_cost"]
+    timestamp: "2026-11-12"
+    executor: "agent"
+
+  caveats:
+    - "所有实参是预算/假设，不是观测值；S4 的 pass 是『未被包络界反驳』，不是『已实测达标』"
+    - "G-AVL-01 的上界式包络只能反驳不可达（D-21）；G-CON-01 无包络可依（D-19）；G-CON-01 的跨服务子句无制品（D-18）"
+    - "本结论不改变目标集；若目标或路径模型变化，须重跑 S4（0.7 回归触发）"
+    - "v1.1.0 重跑的唯一动因是输入口径变更（D-14-A 路径分解、D-15-A 可用性窗口），不是新证据；四行 verdict 与判定谓词逐条比对无变化"
