@@ -1,0 +1,194 @@
+# G-CAND-01 —— 方法选型总纲卡片（0.18.2 S0–S6）
+#
+# 编译源：软件工程元框架成文法.md（sha256 6d4b0100…c34f0）
+#   0.18.2（S0–S6）／0.18.3（规程纪律）／0.18.6（M10–M15）／
+#   0.17.4（四类消费者）／0.6（三个自检情形）／0.20.2（FM 目录）
+# 编译规范：2.2（卡片 schema）、2.3（谓词模式）、5.3（FVR 接线）、6.2–6.5（忠实性检查）
+#
+# 说明：本卡为试跑产物（pilot），不是已发布编译产物。
+# 与 0.18.2 的逐字对应关系见 pilot/vertical-slice-20261112/run-log.md §3。
+card_id: G-CAND-01
+version: {major: 0, minor: 1, patch: 0}
+source_anchors:
+  - "0.18.2"
+  - "0.18.3"
+  - "0.18.6"
+  - "0.17.4"
+  - "0.6"
+  - "0.20.2"
+artifact_version: "pilot-20261112.1"
+
+trigger:
+  # 0.18.2 S0 输入形态：决策点声明 {DP_id, aspect, question, affected_predicates}
+  # 方括号＝事件/事实槽（DATA-SPEC D3.3），不引入新谓词名。
+  event_pattern: "[决策点声明：DP_id, aspect=1, kind=STY, question, affected_predicates] ∧ ¬selection_procedure(DP, ·, ·)"
+  guard_conditions:
+    - "∀f∈F: sourced(f)"
+    - "constraints_materialized(C)"
+
+inputs:
+  required_facts:
+    - predicate_expr: "∀f∈F: sourced(f)"
+      source_obligation: "0.4 出处门槛（每条事实带 source_ref + trust_grade）"
+    - predicate_expr: "constraints_materialized(C)"
+      source_obligation: "0.4 ＋ 7.2.1 血缘查询（上游 constraints_imposed ＋ 外部强加登记）"
+    - predicate_expr: "has_six_elements(G)"
+      source_obligation: "6.2.1 六要素质量场景（S4 输入）"
+  upstream_predicates:
+    - style
+    - connects
+    - dependency_rule
+    - has_six_elements
+  upstream_cards: []
+
+steps:
+  - step_id: S0
+    action: "S0 输入装配：接收决策点声明 {DP_id, aspect, question, affected_predicates}；装配三空间事实集（每条过 0.4 出处门槛）；血缘查询（7.2.1）获取上游已定决策与生效约束集（约束接口表 + 已选条目 constraints_imposed + 外部强加登记）。"
+    consumes:
+      - "[决策点声明：DP_id, aspect, question, affected_predicates]"
+    produces:
+      - "selection_context(DP, F, C)"
+      - "selection_procedure(DP, S0, C0)"
+    registry_refs: []
+    source_anchor: "0.18.2-S0"
+    failure_branches:
+      - condition: "事实缺口"
+        route: "CH-B"
+        artifact: "勘察任务登记；以保守假设先行时附可推翻指标"
+      - condition: "无出处事实混入"
+        route: "FM-1"
+        artifact: "剔除记录；剔除致决策不可达 → FM-3"
+
+  - step_id: S1
+    action: "S1 候选装配：{E ∈ registry | kind(E) 匹配 DP ∧ status(E) ∈ {active, seed(bootstrap)} ∧ applicability(E) 对 F 求值为真}。applicability 求值记录逐条保留（哪些谓词真/假/未知——未知 ≠ 假：谓词所需事实缺失时标 unknown，候选保留但附勘察义务，防止『沉默排除』幻觉）。"
+    consumes:
+      - "selection_context(DP, F, C)"
+    produces:
+      - "step_log(DP, S1, In, Evals, candidate_set, T, Executor)"
+      - "exclusion_record(DP, E, P)"
+    registry_refs: [STY-001, STY-002]
+    source_anchor: "0.18.2-S1"
+    failure_branches:
+      - condition: "candidate_set = ∅"
+        route: "FM-3"
+        artifact: "注册表缺口声明（0.13）＋ CH-B（保守界/推迟）；缺口阻断硬目标 → CH-D"
+
+  - step_id: S2
+    action: "S2 约束排除：(i) 逐候选检验 C 中硬约束（含上游方面施加、外部强加）；(ii) 检验候选集内部及候选×已定条目的 compatibility(hard_conflict) 对；(iii) 外部强加走 CH-A 完整分析（范围解包，禁过度泛化与过度反抗——3.6 示例一纪律）。软约束失败 = 降权记录，不排除（降权值入 S5）。"
+    consumes:
+      - "selection_context(DP, F, C)"
+    produces:
+      - "step_log(DP, S2, In, Evals, survivor_set, T, Executor)"
+      - "exclusion_record(DP, E, P)"
+    registry_refs: [STY-001, STY-002]
+    source_anchor: "0.18.2-S2"
+    failure_branches:
+      - condition: "survivor_set = ∅"
+        route: "FM-4"
+        artifact: "CH-D 升级声明（枚举排除性约束清单 + 裁决选项空间：修订目标/放宽强加/追加投入/注册表扩充）"
+
+  - step_id: S3
+    action: "S3 三空间过滤：(i) 交付空间能力过滤：cost_profile.skill_prerequisites 与 applicability.delivery_space 对交付空间事实求值——能力无出处 → 该候选按 0.4 处置（保守假设可用 + 可推翻指标，或排除，取决于能力缺失是『未勘察』还是『勘察为无』）；(ii) 现状空间锁定（0.11）：锁定事实 → 候选收缩或附迁移路径要求；(iii) 问题空间硬需求：sourced 强制需求不满足者排除。"
+    consumes:
+      - "selection_context(DP, F, C)"
+    produces:
+      - "step_log(DP, S3, In, Evals, feasible_set, T, Executor)"
+    registry_refs: [STY-001, STY-002]
+    source_anchor: "0.18.2-S3"
+    failure_branches:
+      - condition: "feasible_set = ∅"
+        route: "FM-4"
+        artifact: "CH-D 升级声明"
+      - condition: "能力缺口"
+        route: "CH-B"
+        artifact: "保守界 + 可推翻指标 = 能力建立（4.6 示例三同型）"
+
+  - step_id: S4
+    action: "S4 包络校验：逐候选 × 逐硬目标执行包络判定（envelope.bound_expr 代入场景参数）；聚合 cost_profile（卡片消费，6.2.4 细则）——聚合算法：多条目代价按各条目 cost_profile.aggregation_semantics 合并，默认逐项并列（itemwise）；产出逐候选三值判定。"
+    consumes:
+      - "feasible_set"
+      - "has_six_elements(G)"
+    produces:
+      - "step_log(DP, S4, In, Evals, verdicts, T, Executor)"
+      - "verdict_table(DP, c, g, v)"
+    registry_refs: [STY-001, STY-002]
+    source_anchor: "0.18.2-S4"
+    failure_branches:
+      - condition: "全部候选对某硬目标 unreachable"
+        route: "FM-5"
+        artifact: "CH-D 升级声明（6.6 示例一格式：目标、各包络界、差距量化、裁决选项空间）；禁止自动降目标或假装可达"
+
+  - step_id: S5
+    action: "S5 排序与不可区分处置：加权得分计算 → 不可区分判定（|Δscore| ≤ 传导不确定区间）。分支一（可区分）：取最优，selection_rationale 记录得分与带宽。分支二（不可区分）：禁止按名义分择一（M-Q2 假精确护栏）→ CH-B 三择：保守界（判据 = ops_cost 低 ∧ typical_reversibility 高者胜，属定性比较、不核数值）+ 保守假设 ADR + 可推翻指标；或推迟（参数化切换点 + LRM）；或升级人类显式排序。"
+    consumes:
+      - "verdict_table(DP, c, g, v)"
+    produces:
+      - "step_log(DP, S5, In, Evals, selected_entry, T, Executor)"
+      - "selection_procedure(DP, S5, C5)"
+    registry_refs: [STY-001, STY-002]
+    source_anchor: "0.18.2-S5"
+    failure_branches:
+      - condition: "|Δscore| ≤ 传导不确定区间（不可区分）且取保守界/推迟"
+        route: "CH-B"
+        artifact: "保守假设 ADR + 可推翻指标；或推迟（参数化切换点 + LRM）"
+      - condition: "不可区分且需人类显式排序"
+        route: "CH-C"
+        artifact: "升级人类排序请求（0.19 冲突消解通道）"
+
+  - step_id: S6
+    action: "S6 决策落地：(i) 影响分级计算（7.2.2：impact_scope 从 selected_entry.constraints_imposed + affected_predicates 推导；reversibility 以 typical_reversibility 为先验、上下文证据可覆写但覆写须有出处）；(ii) 路由：高影响 → 完整 ADR（含被拒候选节、证据集、步骤日志指针）+ 批准（R1）；低影响 → 简记条目（五字段）或快速通道（0.18.5）；(iii) 谓词写入：决策记录 + 所涉方面谓词 diff + 版本向量推进；(iv) 回归触发（0.7）：谓词变更触发绑定性质重跑；(v) 批准不可达 → FM-2 → 0.10 三出路（按 reversibility 分流，7.6 示例二纪律）。"
+    consumes:
+      - "step_log(DP, S5, In, Evals, selected_entry, T, Executor)"
+    produces:
+      - "selection_procedure(DP, S6, C6)"
+      - "style(Scope, S)"
+    registry_refs: [STY-001, STY-002]
+    source_anchor: "0.18.2-S6"
+    failure_branches:
+      - condition: "批准不可达"
+        route: "FM-2"
+        artifact: "0.10 三出路（按 reversibility 分流，7.6 示例二纪律）"
+
+outputs:
+  predicate_writes:
+    - "selection_context(DP, F, C)"
+    - "selection_procedure(DP, S0..S6, Cn)"
+    - "step_log(DP, Sn, In, Evals, Out, T, Executor)"
+    - "exclusion_record(DP, E, P)"
+    - "verdict_table(DP, c, g, v)"
+    - "style(Scope, S)"
+  evidence_artifacts:
+    - artifact_kind: "ADR"
+      elements_checklist:
+        - "白板谓词快照（含版本向量）"
+        - "检查程序/测试套件版本"
+        - "输入数据指纹（哈希）"
+        - "执行记录（CI 运行标识、环境描述）"
+        - "结论三元组（pass | fail→阻塞事件 ID | escalate→升级声明 ID）"
+        - "时间戳"
+        - "执行者（人类署名或 Agent 凭据）"
+    - artifact_kind: "step_log"
+      elements_checklist:
+        - "白板谓词快照（含版本向量）"
+        - "检查程序/测试套件版本"
+        - "输入数据指纹（哈希）"
+        - "执行记录（CI 运行标识、环境描述）"
+        - "结论三元组（pass | fail→阻塞事件 ID | escalate→升级声明 ID）"
+        - "时间戳"
+        - "执行者（人类署名或 Agent 凭据）"
+    - artifact_kind: "批准请求/升级声明"
+      elements_checklist:
+        - "白板谓词快照（含版本向量）"
+        - "检查程序/测试套件版本"
+        - "输入数据指纹（哈希）"
+        - "执行记录（CI 运行标识、环境描述）"
+        - "结论三元组（pass | fail→阻塞事件 ID | escalate→升级声明 ID）"
+        - "时间戳"
+        - "执行者（人类署名或 Agent 凭据）"
+
+discipline_checks: [M10, M11, M12, M14, M15]
+
+approval_route:
+  impact_rule: "7.2.2"
+  high_impact_category: "完整ADR"
+  unreachable_branch: "FM-2 → 0.10 三出路"

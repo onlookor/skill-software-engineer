@@ -1,0 +1,19 @@
+# 编译产物清单（试跑切片，非发布）
+compilation_artifact:
+  version:
+    label: "pilot-20261112.1"   # 卡片 artifact_version 指向此标签；三元组见下
+    framework_version: "sha256:6d4b0100c7a87ee2d4b18c9d20840ad2600095dd32901aa2bf17cf4f792c34f0"
+    registry_version: {major: 1, minor: 0, patch: 0}
+    artifact_seq: 1
+  # 编译规范 8.1：version = (framework_version, registry_version, artifact_seq)
+  # framework_version 用母本内容哈希：母本未声明语义版本号（见 run-log §6 D-3）。
+  cards:
+    - {card_id: G-CAND-01, version: "0.1.0"}
+  dependency_graph:
+    G-CAND-01: []
+  registry_snapshot:
+    method_registry: {file: registry/method_registry.yaml, sha256: "c235265add5ca6ea3fc626c3d328a4d861c05bfffd6a27d91d4c4af1900ffa7b", entries: 138}
+    predicate_vocabulary: {file: registry/predicate_vocabulary.yaml, sha256: "ce22b5089b2a3087d31e951e6b531893379922a75991a2b89f0552b4a9e80647"}
+    profiles: {file: registry/profiles.yaml, kinds: 18}
+  fidelity_record: "fidelity.json（由 check-card.py 生成）"
+  scope_note: "本产物只含 1 张卡，不覆盖全部方面全部硬性质；F3 全量判为 fail（见 run-log §5）。"
