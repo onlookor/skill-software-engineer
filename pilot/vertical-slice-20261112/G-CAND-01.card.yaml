@@ -7,8 +7,10 @@
 #
 # 说明：本卡为试跑产物（pilot），不是已发布编译产物。
 # 与 0.18.2 的逐字对应关系见 pilot/vertical-slice-20261112/run-log.md §3。
+# v0.2.0（2026-11-12 第二轮）：步骤与谓词写入不变；版本随产物 pilot-20261112.2 推进
+#   （接入目标集/包络实参/S4 verdict/批准角色注册表）。变更记录见 run-log §12。
 card_id: G-CAND-01
-version: {major: 0, minor: 1, patch: 0}
+version: {major: 0, minor: 2, patch: 0}
 source_anchors:
   - "0.18.2"
   - "0.18.3"
@@ -16,7 +18,7 @@ source_anchors:
   - "0.17.4"
   - "0.6"
   - "0.20.2"
-artifact_version: "pilot-20261112.1"
+artifact_version: "pilot-20261112.4"
 
 trigger:
   # 0.18.2 S0 输入形态：决策点声明 {DP_id, aspect, question, affected_predicates}
