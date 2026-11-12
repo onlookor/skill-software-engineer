@@ -1367,7 +1367,6 @@ def main(argv=None) -> int:
     write_csv(out / 'targets.csv', targets_rows)
     write_csv(out / 'resolvability.csv', resolv_rows)
     write_csv(out / 'drift.csv', drift_rows)
-    write_csv(out / 'assertions.csv', assert_rows)
     label_out = [{'file': r['file'], 'line': r['line'], 'col': r['col'], 'token': r['token'],
                   'label': r['token'].split('@')[0].strip(), 'label_class': r['label_class'],
                   'exempt_reason': 'code_span' if r['in_code_span'] else 'not_anchor'}
@@ -1410,6 +1409,8 @@ def main(argv=None) -> int:
     assert_rows.append(dict(id='F-8', desc='索引生成幂等（两次扫描输出一致）',
                             status='pass' if h1 == h2 else 'fail', count=0 if h1 == h2 else 1,
                             examples=f'hash={h1[:16]}'))
+    # F-8 在两次扫描后才产生，写入必须放在追加之后，否则 CSV 与 summary.json 项数不一致
+    write_csv(out / 'assertions.csv', assert_rows)
 
     mixed_live, frozen_only, frozen_occ = classify_mixed(rows)
     summary = {
