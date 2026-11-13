@@ -81,7 +81,7 @@ G-AVL-01 六要素补齐：
 
 | 项 | 版本/位置 | 指纹 |
 |---|---|---|
-| 母本 | `软件工程元框架成文法.md`（第 4 次母本改动：0.7／0.21.6 追加 pattern_version，行数不变） | `sha256:8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079` |
+| 母本 | `软件工程元框架成文法.md`（同日更正：pattern_version 定义与现行值同在 0.7；行数不变） | `sha256:c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510` |
 | 方法注册表 | 1.1.0（STY-001 envelope 两条 bound_expr、`depth(path_lat)`；`MJ-30`） | `sha256:aaa8361eb14694813c2cd7a29673afaa350a5596cfb6e0859cdb1e5b6a435ffd` |
 | 目标集 | `TS-PACT-DSH-001` v1.1.0 | `sha256:d2c1338d8fcc6588bb8990d692dadc4e545f5e7e09fd8a62aa3c02dd23a54386` |
 | 包络绑定 | `EB-PACT-DSH-STY-001` v1.1.0（`decomposition` 节） | `sha256:9fb4908c635c3fb894c4bf044ad1b41ee2e7d663aa48fcd79fbe3c04826488ad` |

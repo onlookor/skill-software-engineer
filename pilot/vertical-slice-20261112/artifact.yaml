@@ -2,7 +2,7 @@
 compilation_artifact:
   version:
     label: "pilot-20261112.8"   # 卡片 artifact_version 指向此标签；三元组见下
-    framework_version: "sha256:8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
+    framework_version: "sha256:c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510"
     registry_version: {major: 1, minor: 1, patch: 0}
     artifact_seq: 8
   # 编译规范 8.1：version = (framework_version, registry_version, artifact_seq)
@@ -10,8 +10,9 @@ compilation_artifact:
   #   但模式版本是谓词块级语义版本（0.7），与 framework_version 不同层，勿混。
   # .7：判据二补齐——新增 guard_registry.yaml（v1.0.0，5 条 draft）、fvr_registry.yaml（v1.0.0）、
   #   projection_registry.yaml（v1.0.0，4 条）；10.2.5 升 v1.3.0（4/6）。
-  # .8：判据一闭合——母本 0.7 追加 pattern_version 定义、0.21.6 声明 pv-1.0（同段追加，行数不变）；
-  #   新增 registry/scripts/check_pattern_version.py 与 pattern_version_baseline.yaml；10.2.5 升 v1.4.0（5/6）。
+  # .8：判据一闭合——母本 0.7 追加 pattern_version 定义并同处声明现行值 pv-1.0（同段追加，行数不变）；
+  #   新增 registry/scripts/check_pattern_version.py（自动发现全部机器层谓词块）与 pattern_version_baseline.yaml；
+  #   10.2.5 升 v1.4.0。同日更正：0.21.6 只是状态机谓词块，非全量白板谓词集，声明值改置 0.7。
   cards:
     - {card_id: G-CAND-01, version: "0.2.0"}
   dependency_graph:

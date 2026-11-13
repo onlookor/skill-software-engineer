@@ -608,3 +608,11 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 - `project.py --project`：F-11 pass，Δlines 21（`registry/projections/自检报告.md`，waiver `ADR-DP1-STYLE`，`/tmp/expected-changes-pv.json` 的 `file_bulk`）。
 - `check-card.py`：F1 pass、F2 escalate（`selection_context`）、F3 全量 fail（5/39，判据四待做）、E4 match=True（`.8`）。
 - `anchor_index.py`：F-1～F-10 全 pass、`failures: []`、F-9 986、INFO-2 冻结行号锚 **2,937 条不变**、漂移 **0**（同段追加，未新增行）。
+
+### 18.5 更正（2026-11-13）：0.21.6 不是全量白板谓词块
+
+**发现**：0.21.6 的机器层谓词块只有 5 行（`sm_state` / `sm_transition` / `sm_permission` / `concurrent_invariant` / `snapshot`）；母本共 14 处「**机器层谓词**」块、134 行。原写法「白板谓词块（0.21.6）」把局部当全量，`pv-1.0` 只覆盖 3.7%。
+
+**整改**：0.7 @220 改称「白板谓词集（各节机器层谓词块之并）」并同处声明 `pattern_version: pv-1.0`；删除 0.21.6 @865 行尾注释；`check_pattern_version.py` 改为自动发现全部块（不写死数量），PV-0 打印块清单，PV-3 校验块数／节归属／指纹并可点名增删；基线重算为 14 块、aggregate `0753e743…`。artifact 保持 `.8`。
+
+**实跑**：PV-0/1/2/3 全 pass（14 块、134 行）；`project.py --check` 硬失败 0；`--project` F-11 pass（自检报告 Δlines 21，waiver `ADR-DP1-STYLE`）；`check-card.py` E4 match=True（`.8`）、F1 pass、F2 escalate、F3 5/39；`anchor_index` 全 pass、冻结锚 2,937、漂移 0。判据一仍 pass，10.2.5 **5/6**。

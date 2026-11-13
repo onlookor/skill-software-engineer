@@ -25,7 +25,7 @@
 | `projection_registry.yaml` | 投影规则注册表（10.2.5 判据二）：注册表→人类层投影 4 条 | 本文件头（自建，D-23） |
 | `scripts/project.py` | 自检与同源投影工具 | [CHECK-SPEC](CHECK-SPEC.md) C1、C3 |
 | `scripts/check_pattern_version.py` | 白板模式版本兜底检查器（母本 0.7＋10.2.5 判据一） | [DATA-SPEC](DATA-SPEC.md) D1.3、D6.7 |
-| `pattern_version_baseline.yaml` | 模式版本 → 0.21.6 谓词块规范化指纹基线 | [DATA-SPEC](DATA-SPEC.md) D1.3、D6.7 |
+| `pattern_version_baseline.yaml` | 模式版本 → 全部机器层谓词块的清单与规范化指纹基线 | [DATA-SPEC](DATA-SPEC.md) D1.3、D6.7 |
 | `projections/*.md` | 人类可读投影与自检报告（生成物） | [CHECK-SPEC](CHECK-SPEC.md) C3.2 |
 
 ## 2. 上位文档

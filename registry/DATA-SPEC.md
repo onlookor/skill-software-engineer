@@ -31,7 +31,7 @@
 | `event_catalog.yaml` | 领域事件目录（C-9）：指针表 schema＋空表，不复制 schema；权威在外部 schema registry | **索引非权威**；字段见文件自身 `entry_fields`；指针不可解析 → unknown；见附录 C.1；**本仓无实例** |
 | `scripts/project.py` | 自检与同源投影工具 | 工具，不含规范命题 |
 | `scripts/check_pattern_version.py` | 白板模式版本兜底检查器（母本 0.7 定义＋10.2.5 判据一） | 工具；判定口径在母本，脚本只做机械比对 |
-| `pattern_version_baseline.yaml` | 模式版本 → 0.21.6 谓词块规范化指纹基线 | 数据侧基线；不定义模式语义，语义在母本 0.7 |
+| `pattern_version_baseline.yaml` | 模式版本 → 全部机器层谓词块的清单与规范化指纹基线 | 数据侧基线；不定义模式语义，语义在母本 0.7 |
 | `projections/*.md` | 人类可读投影与自检报告 | **生成物**；只可重跑生成，不可手改 |
 
 〔D1.3 中 profiles／predicate_vocabulary／method_registry 为母本派生；投影禁手改为母本 0.9／编译规范 E2 派生〕
@@ -154,7 +154,7 @@
 - **D6.4** kind 剖面变更走 0.13；新增 kind = 高影响（枚举封闭，0.17.3）。〔母本派生〕
 - **D6.5** 表格与条目冲突时**以条目为准**，冲突登记为成文法缺陷（FM-12 通道，0.17.1）。〔母本派生〕
 - **D6.6 `note` 纠错口径**：`predicate_vocabulary.yaml` 的 `note` 为说明性字段，签名／值域／出处注记的纠错走简记（changelog 续条＋提交说明）；参与判定或校验的字段（`name`／`arity`／`kind`／`source`／`anchor`／`block`／组别）变更才走完整 ADR（D6.1）。〔新立：2026-11-07 用户裁决⑥〕
-- **D6.7 模式版本递增口径**（2026-11-13 用户裁定）：`pattern_version` 的语义与递增义务在母本 0.7，现行值声明在母本 0.21.6 谓词块首行；`pattern_version_baseline.yaml` 只存「版本 → 规范化块指纹」，用于发现「块改了、版本没升」。规范化算法＝去 `//` 注释、去全部空白、去空行后按行 sha256（实现见 `scripts/check_pattern_version.py`）。谓词块语义变更的合法顺序：先递增 0.21.6 声明值 → 再 `check_pattern_version.py --freeze` 登记新基线；顺序颠倒或只 `--freeze` 不升版均判 fail。〔新立：本轮裁定；语义非本规范新立〕
+- **D6.7 模式版本递增口径**（2026-11-13 用户裁定；同日更正）：`pattern_version` 的语义、递增义务与现行值声明同在母本 0.7；其对象是**白板谓词集**＝各节「**机器层谓词**」块之并（脚本自动发现，数量不写死；当前 14 块／134 行）。`pattern_version_baseline.yaml` 存「版本 → 块清单＋规范化指纹」，用于发现「块改了、版本没升」以及「块增删、节归属变化」。规范化算法＝去 `//` 注释、去全部空白、去空行后逐行 sha256（实现见 `scripts/check_pattern_version.py`）。合法顺序：先递增 0.7 声明值 → 再 `--freeze` 登记新基线；顺序颠倒或只 `--freeze` 不升版均判 fail。〔新立：本轮裁定；语义非本规范新立〕
 
 ## 附录 A：本规范承接的迁移条目（20 条）
 

@@ -39,7 +39,7 @@ style(pact-dsh, (·, ·, 同步请求-响应, ·))
 
 | 项 | 位置 | 指纹 |
 |---|---|---|
-| 母本（框架版本） | `软件工程元框架成文法.md`（第 4 次母本改动：0.7 追加 pattern_version 定义、0.21.6 声明 pv-1.0，行数不变） | `sha256:8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079` |
+| 母本（框架版本） | `软件工程元框架成文法.md`（同日更正：0.7 定义与现行值同处，删除 0.21.6 行尾声明；行数不变） | `sha256:c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510` |
 | 方法注册表 STY-001 v0.1.0 | `registry/method_registry.yaml` | `sha256:c235265add5ca6ea3fc626c3d328a4d861c05bfffd6a27d91d4c4af1900ffa7b` |
 | 目标集 | `pilot/vertical-slice-20261112/target-set-pact-dsh.yaml` | `sha256:3cf0433cfbb79b37c741279e3e378cfa704ce586e8c5c081f94fb89266074a23` |
 | 包络实参绑定 | `pilot/vertical-slice-20261112/envelope-bindings-pact-dsh.yaml` | `sha256:93bc90cfcb64f145ad8016e2c9061a0368651e6420c56614bca21bcf571a0d8c` |

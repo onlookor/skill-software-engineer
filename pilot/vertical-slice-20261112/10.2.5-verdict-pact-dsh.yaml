@@ -26,10 +26,11 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "pilot/vertical-slice-20261112/whiteboard-pact-dsh.yaml：白板存在，pattern_version: pv-1.0"
-        - "母本 0.7（@220）定义：pattern_version 是白板谓词块（0.21.6）的模式标识，取语义版本 MAJOR.MINOR"
-        - "母本 0.21.6（@865）谓词块首行声明现行值 pattern_version: pv-1.0"
-        - "registry/scripts/check_pattern_version.py：PV-1／PV-2／PV-3 全 pass（fingerprint 8889d129…）"
-      reason: "判据一只比对、不定义；定义在 0.7、现行值在 0.21.6，两处均在母本内，故『与本文档一致』有可判定右项。白板值＝块声明值＝pv-1.0。"
+        - "母本 0.7（@220）定义：pattern_version 是白板谓词集（各节机器层谓词块之并）的模式标识，取语义版本 MAJOR.MINOR，现行值同处声明"
+        - "母本 0.7（@220）声明现行值 pattern_version: pv-1.0"
+        - "registry/scripts/check_pattern_version.py：自动发现 14 个机器层谓词块（134 行谓词），PV-0/PV-1/PV-2/PV-3 全 pass（aggregate 0753e743…）"
+        - "同日更正：0.21.6 仅为状态机谓词块（5 行），不构成全量白板谓词集；原声明已从 0.21.6 行尾删除"
+      reason: "判据一只比对、不定义；定义与现行值同在 0.7，『与本文档一致』有可判定右项，且右项覆盖全部 14 个机器层谓词块（134 行），不是单个状态机块。白板值＝0.7 声明值＝pv-1.0。"
       gap_refs: ["D-10"]
       gap_status: "已闭合（D-10）：母本定义＋现行值声明＋兜底检查器三者齐备；不依赖部署口径。"
 
@@ -52,9 +53,9 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "G-CAND-01.card.yaml artifact_version = pilot-20261112.8"
-        - "artifact.yaml version.label = pilot-20261112.8；registry_version = 1.1.0；framework_version = sha256:8d9577f4…1d8079"
+        - "artifact.yaml version.label = pilot-20261112.8；registry_version = 1.1.0；framework_version = sha256:c0bb9879…17c4510"
         - "check-card.py E4: match=true（见 fidelity.json）"
-      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。母本本轮回填 0.7／0.21.6 后哈希变为 8d9577f4…，artifact／卡片／ADR 两处／本文件证据同步更新。"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。母本同日更正后哈希为 c0bb9879…，artifact／卡片／ADR 两处／本文件证据同步更新；label 保持 .8（更正不递增序号）。"
       gap_refs: ["D-3"]
 
     - id: 4
@@ -181,4 +182,4 @@ grounding_acceptance:
       - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
       - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"
       - "判据三 pass 只证明卡片与产物标签一致；本产物是切片（1 张卡），F3 全量仍 fail（判据四）"
-      - "判据一 pass 依赖母本 0.21.6 谓词块首行的现行值声明；0.21.6 在母本中标题为『形式化锚点（M27–M30）』，本条按人类裁定称『白板谓词块（0.21.6）』"
+      - "判据一 pass 的右项为 0.7 声明值，兜底指纹覆盖自动发现的全部 14 个机器层谓词块（134 行）；若母本新增/删除谓词块而版本未递增，PV-3 会点名失败"

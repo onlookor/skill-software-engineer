@@ -1,18 +1,74 @@
 # 白板模式版本基线（pattern_version 兜底校验）
 #
-# 依据：母本 0.7（模式版本＝谓词块的语义版本，MAJOR.MINOR）
-#       母本 0.21.6 谓词块首行的现行声明值。
-# 性质：数据侧基线，不是母本条款；只存「版本 → 规范化块指纹」，不定义模式语义。
-# 更新义务：谓词块语义变更 → 先递增声明值（0.7 义务）→ 再 --freeze 登记新基线；
+# 依据：母本 0.7（模式版本＝白板谓词集（各节机器层谓词块之并）的语义版本，现行值同处声明）；
+#       母本各节「**机器层谓词**」块（脚本自动发现，数量不写死）。
+# 性质：数据侧基线，不是母本条款；只存「版本 → 块清单与指纹」，不定义模式语义。
+# 更新义务：谓词集语义变更 → 先递增 0.7 声明值（0.7 义务）→ 再 --freeze 登记新基线；
 #   只 --freeze 不升版会被 check_pattern_version.py 判 fail（版本未递增）。
 
 meta:
-  algorithm: "strip // comments, strip whitespace, drop blank lines, sha256"
-  source_block: "0.21.6 机器层谓词块"
-  mother_sha256_at_freeze: "8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
+  algorithm: "discover **机器层谓词** blocks; strip // comments & whitespace; drop blank lines; sha256"
+  mother_sha256_at_freeze: "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510"
 baselines:
   pv-1.0:
-    fingerprint: "8889d129c94c8c610d15586c0472e5a16d084a07ef1310b97935221353aa0c71"
-    mother_sha256: "8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
+    fingerprint: "0753e743d6f0b5716016d781ba4856ec1bfe42a5e41f3957c47475b1f85363f5"
+    block_count: 14
     recorded_at: "2026-11-13"
     note: "首次登记"
+    blocks:
+      - section: "0.19.6 形式化锚点（M16–M21）〔①〕"
+        line: 544
+        fingerprint: "eb24768f228e9a899bcab47c64d6136d29b6fe58c563fda5e97faef3a1f14ae3"
+        predicate_lines: 8
+      - section: "0.20.4 形式化锚点（M22–M26）〔①〕"
+        line: 657
+        fingerprint: "1d252942f4807774263b4921bc18514469e319ffe0b380cbef6f6a0c5382976e"
+        predicate_lines: 5
+      - section: "0.21.6 形式化锚点（M27–M30）〔①〕"
+        line: 862
+        fingerprint: "8889d129c94c8c610d15586c0472e5a16d084a07ef1310b97935221353aa0c71"
+        predicate_lines: 5
+      - section: "1.5 形式化锚点〔①〕"
+        line: 1087
+        fingerprint: "5006bace7a037ae67d7c9f8e76fb5e7fae404aa3648a62f9ae50c6b78796cee0"
+        predicate_lines: 10
+      - section: "2.5 形式化锚点〔①〕"
+        line: 1321
+        fingerprint: "248070153bdc674bce1930e9cc760825c1f55ef69a0f77a0c72aee219c54e877"
+        predicate_lines: 8
+      - section: "3.5 形式化锚点〔①〕"
+        line: 1572
+        fingerprint: "15b813cccf4a3b0e5b410796827dc7b32cc5bdee8ddf78035b33c339b75e304d"
+        predicate_lines: 7
+      - section: "4.5 形式化锚点〔①〕"
+        line: 1827
+        fingerprint: "12d0c4fb666519734bffe0146811ec6710f1b77b0fffd43835fba1630678bae1"
+        predicate_lines: 10
+      - section: "5.5 形式化锚点〔①〕"
+        line: 2115
+        fingerprint: "841afb9aae3d7a7ed40bbb8cd51cdee2c7da53e12c28cb2c53d9bcbc5da1018f"
+        predicate_lines: 13
+      - section: "6.5 形式化锚点〔①〕"
+        line: 2423
+        fingerprint: "005b29a539edd4f4124280f3e4256913c762ea07c02c3469177296a782a0b212"
+        predicate_lines: 10
+      - section: "7.5 形式化锚点〔①〕"
+        line: 2653
+        fingerprint: "f8e7fa43f77fa0fed238c435124b6984db3f69ea8bf28f11288c8fb4af93dea5"
+        predicate_lines: 9
+      - section: "8.5 形式化锚点〔①〕"
+        line: 2953
+        fingerprint: "b0d7728db6e0706f265ff86a77e664989ef8e7c4098c2f52b5cadcd006147111"
+        predicate_lines: 14
+      - section: "9.5 形式化锚点〔①〕"
+        line: 3224
+        fingerprint: "74358a653a7a21ae5bc2d3ffdb31e8878e46aebb09321ac9722d9af303275dbe"
+        predicate_lines: 23
+      - section: "10.5 形式化锚点〔①〕"
+        line: 3489
+        fingerprint: "49ea9e45061a699964fa14c02ca3c2d2657152fd9c6cd0584783bf98d0cdd964"
+        predicate_lines: 7
+      - section: "0.17.8 形式化锚点（M 系列，0.17 段）〔②〕"
+        line: 3926
+        fingerprint: "f2f378a58e6421f626b3fde353c3724317673a55ed9c4c6e67d94d9b2adb3199"
+        predicate_lines: 5
