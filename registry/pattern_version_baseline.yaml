@@ -1,0 +1,18 @@
+# 白板模式版本基线（pattern_version 兜底校验）
+#
+# 依据：母本 0.7（模式版本＝谓词块的语义版本，MAJOR.MINOR）
+#       母本 0.21.6 谓词块首行的现行声明值。
+# 性质：数据侧基线，不是母本条款；只存「版本 → 规范化块指纹」，不定义模式语义。
+# 更新义务：谓词块语义变更 → 先递增声明值（0.7 义务）→ 再 --freeze 登记新基线；
+#   只 --freeze 不升版会被 check_pattern_version.py 判 fail（版本未递增）。
+
+meta:
+  algorithm: "strip // comments, strip whitespace, drop blank lines, sha256"
+  source_block: "0.21.6 机器层谓词块"
+  mother_sha256_at_freeze: "8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
+baselines:
+  pv-1.0:
+    fingerprint: "8889d129c94c8c610d15586c0472e5a16d084a07ef1310b97935221353aa0c71"
+    mother_sha256: "8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
+    recorded_at: "2026-11-13"
+    note: "首次登记"

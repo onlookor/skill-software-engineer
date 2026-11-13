@@ -24,6 +24,8 @@
 | `fvr_registry.yaml` | FVR 注册面索引（10.2.4）：登记 FVR 集的版本与摘要，条目本体随卡片 | 本文件头（自建，D-24） |
 | `projection_registry.yaml` | 投影规则注册表（10.2.5 判据二）：注册表→人类层投影 4 条 | 本文件头（自建，D-23） |
 | `scripts/project.py` | 自检与同源投影工具 | [CHECK-SPEC](CHECK-SPEC.md) C1、C3 |
+| `scripts/check_pattern_version.py` | 白板模式版本兜底检查器（母本 0.7＋10.2.5 判据一） | [DATA-SPEC](DATA-SPEC.md) D1.3、D6.7 |
+| `pattern_version_baseline.yaml` | 模式版本 → 0.21.6 谓词块规范化指纹基线 | [DATA-SPEC](DATA-SPEC.md) D1.3、D6.7 |
 | `projections/*.md` | 人类可读投影与自检报告（生成物） | [CHECK-SPEC](CHECK-SPEC.md) C3.2 |
 
 ## 2. 上位文档
@@ -38,6 +40,7 @@
 cd registry
 python3 scripts/project.py --check      # 仅自检，写 projections/自检报告.md
 python3 scripts/project.py --project    # 自检 + 生成人类层投影
+python3 scripts/check_pattern_version.py # 白板 pattern_version 与 0.21.6 声明值比对（兜底指纹）
 ```
 
 产物：`projections/STY.md`、`projections/自检报告.md`、`projections/勘察义务清单.md`、`projections/索引.md`。执行顺序、退出码与生成物纪律见 [CHECK-SPEC](CHECK-SPEC.md) C3。

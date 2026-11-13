@@ -1,14 +1,17 @@
-# 编译产物清单（试跑切片，非发布）——2026-11-13 判据二补齐
+# 编译产物清单（试跑切片，非发布）——2026-11-13 判据一闭合
 compilation_artifact:
   version:
-    label: "pilot-20261112.7"   # 卡片 artifact_version 指向此标签；三元组见下
-    framework_version: "sha256:413e3ac483db0a4262c8801363916501e030716d3e8be3229fa4e22b2521c535"
+    label: "pilot-20261112.8"   # 卡片 artifact_version 指向此标签；三元组见下
+    framework_version: "sha256:8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
     registry_version: {major: 1, minor: 1, patch: 0}
-    artifact_seq: 7
+    artifact_seq: 8
   # 编译规范 8.1：version = (framework_version, registry_version, artifact_seq)
-  # framework_version 用母本内容哈希：母本未声明语义版本号（见 run-log §6 D-3）。
+  # framework_version 用母本内容哈希：母本未声明语义版本号（见 run-log §6 D-3）；
+  #   但模式版本是谓词块级语义版本（0.7），与 framework_version 不同层，勿混。
   # .7：判据二补齐——新增 guard_registry.yaml（v1.0.0，5 条 draft）、fvr_registry.yaml（v1.0.0）、
   #   projection_registry.yaml（v1.0.0，4 条）；10.2.5 升 v1.3.0（4/6）。
+  # .8：判据一闭合——母本 0.7 追加 pattern_version 定义、0.21.6 声明 pv-1.0（同段追加，行数不变）；
+  #   新增 registry/scripts/check_pattern_version.py 与 pattern_version_baseline.yaml；10.2.5 升 v1.4.0（5/6）。
   cards:
     - {card_id: G-CAND-01, version: "0.2.0"}
   dependency_graph:
@@ -21,6 +24,7 @@ compilation_artifact:
     guard_registry: {file: registry/guard_registry.yaml, id: GR-PACT-DSH-001, version: "1.0.0", entries: 5, status_note: "5 条均 draft，待 9.2.2 批准"}
     fvr_registry: {file: registry/fvr_registry.yaml, id: FVRREG-PACT-DSH-001, version: "1.0.0", entries: 1}
     projection_registry: {file: registry/projection_registry.yaml, id: PRJREG-PACT-DSH-001, version: "1.0.0", entries: 4}
+    pattern_version_baseline: {file: registry/pattern_version_baseline.yaml, version: "pv-1.0", checker: registry/scripts/check_pattern_version.py}
   deployment_inputs:
     target_set: {file: pilot/vertical-slice-20261112/target-set-pact-dsh.yaml, id: TS-PACT-DSH-001, version: "1.2.0", sha256: "7a37e340af73538dd53a3f76400451c8c68fcd4686fcd5333782dfd33afa2990"}
     envelope_bindings: {file: pilot/vertical-slice-20261112/envelope-bindings-pact-dsh.yaml, id: EB-PACT-DSH-STY-001, version: "1.3.0", sha256: "6449cbe46019cb1d312ddf59b042e4d1deb1479dde05f8151fe23727b877b230"}

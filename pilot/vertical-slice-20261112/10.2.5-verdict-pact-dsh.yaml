@@ -1,4 +1,4 @@
-# 10.2.5 接地编译验收判据：pact-dsh（2026-11-13 第五轮）
+# 10.2.5 接地编译验收判据：pact-dsh（2026-11-13 第六轮）
 #
 # 依据：母本 10.2.5 六判据；判据六字段形态见 0.17.4 grounding_status（母本 @3497）；
 #   0.5.1（批准角色注册表）；7.3/8.3/9.3（三处部署可行性勘察）。
@@ -6,26 +6,32 @@
 # 沿革：
 #   v1.0.0 → v1.1.0（第三轮）：补齐判据五五个评审点触发点与判据六 P0 的 deadline；判据一/二/四维持 fail。
 #   v1.1.0 → v1.2.0（第 3 批后重跑）：产物升 pilot-20261112.6；六判据全量复核，仍 3/6。
-#   v1.2.0 → v1.3.0（本轮，判据二补齐）：新增 registry/guard_registry.yaml、fvr_registry.yaml、
+#   v1.2.0 → v1.3.0（判据二补齐）：新增 registry/guard_registry.yaml、fvr_registry.yaml、
 #     projection_registry.yaml 三个带版本的注册面；判据二 fail→pass，**4/6**；判据一/四仍 fail。
+#   v1.3.0 → v1.4.0（本轮，判据一闭合）：母本 0.7 追加 pattern_version 语义版本定义、0.21.6 声明 pv-1.0；
+#     新增兜底检查器 registry/scripts/check_pattern_version.py 与 pattern_version_baseline.yaml；
+#     白板填 pv-1.0；判据一 fail→pass，**5/6**；判据四仍 fail。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-4"
-  version: "1.3.0"
+  version: "1.4.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-13T10:20:00+08:00"
+  executed_at: "2026-11-13T14:40:00+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.7"
+  artifact: "pilot-20261112.8"
   not_in_scope_this_round: []
 
   criteria:
     - id: 1
       name: "白板存在且谓词模式与本文档一致（模式版本号匹配）"
-      verdict: "fail"
+      verdict: "pass"
       evidence:
-        - "pilot/vertical-slice-20261112/whiteboard-pact-dsh.yaml：白板存在"
-        - "同文件 pattern_version: null"
-      reason: "母本除 10.2.5 判据一外未定义『白板模式版本号』；机器层只有未定义取值的 schema_version(whiteboard, framework_doc)（母本 @3497-3498）。无版本号可匹配 → 不可判定，按 fail 记（不美化）。"
+        - "pilot/vertical-slice-20261112/whiteboard-pact-dsh.yaml：白板存在，pattern_version: pv-1.0"
+        - "母本 0.7（@220）定义：pattern_version 是白板谓词块（0.21.6）的模式标识，取语义版本 MAJOR.MINOR"
+        - "母本 0.21.6（@865）谓词块首行声明现行值 pattern_version: pv-1.0"
+        - "registry/scripts/check_pattern_version.py：PV-1／PV-2／PV-3 全 pass（fingerprint 8889d129…）"
+      reason: "判据一只比对、不定义；定义在 0.7、现行值在 0.21.6，两处均在母本内，故『与本文档一致』有可判定右项。白板值＝块声明值＝pv-1.0。"
       gap_refs: ["D-10"]
+      gap_status: "已闭合（D-10）：母本定义＋现行值声明＋兜底检查器三者齐备；不依赖部署口径。"
 
     - id: 2
       name: "方法注册表、批准注册表、守护规则注册表、FVR、投影规则五个注册表非空且版本在案"
@@ -45,10 +51,10 @@ grounding_acceptance:
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
       verdict: "pass"
       evidence:
-        - "G-CAND-01.card.yaml artifact_version = pilot-20261112.6"
-        - "artifact.yaml version.label = pilot-20261112.6；registry_version = 1.1.0；framework_version = sha256:413e3ac4…21c535"
+        - "G-CAND-01.card.yaml artifact_version = pilot-20261112.8"
+        - "artifact.yaml version.label = pilot-20261112.8；registry_version = 1.1.0；framework_version = sha256:8d9577f4…1d8079"
         - "check-card.py E4: match=true（见 fidelity.json）"
-      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。母本第 3 批加两句后哈希变为 413e3ac4…，三处（artifact／卡片／ADR）同步更新。"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。母本本轮回填 0.7／0.21.6 后哈希变为 8d9577f4…，artifact／卡片／ADR 两处／本文件证据同步更新。"
       gap_refs: ["D-3"]
 
     - id: 4
@@ -155,23 +161,24 @@ grounding_acceptance:
       gap_status: "本轮以人类批准的具体 deadline 闭合记录缺口；『无生产排期』这一事实未消除，deadline 为决策日期而非排期日期。"
 
   summary:
-    pass: 4
-    fail: 2
-    pass_ids: [2, 3, 5, 6]
-    fail_ids: [1, 4]
-    grounding: "未接地（判据一/四未闭合）"
-    delta: "3/6 → 4/6（判据二由 fail 转 pass：补齐守护注册表、FVR 注册面、投影规则注册面，均带 registry_version）"
-    consequence: "按 10.2.5 末段：未过验收判据而产出的设计决策全部标 provisional；ADR-DP1-STYLE 仍为 provisional。"
+    pass: 5
+    fail: 1
+    pass_ids: [1, 2, 3, 5, 6]
+    fail_ids: [4]
+    grounding: "未接地（判据四未闭合）"
+    delta: "4/6 → 5/6（判据一由 fail 转 pass：母本 0.7 定义模式版本、0.21.6 声明 pv-1.0、白板填同值；兜底检查器 pass）"
+    consequence: "按 10.2.5 末段：未过验收判据而产出的设计决策全部标 provisional；ADR-DP1-STYLE 仍为 provisional（判据四未过）。"
 
   evaluability_conclusion:
     card_evaluable: true
     basis: "S4 v1.3.0 有逐目标 verdict（4×reachable_with_cost，逐行 proof_strength=analytic_upper_bound）；S6 有批准（user）与完整 ADR；E4 一致。卡片可评估。"
     decision_effective: false
-    basis_2: "10.2.5 为 4/6；判据一（白板模式版本号无定义）、判据四（FVR 5/39）仍 fail，决策只能以 provisional 存在。"
-    closed_this_round: [2]
-    still_pending: [1, 4]
+    basis_2: "10.2.5 为 5/6；判据四（FVR 5/39）仍 fail，决策只能以 provisional 存在。"
+    closed_this_round: [1]
+    still_pending: [4]
     caveats:
       - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；2026-12-31 到期未转则强制转 confirmed_absent 并按 9.3 判部署形态可行性缺陷"
       - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
       - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"
       - "判据三 pass 只证明卡片与产物标签一致；本产物是切片（1 张卡），F3 全量仍 fail（判据四）"
+      - "判据一 pass 依赖母本 0.21.6 谓词块首行的现行值声明；0.21.6 在母本中标题为『形式化锚点（M27–M30）』，本条按人类裁定称『白板谓词块（0.21.6）』"

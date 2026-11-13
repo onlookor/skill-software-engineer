@@ -7,12 +7,12 @@
 whiteboard:
   deployment: "pilot-pact-dsh"
   schema_ref: "0.7 谓词集 / 0.21.6 sm_state 正名"
-  pattern_version: null          # 母本未定义白板模式版本号；10.2.5 判据一仍不可判定（D-10）
+  pattern_version: "pv-1.0"      # 母本 0.7 定义模式版本语义、0.21.6 声明现行值；D-10 已闭合
   version_vector:
     aspect_1: 1                  # +1：style(pact-dsh, …) 写入
     aspect_6: 1                  # +1：verdict_table 写入
     aspect_10: 0                 # 无投影物化（D-11）
-  artifact_version: "pilot-20261112.7"
+  artifact_version: "pilot-20261112.8"
 
   committed:                     # 已写入（有 step_log 指针）
     - expr: "selection_context(DP-1-STYLE, F, C)"
@@ -109,4 +109,4 @@ whiteboard:
       status: "open"
       blocks: "S0 证据可复核性（不阻断本次投影）"
 
-  grounding_status: "10.2.5-verdict-pact-dsh.yaml（3 pass / 3 fail；判据一/二/四未闭合，仍未接地）"
+  grounding_status: "10.2.5-verdict-pact-dsh.yaml（5 pass / 1 fail；判据四未闭合，仍未接地；判据一已闭合：pattern_version=pv-1.0）"

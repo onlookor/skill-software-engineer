@@ -572,3 +572,39 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 ### 17.4 锚点索引
 
 `anchor_index.py` 实跑：F-1～F-10 全 pass、`failures: []`、F-9 986、INFO-2 仍 2,937 条冻结行号锚（新增三个注册面为 sandbox，未进入 LIVE 约束域，也未引入母本锚）；基线无需重冻。
+
+## 18 判据一闭合：母本定义 `pattern_version`（2026-11-13）
+
+**裁定来源**：人类 2026-11-13「判据一走路线 A」，按 `options-criterion1-20261113.md` 末节写法落地。
+
+### 18.1 母本两处同段追加
+
+| 位置 | 内容 | 备注 |
+|---|---|---|
+| 0.7 版本化条（@220 句尾） | `pattern_version` ＝白板谓词块（0.21.6）的模式标识，取语义版本 `MAJOR.MINOR`；语义变更递增 MINOR、不兼容递增 MAJOR 并登记 changlog；未递增而块已变更＝声明失效；判据一的「一致」＝白板值＝块声明值 | 只加不改，不增行 |
+| 0.21.6 谓词块首行（@865 行尾） | 注释 `// 本块模式版本 pattern_version: pv-1.0；变更按 0.7 语义版本义务递增` | 只加不改，不增行 |
+
+**为什么是两处**：0.7 给语义、0.21.6 给现行值；缺后者则「一致」的右项为空，判据仍不可判定。**为什么 10.2.5 不动**：判据只比对、不定义被比对项，判据自带定义会让判据自证。
+
+**事实性提示（不改条文）**：0.21.6 在母本中的标题是「形式化锚点（M27–M30）」，条文按人类裁定称其为「白板谓词块（0.21.6）」。若后续把「白板谓词块」理解为其他小节，需重新裁定。
+
+### 18.2 兜底检查器
+
+- `registry/scripts/check_pattern_version.py`：PV-1（块声明值与形态）、PV-2（白板值＝声明值）、PV-3（块规范化指纹＝该版本基线；不一致即「块改了版本没升」）三查；`--freeze` 只在版本合法递增后登记新基线。
+- `registry/pattern_version_baseline.yaml`：`pv-1.0 → 8889d129c94c…`。
+- 规范化算法：去 `//` 注释、去全部空白、去空行后逐行 sha256；已登记 DATA-SPEC D1.3＋D6.7 与 README。
+- 实跑：`PV=pass`，`mother_sha_drift=False`（母本哈希与冻结时一致）。
+
+### 18.3 版本与判定
+
+- 母本：4,811 行不变、591,753→**592,233 字节**、`sha256 413e3ac4…`→**`8d9577f4…1d8079`**、条款 **214**。
+- artifact `.7` → **`.8`**（seq 8）；卡片／白板同步；framework_version 四类落点同步（artifact、卡片、ADR-DP1-STYLE、ADR-STY-ENV-01）。
+- 白板 `pattern_version: null` → **`"pv-1.0"`**；10.2.5 升 **v1.4.0**，判据一 fail→pass，总评 **4/6 → 5/6**；ADR-DP1-STYLE 仍 provisional（判据四未过）。
+
+### 18.4 检查
+
+- `check_pattern_version.py`：pass（PV-1/2/3）。
+- `project.py --check`：**硬失败 0**、软警告 20、占位符 1,481＝事实 1＋槽 1,480。
+- `project.py --project`：F-11 pass，Δlines 21（`registry/projections/自检报告.md`，waiver `ADR-DP1-STYLE`，`/tmp/expected-changes-pv.json` 的 `file_bulk`）。
+- `check-card.py`：F1 pass、F2 escalate（`selection_context`）、F3 全量 fail（5/39，判据四待做）、E4 match=True（`.8`）。
+- `anchor_index.py`：F-1～F-10 全 pass、`failures: []`、F-9 986、INFO-2 冻结行号锚 **2,937 条不变**、漂移 **0**（同段追加，未新增行）。
