@@ -1,19 +1,20 @@
-# 10.2.5 接地编译验收判据：pact-dsh（2026-11-12 第四轮）
+# 10.2.5 接地编译验收判据：pact-dsh（2026-11-13 第五轮）
 #
 # 依据：母本 10.2.5 六判据；判据六字段形态见 0.17.4 grounding_status（母本 @3497）；
 #   0.5.1（批准角色注册表）；7.3/8.3/9.3（三处部署可行性勘察）。
 # 性质：pilot 验收记录，不是母本条款。
-# 三轮沿革：
+# 沿革：
 #   v1.0.0 → v1.1.0（第三轮）：补齐判据五五个评审点触发点与判据六 P0 的 deadline；判据一/二/四维持 fail。
-#   v1.1.0 → v1.2.0（本轮，第 3 批后重跑）：产物升 pilot-20261112.6（母本 413e3ac4…、注册表 1.1.0、
-#     S4 v1.3.0）；六判据全量复核，**无判据转号**，仍 3/6。上一份 3/6 记录（id ...-3）针对 .3 产物，已归档。
+#   v1.1.0 → v1.2.0（第 3 批后重跑）：产物升 pilot-20261112.6；六判据全量复核，仍 3/6。
+#   v1.2.0 → v1.3.0（本轮，判据二补齐）：新增 registry/guard_registry.yaml、fvr_registry.yaml、
+#     projection_registry.yaml 三个带版本的注册面；判据二 fail→pass，**4/6**；判据一/四仍 fail。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-4"
-  version: "1.2.0"
+  version: "1.3.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-12T23:10:00+08:00"
+  executed_at: "2026-11-13T10:20:00+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.6"
+  artifact: "pilot-20261112.7"
   not_in_scope_this_round: []
 
   criteria:
@@ -28,16 +29,17 @@ grounding_acceptance:
 
     - id: 2
       name: "方法注册表、批准注册表、守护规则注册表、FVR、投影规则五个注册表非空且版本在案"
-      verdict: "fail"
+      verdict: "pass"
       evidence:
         - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.1.0 → 成立"
         - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.0.0 → 成立"
-        - "守护规则注册表：仓库无该文件；DATA-SPEC 附录 C 记 C-12『缺 status、降叙述、不进词表』→ 不成立"
-        - "FVR：pilot/vertical-slice-20261112/fvr-G-CAND-01.yaml 存在，但无注册表版本，且仅 5 条硬性质 → 不成立（版本在案）"
-        - "投影规则：编译规范 5.7 有条款，但无带版本的投影规则注册表文件 → 不成立（版本在案）"
-      reason: "严格口径 2/5（方法＋批准）。把 FVR 文件与 5.7 条款按『非空』计则 4/5，但判据要求『非空且版本在案』，二者均无版本。本轮只有方法注册表从 1.0.0 升到 1.1.0，计数不变。"
-      count: "2/5"
-      gap_refs: ["D-13"]
+        - "守护规则注册表：registry/guard_registry.yaml，GRD v1.0.0，5 条（draft）→ 成立（非空且版本在案）"
+        - "FVR：registry/fvr_registry.yaml，FVRREG v1.0.0，1 个 FVR 集（G-CAND-01 v1.0.0，sha d25aa220…）→ 成立"
+        - "投影规则：registry/projection_registry.yaml，PRJREG v1.0.0，4 条现行规则（PR-01～04，active）→ 成立"
+      reason: "5/5 均非空且带 registry_version。**但 pass 只证明注册面存在与版本在案**：守护规则 5 条均为 `draft`，尚未取得 9.2.2 要求的完整 ADR＋批准，不可消费；FVR 集仍只接 6 条性质（判据四另计）。"
+      count: "5/5"
+      caveat: "守护规则 draft→active 需 9.2.2 批准；FVR 索引版本已登记但条目集覆盖率问题不因本判据闭合而消失。"
+      gap_refs: ["D-13", "D-22", "D-23", "D-24"]
 
     - id: 3
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
@@ -153,21 +155,21 @@ grounding_acceptance:
       gap_status: "本轮以人类批准的具体 deadline 闭合记录缺口；『无生产排期』这一事实未消除，deadline 为决策日期而非排期日期。"
 
   summary:
-    pass: 3
-    fail: 3
-    pass_ids: [3, 5, 6]
-    fail_ids: [1, 2, 4]
-    grounding: "未接地（判据一/二/四未闭合）"
-    delta: "3/6 → 3/6（第 3 批后全量复核，无判据转号；判据三证据随产物 .6 更新）"
+    pass: 4
+    fail: 2
+    pass_ids: [2, 3, 5, 6]
+    fail_ids: [1, 4]
+    grounding: "未接地（判据一/四未闭合）"
+    delta: "3/6 → 4/6（判据二由 fail 转 pass：补齐守护注册表、FVR 注册面、投影规则注册面，均带 registry_version）"
     consequence: "按 10.2.5 末段：未过验收判据而产出的设计决策全部标 provisional；ADR-DP1-STYLE 仍为 provisional。"
 
   evaluability_conclusion:
     card_evaluable: true
     basis: "S4 v1.3.0 有逐目标 verdict（4×reachable_with_cost，逐行 proof_strength=analytic_upper_bound）；S6 有批准（user）与完整 ADR；E4 一致。卡片可评估。"
     decision_effective: false
-    basis_2: "10.2.5 为 3/6；判据一（白板模式版本号无定义）、判据二（注册表 2/5）、判据四（FVR 5/39）仍 fail，决策只能以 provisional 存在。"
-    closed_this_round: []
-    still_pending: []
+    basis_2: "10.2.5 为 4/6；判据一（白板模式版本号无定义）、判据四（FVR 5/39）仍 fail，决策只能以 provisional 存在。"
+    closed_this_round: [2]
+    still_pending: [1, 4]
     caveats:
       - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；2026-12-31 到期未转则强制转 confirmed_absent 并按 9.3 判部署形态可行性缺陷"
       - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"

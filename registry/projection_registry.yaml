@@ -1,0 +1,74 @@
+# 投影规则注册表（10.2.5 判据二「投影规则」）：schema ＋ 现行规则
+#
+# 义务锚点：母本 10.2.5 判据二要求「投影规则」注册表非空且版本在案。
+# 母本未给该注册面的文件/字段规范；本文件按 registry/ 既有辅助注册表惯例自建，
+# 登记为 D-23（见 pilot/vertical-slice-20261112/run-log.md §17）。
+#
+# 范围声明（防混淆）：
+#   本表登记的是 **注册表 → 人类层投影** 的生成规则（编译规范 CHECK-SPEC C3.2；
+#   生成器 registry/scripts/project.py）。**不是**母本 10.2.1 的 PRJ 注册表——
+#   后者管「已批准投影规则 × 受众视图」（E1/E2），本仓当前无受众视图实例，
+#   故不在本表冒充。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  registry_id: "PRJREG-PACT-DSH-001"
+  deployment: "pact-dsh"
+  obligation_anchor:
+    source_type: clause_id
+    value: "10.2.5"
+    quote: "方法注册表、批准注册表、守护规则注册表、FVR、投影规则五个注册表非空且版本在案"
+    verified: true
+  schema_status: schema+instances
+  instance_state: "4 条现行投影规则（与 project.py 生成物一一对应）"
+  scope_note: "注册表→人类层投影；不含 10.2.1 受众视图投影（本仓无实例）"
+  status_domain: [draft, seed, active, deprecated, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+
+entry_fields:
+  - {name: projection_id, type: string, required: true, note: "PR-<两位>"}
+  - {name: source, type: string, required: true, note: 投影来源注册表/数据集}
+  - {name: output_file, type: string, required: true, note: 生成物相对路径}
+  - {name: generator, type: string, required: true, note: 生成入口}
+  - {name: trigger, type: string, required: true, note: 生成时机}
+  - {name: rule_source, type: string, required: true, note: 规则条款指针}
+  - {name: version, type: string, required: true}
+  - {name: status, type: "enum: draft|seed|active|deprecated|retired", required: true}
+
+entries:
+  - projection_id: "PR-01"
+    source: "registry/method_registry.yaml（kind=STY）"
+    output_file: "registry/projections/STY.md"
+    generator: "registry/scripts/project.py --project"
+    trigger: "注册表版本变更后"
+    rule_source: "CHECK-SPEC C3.2；编译规范 5.7（条目→人类视图）"
+    version: "1.0.0"
+    status: "active"
+
+  - projection_id: "PR-02"
+    source: "registry/method_registry.yaml＋profiles.yaml＋predicate_vocabulary.yaml"
+    output_file: "registry/projections/索引.md"
+    generator: "registry/scripts/project.py --project"
+    trigger: "注册表版本变更后"
+    rule_source: "CHECK-SPEC C3.2"
+    version: "1.0.0"
+    status: "active"
+
+  - projection_id: "PR-03"
+    source: "注册表自检结果（全部检查项）"
+    output_file: "registry/projections/自检报告.md"
+    generator: "registry/scripts/project.py --check／--project"
+    trigger: "每次自检"
+    rule_source: "CHECK-SPEC C3.2／C4"
+    version: "1.0.0"
+    status: "active"
+
+  - projection_id: "PR-04"
+    source: "method_registry.yaml 的 survey_obligations"
+    output_file: "registry/projections/勘察义务清单.md"
+    generator: "registry/scripts/project.py --project"
+    trigger: "勘察义务登记变更后"
+    rule_source: "CHECK-SPEC C3.2；母本 0.18.2 M15"
+    version: "1.0.0"
+    status: "active"

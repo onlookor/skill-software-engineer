@@ -1,0 +1,44 @@
+# FVR 注册表（10.2.5 判据二「FVR」）：schema ＋ 部署级索引
+#
+# 义务锚点：
+#   母本 10.2.4 FVR_entry = {property_id, 检查程序, 静态/动态归属, 触发接线, 证据形态, 失败路由}；
+#   10.2.5 判据二要求「FVR」注册表非空且版本在案。
+# 母本未给 FVR 注册面的文件/字段规范；本文件按 registry/ 既有辅助注册表惯例自建，
+#   登记为 D-24（见 pilot/vertical-slice-20261112/run-log.md §17）。
+#
+# 性质：本文件是**索引**而非条目本体——FVR 条目本体仍随卡片放在
+#   pilot/<试跑>/fvr-<card>.yaml（10.2.4 以卡片为归属单元）。本表登记其版本与摘要，
+#   使「FVR 有版本在案」可判定，而不把条目离心化。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  registry_id: "FVRREG-PACT-DSH-001"
+  deployment: "pact-dsh"
+  obligation_anchor:
+    source_type: clause_id
+    value: "10.2.4"
+    quote: "FVR_entry = {property_id, 检查程序, 静态/动态归属, 触发接线, 证据形态, 失败路由}"
+    verified: true
+  schema_status: schema+instances
+  instance_state: "1 个 FVR 集（G-CAND-01，v1.0.0）"
+  status_domain: [draft, seed, active, deprecated, retired]
+  status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
+
+entry_fields:
+  - {name: fvr_id, type: string, required: true, note: "FVR-<部署>-<卡片>"}
+  - {name: card_id, type: string, required: true}
+  - {name: file, type: string, required: true, note: 条目本体路径}
+  - {name: version, type: string, required: true}
+  - {name: sha256, type: string, required: true}
+  - {name: properties, type: list, required: true, note: "本集接线的 property_id 全集"}
+  - {name: status, type: "enum: draft|seed|active|deprecated|retired", required: true}
+
+entries:
+  - fvr_id: "FVR-PACT-DSH-G-CAND-01"
+    card_id: "G-CAND-01"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-01.yaml"
+    version: "1.0.0"
+    sha256: "d25aa2203eafc3d3d41e7aada230923abf9c8ccde7107a9cb4bf28d5c4b06760"
+    properties: ["M10", "M11", "M12", "M13", "M14", "M15", "E4"]
+    status: "active"

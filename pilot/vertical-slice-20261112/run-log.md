@@ -545,3 +545,30 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 - D-19（STY-001 无一致性包络）：G-CON-01a 判定仍属 `[自定]` 外推。
 - 10.2.5 判据一/二/四仍 fail；ADR-DP1-STYLE 仍 `provisional`。
 - `approval_registry.yaml` 的 `GOV-PACT-002` 保留为历史登记（母本 0.5.1 已补空链语义，部署早已显式 `backup_chain: []`，未改该文件以避免无谓的版本级联）。
+## 17 判据二补齐：守护／FVR／投影三注册面
+
+### 17.1 缺口与处置（只建注册面，不动母本）
+
+| 注册面 | 原状 | 处置 | 新文件／位置 |
+|---|---|---|---|
+| 守护规则 | 母本 9.2.2 有条目形态，仓库无文件（DATA-SPEC C-12 只有 `status` 字段结论） | 按 `schedules.yaml` 的 meta/entries 惯例建表；5 条均为仓库既有闸门的登记，标 `draft`（9.2.2 要求新增规则＝完整 ADR＋批准，未获批准不得 active） | `registry/guard_registry.yaml` v1.0.0 |
+| FVR | `fvr-G-CAND-01.yaml` 有条目但无版本归属 | 建索引表，登记 FVR 集版本与 sha；条目本体仍留卡片侧（10.2.4 以卡片为归属单元） | `registry/fvr_registry.yaml` v1.0.0；FVR 文件加 `fvr_set` 头（v1.0.0） |
+| 投影规则 | 编译规范／CHECK-SPEC 有规则，无带版本的注册面 | 建表登记 4 条注册表→人类层投影（PR-01～04，active） | `registry/projection_registry.yaml` v1.0.0 |
+
+新增决策点：**D-22**（守护注册面无文件/字段规范）、**D-23**（投影规则注册面无文件/字段规范）、**D-24**（FVR 注册面无版本归属）。三者均为「母本未给注册面规范、按既有惯例自建」，不改母本。
+
+### 17.2 判据二判定
+
+2/5 → **5/5**（方法 1.1.0＋批准 1.0.0＋守护 1.0.0＋FVR 1.0.0＋投影 1.0.0），10.2.5 总评 **3/6 → 4/6**。
+
+**边界（如实记）**：判据二 pass 只证明「注册面存在且版本在案」。守护规则 5 条为 `draft`，尚不可消费；FVR 集仍只接 6 条性质，覆盖率问题属判据四，不因本判据闭合而消失。
+
+### 17.3 版本与检查
+
+- artifact `.6` → **`.7`**（seq 7）；卡片／白板 `artifact_version` 同步；10.2.5 升 **v1.3.0**（id 不变 `GA-PACT-DSH-20261112-4`）。
+- `project.py --check`：**硬失败 0**、软警告 20；`check-card.py`：**E4 match=True**（`.7`），exit 1 仍仅因 F3 全量 5/39。
+- `anchor_index.py`：结果见 §17.4。
+
+### 17.4 锚点索引
+
+`anchor_index.py` 实跑：F-1～F-10 全 pass、`failures: []`、F-9 986、INFO-2 仍 2,937 条冻结行号锚（新增三个注册面为 sandbox，未进入 LIVE 约束域，也未引入母本锚）；基线无需重冻。
