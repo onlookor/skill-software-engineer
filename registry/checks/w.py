@@ -2,21 +2,41 @@
 """W 系列（方面 2 / 分解）硬性质检查器：W1 W2 W4 W7。"""
 from __future__ import annotations
 
-from common import ok, esc, domain_data
+from common import ok, bad, esc, domain_data
 
 NOTE = '域数据源未登记：本部署有模块，但白板无 module_inventory（不是空集）'
 
 
 def w1(ctx):
-    if 'module_inventory' not in ctx['whiteboard']:
+    """每个模块的接缝封闭（人工核结论，2026-11-14 人类裁定方案 A）。"""
+    if domain_data(ctx, 'module_inventory') is None:
         return esc('W1', NOTE, '不可判：模块目录未登记，接缝封闭无从核验（非空真）')
-    return esc('W1', '存在 module_inventory', '需人工核接缝封闭')
+    reviews = domain_data(ctx, 'human_review') or []
+    for r in reviews:
+        if r.get('property') != 'W1':
+            continue
+        if r.get('approver_kind') != 'human' or not r.get('approved_by') or not r.get('conclusion'):
+            return esc('W1', '存在 W1 人工核记录，但缺批准人或结论文本',
+                       '不可判：人工核记录不完整')
+        return ok('W1', r['conclusion'],
+                  f"人工核结论，非机械校验：{r.get('approved_by')} 于 {r.get('approved_at')} 确认")
+    return esc('W1', '存在 module_inventory，但无 W1 人工核结论', '需人工核接缝封闭')
 
 
 def w2(ctx):
-    if 'module_inventory' not in ctx['whiteboard']:
-        return esc('W2', NOTE, '不可判：模块目录未登记，可独立验证无从核验（非空真）')
-    return esc('W2', '存在 module_inventory', '需人工核可独立验证')
+    """每个单元可独立验证：以「单元是否有自己的测试文件」为机械口径。"""
+    units = domain_data(ctx, 'module_inventory')
+    inv = domain_data(ctx, 'unit_test_inventory')
+    if units is None or inv is None:
+        return esc('W2', NOTE, '不可判：模块目录/测试清单未登记，可独立验证无从核验（非空真）')
+    suites = {}
+    for row in inv or []:
+        if row.get('unit') and row.get('test_files'):
+            suites.setdefault(row['unit'], []).extend(row['test_files'])
+    untestable = [u.get('id', '?') for u in units if not suites.get(u.get('id'))]
+    if untestable:
+        return bad('W2', f'{len(untestable)}/{len(units)} 个单元无独立测试，不可独立验证：{untestable}')
+    return ok('W2', f'{len(units)} 个单元均有独立测试文件，可独立验证')
 
 
 def w4(ctx):

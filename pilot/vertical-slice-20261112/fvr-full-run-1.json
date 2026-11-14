@@ -1,15 +1,15 @@
 {
   "run_id": "fvr-full-run-1",
-  "generated_at": "2026-11-14T11:47:01+08:00",
+  "generated_at": "2026-11-14T12:22:44+08:00",
   "mother_sha256": "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510",
   "predicate_blocks": 14,
   "hard_property_source": "regex ^\\s*([A-Z]\\d+):.*(——|—)\\s*硬 + hard-properties.snapshot.json",
   "snapshot_count": 39,
   "executed_count": 39,
   "summary": {
-    "pass": 31,
-    "fail": 5,
-    "escalate": 3,
+    "pass": 32,
+    "fail": 7,
+    "escalate": 0,
     "vacuous": 9
   },
   "results": [
@@ -119,19 +119,19 @@
     },
     {
       "property": "W1",
-      "verdict": "escalate",
-      "evidence": "存在 module_inventory",
-      "reason": "需人工核接缝封闭",
+      "verdict": "pass",
+      "evidence": "W1 接缝封闭：覆盖面为 module_inventory 全部 9 个单元（index、loop-entry、config、govern、loop-core、names、observer、pact-backend、wasm-backend）。逐一核对模块间调用与 import，未发现经由未声明接口的跨模块访问，无例外。",
+      "reason": "人工核结论，非机械校验：user 于 2026-11-14 确认",
       "vacuous": false,
-      "route": "escalate"
+      "route": "pass"
     },
     {
       "property": "W2",
-      "verdict": "escalate",
-      "evidence": "存在 module_inventory",
-      "reason": "需人工核可独立验证",
+      "verdict": "fail",
+      "evidence": "2/9 个单元无独立测试，不可独立验证：['index', 'loop-entry']",
+      "reason": "",
       "vacuous": false,
-      "route": "escalate"
+      "route": "fail"
     },
     {
       "property": "W4",
@@ -231,11 +231,11 @@
     },
     {
       "property": "G7",
-      "verdict": "escalate",
-      "evidence": "域数据源未登记：白板无 P2 信号与告警阈值",
-      "reason": "不可判：P2 信号未登记（非空真）",
+      "verdict": "fail",
+      "evidence": "1/1 条 P2 信号缺阈值或趋势窗：[\"GR-005 缺 ['trend_window']\"]",
+      "reason": "",
       "vacuous": false,
-      "route": "escalate"
+      "route": "fail"
     },
     {
       "property": "E1",

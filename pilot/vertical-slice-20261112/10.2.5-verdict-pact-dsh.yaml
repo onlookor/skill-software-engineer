@@ -1,11 +1,11 @@
-# 10.2.5 接地编译验收判据：pact-dsh（2026-11-14 第十轮）
+# 10.2.5 接地编译验收判据：pact-dsh（2026-11-14 第十一轮）
 #
 # 依据：母本 10.2.5 六判据；判据六字段形态见 0.17.4 grounding_status（母本 @3497）；
 #   0.5.1（批准角色注册表）；7.3/8.3/9.3（三处部署可行性勘察）。
 # 性质：pilot 验收记录，不是母本条款。
 # 判据四口径（人类裁定，2026-11-14）：39 条硬性质**全部具备可复现 verdict 即成立**；
 #   fail 与 escalate 是有效判定结论，不计为判据不成立，也不构成豁免。
-#   现行真实分布：pass 31 / fail 5 / escalate 3 / vacuous 9（fail＝X2／X5／T4／T6／G3）。
+#   现行真实分布：pass 32 / fail 7 / escalate 0 / vacuous 9（fail＝X2／X5／T4／T6／G3／W2／G7）。
 #   本文件中凡出现 6/6，均须附该分布，不得单独引用。
 # 沿革：
 #   v1.0.0 → v1.1.0（第三轮）：补齐判据五五个评审点触发点与判据六 P0 的 deadline；判据一/二/四维持 fail。
@@ -17,30 +17,35 @@
 #     白板填 pv-1.0；判据一 fail→pass，**5/6**；判据四仍 fail。
 #   v1.4.0 → v1.5.0（本轮，判据四闭合）：8 张实质卡＋10 张躯干卡机械生成；
 #     8 份 FVR 集（v1.1.0）接 39 条硬性质；首轮全量 fvr-full-run-1.json；
-#     判据四 fail→pass，**6/6**（现行分布 pass 31 / fail 5 / escalate 3 / vacuous 9）。空真复核：13 条由空真改为 escalate（域数据源未登记）。
+#     判据四 fail→pass，**6/6**（当时分布 pass 25 / fail 0 / escalate 14 / vacuous 8）。空真复核：13 条由空真改为 escalate（域数据源未登记）。
 #   v1.5.0 → v1.6.0（2026-11-13，治理记录回填）：ADR-DP1-STYLE 按 SM-DR `provisional → approved`
 #     （retro_approve，human `user`）转 approved；新建 registry/compilation_regime_changes.yaml
 #     （3 条，均人类批准，哈希链连续）；approval_registry 升 1.1.0（新增「编译规程变更」类，5 类决策）；
-#     E7 由 escalate 转 pass，escalate 14→13；六判据仍 **6/6**（现行分布 pass 31 / fail 5 / escalate 3 / vacuous 9）。
+#     E7 由 escalate 转 pass，escalate 14→13；六判据仍 **6/6**（当时分布 pass 26 / fail 0 / escalate 13 / vacuous 8）。
 #   v1.6.0 → v1.7.0（2026-11-14，批 A 登记与判定升级）：9 个「存在即 pass」检查器
-#     （V2/X1/X2/X5/X6/T4/T6/G3/G7）升级为内容校验；白板基线三处修正（artifact .9／style approved／10.2.5 6/6，现行分布 pass 31 / fail 5 / escalate 3 / vacuous 9）；
+#     （V2/X1/X2/X5/X6/T4/T6/G3/G7）升级为内容校验；白板基线三处修正（artifact .9／style approved／10.2.5 6/6，当时分布 pass 29 / fail 4 / escalate 6 / vacuous 9）；
 #     批 A 登记 module_inventory/unit_test_inventory/connects/contract/deploy_strategy/shared_data_access；
-#     实跑分布 pass 31 / fail 5 / escalate 3 / vacuous 9；六判据仍 **6/6**（附同一分布，fail＝X2／X5／T4／T6／G3）。
+#     实跑分布 pass 29 / fail 4 / escalate 6 / vacuous 9；六判据仍 **6/6**（附同一分布，fail＝X2／X5／T4／G3）。
 #   v1.7.0 → v1.8.0（2026-11-14，批 B 第一步）：登记 contract_tests 显式空集（仓库无契约测试），
-#     T6 由 escalate 转 fail；六判据仍 **6/6**（真实分布 pass 31 / fail 5 / escalate 3 / vacuous 9，fail＝X2／X5／T4／T6／G3）。
+#     T6 由 escalate 转 fail；六判据仍 **6/6**（真实分布 pass 29 / fail 5 / escalate 5 / vacuous 9，fail＝X2／X5／T4／T6／G3）。
 #   v1.8.0 → v1.9.0（2026-11-14，V1/W4 登记，人类批准，登记人 user）：
 #     登记 layer_of 9 条＋dependency_rule 3 条（口径甲，弱校验：不展开 layer_of）；
 #     登记 owned_by 2 条（events.jsonl 拆分「创建/配置」与「写入」；口径丙，弱校验，W4 仍 escalate）；
-#     V1 escalate→pass（弱校验）；分布 pass 31 / fail 5 / escalate 3 / vacuous 9；六判据仍 **6/6**（附同一分布）。
+#     V1 escalate→pass（弱校验）；分布 pass 30 / fail 5 / escalate 4 / vacuous 9；六判据仍 **6/6**（附同一分布）。
 #   v1.9.0 → v1.10.0（2026-11-14，W4 人工核转 pass，人类 user）：
 #     登记人类确认依据（approved_by=user、approver_kind=human、2026-11-14），W4 escalate→pass；
 #     该 pass 属**人工核结论**而非机械校验，与 V1 同列 weak_checks／packed_upgrade；
 #     分布 pass 31 / fail 5 / escalate 3 / vacuous 9；六判据仍 **6/6**（附同一分布）。
+#   v1.10.0 → v1.11.0（2026-11-14，收掉最后三条 escalate，人类批准）：
+#     W1 登记人工核结论（方案 A，pass；人工核非机械校验）；
+#     W2 按机械口径判 fail（index、loop-entry 无独立测试）；
+#     G7 登记 GR-005 为 P2 信号后判 fail（缺 trend_window）；
+#     分布 pass 32 / fail 7 / escalate 0 / vacuous 9；六判据仍 **6/6**（附同一分布）。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.10.0"
+  version: "1.11.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-14T13:20:00+08:00"
+  executed_at: "2026-11-14T14:05:00+08:00"
   executor: "agent（本会话）"
   artifact: "pilot-20261112.9"
   not_in_scope_this_round: []
@@ -90,16 +95,16 @@ grounding_acceptance:
         - "卡片集：18 张（8 实质卡 G-CAND-01..08＋10 躯干卡），由 registry/scripts/gen_cards.py 从母本 0.18.2 S0–S6 机械生成"
         - "FVR：8 份 fvr-G-CAND-0X.yaml（v1.1.0），39 条硬性质各接一个 registry/checks/ 下真实检查器，wired: true"
         - "首轮全量：pilot/vertical-slice-20261112/fvr-full-run-1.json，39 行 verdict（hard=39 executed=39；2026-11-14 复跑，9 个检查器升级为内容校验）"
-        - "实跑分布：pass 31 / fail 5 / escalate 3 / vacuous 9（空真清单见 vacuous-inventory.md）"
+        - "实跑分布：pass 32 / fail 7 / escalate 0 / vacuous 9（空真清单见 vacuous-inventory.md）"
         - "check-card.py --all：F1=pass，F2=escalate，F3(full)=pass 39/39，E4 match=true，exit=0"
         - "runner E3：pass（39/39 有 FVR 条目、检查程序与首轮 verdict）"
-      reason: "判据四的两要件均成立：全部 39 条硬性质有 FVR 条目并接到可执行检查器；全量执行有落盘工件。**pass 不代表 39 条全部 pass**：9 条检查器由「键存在即 pass」升级为内容校验后，揭示 5 条真实 fail；3 条 escalate（W1/W2/G7）仍为需人工核或域数据源未登记；9 条 vacuous 中 X6 为显式空集（shared_data_access: []）。V1 的 pass 属弱校验（口径甲），W4 的 pass 属人工核结论（user 2026-11-14），二者均非机械校验。"
+      reason: "判据四的两要件均成立：全部 39 条硬性质有 FVR 条目并接到可执行检查器；全量执行有落盘工件。**pass 不代表 39 条全部 pass**：9 条检查器由「键存在即 pass」升级为内容校验后，揭示 7 条真实 fail（X2/X5/T4/T6/G3/W2/G7）；0 条 escalate；9 条 vacuous 中 X6 为显式空集（shared_data_access: []）。V1 的 pass 属弱校验（口径甲），W1/W4 的 pass 属人工核结论（user 2026-11-14），三者均非机械校验。"
       interpretation:
         rule: "39 条硬性质**全部具备可复现 verdict 即成立**；fail 属有效结论，不计为判据四不成立。"
         source: "人类裁定，2026-11-14（父会话转达）"
         not_an_exemption: "fail 是判定结论而非豁免：它记录真实缺陷，不把未满足的性质记成 pass。"
         distinction: "escalate（数据源未登记、不可判）与 fail（数据在案、判定不满足）都属可复现结论；二者均不阻断判据四，但都必须逐条登记。"
-      count: "39/39 接线；verdict pass 31 / fail 5 / escalate 3 / vacuous 9"
+      count: "39/39 接线；verdict pass 32 / fail 7 / escalate 0 / vacuous 9"
       known_defects:
         status: "在案，不在本轮修复范围"
         items:
@@ -108,14 +113,17 @@ grounding_acceptance:
           - "T4：9 个单元中 index、loop-entry 无测试（D-C：入口单元按独立单元计）"
           - "T6：CT-PACT-BACKEND-01 为 published，但仓库无契约测试（contract_tests 显式空集）"
           - "G3：DEP-PACT-DSH-01 缺 rollback 与 compatible_with_style"
+          - "W2：index、loop-entry 无独立测试，按机械口径不可独立验证"
+          - "G7：GR-005 已登记为 P2 信号，但缺 trend_window"
       weak_checks:
         - "V1（口径甲）：只读 dependency_rule 字面层规则边，不展开 layer_of 到单元边；pass 仅表示禁止层规则无环，不代表单元级依赖已核"
         - "W4（人工核）：已登记 owned_by 2 条＋人类确认（approved_by=user、approver_kind=human、2026-11-14）；pass 是人工核结论，检查器不做单一所有者机械核对"
         - "human_review 记录作为 W4 的判定输入：仅当每条 owned_by 都带 human 确认时 W4 才 pass；缺记录则回退 escalate"
-      packed_upgrade: "V1/W4 打包为同一项「将来升级为机械校验」：V1 展开 layer_of×实际 import 边；W4 机械核对象→所有者一对一与写入点归属一致。"
-      caveat: "3 条 escalate（W1/W2/G7）需人工核接缝/可独立验证或补 P2 信号，属批 B 未落项；5 条 fail 是调查结论，非接线缺口，补齐对应字段后重判；W4 的 pass 依赖人类确认记录，不是机械校验。"
+        - "W1（人工核）：已登记人类确认（approved_by=user、approver_kind=human、2026-11-14），覆盖 9 个单元且结论为「无未声明跨模块访问、无例外」；pass 是人工核结论，检查器不做接缝机械核对"
+      packed_upgrade: "V1/W1/W4 打包为同一项「将来升级为机械校验」：V1 展开 layer_of×实际 import 边；W1 机械核未声明跨模块访问；W4 机械核对象→所有者一对一与写入点归属一致。"
+      caveat: "0 条 escalate：W1 由人工核转 pass，W2/G7 按机械口径判 fail；7 条 fail 是调查结论，非接线缺口，补齐对应字段后重判；W1/W4 的 pass 依赖人类确认记录，不是机械校验。"
       gap_refs: ["D-9"]
-      gap_status: "已闭合（D-9）：接线与首轮全量证据齐备；剩余 escalate 是判定结果，不是接线缺口。"
+      gap_status: "已闭合（D-9）：接线与首轮全量证据齐备；escalate 已清零（W1 人工核转 pass，W2/G7 判 fail），7 条 fail 是判定结论，不是接线缺口。"
 
     - id: 5
       name: "评审点集合（8.2.7 裁剪后）已排期且有责任人"
@@ -215,21 +223,21 @@ grounding_acceptance:
     fail: 0
     pass_ids: [1, 2, 3, 4, 5, 6]
     fail_ids: []
-    grounding: "已接地（六判据全过，6/6；真实分布 pass 31 / fail 5 / escalate 3 / vacuous 9，fail＝X2／X5／T4／T6／G3）"
-    delta: "保持 6/6（W4 依人类确认转 pass；真实分布 pass 31 / fail 5 / escalate 3 / vacuous 9，此前为 pass 30 / fail 5 / escalate 4 / vacuous 9）"
+    grounding: "已接地（六判据全过，6/6；真实分布 pass 32 / fail 7 / escalate 0 / vacuous 9，fail＝X2／X5／T4／T6／G3／W2／G7）"
+    delta: "保持 6/6（W1 人工核转 pass；W2/G7 判 fail；真实分布 pass 32 / fail 7 / escalate 0 / vacuous 9，此前为 pass 31 / fail 5 / escalate 3 / vacuous 9）"
     consequence: "按 10.2.5，接地验收已过，决策不再因判据四而强制 provisional。ADR-DP1-STYLE 的决策记录状态已于 2026-11-13 按 SM-DR `provisional → approved`（trigger `retro_approve`，权限 human）由人类 `user` 事后追认，Agent 未自批。"
 
   evaluability_conclusion:
     card_evaluable: true
     basis: "8 张实质卡均有 S0–S6 与逐目标 verdict；F1 pass、F3 39/39、E4 match。"
     decision_effective: true
-    basis_2: "六判据全过（6/6），接地成立；真实分布 pass 31 / fail 5 / escalate 3 / vacuous 9；5 条 fail（X2／X5／T4／T6／G3）与 3 条 escalate（W1/W2/G7）均为域数据未满足、未登记或需人工核，属有效结论，不否定判据四。V1 为弱校验 pass，W4 为人工核 pass，均已列入打包升级。"
+    basis_2: "六判据全过（6/6），接地成立；真实分布 pass 32 / fail 7 / escalate 0 / vacuous 9；7 条 fail（X2／X5／T4／T6／G3／W2／G7）均为域数据未满足或未验证，属有效结论，不否定判据四；escalate 已清零。V1 为弱校验 pass，W1/W4 为人工核 pass，均已列入打包升级。"
     closed_this_round: [4]
     still_pending: []
     caveats:
       - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；2026-12-31 到期未转则强制转 confirmed_absent 并按 9.3 判部署形态可行性缺陷"
       - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
       - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"
-      - "判据四 pass 只证明接线与全量执行证据；39 条中 5 条 fail、3 条 escalate、9 条 vacuous，不等于 39 条性质均成立；V1 为弱校验、W4 为人工核"
+      - "判据四 pass 只证明接线与全量执行证据；39 条中 7 条 fail、0 条 escalate、9 条 vacuous，不等于 39 条性质均成立；V1 为弱校验、W1/W4 为人工核"
       - "判据一 pass 的右项为 0.7 声明值，兜底指纹覆盖自动发现的全部 14 个机器层谓词块（134 行）；若母本新增/删除谓词块而版本未递增，PV-3 会点名失败"
       - "ADR-DP1-STYLE 已于 2026-11-13 转为 approved（SM-DR `provisional → approved`，retro_approve，human `user`）；批准证据指针为 2026-11-13 本轮对话人类口头批准"

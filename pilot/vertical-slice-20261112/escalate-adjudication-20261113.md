@@ -149,3 +149,17 @@
 - 归属：`observer` → `events.jsonl` 写入权；`index` → 创建/配置权。
 - W4 escalate→**pass**，属**人工核结论**而非机械校验；与 V1 同列 `weak_checks`／`packed_upgrade`。
 - **现行分布**：pass 31 / fail 5 / escalate 3 / vacuous 9；10.2.5 v1.10.0 仍 6/6（附同一分布）。剩余 escalate：W1、W2、G7。
+
+## 11 批 B 第四步（2026-11-14）：收掉最后三条 escalate
+
+人类批准收口，三条结局如下（详见 run-log §25）：
+
+| 性质 | 结局 | 性质标注 | 依据 |
+|---|---|---|---|
+| W1（接缝封闭） | **pass** | **人工核结论，非机械校验** | 白板 `human_review` 登记：`approved_by=user`、`approver_kind=human`、`2026-11-14`；结论覆盖 9 个单元（含 `index`、`loop-entry`），无未声明跨模块访问、无例外 |
+| W2（可独立验证） | **fail** | **机械判定** | `index`、`loop-entry` 无独立测试（`2/9` 个单元）；数据在案，非空真 |
+| G7（P2 告警） | **fail** | **机械判定** | `GR-005` 登记为 P2 信号（有阈值、无 `trend_window`） |
+
+- W1 与 W4 同类，均以 `human_review` 登记，**不得计入机械校验通过**；已与 V1、W4 打包为将来机械校验升级项。
+- **现行分布**：pass 32 / fail 7 / escalate 0 / vacuous 9；10.2.5 v1.11.0 仍 6/6（附同一分布）。
+- 7 条 fail：X2、X5、T4、T6、G3、W2、G7；**escalate 已清零**。
