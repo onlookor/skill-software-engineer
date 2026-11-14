@@ -1,8 +1,12 @@
-# 10.2.5 接地编译验收判据：pact-dsh（2026-11-13 第六轮）
+# 10.2.5 接地编译验收判据：pact-dsh（2026-11-14 第七轮）
 #
 # 依据：母本 10.2.5 六判据；判据六字段形态见 0.17.4 grounding_status（母本 @3497）；
 #   0.5.1（批准角色注册表）；7.3/8.3/9.3（三处部署可行性勘察）。
 # 性质：pilot 验收记录，不是母本条款。
+# 判据四口径（人类裁定，2026-11-14）：39 条硬性质**全部具备可复现 verdict 即成立**；
+#   fail 与 escalate 是有效判定结论，不计为判据不成立，也不构成豁免。
+#   现行真实分布：pass 29 / fail 4 / escalate 6 / vacuous 9（fail＝X2／X5／T4／G3）。
+#   本文件中凡出现 6/6，均须附该分布，不得单独引用。
 # 沿革：
 #   v1.0.0 → v1.1.0（第三轮）：补齐判据五五个评审点触发点与判据六 P0 的 deadline；判据一/二/四维持 fail。
 #   v1.1.0 → v1.2.0（第 3 批后重跑）：产物升 pilot-20261112.6；六判据全量复核，仍 3/6。
@@ -11,13 +15,24 @@
 #   v1.3.0 → v1.4.0（本轮，判据一闭合）：母本 0.7 追加 pattern_version 语义版本定义、0.21.6 声明 pv-1.0；
 #     新增兜底检查器 registry/scripts/check_pattern_version.py 与 pattern_version_baseline.yaml；
 #     白板填 pv-1.0；判据一 fail→pass，**5/6**；判据四仍 fail。
+#   v1.4.0 → v1.5.0（本轮，判据四闭合）：8 张实质卡＋10 张躯干卡机械生成；
+#     8 份 FVR 集（v1.1.0）接 39 条硬性质；首轮全量 fvr-full-run-1.json；
+#     判据四 fail→pass，**6/6**（现行分布 pass 29 / fail 4 / escalate 6 / vacuous 9）。空真复核：13 条由空真改为 escalate（域数据源未登记）。
+#   v1.5.0 → v1.6.0（2026-11-13，治理记录回填）：ADR-DP1-STYLE 按 SM-DR `provisional → approved`
+#     （retro_approve，human `user`）转 approved；新建 registry/compilation_regime_changes.yaml
+#     （3 条，均人类批准，哈希链连续）；approval_registry 升 1.1.0（新增「编译规程变更」类，5 类决策）；
+#     E7 由 escalate 转 pass，escalate 14→13；六判据仍 **6/6**（现行分布 pass 29 / fail 4 / escalate 6 / vacuous 9）。
+#   v1.6.0 → v1.7.0（2026-11-14，批 A 登记与判定升级）：9 个「存在即 pass」检查器
+#     （V2/X1/X2/X5/X6/T4/T6/G3/G7）升级为内容校验；白板基线三处修正（artifact .9／style approved／10.2.5 6/6，现行分布 pass 29 / fail 4 / escalate 6 / vacuous 9）；
+#     批 A 登记 module_inventory/unit_test_inventory/connects/contract/deploy_strategy/shared_data_access；
+#     实跑分布 pass 29 / fail 4 / escalate 6 / vacuous 9；六判据仍 **6/6**（附同一分布，fail＝X2／X5／T4／G3）。
 grounding_acceptance:
-  id: "GA-PACT-DSH-20261112-4"
-  version: "1.4.0"
+  id: "GA-PACT-DSH-20261112-5"
+  version: "1.7.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-13T14:40:00+08:00"
+  executed_at: "2026-11-14T10:30:00+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.8"
+  artifact: "pilot-20261112.9"
   not_in_scope_this_round: []
 
   criteria:
@@ -39,34 +54,52 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.1.0 → 成立"
-        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.0.0 → 成立"
+        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.1.0（5 类决策，含「编译规程变更」）→ 成立"
         - "守护规则注册表：registry/guard_registry.yaml，GRD v1.0.0，5 条（draft）→ 成立（非空且版本在案）"
-        - "FVR：registry/fvr_registry.yaml，FVRREG v1.0.0，1 个 FVR 集（G-CAND-01 v1.0.0，sha d25aa220…）→ 成立"
+        - "FVR：registry/fvr_registry.yaml，FVRREG v1.1.0，8 个 FVR 集（G-CAND-01..08），39 条硬性质 → 成立"
         - "投影规则：registry/projection_registry.yaml，PRJREG v1.0.0，4 条现行规则（PR-01～04，active）→ 成立"
-      reason: "5/5 均非空且带 registry_version。**但 pass 只证明注册面存在与版本在案**：守护规则 5 条均为 `draft`，尚未取得 9.2.2 要求的完整 ADR＋批准，不可消费；FVR 集仍只接 6 条性质（判据四另计）。"
+      reason: "5/5 均非空且带 registry_version。**但 pass 只证明注册面存在与版本在案**：守护规则 5 条均为 `draft`，尚未取得 9.2.2 要求的完整 ADR＋批准，不可消费；FVR 集已覆盖 39 条硬性质（接线与执行证据见判据四）。"
       count: "5/5"
-      caveat: "守护规则 draft→active 需 9.2.2 批准；FVR 索引版本已登记但条目集覆盖率问题不因本判据闭合而消失。"
+      caveat: "守护规则 draft→active 需 9.2.2 批准。"
       gap_refs: ["D-13", "D-22", "D-23", "D-24"]
 
     - id: 3
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
       verdict: "pass"
       evidence:
-        - "G-CAND-01.card.yaml artifact_version = pilot-20261112.8"
-        - "artifact.yaml version.label = pilot-20261112.8；registry_version = 1.1.0；framework_version = sha256:c0bb9879…17c4510"
-        - "check-card.py E4: match=true（见 fidelity.json）"
-      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。母本同日更正后哈希为 c0bb9879…，artifact／卡片／ADR 两处／本文件证据同步更新；label 保持 .8（更正不递增序号）。"
+        - "18 张卡片 artifact_version 均为 pilot-20261112.9"
+        - "artifact.yaml version.label = pilot-20261112.9；registry_version = 1.1.0；framework_version = sha256:c0bb9879…17c4510"
+        - "check-card.py --all E4: match=true（见 fidelity-all.json）"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。本轮新增 18 张卡与 8 份 FVR，产物序号 8→9。"
       gap_refs: ["D-3"]
 
     - id: 4
       name: "全部硬性质 FVR 接线完成且首轮全量执行有证据工件"
-      verdict: "fail"
+      verdict: "pass"
       evidence:
-        - "check-card.py F3：母本硬性质 39 条，卡片覆盖 5 条（M10/M11/M12/M14/M15），缺 34 条"
-        - "fvr-G-CAND-01.yaml：6 条硬性质接线（含软性质 M13 与 E4），无『首轮全量执行』证据工件"
-      reason: "本轮口径明确不追 39 条全认领（切片口径），故此项保持 fail；切片口径不是规范判据。"
-      count: "5/39"
+        - "卡片集：18 张（8 实质卡 G-CAND-01..08＋10 躯干卡），由 registry/scripts/gen_cards.py 从母本 0.18.2 S0–S6 机械生成"
+        - "FVR：8 份 fvr-G-CAND-0X.yaml（v1.1.0），39 条硬性质各接一个 registry/checks/ 下真实检查器，wired: true"
+        - "首轮全量：pilot/vertical-slice-20261112/fvr-full-run-1.json，39 行 verdict（hard=39 executed=39；2026-11-14 复跑，9 个检查器升级为内容校验）"
+        - "实跑分布：pass 29 / fail 4 / escalate 6 / vacuous 9（空真清单见 vacuous-inventory.md）"
+        - "check-card.py --all：F1=pass，F2=escalate，F3(full)=pass 39/39，E4 match=true，exit=0"
+        - "runner E3：pass（39/39 有 FVR 条目、检查程序与首轮 verdict）"
+      reason: "判据四的两要件均成立：全部 39 条硬性质有 FVR 条目并接到可执行检查器；全量执行有落盘工件。**pass 不代表 39 条全部 pass**：9 条检查器由「键存在即 pass」升级为内容校验后，揭示 4 条真实 fail；6 条 escalate 仍为域数据源未登记（批 B 未落）；9 条 vacuous 中 X6 为显式空集（shared_data_access: []）。"
+      interpretation:
+        rule: "39 条硬性质**全部具备可复现 verdict 即成立**；fail 属有效结论，不计为判据四不成立。"
+        source: "人类裁定，2026-11-14（父会话转达）"
+        not_an_exemption: "fail 是判定结论而非豁免：它记录真实缺陷，不把未满足的性质记成 pass。"
+        distinction: "escalate（数据源未登记、不可判）与 fail（数据在案、判定不满足）都属可复现结论；二者均不阻断判据四，但都必须逐条登记。"
+      count: "39/39 接线；verdict pass 29 / fail 4 / escalate 6 / vacuous 9"
+      known_defects:
+        status: "在案，不在本轮修复范围"
+        items:
+          - "X2：CT-PACT-BACKEND-01 缺 compat_policy（version 已在）"
+          - "X5：CT-PACT-BACKEND-01 为 published，但无 ADR"
+          - "T4：9 个单元中 index、loop-entry 无测试（D-C：入口单元按独立单元计）"
+          - "G3：DEP-PACT-DSH-01 缺 rollback 与 compatible_with_style"
+      caveat: "6 条 escalate（V1/W1/W2/W4/T6/G7）需补登记依赖规则/模块归属/契约测试/P2 信号，属批 B，不在本轮范围；4 条 fail 是调查结论，非接线缺口，补齐对应字段后重判。"
       gap_refs: ["D-9"]
+      gap_status: "已闭合（D-9）：接线与首轮全量证据齐备；剩余 escalate 是判定结果，不是接线缺口。"
 
     - id: 5
       name: "评审点集合（8.2.7 裁剪后）已排期且有责任人"
@@ -119,7 +152,7 @@ grounding_acceptance:
       name: "部署可行性勘察结论已登记（批准角色存在性、P0 响应能力、CI 能力）"
       verdict: "pass"
       evidence:
-        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.0.0）"
+        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.1.0）"
         - "P0 响应：undetermined（仓库无值班/告警/pager 登记）"
         - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
       reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 为 undetermined，且已附 conversion_event 与 deadline（2026-12-31）→ 声明完整，判据成立。**pass 只代表声明完整，不代表 P0 响应能力存在。**"
@@ -128,13 +161,13 @@ grounding_acceptance:
           state: "confirmed_present"
           declared_by: "user"
           declared_at: "2026-11-12T23:10:00+08:00"
-          evidence: "registry/approval_registry.yaml（sha256 a0457a4e3b8f197f29cee2051ae91b8a5a93827766b831493c94c4926a529013），pact-dsh v1.0.0，4 类决策，主批准人 user"
+          evidence: "registry/approval_registry.yaml（sha256 9658bc9f24fda9b6a1010bd54fa5db36239904fa83b5a8638c527a444f4530f2），pact-dsh v1.1.0，5 类决策，主批准人 user"
           source: "人类用户 user 于 2026-11-12 裁定"
           conversion_event: null
           deadline: null
           confirmed_by: "user"
           confirmed_at: "2026-11-12T23:10:00+08:00"
-          version: "approval_registry 1.0.0"
+          version: "approval_registry 1.1.0"
         - dimension: "p0_response"
           state: "undetermined"
           declared_by: "user"
@@ -162,24 +195,25 @@ grounding_acceptance:
       gap_status: "本轮以人类批准的具体 deadline 闭合记录缺口；『无生产排期』这一事实未消除，deadline 为决策日期而非排期日期。"
 
   summary:
-    pass: 5
-    fail: 1
-    pass_ids: [1, 2, 3, 5, 6]
-    fail_ids: [4]
-    grounding: "未接地（判据四未闭合）"
-    delta: "4/6 → 5/6（判据一由 fail 转 pass：母本 0.7 定义模式版本、0.21.6 声明 pv-1.0、白板填同值；兜底检查器 pass）"
-    consequence: "按 10.2.5 末段：未过验收判据而产出的设计决策全部标 provisional；ADR-DP1-STYLE 仍为 provisional（判据四未过）。"
+    pass: 6
+    fail: 0
+    pass_ids: [1, 2, 3, 4, 5, 6]
+    fail_ids: []
+    grounding: "已接地（六判据全过，6/6；真实分布 pass 29 / fail 4 / escalate 6 / vacuous 9，fail＝X2／X5／T4／G3）"
+    delta: "保持 6/6（判据四内部收紧：9 个检查器由存在性判定升级为内容校验；真实分布 pass 29 / fail 4 / escalate 6 / vacuous 9，此前为 pass 26 / fail 0 / escalate 13 / vacuous 8）"
+    consequence: "按 10.2.5，接地验收已过，决策不再因判据四而强制 provisional。ADR-DP1-STYLE 的决策记录状态已于 2026-11-13 按 SM-DR `provisional → approved`（trigger `retro_approve`，权限 human）由人类 `user` 事后追认，Agent 未自批。"
 
   evaluability_conclusion:
     card_evaluable: true
-    basis: "S4 v1.3.0 有逐目标 verdict（4×reachable_with_cost，逐行 proof_strength=analytic_upper_bound）；S6 有批准（user）与完整 ADR；E4 一致。卡片可评估。"
-    decision_effective: false
-    basis_2: "10.2.5 为 5/6；判据四（FVR 5/39）仍 fail，决策只能以 provisional 存在。"
-    closed_this_round: [1]
-    still_pending: [4]
+    basis: "8 张实质卡均有 S0–S6 与逐目标 verdict；F1 pass、F3 39/39、E4 match。"
+    decision_effective: true
+    basis_2: "六判据全过（6/6），接地成立；真实分布 pass 29 / fail 4 / escalate 6 / vacuous 9；4 条 fail（X2／X5／T4／G3）与 6 条 escalate 均为域数据未满足或未登记，属有效结论，不否定判据四。"
+    closed_this_round: [4]
+    still_pending: []
     caveats:
       - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；2026-12-31 到期未转则强制转 confirmed_absent 并按 9.3 判部署形态可行性缺陷"
       - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
       - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"
-      - "判据三 pass 只证明卡片与产物标签一致；本产物是切片（1 张卡），F3 全量仍 fail（判据四）"
+      - "判据四 pass 只证明接线与全量执行证据；39 条中 4 条 fail、6 条 escalate、9 条 vacuous，不等于 39 条性质均成立"
       - "判据一 pass 的右项为 0.7 声明值，兜底指纹覆盖自动发现的全部 14 个机器层谓词块（134 行）；若母本新增/删除谓词块而版本未递增，PV-3 会点名失败"
+      - "ADR-DP1-STYLE 已于 2026-11-13 转为 approved（SM-DR `provisional → approved`，retro_approve，human `user`）；批准证据指针为 2026-11-13 本轮对话人类口头批准"

@@ -616,3 +616,218 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 **整改**：0.7 @220 改称「白板谓词集（各节机器层谓词块之并）」并同处声明 `pattern_version: pv-1.0`；删除 0.21.6 @865 行尾注释；`check_pattern_version.py` 改为自动发现全部块（不写死数量），PV-0 打印块清单，PV-3 校验块数／节归属／指纹并可点名增删；基线重算为 14 块、aggregate `0753e743…`。artifact 保持 `.8`。
 
 **实跑**：PV-0/1/2/3 全 pass（14 块、134 行）；`project.py --check` 硬失败 0；`--project` F-11 pass（自检报告 Δlines 21，waiver `ADR-DP1-STYLE`）；`check-card.py` E4 match=True（`.8`）、F1 pass、F2 escalate、F3 5/39；`anchor_index` 全 pass、冻结锚 2,937、漂移 0。判据一仍 pass，10.2.5 **5/6**。
+
+---
+
+## 19 判据四闭合（2026-11-13）：卡片集、FVR 接线与首轮全量
+
+### 19.1 产出
+
+- `registry/scripts/gen_cards.py`：从母本 0.18.2 S0–S6 与 kind 剖面机械生成 8 张实质卡（G-CAND-01..08）＋10 张躯干卡（G-TRUNK-OWN/CSL/DFL/STP/SCH/RLP/DPS/CRD/CFG/SRC），共 18 张。步骤动作逐字取母本；躯干卡只含 `outputs.predicate_writes` 与 `registry_refs`。
+- 闭包自检：DAG 无环（单链 18 节点）、被引用卡全部存在、每个 `upstream_predicate` 有写者；跨方面认领写 `cross_aspect_claims`（含 `owner_of_record`）。
+- `gen_cards.py --fvr`：8 份 `fvr-G-CAND-0X.yaml`（v1.1.0），每条 `property_id` 接 `registry/checks/` 下真实检查器，`wired: true`；`registry/fvr_registry.yaml` 升 1.1.0（8 集、39 条）。
+- `artifact.yaml`：`.8 → .9`（seq 9），卡片清单 18 条＋`dependency_graph`；registry_snapshot 的 fvr_registry 升 1.1.0。
+
+### 19.2 E7 待批：编译规程变更批准记录所需形态
+
+`E7` 现为 escalate：changlog 有「编译规程变更权」与编译规范修订记录，但没有可机读的批准记录。补齐以下记录后 E7 可判定：
+
+1. **前置**：在 `registry/approval_registry.yaml` 增加决策类 `编译规程变更`，主批准人登记为人类用户（`user`），并在 `approval_role_instances` 中给出 `confirmed_present`。当前 4 类中没有这一类，属注册表变更（高影响）。
+2. **记录文件**：`registry/compilation_regime_changes.yaml`（新表），每条至少含：
+   - `change_id`、`changed_at`（ISO8601）
+   - `scope`：被改条款/章节 ID 列表
+   - `from_sha256` / `to_sha256`：编译规范文件前后指纹
+   - `summary`
+   - `approved_by`：必须是人（`user`），`approver_kind: human`
+   - `approval_role_class: 编译规程变更`
+   - `approved_at`、`approval_evidence`（ADR ID＋会话消息指针）
+   - `artifact_seq`、`status: approved`
+3. **谁批准**：`approval_registry.yaml` 中「编译规程变更」类主批准人；不得由 agent 自批。
+4. **判定**：E7 检查器读到 `status=approved` 且 `approved_by` 为人时转 pass；缺任一字段仍 escalate。
+
+### 19.3 空真复核
+
+首轮 21 条候选空真经复核：8 条为真空真（M8/M14/M20/M25/W7/R8/E1/E2），13 条属「域数据源未登记」不算空真（V1/V2/W1/W2/W4/X1/X2/X5/X6/T4/T6/G3/G7），检查器已改为 `escalate`。清单见 `vacuous-inventory.md`。
+
+### 19.4 实跑
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 pass=25 fail=0 escalate=14 vacuous=8 |
+| E3 | pass（39/39 FVR 条目＋检查程序＋首轮 verdict） |
+| `check-card.py --all` | cards=18 F1=pass F2=escalate F3(full)=39/39 E4 match=True exit=0 |
+| `check_pattern_version.py` | PV-0/1/2/3 全 pass，14 块，aggregate 0753e743… |
+| `project.py --check` | 硬失败 0、软警告 20、占位符 1,481＝事实 1＋槽 1,480 |
+| `project.py --project` | F-11 pass，Δkeys 0、Δfps 0、Δlines 0 |
+| `anchor_index.py` | failures []；frozen_anchors 2,939；drift 0；assertions 仅 info |
+| 10.2.5 | **6/6**（判据四 fail→pass），v1.5.0；当时分布 pass 25 / fail 0 / escalate 14 / vacuous 8。现行 v1.7.0 分布 pass 29 / fail 4 / escalate 6 / vacuous 9（fail＝X2／X5／T4／G3） |
+
+- 母本未改动（行数 4,811、sha256 c0bb9879…）；未推送。
+- ADR-DP1-STYLE 仍标 provisional：转 approved 属 SM-DR 迁移，本轮未自动执行。
+
+---
+
+## 20 治理回填（2026-11-13）：ADR 转 approved、编译规程变更登记与 E7 转 pass
+
+### 20.1 人类裁定（两项，本轮执行）
+
+1. ADR-DP1-STYLE 转 `approved`，按 SM-DR 正式迁移、不跳级。
+2. 建 E7 所需批准记录并回填既有母本改动；`approved_by` 一律 `user`/human，不得 agent 自批；无批准依据者标待补。
+
+### 20.2 ADR-DP1-STYLE：`provisional → approved`
+
+| 项 | 值 |
+|---|---|
+| 迁移 | `provisional → approved`，trigger `retro_approve`，权限 human（母本 SM-DR 迁移表 @780） |
+| 完整链 | `blocked → under_review → approved → provisional → approved`（不跳级） |
+| 批准人 | `user`（`approver_kind: human`） |
+| 批准时间 | 2026-11-13 |
+| 批准证据 | 人类口头批准，来源＝2026-11-13 本轮对话（父会话转达） |
+| 同步落点 | ADR 头部＋§2＋§7＋§8＋§10；`10.2.5` 的 `consequence` 与 caveat；`artifact.yaml` 的 `verdicts.adr`（含 `state_history` / `last_transition`）；`checks/v.py::v5` 改为解析状态行 |
+
+10.2.5 版本：v1.5.0 → **v1.6.0**（与第二项一并推进，避免为空改版本）。
+
+### 20.3 批准登记面
+
+- `registry/approval_registry.yaml` 升 **1.1.0**：新增决策类「编译规程变更」，主批准人 `user`（human），`backup_chain: []`，时限 48h；`GOV-PACT-001` 由「四个决策类」改「五个」。
+- 新建 `registry/compilation_regime_changes.yaml`（v1.0.0，3 条）：字段按裁定形态；`from/to` 由 git 实算，不估算；哈希链首尾相接且末条 `to_sha256` ＝母本现行 `c0bb9879…`。
+
+| change_id | commit | scope | from → to（前 8 位） | artifact_seq |
+|---|---|---|---|---|
+| `CRC-PACT-DSH-20261112-01` | `e7afd07` | 0.8（D-21-A）＋0.5.1（D-20-A） | `6d4b0100` → `413e3ac4` | 6 |
+| `CRC-PACT-DSH-20261113-02` | `2b58c19` | 0.7 定义＋0.21.6 声明 | `413e3ac4` → `8d9577f4` | 8 |
+| `CRC-PACT-DSH-20261113-03` | `a171cb1` | 0.7 改称＋删除 0.21.6 行尾注释（更正，取代 -02 对 0.21.6 的声明） | `8d9577f4` → `c0bb9879` | 8 |
+
+### 20.4 E7 判定口径
+
+`e.py::e7` 不再扫 changlog 文本，改读 `compilation_regime_changes.yaml`：
+
+- 任一条 `approver_kind ≠ human` 或 `approved_by` 非人 → **fail**（0.25.1：Agent 不得自行修改编译规程）；
+- 任一条 `status ≠ approved` → **escalate**，点名待补项（不补假批准）；
+- `from/to` 断链，或末条 `to_sha256 ≠ 母本现行哈希` → **fail**（母本改了但未登记）。
+- 表不存在 → escalate；表存在但无记录 → 空真 pass。
+
+### 20.5 实跑
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 **pass=26** fail=0 **escalate=13** vacuous=8 |
+| E7 | **pass**（3 条均人类批准，哈希链连续，末条＝母本现行 `c0bb9879…`） |
+| E3 / E5 | pass / pass（39/39） |
+| `check-card.py --all` | cards=18 F1=pass F2=escalate F3(full)=39/39 E4 match=True exit=0 |
+| `check_pattern_version.py` | PV-0/1/2/3 全 pass，14 块，aggregate 0753e743… |
+| `project.py --check` | 记录 1,240 条；硬失败 0；软警告 20；占位符 1,481＝事实 1＋槽 1,480 |
+| `project.py --project` | F-11 pass，Δkeys 0、Δfps 0、Δlines 0 |
+| `anchor_index.py` | failures []，frozen_anchors 2,939，live 3，drift 0（`by_drift: n/a` 全部）；F-1～F-10/CFG-01 全 pass |
+| 10.2.5 | **6/6**，v1.6.0；当时分布 pass 26 / fail 0 / escalate 13 / vacuous 8。现行 v1.7.0 分布 pass 29 / fail 4 / escalate 6 / vacuous 9（fail＝X2／X5／T4／G3） |
+
+注：`fvr-full-run-1.json` 已由本次复跑覆盖（现为 pass 26／escalate 13）；首轮分布 pass 25／escalate 14 见 §19.4 与本文件 git 历史。复跑未改任何检查器的判定口径，唯一变化是 E7 读取新的批准登记表。
+
+### 20.6 「待补批准依据」清单
+
+**空。** 三条改动均有可指认的人类批准依据：
+
+- `e7afd07`：人类口令「人类批准按你推荐的方案、打包方式与排序执行……第 3 批（母本修订，一次做完）」，落于 `软件工程元框架成文法-changlog.md`「2026-11-12：试点第 3 批」节（逐字口令）。
+- `2b58c19`：人类裁定「判据一走路线 A」，落于 run-log §18＋`options-criterion1-20261113.md`（**转述**，非逐字口令）。人类已于 2026-11-13 明确确认该转述构成批准（**已追认**，`status` 维持 approved，不转 pending）。
+- `a171cb1`：人类裁定「走方案甲」，并要求 0.7 改称「白板谓词集」、删除 0.21.6 行尾注释（本轮会话逐字转述，落于 run-log §18.5）。
+
+未补任何假批准；母本未改动、未推送。
+
+---
+
+## 21. 第七轮（2026-11-14）：批 A 登记与 9 个检查器升级
+
+### 21.1 人类裁定（D-A～D-D）
+
+| 编号 | 裁定 | 本轮落地 |
+|---|---|---|
+| D-A | 批准新增白板登记键，采用白名单，只收母本已定义的键名 | 只在 `whiteboard.domain_data` 下登记母本键名，未自造键 |
+| D-B | 先升级 9 个「存在即 pass」检查器为真校验，再补登记 | V2/X1/X2/X5/X6/T4/T6/G3/G7 全部改为校验内容 |
+| D-C | X6 记 vacuous；`index.js`／`loop.js` 按独立单元计 | `shared_data_access: []` 显式空集 → vacuous；模块清单含两个入口，T4 按 9 个单元判定 |
+| D-D | 先修白板基线，再按 W1/W2 → T4 → X2/X5 → X1 → G3 落批 A | 基线三处已修；批 A 数据已登记；登记人 `user`，agent 不自批 |
+
+批 B（V1/V2/W4/X6/T6/G7 及 G3 回滚部分的新数据）不在本轮范围。
+
+### 21.2 检查器升级口径
+
+统一三态语义（`common.py` 新增 `whiteboard_doc()`／`domain_data()`）：
+
+- **数据源未登记**（键不存在）→ `escalate`，写明缺哪个键；
+- **显式空集**（键存在且为空）→ `pass` + `vacuous: true`；
+- **数据在案但不满足** → `fail`，逐条点名不满足的条目。
+
+| 检查器 | 升级后的校验内容 |
+|---|---|
+| V2 | 每条 connects 的 `protocol` 必须 ∈ style 允许协议集；空集 vacuous |
+| X1 | 每条 connects 必须被某契约（provider＋consumer）覆盖 |
+| X2 | 每份契约必须有 `version` 与 `compat_policy` |
+| X5 | `lifecycle: published` 的契约必须带 `adr` 且 ADR 状态 approved |
+| X6 | 非空时四条件（`weak_coupling`／`read_only_or_single_writer`／`no_cross_unit_transaction`／`via_data_contract`）均须 True；空集 vacuous |
+| T4 | 每个单元须有非空测试；入口单元按独立单元计（D-C） |
+| T6 | 已发布契约须有 `contract_tests` 且 `in_ci: true` |
+| G3 | 每条部署策略须有 `rollback` 真值且 `compatible_with_style is True` |
+| G7 | 每条 P2 信号须有 `alarm_threshold` 与 `trend_window` |
+
+### 21.3 白板基线修三处（D-D 前置）
+
+1. `artifact_version`: `pilot-20261112.8` → `.9`（卡片与 artifact.yaml 早已是 `.9`）；
+2. `style.state`: `provisional` → `approved`（与 2026-11-13 SM-DR 迁移一致），`note` 改 6/6（v1.6.0；现行 v1.7.0 真实分布 pass 29 / fail 4 / escalate 6 / vacuous 9，fail＝X2／X5／T4／G3）；
+3. 白板内 `grounding_status`: 1/6 → 6 比 0（v1.6.0）。
+
+### 21.4 批 A 登记内容与数据来源
+
+`/home/user/projects/pact-dsh`（`dsh-plugin-pact` 0.1.2）勘察所得，全部为仓库现有事实，无估算：
+
+- `module_inventory`：9 项（`index`、`loop-entry`、`config`、`govern`、`loop-core`、`names`、`observer`、`pact-backend`、`wasm-backend`）；
+- `unit_test_inventory`：9 条；`index`、`loop-entry` 的 `test_files: []`；
+- `connects`：1 条（`loop-core → pact-backend`，协议 `同步请求-响应`）；
+- `contract`：`CT-PACT-BACKEND-01`（`version: "0.1.2"`，`compat_policy: null`，`lifecycle: published`，`adr: null`）；
+- `deploy_strategy`：`DEP-PACT-DSH-01`（`rollback: null`，`compatible_with_style: null`）；
+- `shared_data_access`：`[]`（显式空集）。
+
+### 21.5 实跑结果
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 **pass=29 fail=4 escalate=6 vacuous=9** |
+| 10.2.5 | **6/6**，v1.7.0（真实分布 pass 29 / fail 4 / escalate 6 / vacuous 9；fail＝X2／X5／T4／G3） |
+| `check-card.py --all` | cards=18 F1=pass F2=escalate F3(full)=39/39 E4 match=True exit=0 |
+| `check_pattern_version.py` | PV-0/1/2/3 全 pass，14 块，aggregate 0753e743… |
+
+`pass 29` 中含 9 条 vacuous（X6 为显式空集，其余为域本身无实例）。
+
+### 21.6 4 条 fail
+
+| 性质 | 原因 |
+|---|---|
+| X2 | `CT-PACT-BACKEND-01` 缺 `compat_policy` |
+| X5 | 该契约为 `published` 但 `adr: null`，无已批准 ADR |
+| T4 | 9 个单元中 `index`、`loop-entry` 无测试（D-C 口径） |
+| G3 | `DEP-PACT-DSH-01` 缺 `rollback` 与 `compatible_with_style` |
+
+这 4 条不是接线缺口，是升级为内容校验后揭示的真实数据缺口；补齐对应字段后重判。
+
+### 21.7 6 条剩余 escalate（批 B）
+
+V1（无 `dependency_rule`）、W1/W2（`module_inventory` 已登记但需人工核归属）、W4（无 `owned_by`）、T6（无 `contract_tests`）、G7（无 P2 信号）。均在 `escalate-adjudication-20261113.md` 批 B 清单内。
+
+**注**：V2 原在批 B，因 X1 需要 `connects` 才能判定，批 A 一并登记了 `connects`，V2 遂顺带具备数据源并转为 pass（协议在 style 允许集内）。这一项的口径变化由数据依赖导致，非扩大登记面。
+
+### 21.8 判据四口径（人类裁定，2026-11-14）
+
+**裁定**：39 条硬性质**全部具备可复现 verdict 即判据四成立**；fail 属有效结论，不计为判据不成立。10.2.5 维持 **6/6**、v1.7.0 不回退。
+
+**不是豁免**：fail 记录的是真实缺陷，不把未满足的性质记成 pass，也不降低判定力。它与 escalate（数据源未登记、不可判）同属可复现结论，二者都必须逐条登记。
+
+**现行真实分布**：pass 29 / fail 4 / escalate 6 / vacuous 9（此前 pass 26 / fail 0 / escalate 13 / vacuous 8）。凡引用 6/6 处均须同时给出该分布。
+
+**已知缺陷登记（在案，不在本轮修复范围）**：
+
+| 性质 | 缺陷 |
+|---|---|
+| X2 | `CT-PACT-BACKEND-01` 缺 `compat_policy` |
+| X5 | `CT-PACT-BACKEND-01` 为 `published`，但无 ADR |
+| T4 | `index`、`loop-entry` 无测试（D-C：入口按独立单元计） |
+| G3 | `DEP-PACT-DSH-01` 缺 `rollback` 与 `compatible_with_style` |
+
+该口径已同步写入 `10.2.5-verdict-pact-dsh.yaml` 判据四的 `interpretation`／`known_defects` 与文件头说明，以及 `artifact.yaml` 的 `scope_note`。

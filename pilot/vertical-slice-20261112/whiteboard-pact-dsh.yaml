@@ -1,18 +1,23 @@
-# 白板状态（试跑：pact-dsh / DP-1-STYLE）——2026-11-12 第二轮
+# 白板状态（试跑：pact-dsh / DP-1-STYLE）——2026-11-14 第四轮
 #
 # 依据：母本 0.7（白板谓词集）＋0.21（五状态机）＋0.21.6（机器层谓词）
 # 性质：pilot 记录，不是部署实例的正式白板。
-# 本轮变更（相对 v1）：S4 首次产出 verdict_table；S6 取得批准并写入 style；
-#   因 10.2.5 未过，决策记录落 provisional（SM-DR * → provisional / grounding_fail）。
+# 本轮变更（D-C/D-D 裁定）：基线同步（artifact .8→.9、style/SM-DR provisional→approved、
+#   10.2.5 1/6→6/6）；登记批 A 域数据（module_inventory、unit_test_inventory、
+#   contract、connects、deploy_strategy、shared_data_access 显式空集）。
 whiteboard:
   deployment: "pilot-pact-dsh"
   schema_ref: "0.7 谓词集 / 0.21.6 sm_state 正名"
   pattern_version: "pv-1.0"      # 母本 0.7 定义模式版本语义、0.21.6 声明现行值；D-10 已闭合
   version_vector:
     aspect_1: 1                  # +1：style(pact-dsh, …) 写入
+    aspect_2: 1                  # 批 A：module_inventory / unit_test_inventory
+    aspect_3: 1                  # 批 A：connects / contract / shared_data_access
     aspect_6: 1                  # +1：verdict_table 写入
+    aspect_8: 1                  # 批 A：契约测试与单元测试登记面
+    aspect_9: 1                  # 批 A：deploy_strategy
     aspect_10: 0                 # 无投影物化（D-11）
-  artifact_version: "pilot-20261112.8"
+  artifact_version: "pilot-20261112.9"
 
   committed:                     # 已写入（有 step_log 指针）
     - expr: "selection_context(DP-1-STYLE, F, C)"
@@ -53,8 +58,52 @@ whiteboard:
     - expr: "style(pact-dsh, (·, ·, 同步请求-响应, ·))"
       written_at: "S6"
       derived_by: "编译规范 5.7 P1–P3（R-1）"
-      state: "provisional"
-      note: "决策记录为 provisional：10.2.5 未过（1/6）；下游消费只许软约束 + 张力承认 ADR（7.2.5）"
+      state: "approved"
+      note: "决策记录 approved：10.2.5 6/6（v1.6.0）；2026-11-13 经 SM-DR provisional → approved（retro_approve，human user）追认"
+
+  domain_data:                   # 批 A 登记（D-A/D-D）；键名取母本硬性质原文
+    module_inventory:
+      - {id: index, path: index.js, role: "DSH host 插件装配入口（审计镜像）"}
+      - {id: loop-entry, path: loop.js, role: "agent-loop 行覆盖入口，组装 backendFor"}
+      - {id: config, path: src/config.js, role: "环境变量加载与配置校验"}
+      - {id: govern, path: src/govern.js, role: "PACT govern 钩子（preset/participant 路由）"}
+      - {id: loop-core, path: src/loop.js, role: "AgentLoop 子类，按 backendFor(key) 调用后端"}
+      - {id: names, path: src/names.js, role: "名称校验与 instance key 派生"}
+      - {id: observer, path: src/observer.js, role: "审计事件 JSONL 追加写入"}
+      - {id: pact-backend, path: src/pact-backend.js, role: "backend 契约定义＋内存 double"}
+      - {id: wasm-backend, path: src/wasm-backend.js, role: "pact-wasm host 适配器"}
+    unit_test_inventory:
+      - {unit: config, test_files: [test/config.test.js]}
+      - {unit: govern, test_files: [test/govern.test.js]}
+      - {unit: names, test_files: [test/names.test.js]}
+      - {unit: observer, test_files: [test/observer.test.js]}
+      - {unit: pact-backend, test_files: [test/fake-backend.test.js]}
+      - {unit: wasm-backend, test_files: [test/wasm-backend.test.js]}
+      - {unit: loop-core, test_files: [test/loop-routing.test.js]}
+      - {unit: index, test_files: []}
+      - {unit: loop-entry, test_files: []}
+    connects:
+      - from: loop-core
+        to: pact-backend
+        protocol: "同步请求-响应"
+        channel: "进程内函数调用（backendFor(key) → enabled/gates/seed/produce/consume/status）"
+        evidence: "src/loop.js 调用 backend 方法；src/pact-backend.js#L1-L8 契约注释"
+    contract:
+      - id: "CT-PACT-BACKEND-01"
+        provider: pact-backend
+        consumers: [loop-core]
+        version: "0.1.2"
+        compat_policy: null
+        lifecycle: published
+        adr: null
+        evidence: "src/pact-backend.js#L1-L8（backend contract）；FakePactBackend 与 wasm-backend 同形实现；package.json version 0.1.2（已发布 npm）"
+    deploy_strategy:
+      - id: "DEP-PACT-DSH-01"
+        mechanism: "npm 包发布（release.yml：tag + OIDC）＋ cordis.patch.yml 覆盖 agent-loop 行"
+        rollback: null
+        compatible_with_style: null
+        evidence: ".github/workflows/release.yml；cordis.patch.yml"
+    shared_data_access: []       # 显式空集：跨单元无共享数据；审计 JSONL 为单模块内写
 
   absent:                        # 按规程应写而未写
     - expr: "（无）"
@@ -70,21 +119,22 @@ whiteboard:
       resolved_at: "S6"
       evidence: "ADR-DP1-STYLE.md"
       prev_reason: "S6 (v) 批准不可达"
-      resolution: "批准角色注册表 registry/approval_registry.yaml v1.0.0；主批准人 user 批准"
+      resolution: "批准角色注册表 registry/approval_registry.yaml v1.1.0；主批准人 user 批准"
 
   pending_projection:
     - expr: "（无）"
       status: "materialized"
-      note: "style 已写入 committed（state=provisional）；投影物化 aspect_10 未推进（D-11，非本轮目标）"
+      note: "style 已写入 committed（state=approved）；投影物化 aspect_10 未推进（D-11，非本轮目标）"
 
   state_machines:
     SM-DR:
       decision: "ADR-DP1-STYLE"
-      state: "provisional"
+      state: "approved"
       transitions:
         - {from: "blocked", to: "under_review", trigger: "re_review", actor: "human(user)", at: "2026-11-12T21:29:21+08:00", basis: "障碍消除：批准角色注册表已登记"}
         - {from: "under_review", to: "approved", trigger: "approve", actor: "human(user)", at: "2026-11-12T21:29:21+08:00", basis: "R1 闭环：完整 ADR + 批准"}
         - {from: "approved", to: "provisional", trigger: "grounding_fail", actor: "system", at: "2026-11-12T21:29:21+08:00", basis: "10.2.5 未过（1/6），母本 10.2.5 末段"}
+        - {from: "provisional", to: "approved", trigger: "retro_approve", actor: "human(user)", at: "2026-11-13", basis: "10.2.5 达 6/6，临时保守通道经人类事后追认"}
       governance_risk: "GOV-PACT-001（备选链为空）"
 
   open_obligations:
@@ -109,4 +159,4 @@ whiteboard:
       status: "open"
       blocks: "S0 证据可复核性（不阻断本次投影）"
 
-  grounding_status: "10.2.5-verdict-pact-dsh.yaml（5 pass / 1 fail；判据四未闭合，仍未接地；判据一已闭合：pattern_version=pv-1.0）"
+  grounding_status: "10.2.5-verdict-pact-dsh.yaml v1.6.0（6 pass / 0 fail；判据四：39 条硬性质 FVR 接线＋全量执行；pattern_version=pv-1.0）；批 A 域数据已于 2026-11-14 登记"
