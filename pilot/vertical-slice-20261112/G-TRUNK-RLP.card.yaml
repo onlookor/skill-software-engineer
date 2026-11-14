@@ -1,0 +1,27 @@
+# G-TRUNK-RLP —— 机械生成卡（registry/scripts/gen_cards.py）
+# 编译源：软件工程元框架成文法.md（sha256 c0bb9879…）0.18.2 S0–S6 逐字动作；
+#   kind=RLP，方面=5；生成时间 2026-11-13。
+# 谓词写者与上下游按编译期 DAG 骨架分配；语义对应待后续批次按 0.18.4 精化。
+card_id: G-TRUNK-RLP
+version:
+  major: 0
+  minor: 1
+  patch: 0
+artifact_version: pilot-20261112.9
+outputs:
+  predicate_writes:
+  - idempotent
+  - delivery_semantics
+  - idempotency
+  - flag
+  - cleanup_filed
+  - expiry_of
+registry_refs:
+- RLP-001
+- RLP-002
+- RLP-003
+- RLP-004
+- RLP-005
+- RLP-006
+_kind: RLP
+_aspect: 5

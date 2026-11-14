@@ -1,0 +1,26 @@
+# G-TRUNK-STP —— 机械生成卡（registry/scripts/gen_cards.py）
+# 编译源：软件工程元框架成文法.md（sha256 c0bb9879…）0.18.2 S0–S6 逐字动作；
+#   kind=STP，方面=5；生成时间 2026-11-13。
+# 谓词写者与上下游按编译期 DAG 骨架分配；语义对应待后续批次按 0.18.4 精化。
+card_id: G-TRUNK-STP
+version:
+  major: 0
+  minor: 1
+  patch: 0
+artifact_version: pilot-20261112.9
+outputs:
+  predicate_writes:
+  - interaction_flow
+  - orchestrator
+  - saga
+  - step_class
+  - compensation
+  - timeout_budget
+  - quality_impact_card
+registry_refs:
+- STP-001
+- STP-002
+- STP-003
+- STP-004
+_kind: STP
+_aspect: 5

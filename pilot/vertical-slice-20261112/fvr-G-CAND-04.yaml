@@ -1,0 +1,62 @@
+# 由 registry/scripts/gen_cards.py --fvr 生成；勿手改条目接线。
+fvr_set:
+  id: FVR-PACT-DSH-G-CAND-04
+  version: 1.1.0
+  card: G-CAND-04
+  artifact_version: pilot-20261112.9
+  property_count: 4
+  owner_of_record: G-CAND-04
+  definition: 10.2.4 FVR_entry；检查器为 registry/checks/ 下的真实可执行函数
+fvr_entries:
+- property_id: X1
+  statement: '∀ interaction(u1,u2) ∈ connects: ∃C ∈ registry: covers(C,u1,u2)     // 无未登记跨单元交互 —— 硬'
+  source_section: '3.5'
+  check_program: registry/checks/x.py::x1
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=X1 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-04
+- property_id: X2
+  statement: '∀C(lifecycle_state=published): has(version) ∧ has(compat_policy)     // 版本与兼容策略齐备 —— 硬'
+  source_section: '3.5'
+  check_program: registry/checks/x.py::x2
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=X2 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-04
+- property_id: X5
+  statement: lifecycle_state(C) ∈ {published, deprecated} → ∃ approved(ADR(C))     // 发布即批准 —— 硬
+  source_section: '3.5'
+  check_program: registry/checks/x.py::x5
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=X5 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-04
+- property_id: X6
+  statement: '∀ shared_data_access: satisfies(3.2.3 四条件) ∧ explicitly_recorded   // 共享数据条件化 —— 硬'
+  source_section: '3.5'
+  check_program: registry/checks/x.py::x6
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=X6 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-04

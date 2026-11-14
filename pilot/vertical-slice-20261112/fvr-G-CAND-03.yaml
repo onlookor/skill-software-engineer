@@ -1,0 +1,75 @@
+# 由 registry/scripts/gen_cards.py --fvr 生成；勿手改条目接线。
+fvr_set:
+  id: FVR-PACT-DSH-G-CAND-03
+  version: 1.1.0
+  card: G-CAND-03
+  artifact_version: pilot-20261112.9
+  property_count: 5
+  owner_of_record: G-CAND-03
+  definition: 10.2.4 FVR_entry；检查器为 registry/checks/ 下的真实可执行函数
+fvr_entries:
+- property_id: M20
+  statement: A0 × A0 不相容 → FM-7 → 人类（框架无自动裁决路径）—— 硬
+  source_section: 0.19.6
+  check_program: registry/checks/m.py::m20
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=M20 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-03
+- property_id: M22
+  statement: '∀ failure_event: fm_classification 先于处置 ∧ 五要素工件齐备        // 穷举归类 —— 硬'
+  source_section: 0.20.4
+  check_program: registry/checks/m.py::m22
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=M22 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-03
+- property_id: M23
+  statement: ¬classifiable(fe) → FM-0 ∧ block(scope) ∧ gap_declaration(0.13/R2) // 逃逸阀闭合 —— 硬
+  source_section: 0.20.4
+  check_program: registry/checks/m.py::m23
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=M23 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-03
+- property_id: M24
+  statement: '∀ fm_classification: 按目录表路由执行（处置/介入/工件三列不得缺项）  // 路由忠实 —— 硬'
+  source_section: 0.20.4
+  check_program: registry/checks/m.py::m24
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=M24 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-03
+- property_id: M25
+  statement: 目录变更 → R2 ∧ 高影响ADR ∧ 提案源 ∈ {FM-0事件, 自举审查}          // 目录治理 —— 硬
+  source_section: 0.20.4
+  check_program: registry/checks/m.py::m25
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=M25 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-03

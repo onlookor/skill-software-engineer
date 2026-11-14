@@ -1,0 +1,114 @@
+# 由 registry/scripts/gen_cards.py --fvr 生成；勿手改条目接线。
+fvr_set:
+  id: FVR-PACT-DSH-G-CAND-06
+  version: 1.1.0
+  card: G-CAND-06
+  artifact_version: pilot-20261112.9
+  property_count: 8
+  owner_of_record: G-CAND-06
+  definition: 10.2.4 FVR_entry；检查器为 registry/checks/ 下的真实可执行函数
+fvr_entries:
+- property_id: V1
+  statement: ¬∃ cycle(forbidden_dependency)                    // 依赖规则无违例环 —— 硬
+  source_section: '1.5'
+  check_program: registry/checks/v.py::v1
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=V1 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06
+- property_id: V2
+  statement: '∀ connects(u1,u2,p): p ∈ allowed_protocols(S)     // 通信协议与风格自洽 —— 硬'
+  source_section: '1.5'
+  check_program: registry/checks/v.py::v2
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=V2 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06
+- property_id: V5
+  statement: '∀ style(scope,S) ∈ 高影响: ∃ approved(ADR(S))      // 批准路径已走（0.5/0.10）—— 硬'
+  source_section: '1.5'
+  check_program: registry/checks/v.py::v5
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=V5 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06
+- property_id: E1
+  statement: '∀ predicate_subset referenced_by(评审点): ∃ view_instance covering it   // 表达无缺口 —— 硬'
+  source_section: '10.5'
+  check_program: registry/checks/e.py::e1
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=E1 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06
+- property_id: E2
+  statement: '∀ view_instance: generated_from(snapshot) ∧ no_manual_divergence       // 同源生成 —— 硬'
+  source_section: '10.5'
+  check_program: registry/checks/e.py::e2
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=E2 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06
+- property_id: E3
+  statement: '∀ property(hard): ∃ fvr_entry ∧ wired ∧ first_full_run has evidence    // FVR 全覆盖 —— 硬'
+  source_section: 0.23.11
+  check_program: registry/checks/e.py::e3
+  static_dynamic: dynamic
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=E3 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06
+- property_id: E5
+  statement: ∀ check_program verdict ∈ {pass, fail, escalate} ∧ routed             // 三值路由唯一 —— 硬
+  source_section: 0.23.11
+  check_program: registry/checks/e.py::e5
+  static_dynamic: dynamic
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=E5 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06
+- property_id: E7
+  statement: compilation_regime 变更记录 → approved_by(human_role)                 // 编译规程自我修改禁令 —— 硬
+  source_section: 0.25.4
+  check_program: registry/checks/e.py::e7
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=E7 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-06

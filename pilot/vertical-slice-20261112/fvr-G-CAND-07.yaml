@@ -1,0 +1,49 @@
+# 由 registry/scripts/gen_cards.py --fvr 生成；勿手改条目接线。
+fvr_set:
+  id: FVR-PACT-DSH-G-CAND-07
+  version: 1.1.0
+  card: G-CAND-07
+  artifact_version: pilot-20261112.9
+  property_count: 3
+  owner_of_record: G-CAND-07
+  definition: 10.2.4 FVR_entry；检查器为 registry/checks/ 下的真实可执行函数
+fvr_entries:
+- property_id: T1
+  statement: '∀ property(hard): ∃ means ∈ plan: covers_check(property, ·)   // 硬性质无悬置 —— 硬'
+  source_section: '8.5'
+  check_program: registry/checks/t.py::t1
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=T1 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-07
+- property_id: T4
+  statement: '∀ unit M: test_suite(target ∋ M, layer=unit) ≠ ∅              // W2 执行域闭合 —— 硬'
+  source_section: '8.5'
+  check_program: registry/checks/t.py::t4
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=T4 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-07
+- property_id: T6
+  statement: '∀ C(lifecycle=published): 契约测试套件（3.5 注册的契约测试集合，含 X4 的 CDC 要求）∈ CI   // X4 执行域 —— 硬（分级按 X4）'
+  source_section: '8.5'
+  check_program: registry/checks/t.py::t6
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=T6 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-07

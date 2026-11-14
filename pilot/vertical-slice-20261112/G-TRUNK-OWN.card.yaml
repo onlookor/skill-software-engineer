@@ -1,0 +1,24 @@
+# G-TRUNK-OWN —— 机械生成卡（registry/scripts/gen_cards.py）
+# 编译源：软件工程元框架成文法.md（sha256 c0bb9879…）0.18.2 S0–S6 逐字动作；
+#   kind=OWN，方面=4；生成时间 2026-11-13。
+# 谓词写者与上下游按编译期 DAG 骨架分配；语义对应待后续批次按 0.18.4 精化。
+card_id: G-TRUNK-OWN
+version:
+  major: 0
+  minor: 1
+  patch: 0
+artifact_version: pilot-20261112.9
+outputs:
+  predicate_writes:
+  - dataset
+  - owner
+  - shared_write_exception
+  - access_path
+  - sensitivity
+registry_refs:
+- OWN-001
+- OWN-002
+- OWN-003
+- OWN-004
+_kind: OWN
+_aspect: 4

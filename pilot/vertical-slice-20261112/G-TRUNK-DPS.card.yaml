@@ -1,0 +1,24 @@
+# G-TRUNK-DPS —— 机械生成卡（registry/scripts/gen_cards.py）
+# 编译源：软件工程元框架成文法.md（sha256 c0bb9879…）0.18.2 S0–S6 逐字动作；
+#   kind=DPS，方面=9；生成时间 2026-11-13。
+# 谓词写者与上下游按编译期 DAG 骨架分配；语义对应待后续批次按 0.18.4 精化。
+card_id: G-TRUNK-DPS
+version:
+  major: 0
+  minor: 1
+  patch: 0
+artifact_version: pilot-20261112.9
+outputs:
+  predicate_writes:
+  - deploy_strategy
+  - canary_gate
+  - evolution_path
+  - strangler_sequence
+registry_refs:
+- DPS-001
+- DPS-002
+- DPS-003
+- DPS-004
+- DPS-005
+_kind: DPS
+_aspect: 9

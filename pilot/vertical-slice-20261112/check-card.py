@@ -80,15 +80,7 @@ def collect_vocab_names(node, out):
     return out
 
 
-def main():
-    card_path = Path(sys.argv[1]) if len(sys.argv) > 1 else HERE / "G-CAND-01.card.yaml"
-    artifact_path = Path(sys.argv[2]) if len(sys.argv) > 2 else HERE / "artifact.yaml"
-    card = load_yaml(card_path)
-    artifact = load_yaml(artifact_path)["compilation_artifact"]
-    mother = MOTHER.read_text(encoding="utf-8")
-    registry = load_yaml(REGISTRY)
-    vocab_names = collect_vocab_names(load_yaml(VOCAB), set())
-
+def check_one(card, artifact, mother, registry, vocab_names):
     entries = {e["entry_id"]: e for e in registry.get("entries", [])}
     all_exprs = []
 
@@ -257,17 +249,111 @@ def main():
         "exit_code": 1 if fails else 0,
     }
 
-    out = HERE / "fidelity.json"
-    out.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+    return result
 
-    print(f"card={card['card_id']} v{card['version']}")
-    print(f"F1={result['F1_verdict']}  F2={result['F2_verdict']}  F3(full)={result['F3']['full_verdict']}  F3(scoped)={result['F3']['scoped_verdict']}")
-    print(f"E4 match={e4['match']}  fail_count={len(fails)}  exit={result['summary']['exit_code']}")
+
+def aggregate(results, artifact):
+    """--all：F1/F2 取各卡最差，F3 取卡片集并集（计分字段 discipline_checks）。"""
+    def worst(bucket):
+        levels = {x["level"] for r in results for x in r[bucket]}
+        return "fail" if "fail" in levels else "escalate" if "escalate" in levels else "pass"
+
+    covered = sorted({p for r in results for p in r["F3"]["covered"]})
+    hard = results[0]["F3"]["registry_hard_properties"]
+    missing = [p for p in _hard_ids() if p not in covered]
+    e4_bad = [r["E4"] for r in results if not r["E4"]["match"]]
+    scoped = results[0]["F3"]["scoped_properties"]
+    agg = {
+        "mode": "aggregate",
+        "cards": len(results),
+        "F1_verdict": worst("F1"),
+        "F2_verdict": worst("F2"),
+        "F3": {
+            "registry_hard_properties": hard,
+            "covered_count": len(covered),
+            "covered": covered,
+            "missing_count": len(missing),
+            "missing": missing,
+            "full_verdict": "fail" if missing else "pass",
+            "scoped_properties": scoped,
+            "scoped_missing": [p for p in scoped if p not in covered],
+            "scoped_verdict": "pass" if all(p in covered for p in scoped) else "fail",
+            "per_card": {r["_card_id"]: r["F3"]["covered"] for r in results},
+        },
+        "E4": {"match": not e4_bad, "bad": e4_bad},
+        "summary": {
+            "fail_count": (0 if worst("F1") != "fail" else 1)
+                          + (0 if worst("F2") != "fail" else 1)
+                          + (1 if missing else 0)
+                          + len(e4_bad),
+        },
+    }
+    agg["summary"]["exit_code"] = 1 if agg["summary"]["fail_count"] else 0
+    return agg
+
+
+def _hard_ids():
+    mother = MOTHER.read_text(encoding="utf-8")
+    return list(dict.fromkeys(re.findall(r"^\s*([A-Z]\d+):.*(?:——|—)\s*硬", mother, re.M)))
+
+
+def main():
+    argv = sys.argv[1:]
+    all_mode = "--all" in argv
+    pos = [a for a in argv if not a.startswith("--")]
+    artifact_path = Path(pos[1]) if len(pos) > 1 else HERE / "artifact.yaml"
+    artifact = load_yaml(artifact_path)["compilation_artifact"]
+    mother = MOTHER.read_text(encoding="utf-8")
+    registry = load_yaml(REGISTRY)
+    vocab_names = collect_vocab_names(load_yaml(VOCAB), set())
+
+    if all_mode:
+        cards = [load_yaml(p) for p in sorted(HERE.glob("*.card.yaml"))]
+        results = []
+        label = artifact.get("version", {}).get("label")
+        for c in cards:
+            if not c.get("steps"):
+                # 躯干卡只做 E4（无步骤/FVR/性质认领，F1–F3 不适用）
+                results.append({
+                    "_card_id": c["card_id"],
+                    "F1": [{"level": "pass", "msg": "躯干卡无步骤，F1 不适用"}],
+                    "F2": [{"level": "pass", "msg": "躯干卡无引用，F2 不适用"}],
+                    "F3": {"covered": [], "registry_hard_properties": len(_hard_ids()),
+                           "scoped_properties": []},
+                    "E4": {"match": c.get("artifact_version") == label},
+                })
+                continue
+            r = check_one(c, artifact, mother, registry, vocab_names)
+            r["_card_id"] = c["card_id"]
+            results.append(r)
+        agg = aggregate(results, artifact)
+        print(f"cards={agg['cards']}  F1={agg['F1_verdict']}  F2={agg['F2_verdict']}  "
+              f"F3(full)={agg['F3']['full_verdict']} ({agg['F3']['covered_count']}/"
+              f"{agg['F3']['registry_hard_properties']})  F3(scoped)={agg['F3']['scoped_verdict']}")
+        print(f"E4 match={agg['E4']['match']}  fail_count={agg['summary']['fail_count']}  "
+              f"exit={agg['summary']['exit_code']}")
+        if agg["F3"]["missing"]:
+            print("F3 missing:", agg["F3"]["missing"])
+        out = HERE / "fidelity-all.json"
+        out.write_text(json.dumps(agg, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"→ {out}")
+        return agg["summary"]["exit_code"]
+
+    card_path = Path(pos[0]) if pos else HERE / "G-CAND-01.card.yaml"
+    result = check_one(load_yaml(card_path), artifact, mother, registry, vocab_names)
+    result["card_id"] = card_path.stem.replace(".card", "")
+    (HERE / "fidelity.json").write_text(json.dumps(result, ensure_ascii=False, indent=2),
+                                        encoding="utf-8")
+    print(f"card={result['card_id']}")
+    print(f"F1={result['F1_verdict']}  F2={result['F2_verdict']}  "
+          f"F3(full)={result['F3']['full_verdict']}  F3(scoped)={result['F3']['scoped_verdict']}")
+    print(f"E4 match={result['E4']['match']}  fail_count={result['summary']['fail_count']}  "
+          f"exit={result['summary']['exit_code']}")
     if result["summary"]["escalate_names"]:
         print("escalate:", ", ".join(result["summary"]["escalate_names"]))
-    for f in fails:
+    for f in [x for x in result["F1"] + result["F2"] if x["level"] == "fail"]:
         print("FAIL:", f["msg"])
-    print(f"→ {out}")
+    print(f"→ {HERE / 'fidelity.json'}")
     return result["summary"]["exit_code"]
 
 

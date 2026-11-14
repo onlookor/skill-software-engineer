@@ -1,0 +1,62 @@
+# 由 registry/scripts/gen_cards.py --fvr 生成；勿手改条目接线。
+fvr_set:
+  id: FVR-PACT-DSH-G-CAND-08
+  version: 1.1.0
+  card: G-CAND-08
+  artifact_version: pilot-20261112.9
+  property_count: 4
+  owner_of_record: G-CAND-08
+  definition: 10.2.4 FVR_entry；检查器为 registry/checks/ 下的真实可执行函数
+fvr_entries:
+- property_id: G3
+  statement: '∀ deploy_strategy: has(rollback_procedure) ∧ compatible(strategy, active_style)   // 策略注册完整性 —— 硬'
+  source_section: '9.5'
+  check_program: registry/checks/g.py::g3
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=G3 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-08
+- property_id: G7
+  statement: P2 信号告警 → threshold ∧ trend_window 双判据成立（单点越阈只记录）—— 硬（告警治理本身受守护）
+  source_section: '9.5'
+  check_program: registry/checks/g.py::g7
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=G7 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-08
+- property_id: Q1
+  statement: '∀ g: has_six_elements(g) ∧ measurable(bound(g)) ∧ sourced(g)   // 目标定义完备（0.4门槛）—— 硬'
+  source_section: '6.5'
+  check_program: registry/checks/q.py::q1
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=Q1 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-08
+- property_id: R8
+  statement: reopen admitted → 下游血缘逐一目检记录在案（显式影响传播）—— 硬
+  source_section: '7.5'
+  check_program: registry/checks/r.py::r8
+  static_dynamic: static
+  trigger_wiring: registry/checks/runner.py 全量执行，逐条落盘
+  evidence_form: fvr-full-run-1.json 中 property_id=R8 的 verdict/evidence 行
+  failure_route:
+    pass: 记 pass；空真同时记 vacuous 与空集依据
+    fail: 阻塞事件＋缺口登记（0.13）
+    escalate: 升级声明（0.19.4）
+  wired: true
+  owner_of_record: G-CAND-08
