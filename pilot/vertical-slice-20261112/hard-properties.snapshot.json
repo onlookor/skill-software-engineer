@@ -1,0 +1,119 @@
+{
+  "frozen_at": "2026-11-13T20:55:04+08:00",
+  "mother_sha256": "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510",
+  "source": "regex ^\\s*([A-Z]\\d+):.*(——|—)\\s*硬 over 软件工程元框架成文法.md",
+  "count": 39,
+  "ids": [
+    "M10",
+    "M11",
+    "M12",
+    "M14",
+    "M15",
+    "M20",
+    "M22",
+    "M23",
+    "M24",
+    "M25",
+    "V1",
+    "V2",
+    "V5",
+    "W1",
+    "W2",
+    "W4",
+    "W7",
+    "X1",
+    "X2",
+    "X5",
+    "X6",
+    "Q1",
+    "R8",
+    "T1",
+    "T4",
+    "T6",
+    "G3",
+    "G7",
+    "E1",
+    "E2",
+    "M1",
+    "M2",
+    "M3",
+    "M4",
+    "M8",
+    "M9",
+    "E7",
+    "E3",
+    "E5"
+  ],
+  "predicate_blocks": [
+    {
+      "section": "0.19.6 形式化锚点（M16–M21）〔①〕",
+      "line": 544,
+      "predicates": 8
+    },
+    {
+      "section": "0.20.4 形式化锚点（M22–M26）〔①〕",
+      "line": 657,
+      "predicates": 5
+    },
+    {
+      "section": "0.21.6 形式化锚点（M27–M30）〔①〕",
+      "line": 862,
+      "predicates": 5
+    },
+    {
+      "section": "1.5 形式化锚点〔①〕",
+      "line": 1087,
+      "predicates": 10
+    },
+    {
+      "section": "2.5 形式化锚点〔①〕",
+      "line": 1321,
+      "predicates": 9
+    },
+    {
+      "section": "3.5 形式化锚点〔①〕",
+      "line": 1572,
+      "predicates": 7
+    },
+    {
+      "section": "4.5 形式化锚点〔①〕",
+      "line": 1827,
+      "predicates": 10
+    },
+    {
+      "section": "5.5 形式化锚点〔①〕",
+      "line": 2115,
+      "predicates": 14
+    },
+    {
+      "section": "6.5 形式化锚点〔①〕",
+      "line": 2423,
+      "predicates": 11
+    },
+    {
+      "section": "7.5 形式化锚点〔①〕",
+      "line": 2653,
+      "predicates": 13
+    },
+    {
+      "section": "8.5 形式化锚点〔①〕",
+      "line": 2953,
+      "predicates": 15
+    },
+    {
+      "section": "9.5 形式化锚点〔①〕",
+      "line": 3224,
+      "predicates": 18
+    },
+    {
+      "section": "10.5 形式化锚点〔①〕",
+      "line": 3489,
+      "predicates": 7
+    },
+    {
+      "section": "0.17.8 形式化锚点（M 系列，0.17 段）〔②〕",
+      "line": 3926,
+      "predicates": 5
+    }
+  ]
+}

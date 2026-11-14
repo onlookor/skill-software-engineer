@@ -128,3 +128,24 @@
 | V1/W1/W2/W4/T6/G7 | **仍 escalate** | 批 B，数据源未登记 |
 
 本清单的 §4 三个判定面问题已处理：问题 1（存在即 pass）已升级；问题 2（W1/W2/W4 仍 escalate）待批 B 改判据；问题 3（空集 vs 未登记）已按 D-C 落地 X6。
+
+## 8 批 B 第一步（2026-11-14）
+
+- **T6 已落地**：仓库 `test/` 8 个文件均非契约测试，登记 `contract_tests: []`（显式空集）→ T6 escalate→**fail**（published 契约无契约测试）。
+- **现行分布**：pass 29 / fail 5 / escalate 5 / vacuous 9；10.2.5 v1.8.0 仍 6/6（附同一分布）。
+- **剩余 5 条 escalate**：V1、W1、W2、W4、G7。缺什么、由谁产出、两种口径的后果见 run-log §22.3–22.4，等待人类裁定。
+
+## 9 批 B 第二步（2026-11-14）：V1/W4 登记（弱校验）
+
+- **V1 已落地**：登记 `layer_of` 9 条＋`dependency_rule` 3 条；escalate→**pass**，但为弱校验（不展开 `layer_of`，只判层规则无环）。
+- **W4 已落地**：登记 `owned_by` 2 条（`observer` 写入权、`index` 创建/配置权）；按口径丙仍 **escalate**（待人工核单一所有者）。
+- **排除项**：进程级单例不算共享数据对象；只读配置不计入；撤回「单写者是否成立」确认项。
+- **打包升级**：V1/W4 合并为「将来升级为机械校验」一项（run-log §23.3）。
+- **现行分布**：pass 30 / fail 5 / escalate 4 / vacuous 9；10.2.5 v1.9.0 仍 6/6（附同一分布）。剩余 escalate：W1、W2、W4、G7。
+
+## 10 批 B 第三步（2026-11-14）：W4 人工核转 pass
+
+- 人类确认「W4 通过，升级机械校验后再回头看」，登记为 `human_review`（`approved_by=user`、`approver_kind=human`、`approved_at=2026-11-14`）。
+- 归属：`observer` → `events.jsonl` 写入权；`index` → 创建/配置权。
+- W4 escalate→**pass**，属**人工核结论**而非机械校验；与 V1 同列 `weak_checks`／`packed_upgrade`。
+- **现行分布**：pass 31 / fail 5 / escalate 3 / vacuous 9；10.2.5 v1.10.0 仍 6/6（附同一分布）。剩余 escalate：W1、W2、G7。

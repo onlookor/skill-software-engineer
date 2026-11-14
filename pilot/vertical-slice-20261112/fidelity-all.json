@@ -1,0 +1,138 @@
+{
+  "mode": "aggregate",
+  "cards": 18,
+  "F1_verdict": "pass",
+  "F2_verdict": "escalate",
+  "F3": {
+    "registry_hard_properties": 39,
+    "covered_count": 39,
+    "covered": [
+      "E1",
+      "E2",
+      "E3",
+      "E5",
+      "E7",
+      "G3",
+      "G7",
+      "M1",
+      "M10",
+      "M11",
+      "M12",
+      "M14",
+      "M15",
+      "M2",
+      "M20",
+      "M22",
+      "M23",
+      "M24",
+      "M25",
+      "M3",
+      "M4",
+      "M8",
+      "M9",
+      "Q1",
+      "R8",
+      "T1",
+      "T4",
+      "T6",
+      "V1",
+      "V2",
+      "V5",
+      "W1",
+      "W2",
+      "W4",
+      "W7",
+      "X1",
+      "X2",
+      "X5",
+      "X6"
+    ],
+    "missing_count": 0,
+    "missing": [],
+    "full_verdict": "pass",
+    "scoped_properties": [
+      "M10",
+      "M11",
+      "M12",
+      "M14",
+      "M15"
+    ],
+    "scoped_missing": [],
+    "scoped_verdict": "pass",
+    "per_card": {
+      "G-CAND-01": [
+        "M10",
+        "M11",
+        "M12",
+        "M14",
+        "M15"
+      ],
+      "G-CAND-02": [
+        "M1",
+        "M2",
+        "M3",
+        "M4",
+        "M8",
+        "M9"
+      ],
+      "G-CAND-03": [
+        "M20",
+        "M22",
+        "M23",
+        "M24",
+        "M25"
+      ],
+      "G-CAND-04": [
+        "X1",
+        "X2",
+        "X5",
+        "X6"
+      ],
+      "G-CAND-05": [
+        "W1",
+        "W2",
+        "W4",
+        "W7"
+      ],
+      "G-CAND-06": [
+        "E1",
+        "E2",
+        "E3",
+        "E5",
+        "E7",
+        "V1",
+        "V2",
+        "V5"
+      ],
+      "G-CAND-07": [
+        "T1",
+        "T4",
+        "T6"
+      ],
+      "G-CAND-08": [
+        "G3",
+        "G7",
+        "Q1",
+        "R8"
+      ],
+      "G-TRUNK-CFG": [],
+      "G-TRUNK-CRD": [],
+      "G-TRUNK-CSL": [],
+      "G-TRUNK-DFL": [],
+      "G-TRUNK-DPS": [],
+      "G-TRUNK-OWN": [],
+      "G-TRUNK-RLP": [],
+      "G-TRUNK-SCH": [],
+      "G-TRUNK-SRC": [],
+      "G-TRUNK-STP": []
+    }
+  },
+  "E4": {
+    "match": true,
+    "bad": []
+  },
+  "summary": {
+    "fail_count": 0,
+    "exit_code": 0
+  }
+}

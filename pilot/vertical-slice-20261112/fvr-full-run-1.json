@@ -1,0 +1,330 @@
+{
+  "run_id": "fvr-full-run-1",
+  "generated_at": "2026-11-14T11:47:01+08:00",
+  "mother_sha256": "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510",
+  "predicate_blocks": 14,
+  "hard_property_source": "regex ^\\s*([A-Z]\\d+):.*(——|—)\\s*硬 + hard-properties.snapshot.json",
+  "snapshot_count": 39,
+  "executed_count": 39,
+  "summary": {
+    "pass": 31,
+    "fail": 5,
+    "escalate": 3,
+    "vacuous": 9
+  },
+  "results": [
+    {
+      "property": "M10",
+      "verdict": "pass",
+      "evidence": "8 张实质卡均含 S0–S6 七步",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M11",
+      "verdict": "pass",
+      "evidence": "实质卡步骤序列均为 S0–S6 连续无跳步",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M12",
+      "verdict": "pass",
+      "evidence": "全部失败分支路由 ∈ {FM-xx, CH-x}",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M14",
+      "verdict": "pass",
+      "evidence": "白板无快速通道使用记录",
+      "reason": "空真：未使用快路径",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "M15",
+      "verdict": "pass",
+      "evidence": "白板 exclusion_record 走 applicability.problem_space；勘察义务 SO-PILOT-4 在册",
+      "reason": "候选未因未知被删，义务未闭合但不影响保留",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M20",
+      "verdict": "pass",
+      "evidence": "白板无 conflict_instance 写入",
+      "reason": "空真：无 A0×A0 不相容实例",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "M22",
+      "verdict": "pass",
+      "evidence": "FM 目录在册 16 条（FM-0～FM-15 形态）",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M23",
+      "verdict": "pass",
+      "evidence": "FM-0 与阻塞语义在册（不可分类→阻塞＋缺口声明）",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M24",
+      "verdict": "pass",
+      "evidence": "FM 目录含处置/介入/工件三列",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M25",
+      "verdict": "pass",
+      "evidence": "changlog 无 FM 目录变更记录",
+      "reason": "空真：本轮未改 FM 目录",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "V1",
+      "verdict": "pass",
+      "evidence": "禁止依赖图无环（3 条 forbidden 层规则）",
+      "reason": "弱校验：只读字面层规则边，不展开 layer_of；不代表单元级依赖已核",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "V2",
+      "verdict": "pass",
+      "evidence": "1 条 connects 的协议均在 style 允许集 ['同步请求-响应'] 内",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "V5",
+      "verdict": "pass",
+      "evidence": "ADR-DP1-STYLE 存在且有批准人 user；决策记录状态 approved（SM-DR provisional → approved，retro_approve，2026-11-13）",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "W1",
+      "verdict": "escalate",
+      "evidence": "存在 module_inventory",
+      "reason": "需人工核接缝封闭",
+      "vacuous": false,
+      "route": "escalate"
+    },
+    {
+      "property": "W2",
+      "verdict": "escalate",
+      "evidence": "存在 module_inventory",
+      "reason": "需人工核可独立验证",
+      "vacuous": false,
+      "route": "escalate"
+    },
+    {
+      "property": "W4",
+      "verdict": "pass",
+      "evidence": "单一所有者经人类确认（user，2026-11-14）：observer→events.jsonl(write)；index→events.jsonl(create_and_configure)",
+      "reason": "人工核结论，非机械校验：归属由人确认；已与 V1 打包为将来机械校验升级项",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "W7",
+      "verdict": "pass",
+      "evidence": "无分解主策略决策（DP-*-DECOMP 未启动）",
+      "reason": "空真：主策略未选择",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "X1",
+      "verdict": "pass",
+      "evidence": "1 条 connects 均被已登记契约（provider＋consumer 命中）覆盖",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "X2",
+      "verdict": "fail",
+      "evidence": "1 份契约缺 version 或 compat_policy：['CT-PACT-BACKEND-01']",
+      "reason": "",
+      "vacuous": false,
+      "route": "fail"
+    },
+    {
+      "property": "X5",
+      "verdict": "fail",
+      "evidence": "1 份已发布契约缺已批准 ADR：['CT-PACT-BACKEND-01 无 ADR']",
+      "reason": "",
+      "vacuous": false,
+      "route": "fail"
+    },
+    {
+      "property": "X6",
+      "verdict": "pass",
+      "evidence": "shared_data_access 显式空集：本部署无跨单元共享数据",
+      "reason": "空真：共享数据域为空（D-C 裁定按 vacuous，不记 pass 实质）",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "Q1",
+      "verdict": "pass",
+      "evidence": "4 个硬目标六要素齐全、有单位/目标值、目标集有出处",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "R8",
+      "verdict": "pass",
+      "evidence": "本轮无需求重开记录",
+      "reason": "空真：白板无 reopen 准入记录（reopen_proposal 集合为空）",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "T1",
+      "verdict": "pass",
+      "evidence": "39 条硬性质在方案 §4 均有检查手段／检查器组",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "T4",
+      "verdict": "fail",
+      "evidence": "2/9 个单元无非空测试集：['index', 'loop-entry']",
+      "reason": "入口单元按独立单元计（D-C）：无直测即不满足 ∀UNIT",
+      "vacuous": false,
+      "route": "fail"
+    },
+    {
+      "property": "T6",
+      "verdict": "fail",
+      "evidence": "1 份契约的测试不满足：['CT-PACT-BACKEND-01 无契约测试']",
+      "reason": "",
+      "vacuous": false,
+      "route": "fail"
+    },
+    {
+      "property": "G3",
+      "verdict": "fail",
+      "evidence": "1/1 条部署策略不满足：[\"DEP-PACT-DSH-01 缺 ['rollback', 'compatible_with_style']\"]",
+      "reason": "",
+      "vacuous": false,
+      "route": "fail"
+    },
+    {
+      "property": "G7",
+      "verdict": "escalate",
+      "evidence": "域数据源未登记：白板无 P2 信号与告警阈值",
+      "reason": "不可判：P2 信号未登记（非空真）",
+      "vacuous": false,
+      "route": "escalate"
+    },
+    {
+      "property": "E1",
+      "verdict": "pass",
+      "evidence": "registry/ 无 view_instances 实例；10.2.5 五个评审点均未声明 predicate_subset",
+      "reason": "空真：量化域（评审点引用的谓词子集）为空集，∀ 平凡为真；表达缺口另行由 E2 域覆盖",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "E2",
+      "verdict": "pass",
+      "evidence": "无 view_instance（集合为空）",
+      "reason": "空真：无视图实例可校验生成来源",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "M1",
+      "verdict": "pass",
+      "evidence": "卡片消费的 31 个方法条目状态均 ∈ {active, seed}",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M2",
+      "verdict": "pass",
+      "evidence": "138 条非 draft 条目按 kind 剖面必填面全部在案（空列表按在案计，0.17.2）",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M3",
+      "verdict": "pass",
+      "evidence": "323 个包络条目均有 bound_expr 与 source",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M4",
+      "verdict": "pass",
+      "evidence": "369 个反模式均有 detection_predicate",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "M8",
+      "verdict": "pass",
+      "evidence": "method_registry 无 seed_revalidation 记录",
+      "reason": "空真：未发生种子重校验",
+      "vacuous": true,
+      "route": "pass"
+    },
+    {
+      "property": "M9",
+      "verdict": "pass",
+      "evidence": "全部兼容性 peer_entry 在册",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "E7",
+      "verdict": "pass",
+      "evidence": "3 条编译规程变更均经人类批准（approved_by=user，approver_kind=human），哈希链连续且末条＝母本现行 c0bb9879b65c…",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "E3",
+      "verdict": "pass",
+      "evidence": "39/39 条硬性质均有 FVR 条目、检查程序与首轮 verdict",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    },
+    {
+      "property": "E5",
+      "verdict": "pass",
+      "evidence": "全部 verdict ∈ {pass, fail, escalate}（本轮 39 条）",
+      "reason": "",
+      "vacuous": false,
+      "route": "pass"
+    }
+  ],
+  "problems": []
+}

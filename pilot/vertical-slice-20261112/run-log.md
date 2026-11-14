@@ -660,7 +660,7 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 | `project.py --check` | 硬失败 0、软警告 20、占位符 1,481＝事实 1＋槽 1,480 |
 | `project.py --project` | F-11 pass，Δkeys 0、Δfps 0、Δlines 0 |
 | `anchor_index.py` | failures []；frozen_anchors 2,939；drift 0；assertions 仅 info |
-| 10.2.5 | **6/6**（判据四 fail→pass），v1.5.0；当时分布 pass 25 / fail 0 / escalate 14 / vacuous 8。现行 v1.7.0 分布 pass 29 / fail 4 / escalate 6 / vacuous 9（fail＝X2／X5／T4／G3） |
+| 10.2.5 | **6/6**（判据四 fail→pass），v1.5.0；当时分布 pass 25 / fail 0 / escalate 14 / vacuous 8。现行 v1.10.0 分布 pass 31 / fail 5 / escalate 3 / vacuous 9（fail＝X2／X5／T4／T6／G3） |
 
 - 母本未改动（行数 4,811、sha256 c0bb9879…）；未推送。
 - ADR-DP1-STYLE 仍标 provisional：转 approved 属 SM-DR 迁移，本轮未自动执行。
@@ -719,7 +719,7 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 | `project.py --check` | 记录 1,240 条；硬失败 0；软警告 20；占位符 1,481＝事实 1＋槽 1,480 |
 | `project.py --project` | F-11 pass，Δkeys 0、Δfps 0、Δlines 0 |
 | `anchor_index.py` | failures []，frozen_anchors 2,939，live 3，drift 0（`by_drift: n/a` 全部）；F-1～F-10/CFG-01 全 pass |
-| 10.2.5 | **6/6**，v1.6.0；当时分布 pass 26 / fail 0 / escalate 13 / vacuous 8。现行 v1.7.0 分布 pass 29 / fail 4 / escalate 6 / vacuous 9（fail＝X2／X5／T4／G3） |
+| 10.2.5 | **6/6**，v1.6.0；当时分布 pass 26 / fail 0 / escalate 13 / vacuous 8。现行 v1.10.0 分布 pass 31 / fail 5 / escalate 3 / vacuous 9（fail＝X2／X5／T4／T6／G3） |
 
 注：`fvr-full-run-1.json` 已由本次复跑覆盖（现为 pass 26／escalate 13）；首轮分布 pass 25／escalate 14 见 §19.4 与本文件 git 历史。复跑未改任何检查器的判定口径，唯一变化是 E7 读取新的批准登记表。
 
@@ -771,7 +771,7 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 ### 21.3 白板基线修三处（D-D 前置）
 
 1. `artifact_version`: `pilot-20261112.8` → `.9`（卡片与 artifact.yaml 早已是 `.9`）；
-2. `style.state`: `provisional` → `approved`（与 2026-11-13 SM-DR 迁移一致），`note` 改 6/6（v1.6.0；现行 v1.7.0 真实分布 pass 29 / fail 4 / escalate 6 / vacuous 9，fail＝X2／X5／T4／G3）；
+2. `style.state`: `provisional` → `approved`（与 2026-11-13 SM-DR 迁移一致），`note` 改 6/6（v1.6.0；现行 v1.9.0 真实分布 pass 30 / fail 5 / escalate 4 / vacuous 9，fail＝X2／X5／T4／T6／G3）；
 3. 白板内 `grounding_status`: 1/6 → 6 比 0（v1.6.0）。
 
 ### 21.4 批 A 登记内容与数据来源
@@ -790,7 +790,7 @@ sha256sum registry/method_registry.yaml registry/approval_registry.yaml \
 | 项 | 结果 |
 |---|---|
 | `runner.py` | hard=39 executed=39 blocks=14 **pass=29 fail=4 escalate=6 vacuous=9** |
-| 10.2.5 | **6/6**，v1.7.0（真实分布 pass 29 / fail 4 / escalate 6 / vacuous 9；fail＝X2／X5／T4／G3） |
+| 10.2.5 | **6/6**，v1.7.0（当时分布 pass 29 / fail 4 / escalate 6 / vacuous 9，fail＝X2／X5／T4／G3；现行 v1.10.0 分布 pass 31 / fail 5 / escalate 3 / vacuous 9，fail＝X2／X5／T4／T6／G3） |
 | `check-card.py --all` | cards=18 F1=pass F2=escalate F3(full)=39/39 E4 match=True exit=0 |
 | `check_pattern_version.py` | PV-0/1/2/3 全 pass，14 块，aggregate 0753e743… |
 
@@ -819,7 +819,7 @@ V1（无 `dependency_rule`）、W1/W2（`module_inventory` 已登记但需人工
 
 **不是豁免**：fail 记录的是真实缺陷，不把未满足的性质记成 pass，也不降低判定力。它与 escalate（数据源未登记、不可判）同属可复现结论，二者都必须逐条登记。
 
-**现行真实分布**：pass 29 / fail 4 / escalate 6 / vacuous 9（此前 pass 26 / fail 0 / escalate 13 / vacuous 8）。凡引用 6/6 处均须同时给出该分布。
+**v1.7.0 时真实分布**：pass 29 / fail 5 / escalate 5 / vacuous 9（此前 pass 26 / fail 0 / escalate 13 / vacuous 8）。**现行 v1.10.0**：pass 31 / fail 5 / escalate 3 / vacuous 9。凡引用 6/6 处均须同时给出当时或现行分布。
 
 **已知缺陷登记（在案，不在本轮修复范围）**：
 
@@ -831,3 +831,104 @@ V1（无 `dependency_rule`）、W1/W2（`module_inventory` 已登记但需人工
 | G3 | `DEP-PACT-DSH-01` 缺 `rollback` 与 `compatible_with_style` |
 
 该口径已同步写入 `10.2.5-verdict-pact-dsh.yaml` 判据四的 `interpretation`／`known_defects` 与文件头说明，以及 `artifact.yaml` 的 `scope_note`。
+
+---
+
+## 22. 批 B 第一步（2026-11-14）：契约测试清单登记
+
+### 22.1 可凭仓库事实补齐的项
+
+`/home/user/projects/pact-dsh/test/` 共 8 个测试文件（config、fake-backend、govern、loop-routing、manifest、names、observer、wasm-backend），无契约测试。据此在白板 `domain_data` 登记 `contract_tests: []`（显式空集），未新造键。
+
+### 22.2 结果
+
+| 性质 | 变化 | 依据 |
+|---|---|---|
+| T6 | escalate → **fail** | `CT-PACT-BACKEND-01` 为 published，但 `contract_tests` 显式为空 |
+
+**当时（v1.8.0）分布：pass 29 / fail 5 / escalate 5 / vacuous 9**；10.2.5 升 **v1.8.0**，仍 **6/6**（附当时分布）。4 条 fail 增至 5 条（新增 T6），已并入 `known_defects`。**现行 v1.10.0 分布：pass 31 / fail 5 / escalate 3 / vacuous 9**。
+
+### 22.3 剩余 5 条 escalate：缺什么、由谁产出
+
+| 性质 | 缺的数据源 | 现状与产出者 |
+|---|---|---|
+| V1 | `dependency_rule(·,·,forbidden)` 实例 | 仓库只有 11 条实际 import 边（构成 DAG），无显式分层与禁止规则；需架构责任人（`user`）定分层口径 |
+| W1 | 接缝封闭的人工核结论 | `module_inventory` 已在案（9 个单元）；JS 无接口声明，机器无法判定「接缝封闭」 |
+| W2 | 可独立验证的人工核结论 | 7 个 src 模块有测试，`index`／`loop-entry` 无；是否算「可独立验证」需人判 |
+| W4 | `owned_by` 数据所有权声明 | 仓库事实：`src/observer.js` 写 append-only `events.jsonl`（`src/observer.js#L5-L16`）；所有权归属是设计声明，需数据责任人确认 |
+| G7 | P2 信号及其阈值/窗口 | 仓库无监控/告警配置；`registry/guard_registry.yaml` 有 GR-005（P2，阈值「漂移只登记不追」，无 `trend_window`） |
+
+### 22.4 待人类选择的两种口径（本轮未定）
+
+| 性质 | 选项 A（后果） | 选项 B（后果） | 选项 C |
+|---|---|---|---|
+| V1 | 按观测 import 方向登记 11 条反向禁止边 `dependency_rule(v,u,forbidden)` → 反向图必无环 → **pass**；代价：判定近乎同义反复，「反向禁止」是策略声明而非仓库事实 | 先声明 `layer_of`＋分层禁止规则，升级 V1 按层展开 → 需新增登记键与判据；当前无显式分层，须你定层 | 维持 escalate，等架构责任人给分层与规则 |
+| W1 | 登记人工核结论（reviewer=`user`、日期、结论）并升级 checker 消费 → pass/fail 由结论定 | 机械化：每模块须有显式导出接口且无未声明跨模块访问 → JS 无接口声明，大概率 fail | 维持 escalate |
+| W2 | 登记人工核结论 → pass/fail 由结论定 | 机械化：每模块有独立测试或显式豁免 → `index`／`loop-entry` 无测试，将 fail | 维持 escalate |
+| W4 | 登记 `shared_data_access` 审计日志条目 `owned_by: observer`（仓库事实），升级 w4 校验单一所有者 → **pass** | 维持 escalate，由数据责任人确认所有权 | — |
+| G7 | 把 GR-005 登记为 P2 信号（阈值在、无趋势窗口）→ **fail** | 等运维定义 P2 信号与阈值/窗口 → 维持 escalate | — |
+
+未自行选择，等待裁定后落下一批。
+
+---
+
+## 23. 批 B 第二步（2026-11-14）：V1/W4 登记，弱校验
+
+人类全量批准两份草案（登记人 `user`），裁定 V1 口径甲、W4 口径丙，均标注为弱校验。
+
+### 23.1 落地内容
+
+| 项 | 内容 |
+|---|---|
+| V1 | 登记 `layer_of` 9 条（3 层全覆盖）＋`dependency_rule` 3 条 forbidden；检查器改为从 `domain_data` 读条目，仍只判字面层规则无环 |
+| W4 | 登记 `owned_by` 2 条：`observer → events.jsonl(write)`、`index → events.jsonl(create_and_configure)`；检查器改为读 `owned_by` 条目并点名归属，仍判 escalate |
+
+排除项：进程级单例（backend 注册表、`FakePactBackend` 单例状态）不算共享数据对象；只读配置不计入；撤回「单写者是否成立」确认项（属判据结果）。
+
+### 23.2 弱校验限制（必须随结论引用）
+
+- **V1**：不展开 `layer_of` 到单元边，pass 只表示禁止层规则无环，**不代表单元级依赖已核**。
+- **W4**：不机械核单一所有者，登记后仍判 **escalate**，登记不自动转 pass。
+
+### 23.3 打包升级项
+
+V1/W4 合并为一项「将来升级为机械校验」：
+
+1. V1 按 `layer_of` 展开层规则 × 实际 import 边求值；
+2. W4 机械核「对象 → 所有者一对一」「每对象唯一所有者」「写入点归属与登记一致」。
+
+升级前，产物中引用 V1 的 pass 必须同时给出弱校验说明。
+
+### 23.4 实跑分布
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 **pass=30 fail=5 escalate=4 vacuous=9** |
+| V1 | **pass**（3 条 forbidden 层规则无环；弱校验） |
+| W4 | **escalate**（已登记 2 条所有权，待人工核单一所有者；口径丙） |
+| 10.2.5 | **6/6**，v1.9.0（真实分布 pass 30 / fail 5 / escalate 4 / vacuous 9） |
+
+剩余 4 条 escalate：W1、W2、W4、G7；5 条 fail：X2、X5、T4、T6、G3。
+
+---
+
+## 24. 批 B 第三步（2026-11-14）：W4 人工核转 pass
+
+人类确认「W4 通过，升级机械校验后再回头看」。据此把该确认登记为 W4 的人工核依据：
+
+- `approved_by: user`、`approver_kind: human`、`approved_at: 2026-11-14`
+- 归属确认：`observer` → `events.jsonl` 写入权；`index` → 创建/配置权
+- 记录位置：白板 `owned_by` 两条各自的 `human_review` 字段
+
+检查器口径：每条 `owned_by` 都带 human 确认记录时 W4 判 pass；缺记录回退 escalate。pass 属**人工核结论，非机械校验**，已与 V1 同列 `weak_checks`／`packed_upgrade`。
+
+### 24.1 实跑分布
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 **pass=31 fail=5 escalate=3 vacuous=9** |
+| V1 | pass（弱校验） |
+| W4 | pass（人工核） |
+| 10.2.5 | **6/6**，v1.10.0（真实分布 pass 31 / fail 5 / escalate 3 / vacuous 9） |
+
+剩余 3 条 escalate：W1、W2、G7；5 条 fail：X2、X5、T4、T6、G3。

@@ -44,19 +44,44 @@ def _cycle(graph: dict[str, list[str]]) -> list[str]:
 
 
 def v1(ctx):
-    """¬∃ cycle(forbidden_dependency)：边取自 1.5 dependency_rule(·,·,forbidden) 的实例登记。"""
+    """¬∃ cycle(forbidden_dependency)：边取自 1.5 dependency_rule(·,·,forbidden) 的实例登记。
+
+    弱校验（2026-11-14 人类裁定口径甲）：只读字面层规则边，不展开 layer_of 到单元边。
+    """
+    registered = domain_data(ctx, 'dependency_rule')
+    if registered:
+        graph: dict[str, list[str]] = {}
+        count = 0
+        for r in registered:
+            if r.get('relation') not in HARD_RELATIONS:
+                continue
+            a, b = r.get('from'), r.get('to')
+            if not a or not b:
+                return esc('V1', 'dependency_rule 条目缺 from/to', '不可判：登记不完整')
+            graph.setdefault(str(a).strip(), []).append(str(b).strip())
+            count += 1
+        if count == 0:
+            return esc('V1', 'dependency_rule 无 forbidden 条目',
+                       '不可判：无禁止边，环判据无输入')
+        cyc = _cycle(graph)
+        if cyc:
+            return bad('V1', f"禁止依赖成环：{'→'.join(cyc)}")
+        return ok('V1', f"禁止依赖图无环（{count} 条 forbidden 层规则）",
+                  '弱校验：只读字面层规则边，不展开 layer_of；不代表单元级依赖已核')
+
     rules = re.findall(r'dependency_rule\(\s*([^,()]+?)\s*,\s*([^,()]+?)\s*,\s*forbidden\s*\)',
                        ctx['whiteboard'])
     if not rules:
         return esc('V1', '域数据源未登记：本部署有分层/依赖，但白板无 dependency_rule 实例',
                    '不可判：依赖边未登记，禁止依赖环无从核验（非空真）')
-    graph: dict[str, list[str]] = {}
+    graph = {}
     for a, b in rules:
         graph.setdefault(a.strip(), []).append(b.strip())
     cyc = _cycle(graph)
     if cyc:
         return bad('V1', f"禁止依赖成环：{'→'.join(cyc)}")
-    return ok('V1', f"禁止依赖图无环（{len(rules)} 条 forbidden 边）")
+    return ok('V1', f"禁止依赖图无环（{len(rules)} 条 forbidden 边）",
+              '弱校验：只读字面规则，不展开 layer_of')
 
 
 def v2(ctx):

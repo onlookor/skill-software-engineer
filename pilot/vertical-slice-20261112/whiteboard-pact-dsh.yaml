@@ -1,9 +1,14 @@
-# 白板状态（试跑：pact-dsh / DP-1-STYLE）——2026-11-14 第四轮
+# 白板状态（试跑：pact-dsh / DP-1-STYLE）——2026-11-14 第六轮
 #
 # 依据：母本 0.7（白板谓词集）＋0.21（五状态机）＋0.21.6（机器层谓词）
 # 性质：pilot 记录，不是部署实例的正式白板。
-# 本轮变更（D-C/D-D 裁定）：基线同步（artifact .8→.9、style/SM-DR provisional→approved、
-#   10.2.5 1/6→6/6）；登记批 A 域数据（module_inventory、unit_test_inventory、
+# 本轮变更（2026-11-14，人类批准，登记人 user）：
+#   V1 登记 layer_of 9 条＋dependency_rule 3 条（口径甲，弱校验：不展开 layer_of）；
+#   W4 登记 owned_by 2 条（events.jsonl 拆分「创建/配置」与「写入」；人类 user 2026-11-14 确认为
+#   人工核依据，W4 转 pass，但属人工核结论而非机械校验）；
+#   进程级单例与只读配置不计入共享数据对象。
+# 前轮变更（D-C/D-D 裁定）：基线同步（artifact .8→.9、style/SM-DR provisional→approved、
+#   10.2.5 1/6→6/6（现行真实分布 pass 30 / fail 5 / escalate 4 / vacuous 9））；登记批 A 域数据（module_inventory、unit_test_inventory、
 #   contract、connects、deploy_strategy、shared_data_access 显式空集）。
 whiteboard:
   deployment: "pilot-pact-dsh"
@@ -97,13 +102,39 @@ whiteboard:
         lifecycle: published
         adr: null
         evidence: "src/pact-backend.js#L1-L8（backend contract）；FakePactBackend 与 wasm-backend 同形实现；package.json version 0.1.2（已发布 npm）"
+    contract_tests: []            # 显式空集：test/ 8 个文件均为单元/路由/配置测试，无契约测试
     deploy_strategy:
       - id: "DEP-PACT-DSH-01"
         mechanism: "npm 包发布（release.yml：tag + OIDC）＋ cordis.patch.yml 覆盖 agent-loop 行"
         rollback: null
         compatible_with_style: null
         evidence: ".github/workflows/release.yml；cordis.patch.yml"
-    shared_data_access: []       # 显式空集：跨单元无共享数据；审计 JSONL 为单模块内写
+    shared_data_access: []       # 显式空集：跨单元无共享数据结构；审计 JSONL 的所有权见 owned_by
+    # V1 分层（2026-11-14 人类批准，口径甲＝弱校验；登记人 user）
+    layer_of:
+      - {component: index, layer: L0-entry}
+      - {component: loop-entry, layer: L0-entry}
+      - {component: config, layer: L1-core}
+      - {component: govern, layer: L1-core}
+      - {component: loop-core, layer: L1-core}
+      - {component: names, layer: L2-foundation}
+      - {component: observer, layer: L2-foundation}
+      - {component: pact-backend, layer: L2-foundation}
+      - {component: wasm-backend, layer: L2-foundation}
+    dependency_rule:
+      - {from: L1-core, to: L0-entry, relation: forbidden}
+      - {from: L2-foundation, to: L0-entry, relation: forbidden}
+      - {from: L2-foundation, to: L1-core, relation: forbidden}
+    # W4 所有权（2026-11-14 人类批准，口径丙＝弱校验；events.jsonl 按「一次配置、多次写入」拆分）
+    owned_by:
+      - {owner: observer, object: events.jsonl, right: write,
+         evidence: "src/observer.js:16 appendFileSync（唯一写点）；默认文件名 src/observer.js:9",
+         human_review: {approved_by: user, approver_kind: human, approved_at: "2026-11-14",
+                        note: "单一所有者已由人类确认：observer 持写入权；升级机械校验后再回头看"}}
+      - {owner: index, object: events.jsonl, right: create_and_configure,
+         evidence: "index.js:13 创建 FileSink；路径由 config.mirrorDir 决定，null 时不创建",
+         human_review: {approved_by: user, approver_kind: human, approved_at: "2026-11-14",
+                        note: "同一确认：index 持创建/配置权，与写入权分离"}}
 
   absent:                        # 按规程应写而未写
     - expr: "（无）"
