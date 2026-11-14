@@ -4,9 +4,14 @@ from __future__ import annotations
 
 import re
 
-from common import ok, bad, esc, domain_data
+from common import ok, bad, esc, domain_data, source_files
 
 HARD_RELATIONS = {'hard_conflict', 'conflict', 'forbidden'}
+
+IMPORT_RE = re.compile(
+    r"""(?:import|export)\s+(?:[^'"]*?\sfrom\s*)?["'](\.{1,2}/[^"']+)["']"""
+)
+DYNAMIC_RE = re.compile(r"""(?:import|require)\(\s*["'](\.{1,2}/[^"']+)["']\s*\)""")
 
 
 def _style_protocols(ctx) -> set[str]:
@@ -44,44 +49,68 @@ def _cycle(graph: dict[str, list[str]]) -> list[str]:
 
 
 def v1(ctx):
-    """¬∃ cycle(forbidden_dependency)：边取自 1.5 dependency_rule(·,·,forbidden) 的实例登记。
+    """¬∃ cycle(forbidden_dependency)：机械口径。
 
-    弱校验（2026-11-14 人类裁定口径甲）：只读字面层规则边，不展开 layer_of 到单元边。
+    读目标仓库源码的相对 import 边，按 layer_of 映射到层，逐边核对
+    dependency_rule(·,·,forbidden)；同时保留禁止层规则图的环检查。
     """
-    registered = domain_data(ctx, 'dependency_rule')
-    if registered:
-        graph: dict[str, list[str]] = {}
-        count = 0
-        for r in registered:
-            if r.get('relation') not in HARD_RELATIONS:
-                continue
-            a, b = r.get('from'), r.get('to')
-            if not a or not b:
-                return esc('V1', 'dependency_rule 条目缺 from/to', '不可判：登记不完整')
-            graph.setdefault(str(a).strip(), []).append(str(b).strip())
-            count += 1
-        if count == 0:
-            return esc('V1', 'dependency_rule 无 forbidden 条目',
-                       '不可判：无禁止边，环判据无输入')
-        cyc = _cycle(graph)
-        if cyc:
-            return bad('V1', f"禁止依赖成环：{'→'.join(cyc)}")
-        return ok('V1', f"禁止依赖图无环（{count} 条 forbidden 层规则）",
-                  '弱校验：只读字面层规则边，不展开 layer_of；不代表单元级依赖已核')
+    rules = domain_data(ctx, 'dependency_rule')
+    layers = domain_data(ctx, 'layer_of')
+    if rules is None or layers is None:
+        return esc('V1', '域数据源未登记：白板缺 layer_of 或 dependency_rule',
+                   '不可判：分层或禁止规则未登记（非空真）')
 
-    rules = re.findall(r'dependency_rule\(\s*([^,()]+?)\s*,\s*([^,()]+?)\s*,\s*forbidden\s*\)',
-                       ctx['whiteboard'])
-    if not rules:
-        return esc('V1', '域数据源未登记：本部署有分层/依赖，但白板无 dependency_rule 实例',
-                   '不可判：依赖边未登记，禁止依赖环无从核验（非空真）')
-    graph = {}
-    for a, b in rules:
-        graph.setdefault(a.strip(), []).append(b.strip())
+    forbidden = {(str(r.get('from')).strip(), str(r.get('to')).strip())
+                 for r in rules if r.get('relation') in HARD_RELATIONS}
+    if not forbidden:
+        return esc('V1', 'dependency_rule 无 forbidden 条目', '不可判：无禁止边')
+
+    layer_of = {}
+    for r in layers:
+        c, l = r.get('component'), r.get('layer')
+        if not c or not l:
+            return esc('V1', 'layer_of 条目缺 component/layer', '不可判：分层登记不完整')
+        layer_of[str(c).strip()] = str(l).strip()
+
+    files, why = source_files(ctx)
+    if files is None:
+        return esc('V1', why, '不可判：无法读取目标仓库源码，机械校验不成立')
+
+    by_path = {p.resolve(): unit for unit, p in files}
+    edges = set()
+    for unit, path in files:
+        text = path.read_text(encoding='utf-8')
+        specs = set(IMPORT_RE.findall(text)) | set(DYNAMIC_RE.findall(text))
+        for spec in specs:
+            target = by_path.get((path.parent / spec).resolve())
+            if target is not None:
+                edges.add((unit, target))
+    if not edges:
+        return esc('V1', '扫描目标仓库未发现已登记模块间的相对 import 边',
+                   '不可判：机械边集为空，与 module_inventory 不符')
+
+    violations, unmapped = [], []
+    for a, b in sorted(edges):
+        la, lb = layer_of.get(a), layer_of.get(b)
+        if la is None or lb is None:
+            unmapped.append(f'{a}→{b}')
+        elif (la, lb) in forbidden:
+            violations.append(f'{a}({la})→{b}({lb})')
+    if unmapped:
+        return esc('V1', f'{len(unmapped)} 条 import 边端点未登记层：{unmapped}',
+                   '不可判：layer_of 覆盖不全')
+    if violations:
+        return bad('V1', f'{len(violations)}/{len(edges)} 条 import 边违反禁止依赖：{violations}')
+
+    graph: dict[str, list[str]] = {}
+    for a, b in forbidden:
+        graph.setdefault(a, []).append(b)
     cyc = _cycle(graph)
     if cyc:
         return bad('V1', f"禁止依赖成环：{'→'.join(cyc)}")
-    return ok('V1', f"禁止依赖图无环（{len(rules)} 条 forbidden 边）",
-              '弱校验：只读字面规则，不展开 layer_of')
+
+    return ok('V1', f'机械校验：扫描 {len(files)} 个单元源码，{len(edges)} 条相对 import 边，'
+                    f'逐边核对 {len(forbidden)} 条 forbidden 层规则无违反；禁止层规则图无环')
 
 
 def v2(ctx):

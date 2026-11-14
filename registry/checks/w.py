@@ -2,9 +2,16 @@
 """W 系列（方面 2 / 分解）硬性质检查器：W1 W2 W4 W7。"""
 from __future__ import annotations
 
-from common import ok, bad, esc, domain_data
+import re
+
+from common import ok, bad, esc, domain_data, source_files
 
 NOTE = '域数据源未登记：本部署有模块，但白板无 module_inventory（不是空集）'
+
+WRITE_CALL_RE = re.compile(
+    r'\b(?:appendFileSync|writeFileSync|appendFile|writeFile|createWriteStream)\s*\(')
+CLASS_RE = re.compile(r'\bclass\s+([A-Za-z_$][\w$]*)')
+NEW_RE = re.compile(r'\bnew\s+([A-Za-z_$][\w$]*)\s*\(')
 
 
 def w1(ctx):
@@ -40,24 +47,55 @@ def w2(ctx):
 
 
 def w4(ctx):
+    """每个数据实体单一所有者：机械核对源码写点与创建点。"""
     entries = domain_data(ctx, 'owned_by')
     if entries is None:
-        if 'owned_by(' not in ctx['whiteboard'] and 'data_owner' not in ctx['whiteboard']:
-            return esc('W4', '域数据源未登记：白板无 owned_by 写入，但部署数据实体存在',
-                       '不可判：数据所有权未登记，单一所有者无从核验（非空真）')
-        return esc('W4', '白板存在数据所有权写入', '需人工核单一所有者')
+        return esc('W4', '域数据源未登记：白板无 owned_by 写入',
+                   '不可判：数据所有权未登记，单一所有者无从核验（非空真）')
     if not entries:
         return esc('W4', 'owned_by 显式空集', '不可判：本部署存在数据实体，所有权不得为空')
-    pairs = '；'.join(f"{e.get('owner')}→{e.get('object')}({e.get('right')})" for e in entries)
+
+    files, why = source_files(ctx)
+    if files is None:
+        return esc('W4', why, '不可判：无法读取目标仓库源码，机械校验不成立')
+
+    texts = {unit: p.read_text(encoding='utf-8') for unit, p in files}
+    units = set(texts)
     for e in entries:
-        r = e.get('human_review') or {}
-        if r.get('approver_kind') != 'human' or not r.get('approved_by'):
-            return esc('W4', f"已登记 {len(entries)} 条所有权：{pairs}",
-                       '所有权已登记，但缺人类确认记录；需人工核单一所有者')
-    first = entries[0].get('human_review') or {}
-    return ok('W4',
-              f"单一所有者经人类确认（{first.get('approved_by')}，{first.get('approved_at')}）：{pairs}",
-              '人工核结论，非机械校验：归属由人确认；已与 V1 打包为将来机械校验升级项')
+        if e.get('owner') not in units:
+            return esc('W4', f"所有权登记 owner={e.get('owner')} 不在 module_inventory",
+                       '不可判：所有者不是已登记单元，机械核对无基准')
+
+    classes_in = {unit: set(CLASS_RE.findall(text)) for unit, text in texts.items()}
+    problems, evidence = [], []
+    for e in entries:
+        owner, obj, right = e.get('owner'), e.get('object'), e.get('right')
+        if not owner or not obj or right not in ('write', 'create_and_configure'):
+            return esc('W4', f'所有权条目缺字段或 right 非法：{e}', '不可判：登记不完整')
+
+        writers = [u for u, t in texts.items() if obj in t and WRITE_CALL_RE.search(t)]
+        if not writers:
+            return esc('W4', f'源码中未定位到 {obj} 的写点', '不可判：机械核对缺证据')
+
+        if right == 'write':
+            if len(writers) != 1 or writers[0] != owner:
+                problems.append(f'{obj} 写点={writers}，登记 write owner={owner}')
+            else:
+                evidence.append(f'{obj} 唯一写点 {owner}')
+            continue
+
+        sink_classes = set().union(*(classes_in[u] for u in writers))
+        creators = [u for u, t in texts.items() if set(NEW_RE.findall(t)) & sink_classes]
+        if owner in writers:
+            problems.append(f'{owner} 同时持 {obj} 的写入权与创建/配置权')
+        elif len(creators) != 1 or creators[0] != owner:
+            problems.append(f'{obj} 创建点={creators}，登记 create owner={owner}')
+        else:
+            evidence.append(f'{obj} 唯一创建点 {owner}（构造 {sorted(sink_classes)}）')
+
+    if problems:
+        return bad('W4', f'机械核对不通过：{problems}', '源码写点/创建点与登记不一致')
+    return ok('W4', f'机械校验：{len(entries)} 条所有权与源码写点一致（{"；".join(evidence)}）')
 
 
 def w7(ctx):

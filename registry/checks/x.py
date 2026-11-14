@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 
-from common import ok, bad, esc, domain_data
+from common import ok, bad, esc, domain_data, target_repo
 
 PILOT = 'pilot/vertical-slice-20261112'
 
@@ -18,11 +18,17 @@ def _contracts(ctx):
 
 
 def _adr_state(ctx, name: str):
-    p = ctx['root'] / PILOT / name
-    if not p.exists():
-        return None
-    m = re.search(r'决策记录状态：\*\*`([a-z_]+)`\*\*', p.read_text(encoding='utf-8'))
-    return m.group(1) if m else None
+    """ADR 先按 target_repo 解析（契约归属仓），再回退 pilot 目录。"""
+    candidates = []
+    repo = target_repo(ctx)
+    if repo is not None:
+        candidates.append(repo / name)
+    candidates.append(ctx['root'] / PILOT / name)
+    for p in candidates:
+        if p.is_file():
+            m = re.search(r'决策记录状态：\*\*`([a-z_]+)`\*\*', p.read_text(encoding='utf-8'))
+            return m.group(1) if m else None
+    return None
 
 
 def x1(ctx):

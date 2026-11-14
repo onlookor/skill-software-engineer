@@ -95,8 +95,11 @@ entries:
     monitored_predicate: "frozen_line_anchor_drift_registered(INFO-2)"
     level: "P2"
     means: "static_check"
-    params: {check: "anchor_index.py INFO-2（快照比对）", threshold: "漂移只登记不追（ADR-ANCHOR-01 D3）"}
-    obligation: "记录 + 趋势观察"
+    params:
+      check: "anchor_index.py INFO-2（快照比对）"
+      threshold: "漂移只登记不追（ADR-ANCHOR-01 D3）"
+      trend_window: {metric: count, value: 10, configurable: true}   # count＝次数（默认），time＝天；metric/value 均可配
+    obligation: "记录 + 趋势观察（默认按次数，趋势窗口可配置）"
     waiver_clause: null
     source_adr: "ADR-ANCHOR-01（approved 2026-11-11）D3"
     version: "1.0.0"

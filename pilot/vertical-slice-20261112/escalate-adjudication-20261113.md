@@ -163,3 +163,52 @@
 - W1 与 W4 同类，均以 `human_review` 登记，**不得计入机械校验通过**；已与 V1、W4 打包为将来机械校验升级项。
 - **现行分布**：pass 32 / fail 7 / escalate 0 / vacuous 9；10.2.5 v1.11.0 仍 6/6（附同一分布）。
 - 7 条 fail：X2、X5、T4、T6、G3、W2、G7；**escalate 已清零**。
+
+## 12 批 B 第五步（2026-11-14）：V1/W4 升机械校验，G7 转 pass
+
+人类批准「路线二全做＋路线一 V1/W4」，本轮先落地不依赖 `pact-dsh` 改动的三项（详见 run-log §26）：
+
+| 性质 | 结局 | 性质标注 | 依据 |
+|---|---|---|---|
+| V1（¬∃ cycle(forbidden_dependency)） | **pass** | **机械校验** | 扫描目标仓库 9 个单元、11 条相对 import 边，逐边核对 3 条 forbidden 层规则；注入 L2→L1 反例即 fail |
+| W4（单一所有者） | **pass** | **机械校验** | 扫描源码写点/创建点：events.jsonl 唯一写点 observer、唯一创建点 index；注入第二写点即 fail |
+| G7（P2 告警） | **pass** | **机械校验** | `GR-005` 趋势窗 `{metric: count, value: 10, configurable: true}`，metric/value 可配，默认 count |
+| W1（接缝封闭） | pass | **人工核结论，非机械校验** | 未升级；需先由人类定义「已声明接口」判据 |
+
+- 契约兼容策略仅出草案 `draft-CT-compat-policy-20261114.md`，推荐「契约版本＋弃用窗口」；未改 `pact-dsh`、未改白板、未写 ADR。
+- **现行分布**：pass 33 / fail 6 / escalate 0 / vacuous 9；10.2.5 v1.12.0 仍 6/6（附同一分布）。
+- 6 条 fail：X2、X5、T4、T6、G3、W2。
+
+## 13 批 A（2026-11-14）：T4/W2 转 pass，契约策略选定，回滚草案
+
+人类确认契约策略取候选三、趋势窗默认 10 次不变。`pact-dsh` 仅新增测试，未改生产代码。
+
+| 性质 | 结局 | 性质标注 | 依据 |
+|---|---|---|---|
+| T4（有测试） | **pass** | **机械校验** | 新增 `test/index.test.js`、`test/loop-entry.test.js`；`npm test` 57/57；`unit_test_inventory` 登记两文件 |
+| W2（可独立验证） | **pass** | **机械校验** | 9 个单元均有独立测试文件 |
+| V1 | pass | 机械校验 | v1.12.0 起扫描源码 |
+| W4 | pass | 机械校验 | v1.12.0 起扫描源码 |
+| W1 | pass | **人工核结论** | 未升级；需先定义「已声明接口」判据 |
+| G7 | pass | 机械校验 | 趋势窗 `{metric: count, value: 10}`，可配置 |
+
+- 契约策略：人类选定候选三（契约版本与包版本解耦，破坏性变更保留旧面「一个小版本或 30 天，取较长者」）；`draft-CT-compat-policy-20261114.md` 已标选定。
+- ADR 草案：`draft-ADR-CT-PACT-BACKEND-01-20261114.md`，状态 Proposed，`approved_by` 留空待人类批准；未自批。
+- 回滚草案：`draft-DEP-rollback-20261114.md`，对比 deprecate 与发新版回退，待人类勾选；未改 `release.yml`。
+- **现行分布**：pass 35 / fail 4 / escalate 0 / vacuous 9；10.2.5 v1.13.0 仍 6/6（附同一分布）。
+- 4 条 fail：X2、X5、T6、G3。
+
+## 14 第十四轮（2026-11-14）：ADR 批准迁入，X2/T6/G3 收口
+
+人类批准五条（ADR 批准迁入、X2、T6、G3、两仓各一提交），逐条落地（详见 run-log §28）。
+
+| 性质 | 结局 | 性质标注 | 依据 |
+|---|---|---|---|
+| X2（契约版本与兼容策略） | **pass** | **机械校验** | 白板 `contract.compat_policy` 登记候选三：契约版本与包版本解耦（`CT-PACT-BACKEND-01@1` ↔ 包 0.1.2）；破坏性变更升 major 并保留旧面「一个小版本或 30 天，取较长者」 |
+| X5（已发布契约须有已批准 ADR） | **pass** | **机械校验** | `pact-dsh/adr/ADR-0002-CT-PACT-BACKEND-01.md`：`approved_by=user`、`approver_kind=human`、`approved_at=2026-11-14`、状态 `approved`；批准依据「2026-11-14 人类批准」，**Agent 未自批**；`x.py` 扩展为可解析 `target_repo` 下的 ADR |
+| T6（契约测试在 CI） | **pass** | **机械校验** | 新增 `pact-dsh/test/contract.test.js`（只加测试、复用现有桩）：七方法、错误码、断言旧面「只增不删」；`contract_tests` 登记 `in_ci: true`；`npm test` 61/61 |
+| G3（回滚＋风格兼容） | **pass** | **机械校验** | `DEP-PACT-DSH-01.rollback`＝发补丁版回退＋对缺陷版 `deprecate`；`style_conformance` 5 条逐条对上 `ADR-DP1-STYLE`（同步请求-响应、不注册 AgentFactory、仅覆盖 `cordis.patch.yml` 行、不新增故障域、单可部署单元） |
+
+- **现行分布**：pass 39 / fail 0 / escalate 0 / vacuous 9；10.2.5 v1.14.0 仍 6/6（附同一分布）。
+- **39 条 pass 的构成**：29 条机械校验；**1 条人工核结论（W1）**；**9 条 vacuous（空真）**。不得只报 39/0。
+- `pact-dsh` 本轮仅新增测试、ADR 与 README 说明，未改生产代码。

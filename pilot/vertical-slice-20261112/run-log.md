@@ -973,3 +973,153 @@ V1/W4 合并为一项「将来升级为机械校验」：
 | 10.2.5 | **6/6**，v1.11.0（真实分布 pass 32 / fail 7 / escalate 0 / vacuous 9） |
 
 7 条 fail：X2、X5、T4、T6、G3、W2、G7；**0 条 escalate**。pass 中含 9 条 vacuous。
+
+---
+
+## 26. 批 B 第五步（2026-11-14）：V1/W4 升机械校验，G7 修复，契约兼容策略草案
+
+人类批准「路线二全做＋路线一 V1/W4」，但仍不改 `pact-dsh`（入口测试、契约文档、部署策略尚缺人类口径）。本轮落地三项。
+
+### 26.1 V1：机械校验（读源码）
+
+- 白板新增 `target_repo: /home/user/projects/pact-dsh`。
+- `v1` 改为：按 `module_inventory.path` 读 9 个单元源码，正则提取相对 `import`／`export from`／字面量 `import()`／`require()`，解析到单元 id；逐边用 `layer_of` 映射层并核对 3 条 forbidden 规则；另查禁止层规则图无环。
+- 实跑：`机械校验：扫描 9 个单元源码，11 条相对 import 边，逐边核对 3 条 forbidden 层规则无违反；禁止层规则图无环`。
+- 反例验证：在临时副本的 `src/observer.js` 注入 `import { loadConfig } from './config.js'`（L2→L1），V1 立即 fail：`1/12 条 import 边违反禁止依赖：['observer(L2-foundation)→config(L1-core)']`。
+- 性质：**真机械校验**（读取仓库源码，不是核对登记文本）。
+
+### 26.2 W4：机械校验（读源码写点/创建点）
+
+- `w4` 改为：扫描 9 个单元源码，找出含对象名且有写 API（`appendFileSync`／`writeFileSync`／`createWriteStream` 等）的单元，以及构造写点单元所定义类的单元。
+- 实跑：`机械校验：2 条所有权与源码写点一致（events.jsonl 唯一写点 observer；events.jsonl 唯一创建点 index（构造 ['FileSink']））`。
+- 反例验证：在临时副本的 `index.js` 注入第二处 `appendFileSync('events.jsonl', …)`，W4 立即 fail：`写点=['index','observer']`，并报「index 同时持写入权与创建/配置权」。
+- 性质：**真机械校验**。`owned_by.human_review` 保留为历史证据，但不再是判定输入。
+
+### 26.3 G7：可配置趋势窗 → pass
+
+- `registry/guard_registry.yaml` 的 `GR-005.params` 新增：
+  `trend_window: {metric: count, value: 10, configurable: true}`；`metric` 取 `count`（默认）或 `time`（天），`value` 可配。
+- 白板 `p2_signals` 同步为同一配置。
+- `g7` 改为校验该结构（metric 合法、value>0），缺失或非法即 fail。
+- 实跑：`1 条 P2 信号均配置阈值与趋势窗（GR-005=count/10；metric 与 value 可配置）`。
+- 性质：**机械判定 pass**；10 次为默认值，人类未另行指定，可随时改。
+
+### 26.4 契约兼容策略草案（只起草）
+
+- 新增 `draft-CT-compat-policy-20261114.md`：对比严格语义化／宽松／契约版本＋弃用窗口三种候选，逐项给出收益、代价、对 X2/X5/T6 的影响、对已发布 0.1.2 的影响与 X2 能否 pass；推荐候选三，窗口「一个小版本或 30 天，取较长者」。
+- 未改 `pact-dsh`、未改白板 `compat_policy`、未写 ADR；等人类选定。
+
+### 26.5 实跑分布
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 **pass=33 fail=6 escalate=0 vacuous=9** |
+| V1 | **pass（机械校验）** |
+| W1 | **pass（人工核结论，仍非机械校验）** |
+| W4 | **pass（机械校验）** |
+| G7 | **pass（机械校验；趋势窗可配置）** |
+| 10.2.5 | **6/6**，v1.12.0（真实分布 pass 33 / fail 6 / escalate 0 / vacuous 9） |
+
+6 条 fail：X2、X5、T4、T6、G3、W2；**0 条 escalate**。pass 中含 9 条 vacuous。
+
+---
+
+## 27. 批 A 入口测试（2026-11-14）：T4/W2 转 pass，契约策略选定，回滚草案
+
+人类确认契约策略取候选三、趋势窗默认 10 次不变。本轮在 `pact-dsh` 只新增测试，未改生产代码。
+
+### 27.1 契约策略选定与 ADR 草案
+
+- `draft-CT-compat-policy-20261114.md` 标注「候选三已由人类选定（2026-11-14）」，补充契约版本语义、弃用窗口语义（一个小版本或 30 天取较长者）、版本号示例与未选方案理由；①② 的对比保留。
+- 新增 `draft-ADR-CT-PACT-BACKEND-01-20261114.md`：状态 Proposed，记录发布决定、备选、后果、窗口语义与对 0.1.2 的影响；`approved_by` 与 `approved_at` 留空，明确 Agent 不得自批。
+- 未写入 `pact-dsh`、未填白板 `compat_policy`；X2／X5／T6 维持 fail。
+
+### 27.2 批 A：index 测试
+
+- 新增 `test/index.test.js`（4 个用例）：`mirrorDir: null` 不建审计文件、只记录 session 事件且只保留白名单字段、effect disposer 退订、非法配置在装监听前 fail fast。
+
+### 27.3 批 A：loop-entry 测试（未改生产代码）
+
+- 新增 `test/loop-entry.test.js` 与 `test/fixtures/agent-loop-stub.mjs`。
+- 用 `node:module` 的 `registerHooks` 在测试进程内把未安装的 peer 依赖 `@deepseek-ai/dsh-agent-loop` 解析到本地桩，再动态 import 入口；`PACT_DSH_CONFIG` 在 import 前注入，绕开顶层 `loadConfig` 副作用。
+- 覆盖：导出类是 AgentLoop 子类、非法配置导致 import 拒绝、`pactInstall` 把 participants/fakeEnabled 传入 `backendFor`（禁用后端时 pre-step 返回 reject）、effect 释放 4 个 hook。
+- `npm test`：**57 tests / 57 pass / 0 fail**。
+- 结论：**不需要改生产代码**即可覆盖 loop-entry。
+
+### 27.4 批 C：回滚声明草案（只起草）
+
+- 新增 `draft-DEP-rollback-20261114.md`：对比 `deprecate` 与「发新版回退」的消费者影响、版本号影响、对 `release.yml` 的要求；建议默认「发新版回退为主＋deprecate 配套」，待人类勾选。
+- 未改 `release.yml`、未执行 npm 命令、未登记 `deploy_strategy.rollback`。
+
+### 27.5 实跑分布
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 **pass=35 fail=4 escalate=0 vacuous=9** |
+| T4 | **pass（机械校验：9 个单元均有非空测试集）** |
+| W2 | **pass（机械校验：9 个单元均有独立测试文件）** |
+| V1／W4／G7 | pass（机械校验，v1.12.0 起） |
+| W1 | pass（**人工核结论，非机械校验**） |
+| 10.2.5 | **6/6**，v1.13.0（真实分布 pass 35 / fail 4 / escalate 0 / vacuous 9） |
+
+4 条 fail：X2、X5、T6、G3；**0 条 escalate**。pass 中含 9 条 vacuous。
+
+---
+
+## 28. 第十四轮（2026-11-14）：ADR 批准迁入、X2/T6/G3 落地，分布 39/0/0/9
+
+人类按父会话转述的五条全部批准，逐条落地。
+
+### 28.1 ADR 批准并迁入目标仓（X5）
+
+- 新建 `/home/user/projects/pact-dsh/adr/ADR-0002-CT-PACT-BACKEND-01.md`（该仓无既有 `adr/` 惯例，按人类授权新建）。
+- 头部字段：`approved_by: user`、`approver_kind: human`、`approved_at: 2026-11-14`、批准依据「2026-11-14 人类批准」、`决策记录状态：**\`approved\`**`。
+- 正文记录发布决定、弃用窗口语义、被拒候选、后果、对已发布 0.1.2 的影响与实施项；批准记录节明确「Agent 未自批，状态迁移依据人类 2026-11-14 批准」。
+- 检查器适配：`x.py::_adr_state` 先按 `target_repo` 解析 ADR 路径，找不到再回退 pilot 目录，使 ADR 迁出 pilot 后 X5 仍可判。
+- 结果：**X5 pass（机械校验）**——`1 份已发布契约均有已批准 ADR`。
+
+### 28.2 X2：兼容策略写入白板
+
+- 白板 `contract[0].compat_policy` 登记候选三：契约版本与包版本解耦（`CT-PACT-BACKEND-01@<major>`，当前 `@1` 对应包 `0.1.2`）；加性变更升 minor；破坏性变更升 major 并保留旧契约面至少一个小版本或 30 天（取较长者），窗口内不得删除；窗口未满删除或未升 major 视为违约。
+- `contract[0].adr` 指向 `adr/ADR-0002-CT-PACT-BACKEND-01.md`，`evidence` 补 ADR 与 npm 发布事实。
+- 结果：**X2 pass（机械校验）**——`1 份契约均带 version 与 compat_policy`。
+
+### 28.3 T6：新增契约测试
+
+- 新建 `pact-dsh/test/contract.test.js`（只加测试文件，未改生产代码，复用既有 `FakePactBackend`／`WasmPactBackend` 与 `test/fixtures` 桩）。
+- 4 个用例：
+  1. `PUBLISHED_SURFACE` 七方法（`enabled/gates/status/seed/produce/consume/close`）在两个实现上均保留，且只允许新增可选方法（「只增不删／旧面保留」断言）；
+  2. Fake 后端全契约调用与结果形状；
+  3. Fake 后端错误码（`InvalidKey`／`InvalidRequest`／`Disabled`／`DuplicateToken`／`UnknownToken`／`IdempotencyConflict`／`BackendUnavailable`）；
+  4. Wasm 后端七调用透传与错误码保留。
+- 白板 `contract_tests` 由显式空集改为登记该文件，`in_ci: true`（`ci.yml` 的 `npm test` 会执行）。
+- `npm test`：**61 tests / 61 pass / 0 fail**（新增 4 项）。
+- 结果：**T6 pass（机械校验）**——`1 份已发布契约的契约测试均在 CI 执行`。
+
+### 28.4 G3：回滚与风格符合性
+
+- 采纳默认方案：**发补丁版回退为主＋对缺陷版 `deprecate`**（已发布版本不可真正撤回，同号不可重发）。
+- `deploy_strategy[0].rollback` 写明确机制；`compatible_with_style: true`；新增 `style_conformance` 5 条，逐条对上 `ADR-DP1-STYLE` 约束：
+  1. STY-001 同步请求-响应（pre-step/pre-tool 内同步 await，无队列）；
+  2. 不注册 `AgentFactory`（factory 归被覆盖的 `agent-loop` 行）；
+  3. 仅按 `id` 覆盖 `cordis.patch.yml` 行（禁用原行＋插入 `pact-agent-loop`／`dsh-pact-observe`）；
+  4. 不新增故障域（进程内 Fake 默认；wasm 本地惰性导入）；
+  5. 单可部署单元（`release.yml` 一次 tag 产出单个单元）。
+- 结果：**G3 pass（机械校验）**——`1 条部署策略均含回滚且风格兼容判定为真`。
+
+### 28.5 实跑分布
+
+| 项 | 结果 |
+|---|---|
+| `runner.py` | hard=39 executed=39 blocks=14 **pass=39 fail=0 escalate=0 vacuous=9** |
+| X2／X5／T6／G3 | 全部 **pass（机械校验）** |
+| `npm test`（pact-dsh） | 61/61 |
+| 10.2.5 | **6/6**，v1.14.0（真实分布 pass 39 / fail 0 / escalate 0 / vacuous 9） |
+
+**39 条 pass 的构成（不得只报总数）**：29 条为机械校验；**1 条为人工核结论（W1）**；**9 条为 vacuous（空真，pass＋vacuous: true）**。escalate 与 fail 均已清零。
+
+### 28.6 提交范围
+
+- `skills` 仓一个 commit：检查器（`common.py`／`v.py`／`w.py`／`g.py`／`x.py`）、`guard_registry.yaml`、白板、10.2.5、artifact、run-log、adjudication、两份草案（契约策略、回滚）。
+- `pact-dsh` 仓一个 commit：`adr/ADR-0002-CT-PACT-BACKEND-01.md`、`test/contract.test.js`、`test/index.test.js`、`test/loop-entry.test.js`、`test/fixtures/agent-loop-stub.mjs`、`README.md`（契约兼容策略节与测试计数）。未改生产代码。
+- 两仓均未 `git add -A`、均未推送。

@@ -130,6 +130,44 @@ def domain_data(ctx, key):
     return dd[key] if key in dd else None
 
 
+def target_repo(ctx):
+    """目标仓库根目录（白板 target_repo）；未登记或目录不存在返回 None。"""
+    raw = whiteboard_doc(ctx).get('target_repo')
+    if not raw:
+        return None
+    path = Path(raw).expanduser()
+    return path if path.is_dir() else None
+
+
+def source_files(ctx):
+    """按 module_inventory.path 定位目标仓库源码。
+
+    返回 ([(unit_id, Path)], None) 或 (None, 不可判原因)。
+    路径缺失／文件不存在时整批不可判，不做部分扫描。
+    """
+    repo = target_repo(ctx)
+    units = domain_data(ctx, 'module_inventory') or []
+    if repo is None:
+        return None, '白板未登记 target_repo（或目录不存在），无法读取目标仓库源码'
+    if not units:
+        return None, 'module_inventory 未登记，无法定位目标仓库源码'
+    files, missing = [], []
+    for u in units:
+        rel = u.get('path')
+        unit = u.get('id', '?')
+        if not rel:
+            missing.append(f'{unit} 无 path')
+            continue
+        p = repo / rel
+        if not p.is_file():
+            missing.append(f'{unit}→{rel}')
+            continue
+        files.append((unit, p))
+    if missing:
+        return None, f'目标仓库缺少登记模块文件：{missing}'
+    return files, None
+
+
 def verdict(pid: str, v: str, evidence: str, reason: str = '', vacuous: bool = False) -> dict:
     assert v in VERDICTS, v
     return {'property': pid, 'verdict': v, 'evidence': evidence, 'reason': reason,

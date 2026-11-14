@@ -1,14 +1,14 @@
 {
   "run_id": "fvr-full-run-1",
-  "generated_at": "2026-11-14T12:22:44+08:00",
+  "generated_at": "2026-11-14T15:00:16+08:00",
   "mother_sha256": "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510",
   "predicate_blocks": 14,
   "hard_property_source": "regex ^\\s*([A-Z]\\d+):.*(——|—)\\s*硬 + hard-properties.snapshot.json",
   "snapshot_count": 39,
   "executed_count": 39,
   "summary": {
-    "pass": 32,
-    "fail": 7,
+    "pass": 39,
+    "fail": 0,
     "escalate": 0,
     "vacuous": 9
   },
@@ -96,8 +96,8 @@
     {
       "property": "V1",
       "verdict": "pass",
-      "evidence": "禁止依赖图无环（3 条 forbidden 层规则）",
-      "reason": "弱校验：只读字面层规则边，不展开 layer_of；不代表单元级依赖已核",
+      "evidence": "机械校验：扫描 9 个单元源码，11 条相对 import 边，逐边核对 3 条 forbidden 层规则无违反；禁止层规则图无环",
+      "reason": "",
       "vacuous": false,
       "route": "pass"
     },
@@ -127,17 +127,17 @@
     },
     {
       "property": "W2",
-      "verdict": "fail",
-      "evidence": "2/9 个单元无独立测试，不可独立验证：['index', 'loop-entry']",
+      "verdict": "pass",
+      "evidence": "9 个单元均有独立测试文件，可独立验证",
       "reason": "",
       "vacuous": false,
-      "route": "fail"
+      "route": "pass"
     },
     {
       "property": "W4",
       "verdict": "pass",
-      "evidence": "单一所有者经人类确认（user，2026-11-14）：observer→events.jsonl(write)；index→events.jsonl(create_and_configure)",
-      "reason": "人工核结论，非机械校验：归属由人确认；已与 V1 打包为将来机械校验升级项",
+      "evidence": "机械校验：2 条所有权与源码写点一致（events.jsonl 唯一写点 observer；events.jsonl 唯一创建点 index（构造 ['FileSink']））",
+      "reason": "",
       "vacuous": false,
       "route": "pass"
     },
@@ -159,19 +159,19 @@
     },
     {
       "property": "X2",
-      "verdict": "fail",
-      "evidence": "1 份契约缺 version 或 compat_policy：['CT-PACT-BACKEND-01']",
+      "verdict": "pass",
+      "evidence": "1 份契约均带 version 与 compat_policy",
       "reason": "",
       "vacuous": false,
-      "route": "fail"
+      "route": "pass"
     },
     {
       "property": "X5",
-      "verdict": "fail",
-      "evidence": "1 份已发布契约缺已批准 ADR：['CT-PACT-BACKEND-01 无 ADR']",
+      "verdict": "pass",
+      "evidence": "1 份已发布契约均有已批准 ADR",
       "reason": "",
       "vacuous": false,
-      "route": "fail"
+      "route": "pass"
     },
     {
       "property": "X6",
@@ -207,35 +207,35 @@
     },
     {
       "property": "T4",
-      "verdict": "fail",
-      "evidence": "2/9 个单元无非空测试集：['index', 'loop-entry']",
-      "reason": "入口单元按独立单元计（D-C）：无直测即不满足 ∀UNIT",
+      "verdict": "pass",
+      "evidence": "9 个单元均有非空测试集（共 9 个测试文件）",
+      "reason": "",
       "vacuous": false,
-      "route": "fail"
+      "route": "pass"
     },
     {
       "property": "T6",
-      "verdict": "fail",
-      "evidence": "1 份契约的测试不满足：['CT-PACT-BACKEND-01 无契约测试']",
+      "verdict": "pass",
+      "evidence": "1 份已发布契约的契约测试均在 CI 执行",
       "reason": "",
       "vacuous": false,
-      "route": "fail"
+      "route": "pass"
     },
     {
       "property": "G3",
-      "verdict": "fail",
-      "evidence": "1/1 条部署策略不满足：[\"DEP-PACT-DSH-01 缺 ['rollback', 'compatible_with_style']\"]",
+      "verdict": "pass",
+      "evidence": "1 条部署策略均含回滚且风格兼容判定为真",
       "reason": "",
       "vacuous": false,
-      "route": "fail"
+      "route": "pass"
     },
     {
       "property": "G7",
-      "verdict": "fail",
-      "evidence": "1/1 条 P2 信号缺阈值或趋势窗：[\"GR-005 缺 ['trend_window']\"]",
+      "verdict": "pass",
+      "evidence": "1 条 P2 信号均配置阈值与趋势窗（GR-005=count/10；metric 与 value 可配置）",
       "reason": "",
       "vacuous": false,
-      "route": "fail"
+      "route": "pass"
     },
     {
       "property": "E1",
