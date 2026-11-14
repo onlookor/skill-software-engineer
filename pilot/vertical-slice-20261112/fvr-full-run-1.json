@@ -1,8 +1,8 @@
 {
   "run_id": "fvr-full-run-1",
-  "generated_at": "2026-11-14T15:00:16+08:00",
-  "mother_sha256": "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510",
-  "predicate_blocks": 14,
+  "generated_at": "2026-11-14T18:24:44+08:00",
+  "mother_sha256": "469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3",
+  "predicate_blocks": 17,
   "hard_property_source": "regex ^\\s*([A-Z]\\d+):.*(——|—)\\s*硬 + hard-properties.snapshot.json",
   "snapshot_count": 39,
   "executed_count": 39,
@@ -16,7 +16,7 @@
     {
       "property": "M10",
       "verdict": "pass",
-      "evidence": "8 张实质卡均含 S0–S6 七步",
+      "evidence": "14 张实质卡均含 S0–S6 七步",
       "reason": "",
       "vacuous": false,
       "route": "pass"
@@ -256,7 +256,7 @@
     {
       "property": "M1",
       "verdict": "pass",
-      "evidence": "卡片消费的 31 个方法条目状态均 ∈ {active, seed}",
+      "evidence": "卡片消费的 58 个方法条目状态均 ∈ {active, seed}",
       "reason": "",
       "vacuous": false,
       "route": "pass"
@@ -304,7 +304,7 @@
     {
       "property": "E7",
       "verdict": "pass",
-      "evidence": "3 条编译规程变更均经人类批准（approved_by=user，approver_kind=human），哈希链连续且末条＝母本现行 c0bb9879b65c…",
+      "evidence": "4 条编译规程变更均经人类批准（approved_by=user，approver_kind=human），哈希链连续且末条＝母本现行 469d64c023a8…",
       "reason": "",
       "vacuous": false,
       "route": "pass"

@@ -39,29 +39,23 @@ def hard_properties(text: str) -> list[str]:
 
 
 def predicate_blocks(text: str) -> list[dict]:
-    """发现全部「**机器层谓词**」块：节标题、谓词名。"""
+    """按 DATA-SPEC D1.4 权威清单发现谓词块（与判据一检查器同一实现，避免两套口径）。"""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        'pattern_version_checker', REG / 'scripts' / 'check_pattern_version.py')
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    blocks, missing = mod.discover_blocks(text.splitlines(), mod.load_authoritative_blocks())
+    if missing:
+        raise RuntimeError(f'D1.4 权威块在母本定位失败：{sorted(missing)}')
     out = []
-    section = ''
-    lines = text.splitlines()
-    for i, line in enumerate(lines):
-        m = SEC_RE.match(line)
-        if m:
-            section = m.group(2).strip()
-            continue
-        if not PRED_HEAD_RE.match(line.strip()):
-            continue
-        j = i + 1
-        while j < len(lines) and not lines[j].strip().startswith('```'):
-            j += 1
-        body = []
-        j += 1
-        while j < len(lines) and not lines[j].strip().startswith('```'):
-            body.append(lines[j])
-            j += 1
+    for b in blocks:
         names = []
-        for b in body:
-            names += re.findall(r'([a-z_][a-z0-9_]*)\s*\(', b.split('//', 1)[0])
-        out.append({'section': section, 'line': i + 1, 'names': names})
+        for line in b['lines']:
+            m = re.match(r'^\s*([A-Za-z_][A-Za-z0-9_]*)\s*\(', line.split('//', 1)[0])
+            if m and m.group(1) not in names:
+                names.append(m.group(1))
+        out.append({'section': b['section'], 'line': b['line'], 'names': names})
     return out
 
 

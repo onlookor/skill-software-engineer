@@ -2,7 +2,8 @@
 """白板模式版本兜底检查器（pattern_version）。
 
 职责（母本 0.7 模式版本定义 ＋ 10.2.5 判据一）：
-  1) 自动发现母本全部「**机器层谓词**」块（不写死数量），按节序拼接后取规范化指纹；
+  1) 按 `registry/DATA-SPEC.md` D1.4「母本机器层谓词块清单（权威）」逐块定位，取每节首个围栏块，
+     按节序拼接后取规范化指纹（不写死块数；含无「**机器层谓词**」标记、仅以 `####`＋围栏书写的块）；
   2) 从 0.7 读取现行声明值 `pattern_version: pv-MAJOR.MINOR`（定义与现行值同处）；
   3) 校验白板声明的 pattern_version 与 0.7 声明值相等；
   4) 指纹兜底：
@@ -37,43 +38,86 @@ ROOT = Path(__file__).resolve().parents[2]
 REG = ROOT / 'registry'
 MOTHER = ROOT / '软件工程元框架成文法.md'
 BASELINE = REG / 'pattern_version_baseline.yaml'
+DATA_SPEC = REG / 'DATA-SPEC.md'
 DEFAULT_WHITEBOARD = ROOT / 'pilot/vertical-slice-20261112/whiteboard-pact-dsh.yaml'
 
 SEC_RE = re.compile(r'^(#{2,4})\s+(.+)$')
-PRED_HEAD_RE = re.compile(r'^\*\*机器层谓词\*\*')
+SEC_NUM_RE = re.compile(r'^(\d+(?:\.\d+)+)\s')
+BLOCK_ID_RE = re.compile(r'^\d+(?:\.\d+)+$')
 DECL_RE = re.compile(r'pattern_version\s*:\s*(pv-\d+\.\d+)')
 VER_RE = re.compile(r'^pv-(\d+)\.(\d+)$')
 SEC07_RE = re.compile(r'^###\s+0\.7\b')
 
 
-def discover_blocks(lines: list[str]) -> list[dict]:
-    """扫描全部「**机器层谓词**」段后的围栏代码块，按出现顺序返回。"""
-    blocks = []
-    section = ''
+def load_authoritative_blocks() -> list[dict]:
+    """读 DATA-SPEC D1.4 表格，返回权威块清单（块号＋声明名数＋备注）。
+
+    D1.4 是母本机器层谓词块的唯一权威清单（本仓 D1.4 〔新立〕）；本脚本不另立名单、
+    不写死数量，清单增删只改 D1.4。
+    """
+    if not DATA_SPEC.exists():
+        return []
+    out = []
+    for line in DATA_SPEC.read_text(encoding='utf-8').splitlines():
+        s = line.strip()
+        if not s.startswith('|'):
+            continue
+        cells = [c.strip() for c in s.strip('|').split('|')]
+        if len(cells) < 4:
+            continue
+        if not BLOCK_ID_RE.match(cells[1]):
+            continue
+        if not cells[2].startswith('@'):
+            continue
+        out.append({
+            'id': cells[1],
+            'declared_names': cells[3],
+            'note': cells[4] if len(cells) > 4 else '',
+        })
+    return out
+
+
+def discover_blocks(lines: list[str], spec: list[dict]) -> tuple[list[dict], list[str]]:
+    """按 D1.4 权威清单逐块定位：节标题后首个围栏代码块。返回 (块列表, 未定位到的块号)。"""
+    heads = []  # (行下标, 级别, 块号, 标题)
     for i, line in enumerate(lines):
         m = SEC_RE.match(line)
-        if m:
-            section = m.group(2).strip()
+        if not m:
             continue
-        if not PRED_HEAD_RE.match(line.strip()):
+        title = m.group(2).strip()
+        n = SEC_NUM_RE.match(title)
+        heads.append((i, len(m.group(1)), n.group(1) if n else '', title))
+
+    blocks, missing = [], []
+    for entry in spec:
+        pos = next((k for k, h in enumerate(heads) if h[2] == entry['id']), None)
+        if pos is None:
+            missing.append(entry['id'])
             continue
-        j = i + 1
-        while j < len(lines) and not lines[j].strip().startswith('```'):
+        start, level, _, title = heads[pos]
+        end = len(lines)
+        for nxt in heads[pos + 1:]:
+            if nxt[1] <= level:
+                end = nxt[0]
+                break
+        j = start + 1
+        while j < end and not lines[j].strip().startswith('```'):
             j += 1
-        if j >= len(lines):
+        if j >= end:
+            missing.append(entry['id'])
             continue
         body = []
         j += 1
-        while j < len(lines) and not lines[j].strip().startswith('```'):
+        while j < end and not lines[j].strip().startswith('```'):
             body.append(lines[j])
             j += 1
         if body:
-            blocks.append({
-                'section': section,
-                'line': i + 1,
-                'lines': body,
-            })
-    return blocks
+            blocks.append({'section': title, 'block_id': entry['id'],
+                           'line': start + 1, 'lines': body})
+        else:
+            missing.append(entry['id'])
+    blocks.sort(key=lambda b: b['line'])  # 指纹按母本节序（文档顺序）聚合
+    return blocks, missing
 
 
 def normalize(block_lines: list[str]) -> str:
@@ -131,13 +175,13 @@ def write_baseline(data: dict, mother_sha: str) -> None:
         '# 白板模式版本基线（pattern_version 兜底校验）',
         '#',
         '# 依据：母本 0.7（模式版本＝白板谓词集（各节机器层谓词块之并）的语义版本，现行值同处声明）；',
-        '#       母本各节「**机器层谓词**」块（脚本自动发现，数量不写死）。',
+        '#       块清单＝registry/DATA-SPEC.md D1.4（唯一权威），每节取首个围栏块，数量不写死。',
         '# 性质：数据侧基线，不是母本条款；只存「版本 → 块清单与指纹」，不定义模式语义。',
         '# 更新义务：谓词集语义变更 → 先递增 0.7 声明值（0.7 义务）→ 再 --freeze 登记新基线；',
         '#   只 --freeze 不升版会被 check_pattern_version.py 判 fail（版本未递增）。',
         '',
         'meta:',
-        '  algorithm: "discover **机器层谓词** blocks; strip // comments & whitespace; drop blank lines; sha256"',
+        '  algorithm: "block list from DATA-SPEC.md D1.4; first fenced block per block section; strip // comments & whitespace; drop blank lines; sha256; aggregate in document order"',
         f'  mother_sha256_at_freeze: "{mother_sha}"',
         'baselines:',
     ]
@@ -168,6 +212,7 @@ def main() -> int:
     ap.add_argument('--force', action='store_true', help='口径更正时覆盖已有版本基线（须在 changlog 登记）')
     ap.add_argument('--json', dest='json_out', help='把结果另存为 JSON')
     ap.add_argument('--date', default='2026-11-13', help='--freeze 记录日期')
+    ap.add_argument('--note', default='', help='--freeze 写入基线条目的备注（原因／批准依据）')
     args = ap.parse_args()
 
     if not MOTHER.exists():
@@ -177,7 +222,11 @@ def main() -> int:
     lines = mother_text.splitlines()
     mother_sha = hashlib.sha256(mother_text.encode('utf-8')).hexdigest()
 
-    blocks = discover_blocks(lines)
+    spec = load_authoritative_blocks()
+    if not spec:
+        print(f'无法读取 D1.4 权威块清单：{DATA_SPEC}', file=sys.stderr)
+        return 2
+    blocks, missing = discover_blocks(lines, spec)
     agg = aggregate(blocks)
     decl, decl_count, decl_line = get_declaration(lines)
 
@@ -187,7 +236,8 @@ def main() -> int:
         'declaration_line': decl_line,
         'declaration_count': decl_count,
         'block_count': len(blocks),
-        'blocks': [{'section': b['section'], 'line': b['line'],
+        'authoritative_block_count': len(spec),
+        'blocks': [{'block_id': b['block_id'], 'section': b['section'], 'line': b['line'],
                     'predicate_lines': len(normalize(b['lines']).splitlines()),
                     'fingerprint': fingerprint(b['lines'])} for b in blocks],
         'aggregate_fingerprint': agg,
@@ -198,11 +248,13 @@ def main() -> int:
     def rec(level: str, code: str, msg: str):
         result['checks'].append({'level': level, 'code': code, 'msg': msg})
 
+    if missing:
+        rec('fail', 'PV-0b', f'D1.4 权威清单中 {len(missing)} 块在母本定位失败：{sorted(missing)}')
     if not blocks:
-        rec('fail', 'PV-0', '未发现任何「**机器层谓词**」块')
+        rec('fail', 'PV-0', '按 D1.4 权威清单未定位到任何机器层谓词块')
     else:
-        rec('pass', 'PV-0', f'自动发现 {len(blocks)} 个机器层谓词块：'
-                            + '；'.join(f"{b['section']}@{b['line']}" for b in blocks))
+        rec('pass', 'PV-0', f'按 D1.4 权威清单定位 {len(blocks)}/{len(spec)} 块：'
+                            + '；'.join(f"{b['block_id']}@{b['line']}" for b in blocks))
 
     if decl is None:
         rec('fail', 'PV-1', '0.7 内未声明 pattern_version')
@@ -225,11 +277,12 @@ def main() -> int:
             print(f'拒绝 freeze：{decl} 已有基线且指纹不同（先按 0.7 升版；口径更正用 --force 并登记 changlog）',
                   file=sys.stderr)
             return 1
+        note = args.note or (old.get('note') if old else '首次登记')
         entries[decl] = {
             'fingerprint': agg,
             'block_count': len(blocks),
             'recorded_at': args.date,
-            'note': '口径更正重登（0.21.6 单块 → 全量机器层谓词块）' if old else '首次登记',
+            'note': note.replace('"', "'"),
             'blocks': result['blocks'],
         }
         baseline['baselines'] = entries

@@ -7,6 +7,8 @@
 - 谓词写者：按 DAG 顺序贪心分配，每个谓词恰有一个写者（procedure 谓词除外，按 DP 局部写入）。
 - 跨方面认领：性质所在节首段≠卡片方面 → cross_aspect: true ＋ owner_of_record。
 - 生成后自检：DAG 无环、被引用卡存在、每个 upstream_predicate 有写者。
+防覆盖：已精化卡（version ≥ 0.2.0）不得被重跑覆盖——读回既有卡并跳过，不整卡重写；
+  既有卡无法解析时同样跳过（不覆盖未知内容）。机械生成只负责 0.1.0 骨架卡。
 
 用法：python3 registry/scripts/gen_cards.py [--check]
 """
@@ -233,6 +235,29 @@ def emit(card: dict, path: Path):
     path.write_text(header + body, encoding='utf-8')
 
 
+def refined_card(path: Path) -> tuple[bool, str]:
+    """既有卡是否已精化（不得被机械重跑覆盖）。
+
+    返回 (跳过?, 原因)。version ≥ 0.2.0 → 已精化；既有卡无法解析 → 内容未知，同样不覆盖。
+    无卡文件 → 可生成。
+    """
+    if not path.exists():
+        return False, ''
+    try:
+        doc = yaml.safe_load(path.read_text(encoding='utf-8'))
+    except Exception:
+        return True, '既有卡无法解析，跳过以免覆盖未知内容'
+    if not isinstance(doc, dict):
+        return True, '既有卡无法解析，跳过以免覆盖未知内容'
+    v = doc.get('version')
+    if isinstance(v, dict):
+        v = f"{v.get('major', 0)}.{v.get('minor', 0)}.{v.get('patch', 0)}"
+    nums = re.findall(r'\d+', str(v))[:3]
+    if len(nums) == 3 and tuple(int(n) for n in nums) >= (0, 2, 0):
+        return True, f'已精化卡（version {v}），不覆盖'
+    return False, ''
+
+
 def gen_fvr(lines, psect):
     """按认领表生成 8 份 FVR 集：每条接一个真实检查器（导入取得，不手写映射）。"""
     import hashlib
@@ -420,10 +445,19 @@ def main() -> int:
             print(' -', e)
         return 1
 
+    skipped = []
     for cid, kind, aspect, sec, typ in CARDS:
+        out = PILOT / f'{cid}.card.yaml'
+        stop, why = refined_card(out)
+        if stop:
+            skipped.append((cid, why))
+            continue
         c = dict(cards[cid])
         c['_kind'], c['_aspect'] = kind, aspect
-        emit(c, PILOT / f'{cid}.card.yaml')
+        emit(c, out)
+
+    for cid, why in skipped:
+        print(f'skip {cid}: {why}')
 
     covered = sorted({p for ids in CLAIMS.values() for p in ids})
     print(f'cards={len(cards)} sub={sum(1 for c in CARDS if c[4] == "sub")} '

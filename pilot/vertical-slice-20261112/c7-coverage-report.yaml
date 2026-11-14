@@ -1,0 +1,207 @@
+meta:
+  kind: C7 覆盖率报告（pilot 工具生成，非母本条款）
+  generated_by: pilot/vertical-slice-20261112/c7-coverage.py
+  mother_sha256: 469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3
+  method_registry_sha256: aaa8361eb14694813c2cd7a29673afaa350a5596cfb6e0859cdb1e5b6a435ffd
+  profiles_sha256: 623af138471e2e140d5fd8663dfd25f6537e96c56147cf48b3d202b4f5c4679d
+  criteria_source: 编译规范 5.1 C7：覆盖率报告含锚定缺口、软性质未覆盖、存疑来源三清单
+anchor_gap_list:
+  source: registry/scripts/anchor_index.py（F-1–F-10，输出 registry/anchor_index/summary.json）
+  status: 由锚索引生成，本脚本不重复计算
+soft_property_list:
+  denominator_rule: 母本围栏性质块内以 `—— 软` 标注的性质条款；`—— 条件硬`／`—— 升级型` 不计入
+  denominator_count: 16
+  denominator:
+  - property_id: M13
+    line: 420
+    annotation: 'M13: 中断规程: whiteboard state ∈ resumable ∧ ¬silent_restart                 —— 软（P2）'
+  - property_id: M21
+    line: 569
+    annotation: // 分类纪律 —— 软
+  - property_id: M26
+    line: 674
+    annotation: '级联记录: FM-1(primary) → 无派生FM（unknown保留纪律阻断了FM-3/FM-4级联——'
+  - property_id: W5
+    line: 1342
+    annotation: // DSM 最优但语义破碎 → 语义赢，标记评审 —— 软
+  - property_id: W6
+    line: 1344
+    annotation: // 接口/实现比劣化 → P2 技术债信号（方面9消费）—— 软
+  - property_id: X4
+    line: 1592
+    annotation: 'X4: ∀C ∈ high_risk: cdc_suite(C)                                          // 高风险契约 CDC —— 软（微服务风格下升硬）'
+  - property_id: X7
+    line: 1595
+    annotation: 'X7: 事件契约命名语义 × 消费者数交叉一致（3.2.1 判别规则）                    // 事件/命令不混用 —— 软（P2 漂移信号）'
+  - property_id: Y4
+    line: 1852
+    annotation: // 流动机制与风格自洽 —— 软（偏离标记评审，过度工程信号）
+  - property_id: Y7
+    line: 1858
+    annotation: // 派生数据可重建 —— 软（P2；不可重建的"派生物"是隐式权威，漂移信号）
+  - property_id: Z5
+    line: 2147
+    annotation: // 调用链深度上限 —— 软（P2 漂移信号，越阈+趋势才告警）
+  - property_id: Q6
+    line: 2451
+    annotation: 'Q6: ∀ g(priority=high): ∃ t ∈ tactic_registry: mapped(g, t)   // 目标-手段闭合 —— 软（缺口走 CH-B）'
+  - property_id: Q7
+    line: 2452
+    annotation: costly(高成本可逆), irreversible（不可逆：已创造外部事实——数据迁移完成、
+  - property_id: T5
+    line: 2981
+    annotation: // 金字塔失真 —— 软/条件升级
+  - property_id: T7
+    line: 2984
+    annotation: // 行为注入覆盖 —— 软（高风险契约/SLA 出处为合同时升硬）
+  - property_id: G9
+    line: 3269
+    annotation: 'G9: 守护健康度周期报表生成（Waiver 密度/存活期、P1 逾期率、无据决策消化率）—— 软'
+  - property_id: M5
+    line: 3943
+    annotation: 'M5: narrative_sync(E): ∀ decision-bearing claim: formalized ∨ clue_flagged   —— 软（P2 抽查，积累升 P1）'
+  covered_count: 0
+  covered: []
+  uncovered_count: 16
+  uncovered:
+  - M13
+  - M21
+  - M26
+  - W5
+  - W6
+  - X4
+  - X7
+  - Y4
+  - Y7
+  - Z5
+  - Q6
+  - Q7
+  - T5
+  - T7
+  - G9
+  - M5
+questionable_source_list:
+  rule: provenance.source_pointers 中 verified != true；source_class ∈ {external, external-bib}；source_status 字段缺失如实记
+  method_registry:
+    file: registry/method_registry.yaml
+    entry_count: 138
+    source_status_field: absent
+    entries_without_source_status: 138
+    source_class_distribution:
+      external: 34
+      mother-clause: 29
+      mother-definition: 2
+      mother-row: 73
+    unverified_pointer_entries: []
+    non_mother_source_entries:
+    - id: STY-008
+      source_class: external
+      origin: hybrid
+    - id: STY-009
+      source_class: external
+      origin: hybrid
+    - id: STY-012
+      source_class: external
+      origin: hybrid
+    - id: STY-016
+      source_class: external
+      origin: hybrid
+    - id: STY-020
+      source_class: external
+      origin: hybrid
+    - id: STY-023
+      source_class: external
+      origin: hybrid
+    - id: OWN-003
+      source_class: external
+      origin: hybrid
+    - id: CSL-004
+      source_class: external
+      origin: hybrid
+    - id: CSL-005
+      source_class: external
+      origin: hybrid
+    - id: CRD-001
+      source_class: external
+      origin: hybrid
+    - id: CRD-002
+      source_class: external
+      origin: hybrid
+    - id: CRD-005
+      source_class: external
+      origin: hybrid
+    - id: CRD-006
+      source_class: external
+      origin: hybrid
+    - id: DEC-001
+      source_class: external
+      origin: hybrid
+    - id: DEC-005
+      source_class: external
+      origin: hybrid
+    - id: DEC-006
+      source_class: external
+      origin: hybrid
+    - id: CTR-002
+      source_class: external
+      origin: hybrid
+    - id: CTR-004
+      source_class: external
+      origin: hybrid
+    - id: CTR-008
+      source_class: external
+      origin: hybrid
+    - id: CTR-009
+      source_class: external
+      origin: hybrid
+    - id: STP-003
+      source_class: external
+      origin: hybrid
+    - id: STP-004
+      source_class: external
+      origin: hybrid
+    - id: DFL-001
+      source_class: external
+      origin: hybrid
+    - id: RLP-004
+      source_class: external
+      origin: hybrid
+    - id: RLP-005
+      source_class: external
+      origin: hybrid
+    - id: RLP-006
+      source_class: external
+      origin: hybrid
+    - id: RLP-007
+      source_class: external
+      origin: hybrid
+    - id: SCH-002
+      source_class: external
+      origin: hybrid
+    - id: CFG-003
+      source_class: external
+      origin: hybrid
+    - id: DPS-001
+      source_class: external
+      origin: hybrid
+    - id: DPS-002
+      source_class: external
+      origin: hybrid
+    - id: DPS-003
+      source_class: external
+      origin: hybrid
+    - id: DPS-004
+      source_class: external
+      origin: hybrid
+    - id: DPS-005
+      source_class: external
+      origin: hybrid
+  profiles:
+    file: registry/profiles.yaml
+    entry_count: 18
+    source_status_field: absent
+    entries_without_source_status: 18
+    source_class_distribution:
+      mother-clause: 18
+    unverified_pointer_entries: []
+    non_mother_source_entries: []

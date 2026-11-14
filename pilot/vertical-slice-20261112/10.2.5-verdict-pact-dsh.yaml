@@ -1,4 +1,4 @@
-# 10.2.5 接地编译验收判据：pact-dsh（2026-11-14 第十四轮）
+# 10.2.5 接地编译验收判据：pact-dsh（2026-11-14 第十五轮）
 #
 # 依据：母本 10.2.5 六判据；判据六字段形态见 0.17.4 grounding_status（母本 @3497）；
 #   0.5.1（批准角色注册表）；7.3/8.3/9.3（三处部署可行性勘察）。
@@ -58,11 +58,18 @@
 #     contract_tests 登记该文件且 in_ci: true，T6 转 pass；
 #     deploy_strategy 登记回滚（发补丁版回退＋对缺陷版 deprecate）与 5 条 style_conformance，G3 转 pass；
 #     `npm test` 61/61；分布 pass 39 / fail 0 / escalate 0 / vacuous 9；六判据仍 **6/6**（附同一分布）。
+#   v1.14.0 → v1.15.0（2026-11-14，人类批准 H-1 方案 A）：母本 0.18.6 补登记 `selection_context(DP, F, C)`，
+#     0.7 声明值 `pv-1.0 → pv-1.1`，`pattern_version` 基线重冻；母本行数 4,811 不变、锚漂移 0；
+#     判据一改按 `pv-1.1` 比对；分布不变（39/0/0/9），六判据仍 **6/6**。
+#   v1.15.0 → v1.16.0（2026-11-14，人类批准 D1：修 pv-1.1 指纹盲区）：
+#     判据一检查器改为按 DATA-SPEC D1.4 权威清单发现 17 块（补 0.18.6／0.22.4／0.23.5），
+#     重冻 pv-1.1：aggregate 0753e743d6f0…（14 块）→ f329ce90ad77…（17 块），与 pv-1.0 分离；
+#     母本未再改动、锚漂移 0；分布不变（39/0/0/9，blocks 14→17），六判据仍 **6/6**。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.14.0"
+  version: "1.16.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-14T19:10:00+08:00"
+  executed_at: "2026-11-14T22:20:00+08:00"
   executor: "agent（本会话）"
   artifact: "pilot-20261112.9"
   not_in_scope_this_round: []
@@ -72,12 +79,12 @@ grounding_acceptance:
       name: "白板存在且谓词模式与本文档一致（模式版本号匹配）"
       verdict: "pass"
       evidence:
-        - "pilot/vertical-slice-20261112/whiteboard-pact-dsh.yaml：白板存在，pattern_version: pv-1.0"
+        - "pilot/vertical-slice-20261112/whiteboard-pact-dsh.yaml：白板存在，pattern_version: pv-1.1"
         - "母本 0.7（@220）定义：pattern_version 是白板谓词集（各节机器层谓词块之并）的模式标识，取语义版本 MAJOR.MINOR，现行值同处声明"
-        - "母本 0.7（@220）声明现行值 pattern_version: pv-1.0"
-        - "registry/scripts/check_pattern_version.py：自动发现 14 个机器层谓词块（134 行谓词），PV-0/PV-1/PV-2/PV-3 全 pass（aggregate 0753e743…）"
+        - "母本 0.7（@220）声明现行值 pattern_version: pv-1.1（2026-11-14 因 0.18.6 补登记 selection_context 升 MINOR）"
+        - "registry/scripts/check_pattern_version.py：按 DATA-SPEC D1.4 权威清单发现 17 个机器层谓词块，PV-0/PV-1/PV-2/PV-3 全 pass（aggregate f329ce90…）"
         - "同日更正：0.21.6 仅为状态机谓词块（5 行），不构成全量白板谓词集；原声明已从 0.21.6 行尾删除"
-      reason: "判据一只比对、不定义；定义与现行值同在 0.7，『与本文档一致』有可判定右项，且右项覆盖全部 14 个机器层谓词块（134 行），不是单个状态机块。白板值＝0.7 声明值＝pv-1.0。"
+      reason: "判据一只比对、不定义；定义与现行值同在 0.7，『与本文档一致』有可判定右项，且右项覆盖 D1.4 全部 17 个机器层谓词块，不是单个状态机块。白板值＝0.7 声明值＝pv-1.1。"
       gap_refs: ["D-10"]
       gap_status: "已闭合（D-10）：母本定义＋现行值声明＋兜底检查器三者齐备；不依赖部署口径。"
 

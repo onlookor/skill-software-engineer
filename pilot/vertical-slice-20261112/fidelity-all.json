@@ -2,7 +2,7 @@
   "mode": "aggregate",
   "cards": 18,
   "F1_verdict": "pass",
-  "F2_verdict": "escalate",
+  "F2_verdict": "pass",
   "F3": {
     "registry_hard_properties": 39,
     "covered_count": 39,

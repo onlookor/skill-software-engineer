@@ -30,7 +30,7 @@ meta:
   formal_anchor: "E7: compilation_regime 变更记录 → approved_by(human_role)"
   approval_role_class: "编译规程变更（registry/approval_registry.yaml v1.1.0）"
   scope_note: "本表只回填 pilot/vertical-slice-20261112 期间的母本改动（commits e7afd07 / 2b58c19 / a171cb1）。此前历史改动由 软件工程元框架成文法-changlog.md 记录，不在本表范围；本表不追溯改写 changlog。"
-  entry_count: 3
+  entry_count: 4
   all_approved: true
   pending_evidence: []
 
@@ -81,4 +81,20 @@ changes:
     approved_at: "2026-11-13"
     approval_evidence: "人类裁定（2026-11-13，本会话转达）：「裁定：走方案甲」，并逐条要求 0.7 那句改称「白板谓词集（各节机器层谓词块之并）」、现行值写在 0.7 同处、删除 0.21.6 行尾注释。执行记录见 run-log.md §18.5。"
     artifact_seq: 8
+    status: "approved"
+
+  - change_id: "CRC-PACT-DSH-20261114-04"
+    changed_at: "2026-11-14T21:40:00+08:00"
+    scope:
+      - "0.18.6 机器层谓词块补登记 `selection_context(DP, F, C)`：占用块内原空行，行内追加，不新增行"
+      - "0.7 声明值由 `pattern_version: pv-1.0` 改为 `pv-1.1`（谓词集语义变更，按 0.7 递增 MINOR）"
+    from_sha256: "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510"
+    to_sha256: "469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3"
+    summary: "按人类批准执行 R2-PRED-SC-01（方案 A）：只补 0.18.6 的登记遗漏、同步 0.7 声明值；母本行数 4,811 不变、冻结锚漂移 0。注意：检查器只发现 14 个带 `**机器层谓词**` 标记的块，0.18.6 不在其中，故 14 块 aggregate 未变化（`0753e743d6f0…`，与 pv-1.0 相同）；这是检查器覆盖范围缺口，另行决策。"
+    approved_by: "user"
+    approver_kind: "human"
+    approval_role_class: "编译规程变更"
+    approved_at: "2026-11-14"
+    approval_evidence: "人类裁定（2026-11-14，父会话转达）：「H-1 取方案 A：母本 0.18.6 机器层谓词块补登记 `selection_context`，`pattern_version` 升 `pv-1.1`」，并附三条硬约束（行数不变、只动该处与声明值、重算并更新基线）。Agent 未自批。"
+    artifact_seq: 9
     status: "approved"

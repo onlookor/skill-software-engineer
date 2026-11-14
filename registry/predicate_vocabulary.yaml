@@ -10,7 +10,7 @@
 meta:
   law_file: ../软件工程元框架成文法.md
   schema_ref: "编译规范 2.3 谓词模式 BNF；块清单唯一权威 = DATA-SPEC.md D1.4（17 块），本文件与编译规范 2.3 §191 均只指向它"
-  registry_version: {major: 1, minor: 0, patch: 0}
+  registry_version: {major: 1, minor: 1, patch: 0}
   note: "新增谓词名 = R2 提议（成文法谓词未登记），不得在本文件本地扩词"
 
 syntax:
@@ -94,6 +94,7 @@ predicates:
   - {name: step_log, arity: 7, kind: predicate, source: {source_type: clause_id, value: "0.18.6", verified: true}}
   - {name: exclusion_record, arity: 3, kind: predicate, source: {source_type: clause_id, value: "0.18.6", verified: true}}
   - {name: verdict_table, arity: 4, kind: predicate, source: {source_type: clause_id, value: "0.18.6", verified: true}, note: "verdict_table(DP, candidate, goal, three_value)；以母本 @m:0.18.6#code-4 为准（2026-11-07 ⑨-④ 裁决）"}
+  - {name: selection_context, arity: 3, kind: predicate, source: {source_type: clause_id, value: "0.18.6", verified: true}, note: "selection_context(DP, F, C)；S0 装配的三空间事实集与生效约束集快照；以母本 0.18.6 谓词块第 5 条为准（R2-PRED-SC-01，2026-11-14 人类批准）"}
 
   # ── 方面 9（9.5）SRC 判据扩容（2026-11-06，ADR-VG09-01 D1-A/D2-A；8 名）──
   - {name: cross_boundary_density, arity: 2, kind: predicate, source: {source_type: clause_id, value: "9.5", verified: true}, note: "cross_boundary_density(scope, window)；跨边界边数/内部边数按窗口聚合；出处 9.2.3 通道一"}

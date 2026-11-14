@@ -1123,3 +1123,204 @@ V1/W4 合并为一项「将来升级为机械校验」：
 - `skills` 仓一个 commit：检查器（`common.py`／`v.py`／`w.py`／`g.py`／`x.py`）、`guard_registry.yaml`、白板、10.2.5、artifact、run-log、adjudication、两份草案（契约策略、回滚）。
 - `pact-dsh` 仓一个 commit：`adr/ADR-0002-CT-PACT-BACKEND-01.md`、`test/contract.test.js`、`test/index.test.js`、`test/loop-entry.test.js`、`test/fixtures/agent-loop-stub.mjs`、`README.md`（契约兼容策略节与测试计数）。未改生产代码。
 - 两仓均未 `git add -A`、均未推送。
+
+---
+
+## 29. 启动编译就绪度核对（2026-11-14）：停点重判与 C4/C5/C6/C7 现状
+
+目的：判据闭合（v1.14.0）后，核对"正式路径停在 A-2／A-3、试点路径停在 C4／C6"是否仍成立，并推进不需要人类裁定的部分。
+
+### 29.1 停点一（A-2／A-3）：已失效
+
+仓库内可查到的 A-2／A-3 即 `escalate-adjudication-20261113.md` 批 A 的两项：
+
+| 项 | 内容 | 现状 |
+|---|---|---|
+| A-2 | T4（单元有非空测试集） | v1.13.0 转 **pass**（新增 `test/index.test.js`、`test/loop-entry.test.js`） |
+| A-3 | X2／X5（契约版本与兼容策略、已发布契约的 ADR） | v1.14.0 转 **pass**（`ADR-0002-CT-PACT-BACKEND-01` 经人类批准迁入、`compat_policy` 登记） |
+
+→ 该停点不再成立。若上游指的是另一份 A-x 清单，请指明文件，本记录只对仓库内可查到的 A 批负责。
+
+### 29.2 停点二（C4／C6）：C4 成立，C6 仅剩一条 escalate
+
+以只读方式独立重算（不复用 `check-card.py` 的聚合结果）：
+
+| 判据 | 核验方式 | 结果 |
+|---|---|---|
+| C4（每条硬性质至少一张卡认领） | 18 张卡的 `discipline_checks` 并集 vs `hard-properties.snapshot.json` 的 39 条 | **39/39，无未认领** |
+| C5（引用闭合） | 33 个 `outputs.predicate_writes` 谓词集 vs 各卡 `inputs.upstream_predicates` | **0 条悬空引用** |
+| C6-F1（锚定命中） | `fidelity-all.json` | pass（8 张实质卡 S0–S6 全锚定；10 张躯干卡按"无步骤，F1–F3 不适用"跳过） |
+| C6-F3（硬性质覆盖） | 同上 | pass 39/39 |
+| C6-F2（引用闭合） | 同上 | **escalate：`selection_context`，8 张实质卡同因** |
+| C6-E4 | 卡片 `artifact_version` vs 产物标签 | match（`pilot-20261112.9`） |
+
+`selection_context` 的根因（已核到行）：母本 L328／L333／L440 按白板谓词使用，但 0.18.6 机器层谓词块（L411–415）未登记；`registry/predicate_vocabulary.yaml` 亦无；而 `编译规范.md` L90 又把 `selection_context` 举为机器层谓词示例。属**登记遗漏**，不是语义争议。
+
+处置的两条硬约束：
+- `编译规范.md` §6.5：escalate 批量**不阻塞发布**，但清单须随产物发布；
+- C6 判定谓词要求 `fidelity_verdict = pass`，故 C6 不能记 pass；补登记是母本改动（0.7 要求谓词集语义变更递增 MINOR），**须人类裁定**。
+
+→ 本轮起草 [`R2提案-selection_context-谓词登记-20261114.md`](../../R2提案-selection_context-谓词登记-20261114.md)（`R2-PRED-SC-01`，甲类，未批准、未自批），含 A／B／C 三方案、代价与建议默认 A。
+
+### 29.3 C7：未执行，且前置未齐
+
+| C7 前置 | 现状 |
+|---|---|
+| 版本齐一（E4） | 成立（`.9`） |
+| `fidelity_verdict = pass` | **不成立**（F2 escalate） |
+| 覆盖率报告（锚定缺口／软性质未覆盖／存疑来源三清单随产物发布） | **缺**——仓内无该报告 |
+
+→ 不能进 C7；即使 F2 转 pass，仍需先出覆盖率报告。
+
+### 29.4 正式路径的真实卡点（结论）
+
+不是 A-2／A-3，而是两件：
+
+1. **10 个 kind 的实质卡未编译**：`G-TRUNK-CFG/CRD/CSL/DFL/DPS/OWN/RLP/SCH/SRC/STP` 均为 `gen_cards.py` 机械生成的骨架（无 `steps`、无 `discipline_checks`、无 FVR，注释写"语义对应待后续批次按 0.18.4 精化"）。正式编译对这 10 个 kind 只能进 `registry_refs`，F1–F3 一律不适用。
+2. **`selection_context` 登记**（见 29.2）——所有方法选型类决策的公共前置。
+
+### 29.5 本轮推进与未推进
+
+- 推进：C4／C5 独立重算落记录；C6 escalate 根因定位到母本行号；起草 `R2-PRED-SC-01`；量化躯干卡缺口（10/18）。
+- 未推进（需人类）：`selection_context` 三选一（建议 A）；10 个躯干 kind 的精化批次范围与顺序；C7 覆盖率报告的口径（三清单各自的数据源）。
+
+### 29.6 待人类裁定（选项＋后果＋建议默认）
+
+| 编号 | 问题 | 选项 | 后果 | 建议默认 |
+|---|---|---|---|---|
+| H-1 | `selection_context` 如何处置 | A 母本 0.18.6 补登记 + `pv-1.1`；B 卡片改写；C 维持 escalate | A：F2 转 pass、C6 可闭合，代价是 `pattern_version` 基线整体切换；B：触碰 §1.4(4) 禁令；C：C6 不闭合、缺口在正式编译放大 | **A** |
+| H-2 | 10 个躯干 kind 是否启动精化 | 全量／按依赖序分批／暂不启动 | 精化后才谈得上正式编译全量卡片集；分批可先打通一个方面 | **按依赖序分批**（先 DFL／STP：其谓词已被实质卡 `upstream_predicates` 引用，其余 8 个目前无下游消费者） |
+| H-3 | C7 覆盖率报告数据源 | 复用 `registry/reports/` 既有清单／新建专用三清单 | 决定 C7 何时可执行；不影响 C6 | **复用既有清单，缺项单列** |
+
+---
+
+## 30. 第十五轮（2026-11-14）：`selection_context` 补登记、C6 闭合、DFL／STP 精化
+
+人类批准 H-1（方案 A）、H-2（先做 DFL 与 STP）、H-3（复用既有清单）。
+
+### 30.1 母本改动（只动 0.18.6 与 0.7 声明值）
+
+| 项 | 改前 | 改后 |
+|---|---|---|
+| 总行数 | 4,811 | **4,811（不变）** |
+| sha256 | `c0bb9879b65c…c17c4510` | `469d64c023a8…0cb3f8f3` |
+| 0.18.6 谓词块 | 4 条（`selection_procedure`／`step_log`／`exclusion_record`／`verdict_table`） | 5 条（+`selection_context(DP, F, C)`） |
+| 0.7 声明值 | `pattern_version: pv-1.0` | `pattern_version: pv-1.1` |
+
+- 补登记方式：占用 0.18.6 块内原空行（原 416 行），**行内追加、不新增行**，因此 416 行之后的所有行号不位移。
+- 2,939 条冻结锚未重冻，`anchor_index.py` 复跑：**F-9 漂移核对 986 对，drift = 0**；F-1～F-8、F-10 全部 pass。
+- 首轮曾因在 `predicate_vocabulary` 注释里新增 `@m:0.18.6#code-5` 引用触发 F-10 fail（新增引用未声明），已改为不带锚引用的文字描述，复跑全过。
+
+### 30.2 判据一（`check_pattern_version.py`）
+
+- PV-0（块发现 14／行 134）、PV-1（单一来源）、PV-1b（全文仅一处现行值）、PV-2（白板一致 `pv-1.1`）、PV-3（`pv-1.1` 基线已冻结）**全 pass**。
+- **必须登记的异常**：0.18.6 不在检查器自动发现的 14 块内（它没有 `**机器层谓词**` 标记行，而是 `####` 标题＋围栏），`registry/DATA-SPEC.md` D1.4 的权威清单是 **17 块**。因此 `pv-1.1` 的 aggregate 与 `pv-1.0` **完全相同**（`0753e743d6f0…`）。版本递增依 0.7 语义成立，但块指纹兜底看不见本次改动。**是否把检查器扩到 17 块需人裁**（会影响全部历史指纹，必须重冻）。
+
+### 30.3 C6：由 escalate 转 pass
+
+`check-card.py --all`：`cards=18  F1=pass  F2=pass  F3(full)=pass (39/39)  F3(scoped)=pass  E4 match=True  fail_count=0`。
+`selection_context` 已入 `predicate_vocabulary`（`registry_version` 1.1.0，arity 3），F2 的 R2 不再命中。**C6 闭合**。
+
+### 30.4 全量分布
+
+`hard=39 executed=39 blocks=14 pass=39 fail=0 escalate=0 vacuous=9`；E7 pass（4 条编译规程变更均经人类批准，哈希链连续且末条＝现行母本哈希）。构成仍为 29 机械／1 人工核（W1）／9 空真。
+
+### 30.5 H-2：DFL／STP 精化
+
+- 两张卡由躯干骨架升为 **0.2.0**：补齐 0.18.2 S0–S6 七个步骤（动作逐字取自母本）、`trigger`、`inputs`、`source_anchors`、失败分支；保留原躯干卡的谓词分配（DFL：`data_flow`／`data_lineage`；STP：`interaction_flow`／`orchestrator`／`saga`／`step_class`／`compensation`／`timeout_budget`／`quality_impact_card`）。
+- 依赖序：DFL 上游 `G-TRUNK-CSL`；STP 上游 `G-CAND-03`（与 artifact DAG 一致）。
+- 变体口径：0.18.1 把 DFL／STP 列入「尚未登记 0.18.4 变体」的 5 类（另外 3 类为 SCH／CFG／RLP），须按 0.18.8 补登记；本卡按 0.17.3「暂按通用 S0–S6 执行」，卡内 `variant_note` 已写明。
+- 不精化的 8 个 kind 及理由：CSL／OWN 与 DFL 同属方面 4、SCH／RLP 与 STP 同属方面 5，变体未登记且当前无下游消费者；CFG／CRD／DPS／SRC 属方面 7／3 的注册类目，其价值链尚未在本切片打通。动手前先等 DFL／STP 的编译结果验证通用变体口径。
+- **遗留同步项**：`registry/scripts/gen_cards.py` 的 `CARDS` 表仍把 DFL／STP 标为 `trunk`；若重跑生成器会覆盖本版卡。未改生成器（避免波及其余 16 张卡），登记为待办。
+
+### 30.6 H-3：C7 覆盖率报告的数据源核对
+
+| 清单 | 既有数据源 | 能否支撑 |
+|---|---|---|
+| 锚定缺口清单 | `registry/anchor_index/`（`resolvability.csv`／`drift.csv`／`assertions.csv`） | **能**（本轮 F-9 986 对、缺口 0） |
+| 软性质未覆盖清单 | 无软性质登记表；`fvr_registry.yaml` 只登记 39 条硬性质 | **不能**——缺分母 |
+| 存疑来源清单 | `registry/method_registry.yaml` 的 `source_status`／`verified`、`profiles.yaml` 的 `provenance.source_class`（hybrid／`[自定]`） | **部分能**——字段在，但无聚合表 |
+
+结论：C7 的覆盖率报告**不新建清单**，但三清单里只有锚定缺口可直接生成；软性质缺分母，存疑来源需一次性聚合。两者都要先定口径，列入待裁项。
+
+### 30.7 本轮改动文件（未提交）
+
+母本、`registry/predicate_vocabulary.yaml`、`registry/pattern_version_baseline.yaml`、`registry/compilation_regime_changes.yaml`、`registry/anchor_index/*`（复跑产物）、`R2提案-selection_context-谓词登记-20261114.md`、`artifact.yaml`、`10.2.5-verdict-pact-dsh.yaml`、`whiteboard-pact-dsh.yaml`、`fidelity-all.json`、两张 DFL／STP 卡、本日志。
+
+## 31. D 批：pv-1.1 指纹盲区修复、生成器防覆盖、四个 kind 精化、C7 两项口径（2026-11-14）
+
+人类批准 D1–D4（2026-11-14，`user`）；本轮不提交。
+
+### 31.1 D1：判据一检查器扩到 17 块并重冻基线
+
+**根因**：`check_pattern_version.py` 原 `discover_blocks()` 只认 `**机器层谓词**` 标记行，发现 14 块；0.18.6／0.22.4／0.23.5 仅以 `####` 标题＋围栏书写，未入指纹，故 pv-1.1 的 aggregate 曾与 pv-1.0 相同（`0753e743d6f0…`）。
+
+**改法**：块清单改从 `registry/DATA-SPEC.md` D1.4 表格读取（唯一权威，脚本不写死数量）；对每个块号定位节标题，取该节**首个围栏代码块**，按母本文档顺序聚合。`--freeze` 新增 `--note`（记录重冻原因／批准依据）。`registry/checks/common.py::predicate_blocks()` 改为复用同一发现实现，消除「判据一 17 块／runner 14 块」两套口径。
+
+**重冻前后**：
+
+| 项 | 重冻前 | 重冻后 |
+|---|---|---|
+| 块数 | 14 | **17** |
+| aggregate | `0753e743d6f0…` | **`f329ce90ad77dc2249bd467b47ffee9e12ddcf43d2969e59c100662383b44c4c`** |
+
+新增 3 块（D1.4 中原本就有、旧规则漏发现）：
+
+| 块 | 母本标题行 | 块内构成 | 块指纹（前 12） |
+|---|---|---|---|
+| 0.18.6 | @409 | 5 条谓词声明（含 H-1 新增 `selection_context`）＋6 条 M 性质（M10–M15） | `f245b957638a…` |
+| 0.22.4 | @4046 | 7 条谓词声明＋3 条 M 性质（M31–M33） | `81d7e021e749…` |
+| 0.23.5 | @4267 | 3 条谓词声明＋2 条 M 性质（M34–M35） | `713fde55d5e5…` |
+
+**分离结论**：pv-1.1 的 aggregate 已与 pv-1.0 不同（`f329ce90…` ≠ `0753e743…`），盲区消除。**但须注明不可直接同比**：pv-1.0 条目是旧发现口径（14 块）下的历史记录，其数值无法在现行口径下重算（需历史母本）；已在基线 `pv-1.0.note` 写明「历史记录，勿按现行口径重算」。
+
+**口径提示（不擅自改）**：新增 3 块的围栏内同时含 M 性质条款，故块指纹覆盖这些性质行（比只盖谓词声明更严）；`predicate_lines` 因此计 11／10／5 行。另发现 D1.4 表的「声明名数」已滞后：0.18.6 记 4（H-1 后实为 5）、0.22.4 记 4（实为 7）、合计「142 调用／141 名」亦为旧值——已按人类指令在 §31.6 逐块实算校正。
+
+**复跑**：判据一 PV-0/PV-1/PV-1b/PV-2/PV-3 全 pass（17 块，aggregate `f329ce90…`）；锚索引 F-1～F-10 全 pass，F-9 986 对 **drift=0**；全量分布 `hard=39 executed=39 blocks=17 pass=39 fail=0 escalate=0 vacuous=9`。母本未再改动（4,811 行，sha256 `469d64c023a8…`）。
+
+### 31.2 D2：生成器防覆盖
+
+`gen_cards.py` 新增 `refined_card()`：生成前读回既有卡，`version ≥ 0.2.0` 或既有卡无法解析 → 打印 `skip` 并保留原文件；机械生成只负责 0.1.0 骨架卡。文档头同步写明该防覆盖口径。
+
+**干跑验证**：对 18 张卡取 `sha256sum` 快照 → 重跑 `gen_cards.py` → 再取快照：**18/18 逐字节不变**；输出 `skip G-TRUNK-DFL`、`skip G-TRUNK-STP`、`skip G-TRUNK-CSL`、`skip G-TRUNK-OWN`、`skip G-TRUNK-SCH`、`skip G-TRUNK-RLP`（均 0.2.0），其余 12 张 0.1.0 重写后内容一致。
+
+### 31.3 D3：CSL／OWN／SCH／RLP 精化
+
+四张均由躯干骨架升 **0.2.0**，口径与 DFL／STP 完全一致：S0–S6 动作逐字取自 0.18.2；补 `trigger`／`inputs`／`source_anchors`／失败分支／`approval_route`；**保留原躯干卡谓词分配**；依赖序取 artifact DAG。
+
+| 卡 | 变体口径 | 上游 | 种子锚 | 谓词写入（保留原分配） |
+|---|---|---|---|---|
+| G-TRUNK-CSL | 0.18.4 第 4 行为**已登记**变体：逐数据集合迭代、S6 恒为高影响、S5 前强制「业务语义论证」工件 | G-TRUNK-OWN | 4.2.3 | consistency_level／consistency_rationale／invariant |
+| G-TRUNK-OWN | 同上（第 4 行）；单一所有者判据见 4.5（Y1） | G-TRUNK-SRC | 4.2.1 | dataset／owner／shared_write_exception／access_path／sensitivity |
+| G-TRUNK-SCH | 0.18.1 未登记变体（待 0.18.8），按 0.17.3 暂按通用 S0–S6 | G-TRUNK-RLP | 5.2.4 | time_semantics |
+| G-TRUNK-RLP | 同上；种子源 5.2.3 | G-TRUNK-DPS | 5.2.3 | idempotent／delivery_semantics／idempotency／flag／cleanup_filed／expiry_of |
+
+**不动 CFG／CRD／DPS／SRC 的理由**：四者的价值链在本切片未打通——CFG 依赖 SCH 的部署/调度决策产物、CRD 依赖 CFG、DPS 依赖方面 8/9 的质量与可观测产出、SRC 依赖目标仓的 source registry 实体（本切片只有试点数据）；且它们无自有 0.18.4 变体或变体未登记。先行精化会把「未消费的上游谓词」写成硬依赖，制造假 DAG。登记为后续批次。
+
+`check-card.py --all`：`cards=18 F1=pass F2=pass F3(full)=pass (39/39) F3(scoped)=pass E4 match=True fail_count=0`。
+
+### 31.4 D4：C7 两项口径
+
+**软性质（有条款，建分母）**：母本围栏性质块内以 `—— 软` 标注者构成分母，来源＝母本条款本身；`—— 条件硬`／`—— 升级型` 不计入（前者是硬性质的条件形态，后者按失败升级处理）。
+
+- 分母 **16** 条：M13、M21、M26、W5、W6、X4、X7、Y4、Y7、Z5、Q6、Q7、T5、T7、G9、M5。
+- 覆盖 **0** 条（无任何软性质被 FVR 或检查器以 property_id 绑定）→ **未覆盖 16** 条。不是「无可登记分母」，也不是空真。
+
+**存疑来源（聚合脚本，不建人工清单）**：新增 pilot 工具 `c7-coverage.py`，从注册面自动聚合，产出 `c7-coverage-report.yaml`：
+
+| 注册面 | 条目 | `source_status` | 未核验指针 | 非母本来源（external） | source_class 分布 |
+|---|---|---|---|---|---|
+| method_registry | 138 | **字段不存在（absent）** | **0** | **34** | mother-row 73／mother-clause 29／external 34／mother-definition 2 |
+| profiles | 18 | **字段不存在（absent）** | 0 | 0 | mother-clause 18 |
+
+`source_status` 在现 schema 中不存在，报告如实记 `absent`，未臆造字段（人类所说的该字段由 `verified`＋`source_class` 替代承担）。34 条 external 条目为存疑来源清单主体（STY-008/009/012/016/020/023、OWN-003、CSL-004/005、CRD-001/002/005/006、DEC-001/005/006、CTR-002/004/008/009、STP-003/004、DFL-001、RLP-004/005/006/007、SCH-002、CFG-003、DPS-001～005）。
+
+C7 三清单数据源现已齐备：锚定缺口＝`anchor_index`（本轮 0 缺口）、软性质未覆盖＝16、存疑来源＝34。C7 本身（发布与版本对齐）仍待正式发布动作，不自行宣告。
+
+### 31.5 本轮改动文件（未提交）
+
+母本（未改，仅确认 sha `469d64c0…`）、`registry/scripts/check_pattern_version.py`、`registry/checks/common.py`、`registry/pattern_version_baseline.yaml`、`registry/scripts/gen_cards.py`、`pilot/vertical-slice-20261112/{G-TRUNK-CSL,G-TRUNK-OWN,G-TRUNK-SCH,G-TRUNK-RLP}.card.yaml`、`pilot/vertical-slice-20261112/c7-coverage.py`（新）、`pilot/vertical-slice-20261112/c7-coverage-report.yaml`（新）、`artifact.yaml`、`10.2.5-verdict-pact-dsh.yaml`、`whiteboard-pact-dsh.yaml`、`fidelity-all.json`、`fvr-full-run-1.json`、`registry/compilation_regime_changes.yaml`、`registry/predicate_vocabulary.yaml`、`R2提案-selection_context-谓词登记-20261114.md`、本日志。（`registry/anchor_index/*` 复跑后无差异，未改动。）
+
+### 31.6 D1.4 声明名数校正（提交前）
+
+按现行母本（4,811 行）逐块实算，7 处不符已改，合计行同步：1.5 `8→9`（补 `node_role`）、2.5 `9→8`、5.5 `14→12`、6.5 `11→10`、7.5 `11→9`、0.18.6 `4→5`（`selection_context`）、0.22.4 `4→7`；合计 `142 调用／141 名 →` **`141 调用／140 名`**（`envelope` 仍于 1.5／6.5 两见）。行号列仍为 4,461 行版历史值，已在表头注明仅作定位参考。判据一复跑 aggregate 仍为 `f329ce90ad77…`（D1.4 只决定块清单，不参与指纹），全量仍 `39/0/0/9`。
