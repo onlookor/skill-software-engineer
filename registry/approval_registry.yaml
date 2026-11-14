@@ -16,7 +16,7 @@
 
 meta:
   law_file: ../软件工程元框架成文法.md
-  registry_version: {major: 1, minor: 0, patch: 0}
+  registry_version: {major: 1, minor: 1, patch: 0}
   obligation_anchor:
     source_type: clause_id
     value: "0.5.1"
@@ -28,10 +28,11 @@ meta:
 
 deployments:
   - deployment: "pact-dsh"
-    version: "1.0.0"
+    version: "1.1.0"
     registered_at: "2026-11-12"
     registered_by: "user"
     source: "人类用户 user 于 2026-11-12 裁定（单人项目，不虚构第二批准人）"
+    version_note: "1.1.0（2026-11-13）：新增决策类「编译规程变更」，主批准人 user；来源为 2026-11-13 人类裁定（建 E7 所需批准记录）"
     default_timeout_hours: 48
     roles:
       - decision_class: "风格定案"
@@ -54,13 +55,18 @@ deployments:
         main_approver: {id: "user", kind: "human", note: "人类用户本人"}
         backup_chain: []
         timeout_hours: 48
+      - decision_class: "编译规程变更"
+        applies_to: ["软件工程元框架成文法.md 任一条款的语义变更（追加、改写、删除）", "E7：compilation_regime 变更记录须 approved_by(human_role)"]
+        main_approver: {id: "user", kind: "human", note: "人类用户本人"}
+        backup_chain: []
+        timeout_hours: 48
     timeout_semantics:
       rule: "时限届满未批准 → 沿 backup_chain 逐级升级；链为空即耗尽 → unreachable_event（0.5.1 / 7.2.5）"
       agent_may_not: "不得以超时为由视批准为通过；不得自行缩短时限、跳过链级"
     governance_notes:
       - id: "GOV-PACT-001"
         kind: "single_point_of_failure"
-        statement: "四个决策类的 backup_chain 均为空：主批准人不可用时无第二批准人，按 0.5.1 升级链立即穷尽，构成批准不可达（客观事件）"
+        statement: "五个决策类的 backup_chain 均为空：主批准人不可用时无第二批准人，按 0.5.1 升级链立即穷尽，构成批准不可达（客观事件）"
         ruling: "人类用户 user 于 2026-11-12 明示：单人项目，备选链同一人、无备份，不虚构第二人"
         consequence: "主批准人不可用 → 高影响决策 blocked（SM-DR blocked）；reversibility=costly 下只许阻塞等待（0.10 权力条款第三条）"
         classification: "risk（不是合规缺陷：注册表已声明、时限在案、链为空是明示选择）"

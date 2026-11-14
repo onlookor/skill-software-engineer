@@ -1,0 +1,84 @@
+# 编译规程变更登记表（E7 / 0.25.1 / 0.25.4）
+#
+# 义务锚点（母本 0.25.1 @4160 逐字）：
+#   「禁止 Agent 自行修改编译规程。编译规程的变更权属人类责任方；变更必须记
+#   高影响 ADR 并经批准（0.5）。变更记录必须满足 E7（0.25.4）。」
+# 形式化锚点（母本 0.25.4 @4179 逐字）：
+#   E7: compilation_regime 变更记录 → approved_by(human_role)
+#
+# 性质：本文件是**部署实例登记**，不是母本条款；不改动母本。
+# 落点缺口：母本只给 E7 谓词形态，未给变更登记表的文件/字段 schema；
+#   本表按 registry/ 既有辅助注册表的 meta/entries 惯例自建（同 D-13 先例）。
+#
+# 哈希口径：from_sha256 / to_sha256 一律实算，不估算——
+#   from = git show <commit>^:软件工程元框架成文法.md | sha256sum
+#   to   = git show <commit>:软件工程元框架成文法.md  | sha256sum
+#
+# 批准口径：approved_by 必须是人；approver_kind 一律 human；Agent 不得自批。
+#   某次改动若无明确人类批准依据，不得补假批准——status 置 pending、
+#   approval_evidence 标「待补」，由人类逐条确认。
+
+meta:
+  id: "CRC-PACT-DSH-001"
+  version: "1.0.0"
+  law_file: ../软件工程元框架成文法.md
+  obligation_anchor:
+    source_type: clause_id
+    value: "0.25.1"
+    quote: "禁止 Agent 自行修改编译规程。编译规程的变更权属人类责任方；变更必须记高影响 ADR 并经批准（0.5）。变更记录必须满足 E7（0.25.4）。"
+    verified: true
+  formal_anchor: "E7: compilation_regime 变更记录 → approved_by(human_role)"
+  approval_role_class: "编译规程变更（registry/approval_registry.yaml v1.1.0）"
+  scope_note: "本表只回填 pilot/vertical-slice-20261112 期间的母本改动（commits e7afd07 / 2b58c19 / a171cb1）。此前历史改动由 软件工程元框架成文法-changlog.md 记录，不在本表范围；本表不追溯改写 changlog。"
+  entry_count: 3
+  all_approved: true
+  pending_evidence: []
+
+changes:
+  - change_id: "CRC-PACT-DSH-20261112-01"
+    changed_at: "2026-11-12T22:50:16+08:00"
+    scope:
+      - "0.8 包络条款段尾追加：包络是上界式断言，「覆盖目标」只证明「未被反驳」，不构成可达性证明（D-21-A）"
+      - "0.5.1 批准角色注册表段尾追加：备选批准链允许为空但须 `backup_chain: []` 显式声明；空链＝升级链立即穷尽（D-20-A）"
+    from_sha256: "6d4b0100c7a87ee2d4b18c9d20840ad2600095dd32901aa2bf17cf4f792c34f0"
+    to_sha256: "413e3ac483db0a4262c8801363916501e030716d3e8be3229fa4e22b2521c535"
+    summary: "第 3 批母本修订：两处只加不改、同段追加；母本行数 4,811 与条款数 214 不变，冻结裸行号锚错位 0。"
+    approved_by: "user"
+    approver_kind: "human"
+    approval_role_class: "编译规程变更"
+    approved_at: "2026-11-12"
+    approval_evidence: "人类口令（2026-11-12 会话指令）：「人类批准按你推荐的方案、打包方式与排序执行……第 3 批（母本修订，一次做完）」。记录见 软件工程元框架成文法-changlog.md「2026-11-12：试点第 3 批」节。口令具体时刻未在记录中保存，故 approved_at 只记日期。"
+    artifact_seq: 6
+    status: "approved"
+
+  - change_id: "CRC-PACT-DSH-20261113-02"
+    changed_at: "2026-11-13T20:33:11+08:00"
+    scope:
+      - "0.7 版本化条段尾追加：`pattern_version` 定义（时称「白板谓词块（0.21.6）的模式标识」），取语义版本 MAJOR.MINOR，语义变更递增 MINOR、不兼容递增 MAJOR 并登记 changlog"
+      - "0.21.6 谓词块首行行尾加注释：声明 `pattern_version: pv-1.0`"
+    from_sha256: "413e3ac483db0a4262c8801363916501e030716d3e8be3229fa4e22b2521c535"
+    to_sha256: "8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
+    summary: "判据一闭合：母本两处同段追加（只加不改、不增行），给「与本文档一致」补上可判定右项。其中对 0.21.6 的 pv-1.0 声明已于同日被 CRC-PACT-DSH-20261113-03 更正撤销。"
+    approved_by: "user"
+    approver_kind: "human"
+    approval_role_class: "编译规程变更"
+    approved_at: "2026-11-13"
+    approval_evidence: "人类裁定（2026-11-13）：「判据一走路线 A」。落地方案见 pilot/vertical-slice-20261112/options-criterion1-20261113.md 末节，执行记录见 run-log.md §18。该转述的证据效力已于 2026-11-13 由人类明确确认：此转述构成批准（已由人类追认，非待补）。"
+    artifact_seq: 8
+    status: "approved"
+
+  - change_id: "CRC-PACT-DSH-20261113-03"
+    changed_at: "2026-11-13T20:48:31+08:00"
+    scope:
+      - "0.7 改写：定义对象由「白板谓词块（0.21.6）」改为「白板谓词集（各节机器层谓词块之并）」，并同处声明现行值 `pattern_version: pv-1.0`"
+      - "0.21.6 删除 2026-11-13 加入的行尾注释（该块仅 5 行，不构成全量白板谓词集）"
+    from_sha256: "8d9577f4c8e1480eab0fbac179d56dc49041acff00676a30f9499aefcd1d8079"
+    to_sha256: "c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510"
+    summary: "判据一更正：原写法把局部块当全量（pv-1.0 只覆盖 14 块中的 1 块、3.7%）。改为 0.7 承载定义与现行值，兜底检查器自动发现全部 14 个机器层谓词块（134 行）；0.21.6 恢复原状。取代 CRC-PACT-DSH-20261113-02 中对 0.21.6 的声明。"
+    approved_by: "user"
+    approver_kind: "human"
+    approval_role_class: "编译规程变更"
+    approved_at: "2026-11-13"
+    approval_evidence: "人类裁定（2026-11-13，本会话转达）：「裁定：走方案甲」，并逐条要求 0.7 那句改称「白板谓词集（各节机器层谓词块之并）」、现行值写在 0.7 同处、删除 0.21.6 行尾注释。执行记录见 run-log.md §18.5。"
+    artifact_seq: 8
+    status: "approved"

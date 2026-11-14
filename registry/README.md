@@ -21,6 +21,8 @@
 | `pool_capacity.yaml` | 池容量注册表（C-6＋C-7 合并）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `event_catalog.yaml` | 领域事件目录（C-9）：指针表 schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `guard_registry.yaml` | 守护规则注册表（9.2.2）：schema＋5 条 draft 规则（均待 9.2.2 批准） | 本文件头（自建，D-22） |
+| `approval_registry.yaml` | 批准角色注册表（0.5.1）：pact-dsh v1.1.0，5 类决策，主批准人 user | 本文件头（自建，D-13） |
+| `compilation_regime_changes.yaml` | 编译规程变更登记表（E7／0.25.1）：3 条已回填，均人类批准，哈希链连续 | 本文件头（自建，E7 判定数据源） |
 | `fvr_registry.yaml` | FVR 注册面索引（10.2.4）：登记 FVR 集的版本与摘要，条目本体随卡片 | 本文件头（自建，D-24） |
 | `projection_registry.yaml` | 投影规则注册表（10.2.5 判据二）：注册表→人类层投影 4 条 | 本文件头（自建，D-23） |
 | `scripts/project.py` | 自检与同源投影工具 | [CHECK-SPEC](CHECK-SPEC.md) C1、C3 |
@@ -40,7 +42,9 @@
 cd registry
 python3 scripts/project.py --check      # 仅自检，写 projections/自检报告.md
 python3 scripts/project.py --project    # 自检 + 生成人类层投影
-python3 scripts/check_pattern_version.py # 白板 pattern_version 与 0.21.6 声明值比对（兜底指纹）
+python3 scripts/check_pattern_version.py # 白板 pattern_version 与 0.7 声明值比对（兜底指纹）
+python3 scripts/gen_cards.py            # 机械生成 18 张卡；--fvr 生成 8 份 FVR
+python3 checks/runner.py                # 39 条硬性质全量执行（--freeze 冻结分母）
 ```
 
 产物：`projections/STY.md`、`projections/自检报告.md`、`projections/勘察义务清单.md`、`projections/索引.md`。执行顺序、退出码与生成物纪律见 [CHECK-SPEC](CHECK-SPEC.md) C3。

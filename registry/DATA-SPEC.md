@@ -29,8 +29,13 @@
 | `config_changes.yaml` | 配置变更登记表（C-14）：schema＋空表，只记变更动作与影响、不复制配置项字段 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
 | `pool_capacity.yaml` | 池容量注册表（C-6＋C-7 合并）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
 | `event_catalog.yaml` | 领域事件目录（C-9）：指针表 schema＋空表，不复制 schema；权威在外部 schema registry | **索引非权威**；字段见文件自身 `entry_fields`；指针不可解析 → unknown；见附录 C.1；**本仓无实例** |
+| `approval_registry.yaml` | 批准角色注册表（0.5.1）：部署级决策类 → 主批准人／备选链／时限 | 数据侧权威；字段形态为本仓自建（D-13），母本无该 registry 的 schema |
+| `compilation_regime_changes.yaml` | 编译规程变更登记表（E7／0.25.1）：母本改动的批准链与前后哈希 | 数据侧权威；`from/to` 须由 git 实算不估算，`approved_by` 必须是人；E7 的判定数据源 |
 | `scripts/project.py` | 自检与同源投影工具 | 工具，不含规范命题 |
 | `scripts/check_pattern_version.py` | 白板模式版本兜底检查器（母本 0.7 定义＋10.2.5 判据一） | 工具；判定口径在母本，脚本只做机械比对 |
+| `checks/*.py` | 39 条硬性质的分组检查器（m/e/w/x/v/t/g/q/r 九组）＋公共上下文 `common.py` | 工具；每条返回 `pass|fail|escalate`，空真记 pass＋`vacuous`；检查口径出处随各自 docstring |
+| `checks/runner.py` | 硬性质首轮全量执行器（`--freeze` 冻结分母快照） | 工具；断言硬性质集合＝`pilot/<试跑>/hard-properties.snapshot.json`，输出 `fvr-full-run-<seq>.json` |
+| `scripts/gen_cards.py` | 从母本 0.18.2 S0–S6 机械生成实质卡/躯干卡；`--fvr` 生成 FVR 条目集 | 工具；卡片与 FVR 的唯一生成入口，不手写内容 |
 | `pattern_version_baseline.yaml` | 模式版本 → 全部机器层谓词块的清单与规范化指纹基线 | 数据侧基线；不定义模式语义，语义在母本 0.7 |
 | `projections/*.md` | 人类可读投影与自检报告 | **生成物**；只可重跑生成，不可手改 |
 

@@ -12,7 +12,7 @@
 
 meta:
   law_file: ../软件工程元框架成文法.md
-  registry_version: {major: 1, minor: 0, patch: 0}
+  registry_version: {major: 1, minor: 1, patch: 0}
   registry_id: "FVRREG-PACT-DSH-001"
   deployment: "pact-dsh"
   obligation_anchor:
@@ -21,7 +21,7 @@ meta:
     quote: "FVR_entry = {property_id, 检查程序, 静态/动态归属, 触发接线, 证据形态, 失败路由}"
     verified: true
   schema_status: schema+instances
-  instance_state: "1 个 FVR 集（G-CAND-01，v1.0.0）"
+  instance_state: "8 个 FVR 集（G-CAND-01..08，v1.1.0），39 条硬性质全覆盖"
   status_domain: [draft, seed, active, deprecated, retired]
   status_vocabulary_source: "0.17.2 条目状态枚举（同一词汇表，不另立）"
 
@@ -38,7 +38,56 @@ entries:
   - fvr_id: "FVR-PACT-DSH-G-CAND-01"
     card_id: "G-CAND-01"
     file: "pilot/vertical-slice-20261112/fvr-G-CAND-01.yaml"
-    version: "1.0.0"
-    sha256: "d25aa2203eafc3d3d41e7aada230923abf9c8ccde7107a9cb4bf28d5c4b06760"
-    properties: ["M10", "M11", "M12", "M13", "M14", "M15", "E4"]
+    version: "1.1.0"
+    sha256: "c2883f3b66e25560d7536866dea8b9085399515f035c5afa8d37fb06daaf411d"
+    properties: ["M10", "M11", "M12", "M14", "M15"]
+    status: "active"
+  - fvr_id: "FVR-PACT-DSH-G-CAND-02"
+    card_id: "G-CAND-02"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-02.yaml"
+    version: "1.1.0"
+    sha256: "c251d34953cdbbb9aa1239f5022d6f4380b178d49758fed4538e64784c6fdf76"
+    properties: ["M1", "M2", "M3", "M4", "M8", "M9"]
+    status: "active"
+  - fvr_id: "FVR-PACT-DSH-G-CAND-03"
+    card_id: "G-CAND-03"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-03.yaml"
+    version: "1.1.0"
+    sha256: "a2825b517a377913511121f542a1947a13f4f82241a6fd81ab36fdbc9ea32332"
+    properties: ["M20", "M22", "M23", "M24", "M25"]
+    status: "active"
+  - fvr_id: "FVR-PACT-DSH-G-CAND-04"
+    card_id: "G-CAND-04"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-04.yaml"
+    version: "1.1.0"
+    sha256: "5d6a9b898d2749b32f700152ca295411faf14ff550ede71d1795b27be7f8f949"
+    properties: ["X1", "X2", "X5", "X6"]
+    status: "active"
+  - fvr_id: "FVR-PACT-DSH-G-CAND-05"
+    card_id: "G-CAND-05"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-05.yaml"
+    version: "1.1.0"
+    sha256: "f714732adf94824161775465d2f4156f9f9a38448a16eacbfcf70563d42e6e10"
+    properties: ["W1", "W2", "W4", "W7"]
+    status: "active"
+  - fvr_id: "FVR-PACT-DSH-G-CAND-06"
+    card_id: "G-CAND-06"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-06.yaml"
+    version: "1.1.0"
+    sha256: "d88f1bb080bdc1ce2ff61ada7418bd3e61434af4fa7854dafea90e716a9bbc51"
+    properties: ["V1", "V2", "V5", "E1", "E2", "E3", "E5", "E7"]
+    status: "active"
+  - fvr_id: "FVR-PACT-DSH-G-CAND-07"
+    card_id: "G-CAND-07"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-07.yaml"
+    version: "1.1.0"
+    sha256: "93439d775b34671a96b7b19bbc81f8807e616788883b012bbb4503f8871944fc"
+    properties: ["T1", "T4", "T6"]
+    status: "active"
+  - fvr_id: "FVR-PACT-DSH-G-CAND-08"
+    card_id: "G-CAND-08"
+    file: "pilot/vertical-slice-20261112/fvr-G-CAND-08.yaml"
+    version: "1.1.0"
+    sha256: "34c50f829036284b615167292a78bf92be40a3d0d458df141b91cfdaea27b73b"
+    properties: ["G3", "G7", "Q1", "R8"]
     status: "active"
