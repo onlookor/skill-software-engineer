@@ -11,6 +11,10 @@
 - 存疑来源：从 method_registry 各条与 profiles 各剖面的 `provenance` 自动聚合——
   `source_pointers` 中 `verified != true` 的指针、`source_class` 为 external 的条目；
   注册面若无 `source_status` 字段，如实记 absent（不臆造字段）。
+  external 类条目额外核对 bib_id 是否可在母本参考文献中解析，并区分「未核验缺陷」与
+  「external 来源清单」（hybrid 条目的出处构成，不等于未核验）。
+- C7 判定谓词（编译规范 5.1）：`version_consistent ∧ fidelity_verdict = pass`；
+  三清单随产物发布，非空不阻塞（唯一发布阈值＝悬空引用类锚定缺口=0，见 C2）。
 
 用法：python3 pilot/vertical-slice-20261112/c7-coverage.py [--out PATH]
 输出：pilot/vertical-slice-20261112/c7-coverage-report.yaml
@@ -19,6 +23,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
 import re
 import sys
 from pathlib import Path
@@ -33,10 +38,27 @@ MOTHER = ROOT / '软件工程元框架成文法.md'
 PROP_RE = re.compile(r'^\s*([A-Z]\d+):')
 SOFT_RE = re.compile(r'——\s*软')
 SCORE_RE = re.compile(r'——\s*条件硬|——\s*升级型')
+BIB_LINE_RE = re.compile(r'^(\d{1,3})\.\s')
+REF_HEAD_RE = re.compile(r'^### \d+\.(?:9|[78]) ')
 
 
 def sha(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def mother_bib_ids(lines: list[str]) -> set[int]:
+    """母本各 x.7/x.8/x.9 节中形如 `N. ` 的参考文献条目号。"""
+    ids, in_ref = set(), False
+    for line in lines:
+        if REF_HEAD_RE.match(line):
+            in_ref = True
+            continue
+        if in_ref and re.match(r'^#{2,4} ', line):
+            in_ref = False
+        m = BIB_LINE_RE.match(line)
+        if in_ref and m:
+            ids.add(int(m.group(1)))
+    return ids
 
 
 def soft_denominator(lines: list[str]) -> list[dict]:
@@ -89,9 +111,12 @@ def bound_property_ids() -> tuple[set, dict]:
     return bound, evidence
 
 
-def provenance_rows(entries: list[dict], id_key: str, origin_file: str) -> dict:
+def provenance_rows(entries: list[dict], id_key: str, origin_file: str,
+                    bib_ids: set[int]) -> dict:
     """聚合一个注册面的 provenance：缺失 source_status、未核验指针、非母本来源。"""
     missing_status, unverified, non_mother, class_dist = 0, [], [], {}
+    pointer_total = pointer_verified = 0
+    refs_used: set[str] = set()
     for e in entries:
         eid = e.get(id_key) or e.get('entry_id') or '?'
         prov = e.get('provenance') or {}
@@ -99,9 +124,25 @@ def provenance_rows(entries: list[dict], id_key: str, origin_file: str) -> dict:
             missing_status += 1
         sc = prov.get('source_class')
         class_dist[str(sc)] = class_dist.get(str(sc), 0) + 1
+        pointers = prov.get('source_pointers') or []
+        pointer_total += len(pointers)
+        pointer_verified += sum(p.get('verified') is True for p in pointers)
+        bib_refs = sorted({str(p.get('value')) for p in pointers
+                           if p.get('source_type') == 'bib_id'})
+        refs_used.update(bib_refs)
+        unresolved = [r for r in bib_refs if not r.isdigit() or int(r) not in bib_ids]
         if sc in ('external', 'external-bib'):
-            non_mother.append({'id': eid, 'source_class': sc, 'origin': prov.get('origin')})
-        bad = [p for p in (prov.get('source_pointers') or []) if p.get('verified') is not True]
+            non_mother.append({
+                'id': eid,
+                'source_class': sc,
+                'origin': prov.get('origin'),
+                'pointer_count': len(pointers),
+                'all_pointers_verified': bool(pointers) and
+                                         all(p.get('verified') is True for p in pointers),
+                'bib_refs': bib_refs,
+                'bib_refs_unresolved': unresolved,
+            })
+        bad = [p for p in pointers if p.get('verified') is not True]
         if bad:
             unverified.append({
                 'id': eid,
@@ -109,6 +150,8 @@ def provenance_rows(entries: list[dict], id_key: str, origin_file: str) -> dict:
                 'pointers': [{k: p.get(k) for k in ('source_type', 'value', 'verified')}
                              for p in bad],
             })
+    unresolved_all = sorted(r for r in refs_used
+                            if not r.isdigit() or int(r) not in bib_ids)
     return {
         'file': origin_file,
         'entry_count': len(entries),
@@ -116,8 +159,51 @@ def provenance_rows(entries: list[dict], id_key: str, origin_file: str) -> dict:
                                f'present in {len(entries) - missing_status} entries',
         'entries_without_source_status': missing_status,
         'source_class_distribution': dict(sorted(class_dist.items())),
+        'pointer_stats': {
+            'total': pointer_total,
+            'verified': pointer_verified,
+            'unverified': pointer_total - pointer_verified,
+        },
+        'bib_refs': {
+            'distinct': sorted(int(r) for r in refs_used if r.isdigit()),
+            'resolved': sorted(int(r) for r in refs_used
+                               if r.isdigit() and int(r) in bib_ids),
+            'unresolved': unresolved_all,
+            'mother_bibliography_range': [min(bib_ids), max(bib_ids)] if bib_ids else [],
+        },
         'unverified_pointer_entries': unverified,
         'non_mother_source_entries': non_mother,
+        'status': ('无未核验指针且 bib_id 全部可解析；external 类条目为 hybrid 出处构成，'
+                   '不是未核验缺陷' if not unverified and not unresolved_all else
+                   '存在未核验指针或不可解析的 bib_id，见上两表'),
+    }
+
+
+def c7_predicate(mother_text: str, mr: dict) -> dict:
+    """按编译规范 5.1 C7 判定谓词 `version_consistent ∧ fidelity_verdict = pass` 机械核对。"""
+    art_path = HERE / 'artifact.yaml'
+    ca = (yaml.safe_load(art_path.read_text(encoding='utf-8')) or {}).get(
+        'compilation_artifact') or {}
+    ver = ca.get('version') or {}
+    fw_cur = 'sha256:' + hashlib.sha256(mother_text.encode('utf-8')).hexdigest()
+    reg_cur = (mr.get('meta') or {}).get('registry_version')
+    fid_path = HERE / 'fidelity-all.json'
+    fid = json.loads(fid_path.read_text(encoding='utf-8')) if fid_path.exists() else {}
+    f3 = (fid.get('F3') or {}).get('full_verdict')
+    fid_pass = fid.get('F1_verdict') == 'pass' and fid.get('F2_verdict') == 'pass' \
+        and f3 == 'pass'
+    version_consistent = (ver.get('framework_version') == fw_cur
+                          and ver.get('registry_version') == reg_cur)
+    return {
+        'rule': '编译规范 5.1 C7：version_consistent ∧ fidelity_verdict = pass',
+        'framework_version': {'current': fw_cur, 'artifact': ver.get('framework_version')},
+        'registry_version': {'current': reg_cur, 'artifact': ver.get('registry_version')},
+        'version_consistent': version_consistent,
+        'fidelity_verdict': {'F1': fid.get('F1_verdict'), 'F2': fid.get('F2_verdict'),
+                             'F3_full': f3, 'pass': fid_pass,
+                             'source': 'pilot/vertical-slice-20261112/fidelity-all.json'},
+        'predicate_satisfied': version_consistent and fid_pass,
+        'publish_note': '本报告只核对判定谓词，不执行 SM-CA compiling→valid 与发布动作',
     }
 
 
@@ -127,7 +213,9 @@ def main() -> int:
     args = ap.parse_args()
 
     mother_text = MOTHER.read_text(encoding='utf-8')
-    soft = soft_denominator(mother_text.splitlines())
+    mother_lines = mother_text.splitlines()
+    soft = soft_denominator(mother_lines)
+    bib_ids = mother_bib_ids(mother_lines)
     bound, evidence = bound_property_ids()
     covered = [dict(p, checked_by=evidence[p['property_id']])
                for p in soft if p['property_id'] in bound]
@@ -149,6 +237,7 @@ def main() -> int:
             'profiles_sha256': sha(pr_path),
             'criteria_source': '编译规范 5.1 C7：覆盖率报告含锚定缺口、软性质未覆盖、存疑来源三清单',
         },
+        'c7_predicate_check': c7_predicate(mother_text, mr),
         'anchor_gap_list': {
             'source': 'registry/scripts/anchor_index.py（F-1–F-10，输出 registry/anchor_index/summary.json）',
             'status': '由锚索引生成，本脚本不重复计算',
@@ -161,12 +250,16 @@ def main() -> int:
             'covered': covered,
             'uncovered_count': len(uncovered),
             'uncovered': uncovered,
+            'status': ('软性质覆盖为可选（编译规范 3.3 映射表）；未覆盖登记为覆盖率缺口，'
+                       '非阻塞发布。是否升为机械检查属待裁项，本脚本不自判'),
         },
         'questionable_source_list': {
             'rule': 'provenance.source_pointers 中 verified != true；source_class ∈ {external, external-bib}；source_status 字段缺失如实记',
             'method_registry': provenance_rows(mr.get('entries') or [], 'entry_id',
-                                               'registry/method_registry.yaml'),
-            'profiles': provenance_rows(profiles, 'entry_id', 'registry/profiles.yaml'),
+                                               'registry/method_registry.yaml', bib_ids),
+            'profiles': provenance_rows(profiles, 'entry_id', 'registry/profiles.yaml', bib_ids),
+            'status': ('存疑来源按编译规范 4.5 的 `unverified_source` 判定：指针未核验或 bib_id '
+                       '不可解析即缺陷；external 类条目另列作出处构成清单，不自动等同缺陷'),
         },
     }
     Path(args.out).write_text(

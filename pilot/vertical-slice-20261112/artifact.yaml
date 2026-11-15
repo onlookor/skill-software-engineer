@@ -1,10 +1,13 @@
 # 编译产物清单（试跑切片，非发布）——2026-11-14 批 A 登记与判定升级
 compilation_artifact:
   version:
-    label: "pilot-20261112.9"   # 卡片 artifact_version 指向此标签；三元组见下
-    framework_version: "sha256:c0bb9879b65cde1e810b560015ffea2f1885cf18054a9a12d248a751c17c4510"
+    label: "pilot-20261112.10"   # 卡片 artifact_version 指向此标签；三元组见下
+    # .10（2026-11-15，人类批准 C7-A 重编译）：framework_version 对齐现行母本 469d64c0…（H-1 后）；
+    #   artifact_seq 9→10；18 张卡 artifact_version 全量对齐 .10，卡内容未变（6 张 0.2.0 精化卡原样）；
+    #   C7 `version_consistent` 转 true。重编译只做版本对齐，未执行 SM-CA compiling→valid 与发布。
+    framework_version: "sha256:469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3"
     registry_version: {major: 1, minor: 1, patch: 0}
-    artifact_seq: 9
+    artifact_seq: 10
   # 编译规范 8.1：version = (framework_version, registry_version, artifact_seq)
   # framework_version 用母本内容哈希：母本未声明语义版本号（见 run-log §6 D-3）；
   #   但模式版本是谓词块级语义版本（0.7），与 framework_version 不同层，勿混。
@@ -107,4 +110,14 @@ compilation_artifact:
     adr: {file: pilot/vertical-slice-20261112/ADR-DP1-STYLE.md, id: ADR-DP1-STYLE, decision_state: approved, state_history: ["approved", "provisional", "approved"], last_transition: {from: provisional, to: approved, trigger: retro_approve, by: user, approver_kind: human, at: "2026-11-13", evidence: "人类口头批准，来源 2026-11-13 本轮对话"}}
     grounding: {file: pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml, id: GA-PACT-DSH-20261112-5, version: "1.16.0", pass: 6, fail: 0}
   fidelity_record: "fidelity-all.json（check-card.py --all）＋ fidelity.json（单卡）＋ fvr-full-run-1.json（39 行，2026-11-14 复跑）"
+  coverage_report:
+    file: pilot/vertical-slice-20261112/c7-coverage-report.yaml
+    generated_by: pilot/vertical-slice-20261112/c7-coverage.py
+    lists:
+      anchor_gap: "0（anchor_index F-1–F-10；本报告不重复计算）"
+      soft_property_uncovered: 16
+      questionable_source_unverified: 0
+      external_class_inventory: 34
+    c7_predicate_check: {version_consistent: true, fidelity_pass: true, predicate_satisfied: true}
+    note: "编译规范 5.1 C7：三清单随产物发布、非空不阻塞（唯一发布阈值＝悬空引用类锚定缺口=0，见 C2）。本报告只核对判定谓词，不执行 SM-CA compiling→valid 与发布动作。"
   scope_note: "本产物含 18 张卡（10 实质＋8 躯干；DFL／STP／CSL／OWN／SCH／RLP 于 2026-11-14 由躯干升为 0.2.0 实质卡，余 DPS／CRD／CFG／SRC 仍为躯干）与 8 份 FVR，覆盖母本 39 条硬性质。母本 0.18.6 已补登记 selection_context，pattern_version 为 pv-1.1（母本行数 4,811 不变、锚漂移 0）。10.2.5 为 6/6，真实分布为 pass 39 / fail 0 / escalate 0 / vacuous 9。其中 9 条 vacuous 为空真（域本身无实例或显式空集，X6 为 shared_data_access 显式空集）、W1 为人工核结论，其余 29 条为机械校验；引 6/6 处均须附此分布。x2/x5/t6/g3 已转 pass：ADR-0002-CT-PACT-BACKEND-01 经人类 user 2026-11-14 批准并迁入目标仓 adr/（approved_by=user、approver_kind=human、approved_at=2026-11-14，Agent 未自批），白板登记 compat_policy（契约版本与包版本解耦，破坏性变更保留旧面「一个小版本或 30 天，取较长者」），新增 test/contract.test.js 覆盖七方法/错误码并断言旧面只增不删，contract_tests 登记为 in_ci: true，DEP-PACT-DSH-01 登记回滚（发补丁版回退＋对缺陷版 deprecate）与 5 条 style_conformance。T4/W2 由 test/index.test.js 与 test/loop-entry.test.js 转 pass；`npm test` 61/61，三处新增测试均未改生产代码。G7 转 pass：GR-005 趋势窗 {metric: count, value: 10, configurable: true}。V1 与 W4 为机械校验：V1 扫描目标仓库 9 个单元源码的 11 条相对 import 边，逐边核对 3 条 forbidden 层规则；W4 扫描源码写点/创建点，核对 events.jsonl 唯一写点 observer、唯一创建点 index；二者均以注入反例验证会 fail。W1 仍单列为「将来升级为机械校验」项。硬目标 4 条（G-LAT-01／G-AVL-01／G-LT-01／G-CON-01a），G-CON-01b 为软目标不参与 S4 判定。母本行数 4811 未变。"

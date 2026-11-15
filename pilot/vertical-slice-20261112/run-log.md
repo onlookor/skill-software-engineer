@@ -1324,3 +1324,114 @@ C7 三清单数据源现已齐备：锚定缺口＝`anchor_index`（本轮 0 缺
 ### 31.6 D1.4 声明名数校正（提交前）
 
 按现行母本（4,811 行）逐块实算，7 处不符已改，合计行同步：1.5 `8→9`（补 `node_role`）、2.5 `9→8`、5.5 `14→12`、6.5 `11→10`、7.5 `11→9`、0.18.6 `4→5`（`selection_context`）、0.22.4 `4→7`；合计 `142 调用／141 名 →` **`141 调用／140 名`**（`envelope` 仍于 1.5／6.5 两见）。行号列仍为 4,461 行版历史值，已在表头注明仅作定位参考。判据一复跑 aggregate 仍为 `f329ce90ad77…`（D1.4 只决定块清单，不参与指纹），全量仍 `39/0/0/9`。
+
+## 32. C7 口径收口（2026-11-15）：三清单定位与判定谓词机核
+
+本轮从 `3721343`（父 `4fff065`）干净状态接续；未重跑损坏修复、未重做已闭合判据、未推送。
+
+### 32.1 起点核实
+
+- HEAD `3721343c4911ad98622174251ef0539eaeedec6a`，父 `4fff065`；工作区 0 改动；无 `index.lock`；0 字节对象 0；`git fsck` 仅 3 条悬空 commit（无错误）；领先 `origin/main` 11 个提交、未推送。
+- 母本 4,811 行、sha256 `469d64c0…`；判据一 17 块、aggregate `f329ce90ad77…`，PV-0～PV-3 全 pass。
+- 全量 `hard=39 executed=39 blocks=17 pass=39 fail=0 escalate=0 vacuous=9`；`check-card.py --all`：`cards=18 F1=pass F2=pass F3(full)=pass 39/39 E4 match=True fail_count=0`。
+
+### 32.2 C7 判定谓词（原文口径，不本地改写）
+
+- `编译规范.md` §5.1 C7：判定谓词 = **`version_consistent ∧ fidelity_verdict = pass`**；三清单（锚定缺口／软性质未覆盖／存疑来源）**随产物发布**，不是发布门槛。
+- §5.1 C2：锚定覆盖率维度**唯一**发布阈值 = 悬空引用类缺口（R2-B）= 0；其余锚定缺口不阻塞。
+- 故「16 条软性质未覆盖」「34 条 external 来源」**非空也不阻塞 C7**；但也不能据此写成「已覆盖／已核验」。
+
+### 32.3 两项未闭合口径的收口
+
+**（1）软性质未覆盖 16——口径闭合，决策待裁**
+
+- 分母规则按母本条款机核：`—— 软` 命中 **16** 条（M13、M21、M26、W5、W6、X4、X7、Y4、Y7、Z5、Q6、Q7、T5、T7、G9、M5）。
+- 排除项复核：`—— 条件硬` 3 条（W3、X3、Z4）＋ `—— 升级型` 1 条（Z7），不计入分母；T5 标注「软/条件升级」按当前软态计入。
+- 覆盖 **0**（FVR 注册面与 9 组检查器均未以 property_id 绑定）。
+- 依 `编译规范.md` 3.3 映射表，软性质「覆盖为可选，未覆盖登记为覆盖率缺口（非阻塞）」→ 16 条作为已知缺口随报告发布。是否将其升为机械检查，属待裁项 B。
+
+**（2）存疑来源 34——口径闭合为「出处构成清单」，缺陷 0**
+
+新增强化聚合（`c7-coverage.py`）后机核：
+
+| 注册面 | 指针总数 | verified | 未核验 | bib_id 去重 | 可解析 | external 类 |
+|---|---|---|---|---|---|---|
+| method_registry | 1,365 | 1,365 | **0** | 43 | **43/43**（母本书目 1–81） | 34 |
+| profiles | 79 | 79 | **0** | 0 | — | 0 |
+
+- 34 条 external 全部 `origin=hybrid`、全部指针 `verified: true`、bib_id 全部解析；它们是**出处构成**（母本条款 + 外部书目混合），不是 `编译规范.md` 4.5 所说的 `unverified_source` 缺陷。
+- 结论：**存疑来源缺陷 = 0**；34 条仅作出处透明化列出，不再计为「未核验来源」。
+- 限制保留：`verified: true` 是注册面自报字段；独立复核依据为《指针核对报告.md》（书目 1–80 闭合、悬空 0）与《参考资料缺口核对报告.md》（内容级核对），均为 2026-09 历史快照，本轮**未重做**内容级核对。是否要求独立复核，属待裁项 C。
+
+### 32.4 C7 判定谓词机核结果（新发现：版本对齐未成立）
+
+`c7-coverage-report.yaml` 新增 `c7_predicate_check`，逐项机核：
+
+| 谓词分量 | 结果 | 依据 |
+|---|---|---|
+| `fidelity_verdict = pass` | **true** | `fidelity-all.json`：F1 pass、F2 pass、F3(full) 39/39 pass |
+| `version_consistent` | **false** | `artifact.version.framework_version = sha256:c0bb9879…`（H-1 母本改动前），现行母本 `sha256:469d64c0…`；`registry_version` 两侧均 1.1.0，一致 |
+| `predicate_satisfied` | **false** | 合取失效 |
+
+- 按母本 0.23.9 `SM-CA-TRANS`，framework 变更应触发 **CA-03 `valid → stale`**；C7 失败分支要求重编译（以编译完成时刻的最新版本为准）。
+- 重编译的连带面：`artifact_seq` 9→10、label `pilot-20261112.10`、18 张卡 `artifact_version` 同步、重跑 F1–F3 与 E4、更新 `10.2.5` 判据三证据——这会改动已闭合判据的证据面，故**本轮不自行执行**（延续 §31.4「C7 不自行宣告」）。
+- 产物清单中未改 `version` 字段，只在 `artifact.yaml` 加注记 + `coverage_report` 指针（注记写明「按 CA-03 应记 stale」）。
+
+### 32.5 待裁项（不自批）
+
+| 编号 | 问题 | 选项 | 后果 | 建议默认 |
+|---|---|---|---|---|
+| C7-A | 版本对齐：framework_version 滞后于 H-1 后的母本 | ① 重编译到 `.10`；② 保持 `.9` 并记 `stale` 不发布；③ 其他对齐口径 | ① 恢复 `version_consistent`，但改 18 卡与判据三证据；② C7 判定谓词不成立、不能发布 | **①**（C7 失败分支的规定动作） |
+| C7-B | 16 条软性质是否升机械检查 | ① 维持非阻塞缺口；② 逐条接检查器 | ① 与 3.3「软性质覆盖为可选」一致；② 需新增检查器与判定口径 | **①** |
+| C7-C | 34 条 external 是否要求独立复核 | ① 接受为出处构成清单；② 要求内容级复核 | ① 依赖注册面自报 `verified`；② 需重做书目核对 | **①**，并把 `verified` 的独立复核依据标注为历史快照 |
+| C7-D | W1 人工核升级判据 | 先由人类定义「已声明接口」判据，再机械核未声明跨模块访问 | 未定义前 W1 只能保持人工核结论 | 未定义 |
+| C7-E | 编译规范 2.1 记 bib 范围 1–80，母本书目已至 81（2026-11-07 跨方面增补） | 修订编译规范 / 维持现状并注记 | 编译规范属人类修订权（§1.6），Agent 不自改 | 注记后由人类决定 |
+
+### 32.6 本轮改动文件（未提交）
+
+`pilot/vertical-slice-20261112/c7-coverage.py`（增强：C7 谓词机核、bib_id 解析、external 与未核验分离）、`pilot/vertical-slice-20261112/c7-coverage-report.yaml`（重建）、`pilot/vertical-slice-20261112/artifact.yaml`（`coverage_report` 指针＋版本对齐注记；未改 `version` 字段）、`pilot/vertical-slice-20261112/escalate-adjudication-20261113.md`（追加 §15 收尾）、本日志；`fidelity-all.json` 复跑无差异；`fvr-full-run-1.json` 复跑仅 `generated_at` 差异（`18:24:44 → 10:38:28`），已还原，结论不变。母本未改（4,811 行、`469d64c0…`），未推送。
+
+## 33. C7-A 重编译执行（2026-11-15，人类批准）
+
+人类逐项裁定：C7-A 取「重编译」；C7-B／C／D 按建议默认；C7-E 只加注记、不改条文。执行如下。
+
+### 33.1 版本三元组对齐
+
+| 字段 | 重编译前 | 重编译后 |
+|---|---|---|
+| `framework_version` | `sha256:c0bb9879…17c4510`（H-1 前） | `sha256:469d64c0…3f8f3`（现行母本） |
+| `registry_version` | 1.1.0 | 1.1.0（未变） |
+| `artifact_seq` | 9 | **10** |
+| `label` / 卡 `artifact_version` | `pilot-20261112.9` | **`pilot-20261112.10`** |
+
+### 33.2 18 张卡对齐的完整性核对
+
+- 仅替换 `artifact_version` 行（文本级，未重排 YAML）；**18/18** 改毕。
+- 以「剔除 `artifact_version` 行后的内容哈希」逐张比对：**内容变化 0 张**。
+- 6 张 0.2.0 精化卡（DFL、STP、CSL、OWN、SCH、RLP）版本字段保持 `0.2.0`，正文原样。
+- 未运行 `gen_cards.py`（其 `version ≥ 0.2.0` skip 保护未被触发，也未被绕过）。
+
+### 33.3 C7 谓词与判定
+
+- `version_consistent`：false → **true**；`fidelity_verdict = pass`（F1/F2/F3 39/39）；`predicate_satisfied = true`。
+- 只做版本对齐；**未执行 SM-CA `compiling → valid` 与发布动作**（发布仍待人类另行决定）。
+- `10.2.5-verdict-pact-dsh.yaml` 升 **v1.17.0**：`artifact` 改 `pilot-20261112.10`，判据三证据同步标签与 framework_version；判据一/二/四～六未变。
+
+### 33.4 C7-B／C／D 默认落地与 C7-E 注记
+
+- **C7-B**：16 条软性质维持非阻塞缺口（编译规范 3.3），不接检查器。
+- **C7-C**：34 条 external 接受为出处构成清单；报告与 §15 注明 `verified` 的独立复核依据为 2026-09 历史快照。
+- **C7-D**：W1 保持人工核结论；升级前置「已声明接口」判据未定义。
+- **C7-E**：`编译规范.md` 2.1 `bib_id` 行加注记（母本书目 2026-11-07 增补 81 于 10.8，范围 1–80 存在漂移）；**范围值 1–80 未改**，修订权仍属人类。
+
+### 33.5 复跑结果（重编译后）
+
+- 判据一：`PV=pass`，`pv-1.1`，**17 块**，aggregate `f329ce90ad77…`（未变）。
+- 全量：`hard=39 executed=39 blocks=17 pass=39 fail=0 escalate=0 vacuous=9`。
+- 卡检：`cards=18 F1=pass F2=pass F3(full)=pass 39/39 E4 match=True fail_count=0`。
+- 锚索引：ESC-01 与 F-1～F-10 全 pass，F-9 986 对，`failures: []`。
+- 母本未改（4,811 行、`469d64c0…`）。
+
+### 33.6 待提交文件
+
+见本节之后 `git status`：上一轮 5 个文件（`c7-coverage.py`、`c7-coverage-report.yaml`、`artifact.yaml`、`escalate-adjudication-20261113.md`、`run-log.md`）＋本轮 18 张卡＋`10.2.5-verdict-pact-dsh.yaml`＋`编译规范.md`。不推送。

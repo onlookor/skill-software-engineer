@@ -65,13 +65,18 @@
 #     判据一检查器改为按 DATA-SPEC D1.4 权威清单发现 17 块（补 0.18.6／0.22.4／0.23.5），
 #     重冻 pv-1.1：aggregate 0753e743d6f0…（14 块）→ f329ce90ad77…（17 块），与 pv-1.0 分离；
 #     母本未再改动、锚漂移 0；分布不变（39/0/0/9，blocks 14→17），六判据仍 **6/6**。
+#   v1.16.0 → v1.17.0（2026-11-15，人类批准 C7-A 重编译）：
+#     artifact 版本三元组对齐现行母本：framework_version c0bb9879… → 469d64c0…，artifact_seq 9→10，
+#     label pilot-20261112.9 → .10；18 张卡 artifact_version 全量对齐 .10（卡内容未变，6 张 0.2.0
+#     精化卡原样）；C7 `version_consistent` false→true；母本未改、锚漂移 0；
+#     分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.16.0"
+  version: "1.17.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-14T22:20:00+08:00"
+  executed_at: "2026-11-15T11:20:00+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.9"
+  artifact: "pilot-20261112.10"
   not_in_scope_this_round: []
 
   criteria:
@@ -106,10 +111,10 @@ grounding_acceptance:
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
       verdict: "pass"
       evidence:
-        - "18 张卡片 artifact_version 均为 pilot-20261112.9"
-        - "artifact.yaml version.label = pilot-20261112.9；registry_version = 1.1.0；framework_version = sha256:c0bb9879…17c4510"
+        - "18 张卡片 artifact_version 均为 pilot-20261112.10"
+        - "artifact.yaml version.label = pilot-20261112.10；registry_version = 1.1.0；framework_version = sha256:469d64c0…b3f8f3"
         - "check-card.py --all E4: match=true（见 fidelity-all.json）"
-      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。本轮新增 18 张卡与 8 份 FVR，产物序号 8→9。"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。2026-11-15 按 C7-A 重编译：产物序号 9→10，仅对齐版本三元组，卡内容未变（6 张 0.2.0 精化卡原样）。"
       gap_refs: ["D-3"]
 
     - id: 4

@@ -5,6 +5,29 @@ meta:
   method_registry_sha256: aaa8361eb14694813c2cd7a29673afaa350a5596cfb6e0859cdb1e5b6a435ffd
   profiles_sha256: 623af138471e2e140d5fd8663dfd25f6537e96c56147cf48b3d202b4f5c4679d
   criteria_source: 编译规范 5.1 C7：覆盖率报告含锚定缺口、软性质未覆盖、存疑来源三清单
+c7_predicate_check:
+  rule: 编译规范 5.1 C7：version_consistent ∧ fidelity_verdict = pass
+  framework_version:
+    current: sha256:469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3
+    artifact: sha256:469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3
+  registry_version:
+    current:
+      major: 1
+      minor: 1
+      patch: 0
+    artifact:
+      major: 1
+      minor: 1
+      patch: 0
+  version_consistent: true
+  fidelity_verdict:
+    F1: pass
+    F2: pass
+    F3_full: pass
+    pass: true
+    source: pilot/vertical-slice-20261112/fidelity-all.json
+  predicate_satisfied: true
+  publish_note: 本报告只核对判定谓词，不执行 SM-CA compiling→valid 与发布动作
 anchor_gap_list:
   source: registry/scripts/anchor_index.py（F-1–F-10，输出 registry/anchor_index/summary.json）
   status: 由锚索引生成，本脚本不重复计算
@@ -80,6 +103,7 @@ soft_property_list:
   - T7
   - G9
   - M5
+  status: 软性质覆盖为可选（编译规范 3.3 映射表）；未覆盖登记为覆盖率缺口，非阻塞发布。是否升为机械检查属待裁项，本脚本不自判
 questionable_source_list:
   rule: provenance.source_pointers 中 verified != true；source_class ∈ {external, external-bib}；source_status 字段缺失如实记
   method_registry:
@@ -92,110 +116,398 @@ questionable_source_list:
       mother-clause: 29
       mother-definition: 2
       mother-row: 73
+    pointer_stats:
+      total: 1365
+      verified: 1365
+      unverified: 0
+    bib_refs:
+      distinct:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 9
+      - 12
+      - 13
+      - 14
+      - 15
+      - 17
+      - 19
+      - 20
+      - 21
+      - 22
+      - 23
+      - 24
+      - 28
+      - 29
+      - 30
+      - 31
+      - 32
+      - 33
+      - 34
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 41
+      - 42
+      - 44
+      - 45
+      - 46
+      - 47
+      - 48
+      - 49
+      - 51
+      - 57
+      - 67
+      - 81
+      resolved:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+      - 7
+      - 9
+      - 12
+      - 13
+      - 14
+      - 15
+      - 17
+      - 19
+      - 20
+      - 21
+      - 22
+      - 23
+      - 24
+      - 28
+      - 29
+      - 30
+      - 31
+      - 32
+      - 33
+      - 34
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 41
+      - 42
+      - 44
+      - 45
+      - 46
+      - 47
+      - 48
+      - 49
+      - 51
+      - 57
+      - 67
+      - 81
+      unresolved: []
+      mother_bibliography_range:
+      - 1
+      - 81
     unverified_pointer_entries: []
     non_mother_source_entries:
     - id: STY-008
       source_class: external
       origin: hybrid
+      pointer_count: 9
+      all_pointers_verified: true
+      bib_refs:
+      - '20'
+      bib_refs_unresolved: []
     - id: STY-009
       source_class: external
       origin: hybrid
+      pointer_count: 10
+      all_pointers_verified: true
+      bib_refs:
+      - '21'
+      - '22'
+      - '6'
+      bib_refs_unresolved: []
     - id: STY-012
       source_class: external
       origin: hybrid
+      pointer_count: 8
+      all_pointers_verified: true
+      bib_refs:
+      - '81'
+      bib_refs_unresolved: []
     - id: STY-016
       source_class: external
       origin: hybrid
+      pointer_count: 15
+      all_pointers_verified: true
+      bib_refs:
+      - '17'
+      - '19'
+      - '3'
+      - '4'
+      - '5'
+      - '9'
+      bib_refs_unresolved: []
     - id: STY-020
       source_class: external
       origin: hybrid
+      pointer_count: 7
+      all_pointers_verified: true
+      bib_refs:
+      - '12'
+      bib_refs_unresolved: []
     - id: STY-023
       source_class: external
       origin: hybrid
+      pointer_count: 8
+      all_pointers_verified: true
+      bib_refs:
+      - '13'
+      - '23'
+      bib_refs_unresolved: []
     - id: OWN-003
       source_class: external
       origin: hybrid
+      pointer_count: 11
+      all_pointers_verified: true
+      bib_refs:
+      - '41'
+      bib_refs_unresolved: []
     - id: CSL-004
       source_class: external
       origin: hybrid
+      pointer_count: 10
+      all_pointers_verified: true
+      bib_refs:
+      - '39'
+      bib_refs_unresolved: []
     - id: CSL-005
       source_class: external
       origin: hybrid
+      pointer_count: 11
+      all_pointers_verified: true
+      bib_refs:
+      - '36'
+      bib_refs_unresolved: []
     - id: CRD-001
       source_class: external
       origin: hybrid
+      pointer_count: 11
+      all_pointers_verified: true
+      bib_refs:
+      - '44'
+      - '45'
+      bib_refs_unresolved: []
     - id: CRD-002
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '44'
+      - '45'
+      bib_refs_unresolved: []
     - id: CRD-005
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '47'
+      bib_refs_unresolved: []
     - id: CRD-006
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '47'
+      bib_refs_unresolved: []
     - id: DEC-001
       source_class: external
       origin: hybrid
+      pointer_count: 14
+      all_pointers_verified: true
+      bib_refs:
+      - '24'
+      - '7'
+      bib_refs_unresolved: []
     - id: DEC-005
       source_class: external
       origin: hybrid
+      pointer_count: 15
+      all_pointers_verified: true
+      bib_refs:
+      - '14'
+      - '15'
+      bib_refs_unresolved: []
     - id: DEC-006
       source_class: external
       origin: hybrid
+      pointer_count: 17
+      all_pointers_verified: true
+      bib_refs:
+      - '17'
+      - '9'
+      bib_refs_unresolved: []
     - id: CTR-002
       source_class: external
       origin: hybrid
+      pointer_count: 13
+      all_pointers_verified: true
+      bib_refs:
+      - '30'
+      - '32'
+      bib_refs_unresolved: []
     - id: CTR-004
       source_class: external
       origin: hybrid
+      pointer_count: 13
+      all_pointers_verified: true
+      bib_refs:
+      - '31'
+      bib_refs_unresolved: []
     - id: CTR-008
       source_class: external
       origin: hybrid
+      pointer_count: 10
+      all_pointers_verified: true
+      bib_refs:
+      - '33'
+      bib_refs_unresolved: []
     - id: CTR-009
       source_class: external
       origin: hybrid
+      pointer_count: 10
+      all_pointers_verified: true
+      bib_refs:
+      - '28'
+      - '29'
+      bib_refs_unresolved: []
     - id: STP-003
       source_class: external
       origin: hybrid
+      pointer_count: 14
+      all_pointers_verified: true
+      bib_refs:
+      - '37'
+      bib_refs_unresolved: []
     - id: STP-004
       source_class: external
       origin: hybrid
+      pointer_count: 14
+      all_pointers_verified: true
+      bib_refs:
+      - '38'
+      bib_refs_unresolved: []
     - id: DFL-001
       source_class: external
       origin: hybrid
+      pointer_count: 14
+      all_pointers_verified: true
+      bib_refs:
+      - '42'
+      bib_refs_unresolved: []
     - id: RLP-004
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '46'
+      - '51'
+      bib_refs_unresolved: []
     - id: RLP-005
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '46'
+      - '51'
+      bib_refs_unresolved: []
     - id: RLP-006
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '46'
+      - '51'
+      bib_refs_unresolved: []
     - id: RLP-007
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '46'
+      - '51'
+      bib_refs_unresolved: []
     - id: SCH-002
       source_class: external
       origin: hybrid
+      pointer_count: 12
+      all_pointers_verified: true
+      bib_refs:
+      - '49'
+      bib_refs_unresolved: []
     - id: CFG-003
       source_class: external
       origin: hybrid
+      pointer_count: 13
+      all_pointers_verified: true
+      bib_refs:
+      - '48'
+      bib_refs_unresolved: []
     - id: DPS-001
       source_class: external
       origin: hybrid
+      pointer_count: 11
+      all_pointers_verified: true
+      bib_refs:
+      - '67'
+      bib_refs_unresolved: []
     - id: DPS-002
       source_class: external
       origin: hybrid
+      pointer_count: 10
+      all_pointers_verified: true
+      bib_refs:
+      - '67'
+      bib_refs_unresolved: []
     - id: DPS-003
       source_class: external
       origin: hybrid
+      pointer_count: 10
+      all_pointers_verified: true
+      bib_refs:
+      - '67'
+      bib_refs_unresolved: []
     - id: DPS-004
       source_class: external
       origin: hybrid
+      pointer_count: 11
+      all_pointers_verified: true
+      bib_refs:
+      - '67'
+      bib_refs_unresolved: []
     - id: DPS-005
       source_class: external
       origin: hybrid
+      pointer_count: 11
+      all_pointers_verified: true
+      bib_refs:
+      - '46'
+      - '67'
+      bib_refs_unresolved: []
+    status: 无未核验指针且 bib_id 全部可解析；external 类条目为 hybrid 出处构成，不是未核验缺陷
   profiles:
     file: registry/profiles.yaml
     entry_count: 18
@@ -203,5 +515,18 @@ questionable_source_list:
     entries_without_source_status: 18
     source_class_distribution:
       mother-clause: 18
+    pointer_stats:
+      total: 79
+      verified: 79
+      unverified: 0
+    bib_refs:
+      distinct: []
+      resolved: []
+      unresolved: []
+      mother_bibliography_range:
+      - 1
+      - 81
     unverified_pointer_entries: []
     non_mother_source_entries: []
+    status: 无未核验指针且 bib_id 全部可解析；external 类条目为 hybrid 出处构成，不是未核验缺陷
+  status: 存疑来源按编译规范 4.5 的 `unverified_source` 判定：指针未核验或 bib_id 不可解析即缺陷；external 类条目另列作出处构成清单，不自动等同缺陷
