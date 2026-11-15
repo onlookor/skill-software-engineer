@@ -162,19 +162,24 @@ def source_files(ctx):
     return files, None
 
 
-def verdict(pid: str, v: str, evidence: str, reason: str = '', vacuous: bool = False) -> dict:
+def verdict(pid: str, v: str, evidence: str, reason: str = '', vacuous: bool = False,
+            metrics: dict | None = None) -> dict:
     assert v in VERDICTS, v
-    return {'property': pid, 'verdict': v, 'evidence': evidence, 'reason': reason,
-            'vacuous': vacuous, 'route': 'pass' if v == 'pass' else ('fail' if v == 'fail' else 'escalate')}
+    out = {'property': pid, 'verdict': v, 'evidence': evidence, 'reason': reason,
+           'vacuous': vacuous, 'route': 'pass' if v == 'pass' else ('fail' if v == 'fail' else 'escalate')}
+    if metrics is not None:
+        out['metrics'] = metrics
+    return out
 
 
-def ok(pid: str, evidence: str, reason: str = '', vacuous: bool = False) -> dict:
-    return verdict(pid, 'pass', evidence, reason, vacuous)
+def ok(pid: str, evidence: str, reason: str = '', vacuous: bool = False,
+       metrics: dict | None = None) -> dict:
+    return verdict(pid, 'pass', evidence, reason, vacuous, metrics)
 
 
-def bad(pid: str, evidence: str, reason: str = '') -> dict:
-    return verdict(pid, 'fail', evidence, reason)
+def bad(pid: str, evidence: str, reason: str = '', metrics: dict | None = None) -> dict:
+    return verdict(pid, 'fail', evidence, reason, False, metrics)
 
 
-def esc(pid: str, evidence: str, reason: str = '') -> dict:
-    return verdict(pid, 'escalate', evidence, reason)
+def esc(pid: str, evidence: str, reason: str = '', metrics: dict | None = None) -> dict:
+    return verdict(pid, 'escalate', evidence, reason, False, metrics)

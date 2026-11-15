@@ -1,0 +1,72 @@
+# 生产排期登记（D-16）：部署级实例
+#
+# 义务锚点（母本 10.2.5 判据六）：
+#   「部署可行性勘察结论已登记（批准角色、P0 响应、CI）」
+#   P0 响应维度的 conversion_event ＝「首次生产部署前」；到期未转 → 强制转 confirmed_absent。
+#
+# 性质：本文件是**部署实例登记模板**，不是母本条款；不改动母本。
+# 落点缺口：母本未给生产排期的文件/字段规范；本文件按 registry/ 既有辅助注册表
+#   （schedules.yaml / approval_registry.yaml）的 meta/entries 惯例自建，登记为 D-16。
+#
+# 纪律：排期事实只能由人类责任方提供。agent 不代填、不推测，不得以决策日期
+#   （2026-12-31）冒充部署日期。未填项一律 null + status: pending。
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 0, minor: 1, patch: 0}
+  obligation_anchor:
+    source_type: clause_id
+    value: "10.2.5-6"
+    quote: "部署可行性勘察结论已登记（批准角色、P0 响应、CI）；P0 响应 conversion_event＝首次生产部署前"
+    verified: true
+  schema_status: schema-only
+  instance_state: "1 个部署实例（pact-dsh）；排期事实待人类补填，当前为 pending"
+  status_domain: [pending, confirmed_present, not_in_scope, confirmed_absent]
+  note: "本文件不含任何由 agent 推测的日期、环境或责任人。"
+
+entry_fields:
+  - {name: deployment, type: string, required: true}
+  - {name: first_production_deployment.date, type: "date|null", required: true, note: "null = 人类尚未给出；不得用决策日期顶替"}
+  - {name: first_production_deployment.decision, type: "enum: deploy|not_in_scope|null", required: true}
+  - {name: first_production_deployment.environment, type: "string|null", required: true}
+  - {name: first_production_deployment.deployment_shape, type: "enum: single_writer|multi_writer|null", required: true, note: "多写入方 = 编译规范 11.4 #9 的触发条件"}
+  - {name: first_production_deployment.release_mechanism, type: "string", required: true}
+  - {name: first_production_deployment.rollback_window, type: "string|null", required: true}
+  - {name: first_production_deployment.rollback_owner, type: "string|null", required: true}
+  - {name: p0_response.on_call_owner, type: "string|null", required: true}
+  - {name: p0_response.alert_channel, type: "string|null", required: true}
+  - {name: p0_response.pager, type: "string|null", required: true}
+  - {name: p0_response.ack_sla, type: "string|null", required: true}
+  - {name: p0_response.state, type: "enum: undetermined|confirmed_present|confirmed_absent", required: true}
+  - {name: declared_by, type: "string|null", required: true, note: "必须是人类本人；不得写 agent"}
+  - {name: declared_at, type: "datetime|null", required: true}
+  - {name: source, type: "string|null", required: true}
+
+entries:
+  - deployment: "pact-dsh"
+    status: "pending"
+    first_production_deployment:
+      date: null
+      decision: null
+      environment: null
+      deployment_shape: null
+      release_mechanism: "npm publish（release.yml tag+OIDC）＋ cordis.patch.yml"
+      rollback_window: null
+      rollback_owner: null
+    p0_response:
+      on_call_owner: null
+      alert_channel: null
+      pager: null
+      ack_sla: null
+      state: "undetermined"
+    declared_by: null
+    declared_at: null
+    source: null
+    missing:
+      - "M-1 首次生产部署日期（或明示『本阶段不部署』）"
+      - "M-2 部署环境（本机/内网/云；是否含 npm 公网发布）"
+      - "M-3 写入方形态（single_writer / multi_writer）—— 决定 #9 是否触发"
+      - "M-4 P0 响应值班责任人"
+      - "M-5 P0 响应通道与确认 SLA"
+      - "M-6 回滚窗口与回滚责任人"
+    consequence_if_unfilled: "2026-12-31 到期仍空白 → p0_response 强制转 confirmed_absent，按 9.3 判部署形态可行性缺陷"

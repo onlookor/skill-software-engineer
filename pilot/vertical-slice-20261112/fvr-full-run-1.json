@@ -1,6 +1,6 @@
 {
   "run_id": "fvr-full-run-1",
-  "generated_at": "2026-11-14T18:24:44+08:00",
+  "generated_at": "2026-11-15T13:52:30+08:00",
   "mother_sha256": "469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3",
   "predicate_blocks": 17,
   "hard_property_source": "regex ^\\s*([A-Z]\\d+):.*(——|—)\\s*硬 + hard-properties.snapshot.json",
@@ -120,10 +120,20 @@
     {
       "property": "W1",
       "verdict": "pass",
-      "evidence": "W1 接缝封闭：覆盖面为 module_inventory 全部 9 个单元（index、loop-entry、config、govern、loop-core、names、observer、pact-backend、wasm-backend）。逐一核对模块间调用与 import，未发现经由未声明接口的跨模块访问，无例外。",
-      "reason": "人工核结论，非机械校验：user 于 2026-11-14 确认",
+      "evidence": "机械校验：9 单元 / 11 边 / 15 绑定 / 0 违规（每单元导出非空；静态 ESM 范围内无越界访问）；动态加载排除计数=1（外部/注入依赖，固定观测项）",
+      "reason": "",
       "vacuous": false,
-      "route": "pass"
+      "route": "pass",
+      "metrics": {
+        "units": 9,
+        "import_edges": 11,
+        "bindings": 15,
+        "violations": 0,
+        "excluded_dynamic_loads": 1,
+        "excluded_dynamic_load_units": [
+          "wasm-backend"
+        ]
+      }
     },
     {
       "property": "W2",

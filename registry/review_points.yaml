@@ -1,0 +1,126 @@
+# 评审点登记（D-17 O1）：部署级实例 schema
+#
+# 义务锚点（母本 8.5）：
+#   review_point(rp, kind ∈ 8.2.7五类, scheduled, records)
+#   T8: ∀ rp: scheduled(rp) ∧ records preserved
+# 关联条款：8.2.1（四类触发点）、8.2.7（五类评审点）、10.2.5 判据五（已排期且有责任人）。
+#
+# 性质：本文件是**数据层 schema 与实例**，不是母本条款；不改动母本。
+# 缺口处置：D-17 采用 O1（2026-11-15 人类裁定）——在数据层补齐实例 schema，
+#   不扩母本 review_point 的 arity。母本无 scheduled(rp) schema 的缺口仍登记为债。
+#
+# 诚实边界：review_point 在机器层 arity 4 没有 owner 槽；本文件的 owner 字段
+#   是数据层承载，**不等于机器层可表达**。判据五的「有责任人」在本文件中可查。
+#
+# scheduled 真值条件（部署级判读，非母本明文）：
+#   scheduled(rp) ≜ ∃e: e.rp = rp
+#                 ∧ e.trigger_type ∈ {日期, 周期, 发布节点, 按需+季度空检}
+#                 ∧ e.trigger ≠ null ∧ e.owner ≠ null
+#                 ∧ (e.trigger_type ∉ {周期, 按需+季度空检} ∨ e.interval ≠ null)
+
+meta:
+  law_file: ../软件工程元框架成文法.md
+  registry_version: {major: 1, minor: 0, patch: 0}
+  registry_id: "RP-PACT-DSH-001"
+  deployment: "pact-dsh"
+  obligation_anchor:
+    source_type: clause_id
+    value: "8.5"
+    quote: "review_point(rp, kind ∈ 8.2.7五类, scheduled, records)"
+    verified: true
+  schema_status: schema+instances
+  instance_state: "5 点（RP-1…RP-5），2026-11-14 部署级约定原样落盘；均 scheduled=true"
+  status_domain: [pending, done, overdue]
+  field_provenance: "字段值取自 pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml#L154-L189（2026-11-14），未新增推断事实"
+
+entry_fields:
+  - {name: rp, type: string, required: true, note: "RP-<n>"}
+  - {name: name, type: string, required: true}
+  - {name: kind, type: "enum: 设计评审|简记包抽查|材料性抽查|验证计划评审|例外Waiver评审", required: true, note: 对齐 8.2.7 五类}
+  - {name: trigger_type, type: "enum: 日期|周期|发布节点|按需+季度空检", required: true, note: 对齐 8.2.1 四形态}
+  - {name: trigger_type_source, type: string, required: true, note: "原约定措辞，防归一化漂移"}
+  - {name: trigger, type: "date|null", required: true}
+  - {name: interval, type: "string|null", required: true, note: "周期/空检必填"}
+  - {name: fallback, type: boolean, required: true, note: "trigger 是否为兜底日期而非触发点本身"}
+  - {name: retroactive, type: boolean, required: true}
+  - {name: timing_status, type: "string|null", required: true}
+  - {name: owner, type: string, required: true, note: "判据五『有责任人』的承载字段"}
+  - {name: records, type: "string|null", required: true, note: "null=尚未执行；空检记录亦须落此，不得以空检冒充已执行"}
+  - {name: status, type: "enum: pending|done|overdue", required: true}
+  - {name: scheduled, type: boolean, required: true, note: "按上方真值条件求值；不得手填与条件冲突的值"}
+
+entries:
+  - rp: "RP-1"
+    name: "设计评审"
+    kind: "设计评审"
+    trigger_type: "日期"
+    trigger_type_source: "日期（追溯评审）"
+    trigger: "2026-11-19"
+    interval: null
+    fallback: false
+    retroactive: true
+    timing_status: "**批准前时序未满足**：ADR-DP1-STYLE 已于 2026-11-12 批准；本次 2026-11-19 评审是追溯评审，不得记为时序合规。"
+    owner: "user"
+    records: null
+    status: "pending"
+    scheduled: true
+
+  - rp: "RP-2"
+    name: "简记包抽查"
+    kind: "简记包抽查"
+    trigger_type: "周期"
+    trigger_type_source: "周期"
+    trigger: "2026-12-31"
+    interval: "每季度"
+    fallback: false
+    retroactive: false
+    timing_status: null
+    owner: "user"
+    records: null
+    status: "pending"
+    scheduled: true
+
+  - rp: "RP-3"
+    name: "材料性抽查"
+    kind: "材料性抽查"
+    trigger_type: "周期"
+    trigger_type_source: "周期"
+    trigger: "2026-12-31"
+    interval: "每季度"
+    fallback: false
+    retroactive: false
+    timing_status: null
+    owner: "user"
+    records: null
+    status: "pending"
+    scheduled: true
+
+  - rp: "RP-4"
+    name: "验证计划评审"
+    kind: "验证计划评审"
+    trigger_type: "发布节点"
+    trigger_type_source: "发布节点"
+    trigger: "2026-12-31"
+    interval: null
+    fallback: true
+    retroactive: false
+    timing_status: "母本触发点是发布节点；当前无发布排期，2026-12-31 是**兜底日期，不是发布节点本身**。发布排期确定后以发布节点替换。"
+    owner: "user"
+    records: null
+    status: "pending"
+    scheduled: true
+
+  - rp: "RP-5"
+    name: "例外/Waiver 评审"
+    kind: "例外Waiver评审"
+    trigger_type: "按需+季度空检"
+    trigger_type_source: "按需触发＋季度空检"
+    trigger: "2026-12-31"
+    interval: "每季度"
+    fallback: false
+    retroactive: false
+    timing_status: "当前无 Waiver；季度空检即『本期无 Waiver』的复核记录。"
+    owner: "user"
+    records: null
+    status: "pending"
+    scheduled: true

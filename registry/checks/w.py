@@ -13,21 +13,141 @@ WRITE_CALL_RE = re.compile(
 CLASS_RE = re.compile(r'\bclass\s+([A-Za-z_$][\w$]*)')
 NEW_RE = re.compile(r'\bnew\s+([A-Za-z_$][\w$]*)\s*\(')
 
+# --- W1 候选 B（2026-11-15 人类裁定）：静态导入名 ⊆ 目标导出集，且每单元至少一个导出 ---
+IMPORT_RE = re.compile(
+    r"import\s+(?:(?P<clause>[^;'\"]*?)\s+from\s+)?['\"](?P<spec>[^'\"]+)['\"]")
+NAMED_RE = re.compile(r'\{(?P<names>[^}]*)\}')
+EXPORT_DECL_RE = re.compile(
+    r'^\s*export\s+(?:default\s+)?(?:async\s+)?(?:function|class|const|let|var)\s+'
+    r'([A-Za-z_$][\w$]*)', re.M)
+EXPORT_LIST_RE = re.compile(r'^\s*export\s*\{([^}]*)\}', re.M)
+EXPORT_DEFAULT_RE = re.compile(r'^\s*export\s+default\b', re.M)
+DYNAMIC_IMPORT_RE = re.compile(r'\bimport\s*\(')
+REQUIRE_RE = re.compile(r'\brequire\s*\(')
+DYN_OR_REQ_RE = re.compile(r'\b(?:import|require)\s*\(')
+DYN_STATIC_RE = re.compile(r'\b(?:import|require)\s*\(\s*[\'"]([^\'"]+)[\'"]\s*\)')
+STAR_IMPORT_RE = re.compile(r'\*\s*as\s+[A-Za-z_$]')
+
+
+def _exports(text):
+    """返回 (命名导出集, 是否有 default)；支持 export 声明与 export { … } 列表。"""
+    named = set(EXPORT_DECL_RE.findall(text))
+    has_default = bool(EXPORT_DEFAULT_RE.search(text))
+    for block in EXPORT_LIST_RE.findall(text):
+        for item in block.split(','):
+            item = item.strip()
+            if not item:
+                continue
+            if item.endswith(' as default'):
+                has_default = True
+                continue
+            named.add(item.split(' as ')[-1].strip())
+    return named, has_default
+
+
+def _w1_metrics(units=None, pairs=None, bindings=None, violations=None, injected=None):
+    """W1 证据的固定字段契约：excluded_dynamic_loads 每轮必报（null = 未能测量）。"""
+    return {
+        'units': len(units) if units is not None else None,
+        'import_edges': pairs,
+        'bindings': bindings,
+        'violations': violations,
+        'excluded_dynamic_loads': len(injected) if injected is not None else None,
+        'excluded_dynamic_load_units': sorted({x.split(':')[0] for x in injected}) if injected else [],
+    }
+
 
 def w1(ctx):
-    """每个模块的接缝封闭（人工核结论，2026-11-14 人类裁定方案 A）。"""
-    if domain_data(ctx, 'module_inventory') is None:
-        return esc('W1', NOTE, '不可判：模块目录未登记，接缝封闭无从核验（非空真）')
-    reviews = domain_data(ctx, 'human_review') or []
-    for r in reviews:
-        if r.get('property') != 'W1':
-            continue
-        if r.get('approver_kind') != 'human' or not r.get('approved_by') or not r.get('conclusion'):
-            return esc('W1', '存在 W1 人工核记录，但缺批准人或结论文本',
-                       '不可判：人工核记录不完整')
-        return ok('W1', r['conclusion'],
-                  f"人工核结论，非机械校验：{r.get('approved_by')} 于 {r.get('approved_at')} 确认")
-    return esc('W1', '存在 module_inventory，但无 W1 人工核结论', '需人工核接缝封闭')
+    """每个单元接缝封闭（候选 B，机械校验，2026-11-15）。
+
+    判据：exports_static(M) ≠ ∅ ∧ ∀(M1→M2, n): n ∈ exports_static(M2)
+          ∧ 目标路径 ∈ module_inventory；包外访问只经 package.json exports。
+    边界（2026-11-15 人类批准）：静态相对路径的动态加载 → escalate；
+          非字面量/非相对路径 = 外部注入，排除但每轮必报 excluded_dynamic_loads；
+          import * as → escalate。
+    """
+    units = domain_data(ctx, 'module_inventory')
+    if units is None:
+        return esc('W1', NOTE, '不可判：模块目录未登记，接缝封闭无从核验（非空真）', _w1_metrics())
+    if not units:
+        return esc('W1', 'module_inventory 显式空集', '不可判：本部署有模块，目录不得为空',
+                   _w1_metrics(units=[]))
+
+    files, why = source_files(ctx)
+    if files is None:
+        return esc('W1', why, '不可判：无法读取目标仓库源码，机械校验不成立',
+                   _w1_metrics(units=units))
+
+    texts = {u: p.read_text(encoding='utf-8') for u, p in files}
+    path_to_unit = {p.resolve(): u for u, p in files}
+    exports = {u: _exports(t) for u, t in texts.items()}
+
+    # 动态 import()/require()：静态相对路径 = 绕过静态接缝 → escalate；
+    # 非相对路径或非字面量 = 外部/注入依赖，排除于内部接缝范围。
+    # 「外部注入排除」是可被滥用的口子，故作为**固定观测字段**每次都报（2026-11-15 人类批准）。
+    injected, internal_dynamic = [], []
+    for u, t in texts.items():
+        for m in DYN_OR_REQ_RE.finditer(t):
+            sm = DYN_STATIC_RE.match(t, m.start())
+            if sm and sm.group(1).startswith('.'):
+                internal_dynamic.append(f'{u}→{sm.group(1)}')
+            elif not sm:
+                injected.append(f'{u}:非字面量')
+
+    def metrics(pairs=0, bindings=0, violations=0):
+        return _w1_metrics(units, pairs, bindings, violations, injected)
+
+    if internal_dynamic:
+        return esc('W1', f'以动态方式加载内部模块：{internal_dynamic}；动态加载排除计数={len(injected)}',
+                   '不可判：内部接缝被动态加载绕过', metrics())
+    out_of_scope = [u for u, t in texts.items() if STAR_IMPORT_RE.search(t)]
+    if out_of_scope:
+        return esc('W1', f'出现命名空间导入（import * as）：{out_of_scope}；动态加载排除计数={len(injected)}',
+                   '不可判：import * as 不在判据 B 的静态绑定范围', metrics())
+
+    empty = sorted(u for u, (named, default) in exports.items() if not named and not default)
+    if empty:
+        return bad('W1', f'{len(empty)}/{len(units)} 个单元无静态导出，接缝不存在：{empty}；'
+                         f'动态加载排除计数={len(injected)}', '判据 B 第二项不满足', metrics())
+
+    pairs, bindings, violations = set(), 0, []
+    for unit, p in files:
+        for m in IMPORT_RE.finditer(texts[unit]):
+            spec = m.group('spec')
+            if not spec.startswith('.'):
+                continue                      # 外部包/内置模块不在单元接缝范围
+            target_path = (p.parent / spec).resolve()
+            target = path_to_unit.get(target_path)
+            if target is None:
+                violations.append(f'{unit}→{spec} 目标不在 module_inventory')
+                continue
+            pairs.add((unit, target))
+            clause = (m.group('clause') or '').strip()
+            if not clause:
+                continue                      # 副作用导入，无绑定
+            if clause.startswith('{'):
+                block = NAMED_RE.search(clause)
+                names = [x.strip().split(' as ')[0] for x in (block.group('names').split(',') if block else [])]
+                names = [x for x in names if x]
+            else:
+                names = ['default']
+            named, has_default = exports[target]
+            for n in names:
+                bindings += 1
+                if n == 'default':
+                    declared = has_default
+                else:
+                    declared = n in named
+                if not declared:
+                    violations.append(f'{unit}→{target} 导入 {n} 不在目标导出集')
+
+    if violations:
+        return bad('W1', f'机械核对不通过：{violations}；动态加载排除计数={len(injected)}',
+                   '静态导入名超出目标单元导出集', metrics(len(pairs), bindings, len(violations)))
+    return ok('W1', f'机械校验：{len(units)} 单元 / {len(pairs)} 边 / {bindings} 绑定 / 0 违规'
+                   f'（每单元导出非空；静态 ESM 范围内无越界访问）；'
+                   f'动态加载排除计数={len(injected)}（外部/注入依赖，固定观测项）',
+              metrics=metrics(len(pairs), bindings, 0))
 
 
 def w2(ctx):

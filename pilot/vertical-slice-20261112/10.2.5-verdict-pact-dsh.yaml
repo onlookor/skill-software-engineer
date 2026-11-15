@@ -127,7 +127,7 @@ grounding_acceptance:
         - "实跑分布：pass 39 / fail 0 / escalate 0 / vacuous 9（空真清单见 vacuous-inventory.md）"
         - "check-card.py --all：F1=pass，F2=escalate，F3(full)=pass 39/39，E4 match=true，exit=0"
         - "runner E3：pass（39/39 有 FVR 条目、检查程序与首轮 verdict）"
-      reason: "判据四的两要件均成立：全部 39 条硬性质有 FVR 条目并接到可执行检查器；全量执行有落盘工件。**pass 不代表 39 条均为实质性质成立**：其中 9 条为 vacuous（空真，域本身无实例或显式空集），1 条 W1 为人工核结论，其余 29 条为机械校验。v1.14.0 起 0 条 fail、0 条 escalate：X2/X5/T6/G3 经 ADR 批准迁入、兼容策略登记、契约测试新增、回滚与风格符合性登记后转 pass。V1/W4 为机械校验：V1 读取目标仓库源码的相对 import 边并逐边核对层规则，W4 读取源码写点/创建点核对所有权（已用注入反例验证二者会 fail）。T4/W2 经新增 test/index.test.js 与 test/loop-entry.test.js 转 pass；T6 经新增 test/contract.test.js 转 pass，`npm test` 61/61 通过，三处入口/契约测试均未改生产代码。W1 仍为人工核结论（user 2026-11-14），不是机械校验。"
+      reason: "判据四的两要件均成立：全部 39 条硬性质有 FVR 条目并接到可执行检查器；全量执行有落盘工件。**pass 不代表 39 条均为实质性质成立**：其中 9 条为 vacuous（空真，域本身无实例或显式空集），其余 30 条为机械校验。v1.14.0 起 0 条 fail、0 条 escalate：X2/X5/T6/G3 经 ADR 批准迁入、兼容策略登记、契约测试新增、回滚与风格符合性登记后转 pass。V1/W4 为机械校验：V1 读取目标仓库源码的相对 import 边并逐边核对层规则，W4 读取源码写点/创建点核对所有权（已用注入反例验证二者会 fail）。T4/W2 经新增 test/index.test.js 与 test/loop-entry.test.js 转 pass；T6 经新增 test/contract.test.js 转 pass，`npm test` 61/61 通过，三处入口/契约测试均未改生产代码。W1 已于 2026-11-15 升级为机械校验（候选 B）：9 单元 / 11 边 / 15 绑定 / 0 违规，静态 ESM 范围内无越界访问。"
       interpretation:
         rule: "39 条硬性质**全部具备可复现 verdict 即成立**；fail 属有效结论，不计为判据四不成立。"
         source: "人类裁定，2026-11-14（父会话转达）"
@@ -137,12 +137,12 @@ grounding_acceptance:
       known_defects:
         status: "空。原 4 条（X2／X5／T6／G3）已于 v1.14.0 修复并移出"
         items: []
-      weak_checks:
-        - "W1（人工核）：已登记人类确认（approved_by=user、approver_kind=human、2026-11-14），覆盖 9 个单元且结论为「无未声明跨模块访问、无例外」；pass 是人工核结论，检查器不做接缝机械核对"
-      packed_upgrade: "W1 单列为「将来升级为机械校验」项：需先由人类定义「已声明接口」的判据，再机械核未声明跨模块访问。V1/W4 已于 v1.12.0 完成机械校验升级，不再列入。"
-      caveat: "0 条 escalate、0 条 fail；39 条 pass 中 9 条 vacuous（空真）、1 条 W1 为人工核结论，其余 29 条为机械校验。W1 的 pass 依赖人类确认记录，不是机械校验。"
+      weak_checks: []
+      weak_checks_note: "W1 已于 2026-11-15 由人工核升级为机械校验（候选 B；边界与固定观测项经人类批准）。当前无弱校验项。"
+      packed_upgrade: "已完成（2026-11-15）：W1 按候选 B 升级为机械校验，证据固定字段含 excluded_dynamic_loads（当前值 1）。"
+      caveat: "0 条 escalate、0 条 fail；39 条 pass 中 9 条 vacuous（空真），其余 30 条全部为机械校验（W1 于 2026-11-15 升级，不再有人工核项）。"
       gap_refs: ["D-9"]
-      gap_status: "已闭合（D-9）：接线与全量执行证据齐备；escalate 与 fail 均已清零；W1 的人工核性质已单列。"
+      gap_status: "已闭合（D-9）：接线与全量执行证据齐备；escalate 与 fail 均已清零；W1 已于 2026-11-15 升级为机械校验。"
 
     - id: 5
       name: "评审点集合（8.2.7 裁剪后）已排期且有责任人"
@@ -150,7 +150,7 @@ grounding_acceptance:
       evidence:
         - "五点均有可判定触发点（见 review_points）；责任人统一为 user"
         - "8.2.7 五评审点：设计评审、简记包抽查、材料性抽查、验证计划评审、例外/Waiver 评审"
-      field_convention: "母本只有硬性质谓词 scheduled(rp)，**没有字段 schema**，且 scheduled 不在谓词词表（method_registry.yaml#L8959）。本节 review_points / trigger_type / trigger / interval / owner 的字段形态是本轮部署级约定（D-17），**不是母本明文**。"
+      field_convention: "母本 8.5 给出 review_point(rp, kind, scheduled, records) 与 T8，**无实例字段 schema**；scheduled 已于 predicate_vocabulary v1.1.0 在册（review_point 第 3 槽别名），但无独立值域。字段形态自 2026-11-15 起落在 registry/review_points.yaml（D-17 O1），**仍不是母本明文**。"
       review_points:
         - id: "RP-1"
           name: "设计评审"
@@ -189,13 +189,13 @@ grounding_acceptance:
           owner: "user"
       reason: "五点均落到 8.2.1 四形态之一（日期/周期/发布节点/按需＋空检），scheduled(rp) 可判定；责任人齐全。点一为追溯评审，时序欠账在 timing_status 明示，不用『已排期』掩盖。"
       gap_refs: ["D-17"]
-      gap_status: "触发点已补齐，判据成立；『母本无 scheduled(rp) schema』的缺口仍在，字段形态仍属本轮约定。"
+      gap_status: "O1 已落地（2026-11-15）：数据层 schema 与五点实例建立于 registry/review_points.yaml；母本无 scheduled(rp) schema 的缺口保留为已登记债（不改母本）。"
 
     - id: 6
       name: "部署可行性勘察结论已登记（批准角色存在性、P0 响应能力、CI 能力）"
       verdict: "pass"
       evidence:
-        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.1.0）"
+        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.0）"
         - "P0 响应：undetermined（仓库无值班/告警/pager 登记）"
         - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
       reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 为 undetermined，且已附 conversion_event 与 deadline（2026-12-31）→ 声明完整，判据成立。**pass 只代表声明完整，不代表 P0 响应能力存在。**"
@@ -204,18 +204,18 @@ grounding_acceptance:
           state: "confirmed_present"
           declared_by: "user"
           declared_at: "2026-11-12T23:10:00+08:00"
-          evidence: "registry/approval_registry.yaml（sha256 9658bc9f24fda9b6a1010bd54fa5db36239904fa83b5a8638c527a444f4530f2），pact-dsh v1.1.0，5 类决策，主批准人 user"
+          evidence: "registry/approval_registry.yaml（sha256 4551962be1c4725061df79978bdc454e71b60b99b29b02099cb273fdcf809292），pact-dsh v1.2.0，6 类决策，主批准人 user"
           source: "人类用户 user 于 2026-11-12 裁定"
           conversion_event: null
           deadline: null
           confirmed_by: "user"
           confirmed_at: "2026-11-12T23:10:00+08:00"
-          version: "approval_registry 1.1.0"
+          version: "approval_registry 1.2.0"
         - dimension: "p0_response"
           state: "undetermined"
           declared_by: "user"
           declared_at: "2026-11-12T23:10:00+08:00"
-          evidence: "仓库勘察：无值班表、无 pager/on-call 配置、无告警通道登记"
+          evidence: "仓库勘察：无值班表、无 pager/on-call 配置、无告警通道登记。2026-11-15 已落盘登记模板 registry/production_schedule.yaml（status=pending，缺 M-1～M-6），事实仍未补"
           source: "仓库勘察（本会话）"
           conversion_event: "首次生产部署前"
           deadline: "2026-12-31"
@@ -235,7 +235,7 @@ grounding_acceptance:
           confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "ci.yml（未版本化）"
       gap_refs: ["D-16"]
-      gap_status: "本轮以人类批准的具体 deadline 闭合记录缺口；『无生产排期』这一事实未消除，deadline 为决策日期而非排期日期。"
+      gap_status: "D-16 登记模板已落盘（registry/production_schedule.yaml，pending）；『无生产排期』这一事实未消除，deadline 仍为决策日期而非排期日期，缺 M-1～M-6 待人类补填。"
 
   summary:
     pass: 6
