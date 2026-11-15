@@ -4,29 +4,78 @@
 #   「部署可行性勘察结论已登记（批准角色、P0 响应、CI）」
 #   P0 响应维度的 conversion_event ＝「首次生产部署前」；到期未转 → 强制转 confirmed_absent。
 #
-# 性质：本文件是**部署实例登记模板**，不是母本条款；不改动母本。
+# 性质：本文件是**部署实例登记**，不是母本条款；不改动母本。
 # 落点缺口：母本未给生产排期的文件/字段规范；本文件按 registry/ 既有辅助注册表
 #   （schedules.yaml / approval_registry.yaml）的 meta/entries 惯例自建，登记为 D-16。
 #
 # 纪律：排期事实只能由人类责任方提供。agent 不代填、不推测，不得以决策日期
-#   （2026-12-31）冒充部署日期。未填项一律 null + status: pending。
+#   （2026-12-31）冒充部署日期。未答字段一律 null。
+# 2026-11-15：人类 user 答复六项（原话逐字见 meta.declaration_raw）。凡与 schema
+#   取值域/字段语义不符处，记入 meta.pending_conflicts 并在相关字段保持 null；
+#   agent 未代选解释，也未对原话做近义改写。
+# 2026-11-15（15:28+08:00）：人类裁定 C-1～C-4 与三处说明缺口，按原话落实：
+#   declared_by=onlookor（排期声明人，与批准人语义分离）；新增 review_at 承载复核日；
+#   release_mechanism 保留原值并记 release_execution=not_executed；alert_channel=none 逐字；
+#   declared_at 用完整 datetime；M-2 两段分写；M-4 补「无备份」；M-6 补原因。
+#   仅 p0_response.state 的记录口径待裁（C-3）。
 
 meta:
   law_file: ../软件工程元框架成文法.md
-  registry_version: {major: 0, minor: 1, patch: 0}
+  registry_version: {major: 0, minor: 3, patch: 0}
   obligation_anchor:
     source_type: clause_id
     value: "10.2.5-6"
     quote: "部署可行性勘察结论已登记（批准角色、P0 响应、CI）；P0 响应 conversion_event＝首次生产部署前"
     verified: true
-  schema_status: schema-only
-  instance_state: "1 个部署实例（pact-dsh）；排期事实待人类补填，当前为 pending"
+  schema_status: schema+instance
+  instance_state: "1 个部署实例（pact-dsh）；M-1～M-6 与 C-1～C-4、三处说明缺口均按 2026-11-15 人类裁定落实；仅 p0_response.state 记录口径待裁（C-3）"
   status_domain: [pending, confirmed_present, not_in_scope, confirmed_absent]
-  note: "本文件不含任何由 agent 推测的日期、环境或责任人。"
+  status_basis: "M-1『本阶段不部署』→ not_in_scope；C-3 不改变该结论"
+  note: "本文件不含任何由 agent 推测的日期、环境或责任人；未答字段一律 null。"
+  declaration_raw:
+    relayed_by: "user"            # 原话转达人
+    declared_by: "onlookor"      # 排期声明人（条目字段语义；与批准注册表的批准人不同）
+    declared_at: "2026-11-15"
+    items:
+      M-1: "本阶段不部署；复核日期 2026-12-31"
+      M-2: "仅本机可达，不包含 npm 公网发布"
+      M-3: "单写入者"
+      M-4: "onlookor"
+      M-5: "none"
+      M-6: "回滚窗口 none，owner 为 onlookor"
+  normalization_log:
+    - {item: "M-1", field: "first_production_deployment.decision", from: "本阶段不部署", to: "not_in_scope", reason: "schema 枚举为 deploy|not_in_scope|null，无中文取值"}
+    - {item: "M-2", field: "first_production_deployment.environment", from: "仅本机可达，不包含 npm 公网发布", to: "本机｜仅本机", reason: "人类裁定第 6 条：运行位置与可达范围两段分写；发布口径另见 meta.release_execution"}
+    - {item: "M-3", field: "first_production_deployment.deployment_shape", from: "单写入者", to: "single_writer", reason: "schema 枚举为 single_writer|multi_writer|null，无中文取值"}
+  release_execution:
+    status: "not_executed"
+    basis: "M-2：仅本机可达，不包含 npm 公网发布；release_mechanism 仅表示机制存在，本阶段不执行"
+  resolved_conflicts:
+    - {id: "C-1", ruling: "人类裁定第 2 条：新增 review_at 承载 2026-12-31；date 保持 null", applied: "entry_fields 增补 first_production_deployment.review_at；entries[0].review_at=2026-12-31"}
+    - {id: "C-2", ruling: "人类裁定第 3 条：release_mechanism 保留原值，按『机制留着、本阶段不执行』记录", applied: "release_mechanism 未改；meta.release_execution.status=not_executed"}
+    - {id: "C-4", ruling: "人类裁定第 5 条：declared_at 取当前时间，按 datetime 带时区写", applied: "declared_at=2026-11-15T15:28:33+08:00"}
+  pending_conflicts:
+    - id: "C-3"
+      item: "M-5"
+      raw: "none"
+      conflict: "alert_channel=none 已逐字落；pager／ack_sla 仍属未回答（null）。若据 alert_channel=none 推 p0_response.state=confirmed_absent，会连带覆盖 ack_sla 的未回答语义"
+      state: "待人类裁定 p0_response.state 的记录口径；当前保持 undetermined"
+      handling_by_agent: "未推 confirmed_absent；pager/ack_sla 保持 null"
+  open_notes:
+    - "M-4：按裁定第 7 条记为 onlookor（无备份）；未另设 backup 字段。"
+    - "M-6：按裁定第 8 条 rollback_window=none，原因＝尚未确立机制。"
+  concurrency_gate:
+    protocol: "#9（编译规范 11.4 并发协议）"
+    status: "not_triggered"
+    basis: "M-3 deployment_shape=single_writer（原话『单写入者』，见 declaration_raw）"
+    recheck_when: "部署形态改为 multi_writer，或首次生产部署决策涉及多写入方"
+    checked_at: "2026-11-15"
+    note: "单写入方场景 #9 平凡满足；not_triggered 不表示 #9 已实现。"
 
 entry_fields:
   - {name: deployment, type: string, required: true}
   - {name: first_production_deployment.date, type: "date|null", required: true, note: "null = 人类尚未给出；不得用决策日期顶替"}
+  - {name: first_production_deployment.review_at, type: "date|null", required: false, note: "decision=not_in_scope 时承载复核日期；decision=deploy 时为 null"}
   - {name: first_production_deployment.decision, type: "enum: deploy|not_in_scope|null", required: true}
   - {name: first_production_deployment.environment, type: "string|null", required: true}
   - {name: first_production_deployment.deployment_shape, type: "enum: single_writer|multi_writer|null", required: true, note: "多写入方 = 编译规范 11.4 #9 的触发条件"}
@@ -38,35 +87,31 @@ entry_fields:
   - {name: p0_response.pager, type: "string|null", required: true}
   - {name: p0_response.ack_sla, type: "string|null", required: true}
   - {name: p0_response.state, type: "enum: undetermined|confirmed_present|confirmed_absent", required: true}
-  - {name: declared_by, type: "string|null", required: true, note: "必须是人类本人；不得写 agent"}
+  - {name: declared_by, type: "string|null", required: true, note: "排期声明人，须为人类；不得写 agent；与批准人语义不同"}
   - {name: declared_at, type: "datetime|null", required: true}
   - {name: source, type: "string|null", required: true}
 
 entries:
   - deployment: "pact-dsh"
-    status: "pending"
+    status: "not_in_scope"
     first_production_deployment:
-      date: null
-      decision: null
-      environment: null
-      deployment_shape: null
-      release_mechanism: "npm publish（release.yml tag+OIDC）＋ cordis.patch.yml"
-      rollback_window: null
-      rollback_owner: null
+      date: null                       # M-1 日期不适用（decision=not_in_scope）
+      review_at: "2026-12-31"          # M-1 复核日期（人类裁定第 2 条新增字段承载）
+      decision: "not_in_scope"         # M-1 原话『本阶段不部署』（见 normalization_log）
+      environment: "本机｜仅本机"        # M-2 两段分写（人类裁定第 6 条；原话见 declaration_raw）
+      deployment_shape: "single_writer" # M-3 原话『单写入者』（见 normalization_log）
+      release_mechanism: "npm publish（release.yml tag+OIDC）＋ cordis.patch.yml"  # 机制保留；本阶段不执行，见 meta.release_execution
+      rollback_window: "none"          # M-6 逐字；原因见 open_notes
+      rollback_owner: "onlookor"       # M-6 逐字
     p0_response:
-      on_call_owner: null
-      alert_channel: null
-      pager: null
-      ack_sla: null
-      state: "undetermined"
-    declared_by: null
-    declared_at: null
-    source: null
+      on_call_owner: "onlookor（无备份）" # M-4（人类裁定第 7 条）
+      alert_channel: "none"            # M-5 逐字（人类裁定第 4 条）
+      pager: null                      # M-5 未回答
+      ack_sla: null                    # M-5 未回答
+      state: "undetermined"            # 不推 confirmed_absent，见 C-3
+    declared_by: "onlookor"            # 排期声明人（人类裁定第 1 条）
+    declared_at: "2026-11-15T15:28:33+08:00"  # 人类裁定第 5 条
+    source: "人类用户 user 于 2026-11-15 转达；原话逐字见 meta.declaration_raw"
     missing:
-      - "M-1 首次生产部署日期（或明示『本阶段不部署』）"
-      - "M-2 部署环境（本机/内网/云；是否含 npm 公网发布）"
-      - "M-3 写入方形态（single_writer / multi_writer）—— 决定 #9 是否触发"
-      - "M-4 P0 响应值班责任人"
-      - "M-5 P0 响应通道与确认 SLA"
-      - "M-6 回滚窗口与回滚责任人"
+      - "p0_response.state 的记录口径（alert_channel=none、ack_sla 未答；C-3，待裁）"
     consequence_if_unfilled: "2026-12-31 到期仍空白 → p0_response 强制转 confirmed_absent，按 9.3 判部署形态可行性缺陷"

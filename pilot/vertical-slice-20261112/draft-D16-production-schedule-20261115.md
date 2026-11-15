@@ -1,8 +1,9 @@
-# 草案 D-16：生产排期登记（模板已落盘，六项事实待补）
+# 草案 D-16：生产排期登记（六项已答复，冲突待裁定）
 
-> 性质：登记模板已落盘 `registry/production_schedule.yaml`（status=pending），**六项排期事实仍待人类提供**。
+> 性质：登记实例已落盘 `registry/production_schedule.yaml`（status=`not_in_scope`），六项于 2026-11-15 由人类 `user` 答复。
+> 答复原话逐字存于该文件 `meta.declaration_raw`；与 schema 不符处记为 `meta.pending_conflicts`（C-1～C-4），相关字段保持 `null`，agent 未代选解释。
 > 授权属性：排期事实只能由人类责任方提供；agent 不代填、不推测、不用决策日期冒充排期日期。
-> 本轮不改母本；模板中 `declared_by` 为 null，未写 agent。
+> 本轮不改母本。
 
 ## 1 缺口是什么
 
@@ -74,7 +75,7 @@ entries:
 
 ## 5 与其它四项的接口
 
-- **#9 并发协议**：M-3 是触发条件（第一个多写入方部署决策）。M-3 未定 → #9 不启动。
+- **#9 并发协议**：M-3 是触发条件（第一个多写入方部署决策）。2026-11-15 M-3=`single_writer` → #9 登记 `not_triggered`，依据写明为 M-3；若部署形态改为 `multi_writer` 则重新评估并触发。
 - **判据五 RP-4**：`2026-12-31` 是发布节点的兜底日期；M-1 给出后应以真实发布节点替换。
 - **D-17**：scheduled(rp) 的 schema 与「责任人」字段归属（见 `draft-D17-scheduled-schema-R2-20261115.md`），与本项 M-4/M-6 共用「责任人」概念，但一个是评审点责任人、一个是 P0 值班责任人，不合并。
 
@@ -82,5 +83,16 @@ entries:
 
 | 编号 | 待签内容 | 授权方 | 备注 |
 |---|---|---|---|
-| S-D16-1 | M-1～M-6 六项事实 | 人类责任方 | agent 不代填 |
-| S-D16-2 | 登记落点（新文件 vs 并入 approval_registry） | 人类责任方 | 影响后续 `--check` 口径 |
+| S-D16-1 | M-1～M-6 六项事实 | 人类责任方 | **已答复（2026-11-15，user）**；原话落库，C-1～C-4 待裁定 |
+| S-D16-2 | 登记落点（新文件 vs 并入 approval_registry） | 人类责任方 | **已定**：新文件 `registry/production_schedule.yaml` |
+
+## 7 2026-11-15 填报记录
+
+| 项 | 原话（逐字） | 落点 | 冲突 |
+|---|---|---|---|
+| M-1 | 本阶段不部署；复核日期 2026-12-31 | `decision: not_in_scope`（枚举转写） | C-1：复核日期无承接槽 |
+| M-2 | 仅本机可达，不包含 npm 公网发布 | `environment` 逐字 | C-2：与 `release_mechanism` 现值矛盾 |
+| M-3 | 单写入者 | `deployment_shape: single_writer`（枚举转写） | 无；#9 登记 `not_triggered` |
+| M-4 | onlookor | `p0_response.on_call_owner` 逐字 | 未给角色，已记 `open_notes` |
+| M-5 | none | 未落值 | C-3：三槽落点未定义 |
+| M-6 | 回滚窗口 none，owner 为 onlookor | `rollback_window`／`rollback_owner` 逐字 | 无字段冲突；原因未给，记 `open_notes` |

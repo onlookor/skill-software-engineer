@@ -3,6 +3,7 @@
 > 对象：[registry/production_schedule.yaml](production_schedule.yaml) 的 `entries[0]`（deployment: pact-dsh）。
 > 用途：供人类责任方逐项填写 M-1～M-6。**本说明不提供默认值、不提供推荐值、不代填任何一项。**
 > 约定：YAML 中 `null` 一律表示「未回答」，不是「无」或「不适用」；「无」「不适用」「本阶段不做」必须显式写出。
+> 2026-11-15 状态：C-1／C-2／C-4 已按人类裁定落实；仅 C-3（`p0_response.state` 在 `alert_channel=none`、`ack_sla` 未答时的记录口径）待裁。本说明保留为后续填报与复核依据。
 
 ## 0 填写纪律
 
@@ -237,9 +238,11 @@ first_production_deployment:
 - `multi_writer`：**部署前必须完成 #9**——算法实现、运行时监测接线、五不变式验证证据，三项缺一不可进入生产。
 - M-3 未填（`null`）：#9 只能记「条件待定」，不能记「未触发」；任何多写入方上线都属于绕过 11.4。
 
+> **适用说明**：本条是「M-3 未填」时的规则。2026-11-15 现状为 M-3=`single_writer`，故 #9 已登记 `not_triggered` 并注明依据是 M-3；本句保留，仅在 M-3 回退为 `null` 或改为 `multi_writer` 时重新适用。
+
 ## 填完后如何登记
 
 1. 修改 [production_schedule.yaml](production_schedule.yaml)：填六项，删 `missing` 中对应条目。
 2. 六项齐备后把 `status` 从 `pending` 改为 `confirmed_present`（若明确不部署则按 `not_in_scope` 处理），并填 `declared_by`／`declared_at`／`source`。
-3. 同步 [10.2.5-verdict](pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml) 判据六的 `p0_response` 维度与 `gap_status`；若 M-3 为 `multi_writer`，同时登记 #9 触发。
+3. 同步 [10.2.5-verdict](pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml) 判据六的 `p0_response` 维度与 `gap_status`；#9 按 M-3 登记：`multi_writer` → 登记触发，`single_writer` → 登记 `not_triggered` 并写明依据是 M-3，`null` → 记「条件待定」。
 4. 复跑 `python3 registry/checks/runner.py` 与 `python3 registry/scripts/project.py --check`，按既有口径报完整分布。

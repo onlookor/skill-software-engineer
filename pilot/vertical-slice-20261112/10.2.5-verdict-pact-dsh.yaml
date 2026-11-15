@@ -70,9 +70,16 @@
 #     label pilot-20261112.9 → .10；18 张卡 artifact_version 全量对齐 .10（卡内容未变，6 张 0.2.0
 #     精化卡原样）；C7 `version_consistent` false→true；母本未改、锚漂移 0；
 #     分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
+#   v1.17.0 → v1.18.0（2026-11-15，D-16 六项事实落库＋C-1～C-4 裁定落实）：
+#     status pending→not_in_scope；declared_by=onlookor（排期声明人，与批准人分离）；
+#     新增 review_at=2026-12-31；release_mechanism 保留原值并记 release_execution=not_executed；
+#     alert_channel=none；M-2 两段分写（本机｜仅本机）；M-4=onlookor（无备份）；
+#     M-6 原因=尚未确立机制；declared_at=2026-11-15T15:28:33+08:00；
+#     #9 登记 not_triggered（依据 M-3=single_writer）；p0_response.state 保持 undetermined（C-3 待裁）；
+#     母本未改、锚漂移 0。下一步 `.11` 重编译（artifact 快照、18 卡、C7、SM-CA）。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.17.0"
+  version: "1.18.0"
   deployment: "pact-dsh"
   executed_at: "2026-11-15T11:20:00+08:00"
   executor: "agent（本会话）"
@@ -196,7 +203,7 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.0）"
-        - "P0 响应：undetermined（仓库无值班/告警/pager 登记）"
+        - "P0 响应：undetermined（D-16 已由 user 转达、declared_by=onlookor；alert_channel=none 已逐字落，pager/ack_sla 未答；推 confirmed_absent 会覆盖 ack_sla 未答语义，故 state 不转，C-3 待裁）"
         - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
       reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 为 undetermined，且已附 conversion_event 与 deadline（2026-12-31）→ 声明完整，判据成立。**pass 只代表声明完整，不代表 P0 响应能力存在。**"
       grounding_status:
@@ -213,10 +220,10 @@ grounding_acceptance:
           version: "approval_registry 1.2.0"
         - dimension: "p0_response"
           state: "undetermined"
-          declared_by: "user"
-          declared_at: "2026-11-12T23:10:00+08:00"
-          evidence: "仓库勘察：无值班表、无 pager/on-call 配置、无告警通道登记。2026-11-15 已落盘登记模板 registry/production_schedule.yaml（status=pending，缺 M-1～M-6），事实仍未补"
-          source: "仓库勘察（本会话）"
+          declared_by: "onlookor"
+          declared_at: "2026-11-15T15:28:33+08:00"
+          evidence: "registry/production_schedule.yaml（status=not_in_scope，v0.3.0）：declared_by=onlookor；alert_channel=none；pager/ack_sla 保持 null；p0_response.state 保持 undetermined（C-3）"
+          source: "registry/production_schedule.yaml（人类 user 转达，declared_by=onlookor）"
           conversion_event: "首次生产部署前"
           deadline: "2026-12-31"
           deadline_basis: "人类用户 user 于 2026-11-12 批准推荐值；不等于生产排期"
@@ -235,7 +242,7 @@ grounding_acceptance:
           confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "ci.yml（未版本化）"
       gap_refs: ["D-16"]
-      gap_status: "D-16 登记模板已落盘（registry/production_schedule.yaml，pending）；『无生产排期』这一事实未消除，deadline 仍为决策日期而非排期日期，缺 M-1～M-6 待人类补填。"
+      gap_status: "D-16 六项已落库（registry/production_schedule.yaml v0.3.0，status=not_in_scope，declared_by=onlookor）；C-1/C-2/C-4 已按 2026-11-15 裁定落实；仅 C-3（alert_channel=none、ack_sla 未答时 state 的记录口径）待裁；p0_response 仍 undetermined。"
 
   summary:
     pass: 6
