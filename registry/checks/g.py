@@ -32,21 +32,41 @@ def g3(ctx):
     return ok('G3', f'{len(rows)} 条部署策略均含回滚且风格兼容判定为真')
 
 
-def _trend_window(tw):
-    """校验可配置趋势窗：{metric: count|time, value: >0}；metric 默认 count。"""
+_METRIC_VALUES = {'count', 'time'}
+
+
+def _declaration_shape(tw):
+    """校验趋势窗的**声明形态**（ADR-GUARD-02 D3）。
+
+    通过条件：metric 声明为 count|time 枚举且 unconfigured=cannot_evaluate；
+    value 声明为 number、带非空 range、且 unconfigured=cannot_evaluate。
+    **值不参与判定**：直接给数值不构成声明（按形态缺失记）；给出数值时也不据此改判。
+    """
     if not isinstance(tw, dict):
-        return None
-    metric = tw.get('metric', 'count')
-    value = tw.get('value')
-    if metric not in ('count', 'time'):
-        return None
-    if isinstance(value, bool) or not isinstance(value, (int, float)) or value <= 0:
-        return None
-    return metric, value
+        return None, '缺 trend_window 声明'
+    metric = tw.get('metric')
+    if not isinstance(metric, dict):
+        return None, 'metric 未以声明形态给出（需 {type, values, unconfigured}）'
+    values = metric.get('values')
+    if not isinstance(values, list) or set(values) != _METRIC_VALUES:
+        return None, 'metric.values 未声明为 count|time 枚举'
+    if metric.get('unconfigured') != 'cannot_evaluate':
+        return None, 'metric 未声明未配置行为=cannot_evaluate'
+    val = tw.get('value')
+    if not isinstance(val, dict):
+        return None, 'value 未以声明形态给出（需 {type, range, unconfigured}；给出数值本身不算声明）'
+    if val.get('type') != 'number':
+        return None, 'value.type 未声明为 number'
+    rng = val.get('range')
+    if not isinstance(rng, str) or not rng.strip():
+        return None, 'value.range 未声明取值范围'
+    if val.get('unconfigured') != 'cannot_evaluate':
+        return None, 'value 未声明未配置行为=cannot_evaluate'
+    return f'metric∈{{count,time}}；value:number {rng}（仅声明，无值）', None
 
 
 def g7(ctx):
-    """每条 P2 信号都配置告警阈值与可配置趋势窗口。"""
+    """每条 P2 信号都声明告警阈值与可配置趋势窗（形态判据，值不参与判定）。"""
     rows = domain_data(ctx, 'p2_signals')
     if rows is None:
         return esc('G7', '域数据源未登记：白板无 P2 信号与告警阈值',
@@ -60,15 +80,17 @@ def g7(ctx):
         if not r.get('alarm_threshold'):
             problems.append(f'{rid} 缺 alarm_threshold')
             continue
-        tw = _trend_window(r.get('trend_window'))
-        if tw is None:
-            problems.append(f"{rid} 的趋势窗缺失或非法（需 metric∈{{count,time}} 且 value>0）")
+        shape, why = _declaration_shape(r.get('trend_window'))
+        if shape is None:
+            problems.append(f'{rid} 趋势窗声明形态不合规：{why}')
         else:
-            windows.append(f'{rid}={tw[0]}/{tw[1]}')
+            windows.append(f'{rid}: {shape}')
     if problems:
-        return bad('G7', f'{len(problems)}/{len(rows)} 条 P2 信号不满足：{problems}')
-    return ok('G7', f'{len(rows)} 条 P2 信号均配置阈值与趋势窗（{"；".join(windows)}；'
-                    f'metric 与 value 可配置）')
+        return bad('G7', f'{len(problems)}/{len(rows)} 条 P2 信号不满足：{problems}',
+                   '形态判据：判定可配置项是否被正确声明；不合规即无法据以判趋势')
+    return ok('G7', f'{len(rows)} 条 P2 信号均声明阈值与趋势窗形态（{"；".join(windows)}）',
+              '形态判据（ADR-GUARD-02 D3）：判定「可配置项是否被正确声明」，'
+              '不代表趋势检测已实现，也不构成对任何运行时窗口取值的验证。')
 
 
 CHECKS = {'G3': g3, 'G7': g7}

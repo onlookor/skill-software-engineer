@@ -18,10 +18,14 @@
 # 本批 5 条已于 2026-11-15 由 draft 迁至 **active**：依据 ADR-GUARD-ACT-01
 #   （人类 user 批准，来源为当日明确指示）；同批订正 GR-003 陈旧阈值与
 #   GR-004/005 的 ADR 日期。注册表版本 1.0.0 → 1.1.0。
+# 1.1.0 → 1.2.0（2026-11-15，ADR-GUARD-02，人类 user 批准）：GR-005 趋势窗改为
+#   **无值声明**——只声明项名、类型枚举、取值范围、未配置时的行为（cannot_evaluate），
+#   不含任何默认值／示例值／推荐值。值属运行时产物，只在挂载期由 agent 与项目用户
+#   约定并留快照指纹；未约定即 cannot_evaluate。
 
 meta:
   law_file: ../软件工程元框架成文法.md
-  registry_version: {major: 1, minor: 1, patch: 0}
+  registry_version: {major: 1, minor: 2, patch: 0}
   registry_id: "GR-PACT-DSH-001"
   deployment: "pact-dsh"
   obligation_anchor:
@@ -30,7 +34,7 @@ meta:
     quote: "守护规则注册表条目形态 { rule_id, 监控谓词, 级别, 检测手段, 阈值与趋势窗口参数, 响应义务, 豁免条款指针, 出处, 版本 }"
     verified: true
   schema_status: schema+instances
-  instance_state: "5 条 active（2026-11-15 经 ADR-GUARD-ACT-01 批准；v1.1.0）"
+  instance_state: "5 条 active（2026-11-15 经 ADR-GUARD-ACT-01 批准；v1.2.0 经 ADR-GUARD-02 将 GR-005 趋势窗改为无值声明）"
   status_domain: [draft, seed, active, deprecated, retired]
   status_vocabulary_source: "0.17.2 条目状态枚举（D3.14 / C-12）"
   consumption_states: [active, seed]  # 《编译规范》2.3(a)；draft 不可消费
@@ -99,9 +103,23 @@ entries:
     params:
       check: "anchor_index.py INFO-2（快照比对）"
       threshold: "漂移只登记不追（ADR-ANCHOR-01 D3）"
-      trend_window: {metric: count, value: 10, configurable: true}   # count＝次数（默认），time＝天；metric/value 均可配
-    obligation: "记录 + 趋势观察（默认按次数，趋势窗口可配置）"
+      # 趋势窗＝可配置项**声明**，不含值（ADR-GUARD-02 D1/D2）：
+      #   值属运行时产物，只在挂载期由 agent 与项目用户约定并留快照指纹；
+      #   未约定即 cannot_evaluate。此处不得出现默认值／示例值／推荐值。
+      trend_window:
+        metric:
+          type: "enum: count|time"
+          values: [count, time]
+          unit_note: "count＝次数；time＝天"
+          required: true
+          unconfigured: "cannot_evaluate"
+        value:
+          type: number
+          range: ">= 1"
+          required: true
+          unconfigured: "cannot_evaluate"
+    obligation: "记录 + 趋势观察（窗口参数于挂载期约定；未约定即不可判）"
     waiver_clause: null
-    source_adr: "ADR-ANCHOR-01（approved 2026-11-09）D3"
-    version: "1.1.0"
+    source_adr: "ADR-ANCHOR-01（approved 2026-11-09）D3；ADR-GUARD-02（approved 2026-11-15）D1/D2"
+    version: "1.2.0"
     status: "active"

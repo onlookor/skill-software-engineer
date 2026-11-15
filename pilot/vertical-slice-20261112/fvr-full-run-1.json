@@ -1,6 +1,6 @@
 {
   "run_id": "fvr-full-run-1",
-  "generated_at": "2026-11-15T16:59:03+08:00",
+  "generated_at": "2026-11-15T22:23:53+08:00",
   "mother_sha256": "469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3",
   "predicate_blocks": 17,
   "hard_property_source": "regex ^\\s*([A-Z]\\d+):.*(——|—)\\s*硬 + hard-properties.snapshot.json",
@@ -242,8 +242,8 @@
     {
       "property": "G7",
       "verdict": "pass",
-      "evidence": "1 条 P2 信号均配置阈值与趋势窗（GR-005=count/10；metric 与 value 可配置）",
-      "reason": "",
+      "evidence": "1 条 P2 信号均声明阈值与趋势窗形态（GR-005: metric∈{count,time}；value:number >= 1（仅声明，无值））",
+      "reason": "形态判据（ADR-GUARD-02 D3）：判定「可配置项是否被正确声明」，不代表趋势检测已实现，也不构成对任何运行时窗口取值的验证。",
       "vacuous": false,
       "route": "pass"
     },

@@ -95,13 +95,20 @@
 #     不得被其他条目自动套用；判据六 evidence/caveat 同步，缺陷未被洗成 pass；
 #     production_schedule v0.5.0→0.6.0；本轮完成 .12 重编译（artifact snapshot 与 18 卡对齐）。
 #     母本未改、锚漂移 0；分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
+#   v1.21.0 → v1.22.0（2026-11-15，人类选 B：GR-005 无值声明＋重编译 .13）：
+#     `guard_registry` 1.1.0→1.2.0，GR-005 趋势窗改为**无值声明**（只声明项名／类型枚举／
+#     取值范围／未配置行为 cannot_evaluate；删除 value: 10，无默认值／示例值／推荐值）；
+#     G7 由「value>0 校验」改为**形态判据**（值不参与判定）；白板 p2_signals 去值、保留条目；
+#     判据二 evidence 写入弱判据标签：G7 只判可配置项是否被正确声明，**不代表趋势检测已实现**，
+#     也**不构成对任何运行时窗口取值的验证**；
+#     母本未改、锚漂移 0；分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.21.0"
+  version: "1.22.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-15T11:20:00+08:00"
+  executed_at: "2026-11-15T22:11:40+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.12"
+  artifact: "pilot-20261112.13"
   not_in_scope_this_round: []
 
   criteria:
@@ -123,23 +130,24 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.1.0 → 成立"
-        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.2.0（6 类决策，含「编译规程变更」与「守护规则激活」）→ 成立"
-        - "守护规则注册表：registry/guard_registry.yaml，GRD v1.1.0，5 条均 active（2026-11-15 经 ADR-GUARD-ACT-01 批准；status_note 同步）→ 成立"
+        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.2.1（6 类决策，含「编译规程变更」与「守护规则注册表变更」；第 6 类已登记 2 个适用实例）→ 成立"
+        - "守护规则注册表：registry/guard_registry.yaml，GRD v1.2.0，5 条均 active（2026-11-15 经 ADR-GUARD-ACT-01 批准；v1.2.0 经 ADR-GUARD-02 将 GR-005 趋势窗改为无值声明）→ 成立"
+        - "**弱判据标签（G7）**：G7 现为**形态判据**，只判定「可配置项是否被正确声明」（metric 为 count|time 枚举、value 为 number 且带 range、两者均声明 unconfigured=cannot_evaluate）；值不参与判定。该 pass **不代表趋势检测已实现**，也**不构成对任何运行时窗口取值的验证**。"
         - "FVR：registry/fvr_registry.yaml，FVRREG v1.1.0，8 个 FVR 集（G-CAND-01..08），39 条硬性质 → 成立"
         - "投影规则：registry/projection_registry.yaml，PRJREG v1.0.0，4 条现行规则（PR-01～04，active）→ 成立"
-      reason: "5/5 均非空且带 registry_version。**但 pass 只证明注册面存在与版本在案**：守护规则已于 2026-11-15 由 5 条 draft 转为 5 条 active（ADR-GUARD-ACT-01，人类批准），可消费；FVR 集已覆盖 39 条硬性质（接线与执行证据见判据四）。"
+      reason: "5/5 均非空且带 registry_version。**但 pass 只证明注册面存在与版本在案**：守护规则已于 2026-11-15 由 5 条 draft 转为 5 条 active（ADR-GUARD-ACT-01，人类批准），可消费；GR-005 趋势窗于同日改为无值声明（ADR-GUARD-02，人类批准），故 G7 只能判声明形态，不能判趋势是否实现；FVR 集已覆盖 39 条硬性质（接线与执行证据见判据四）。"
       count: "5/5"
-      caveat: "守护规则 draft→active 已于 2026-11-15 完成（v1.1.0，5 条 active）；后续规则变更仍须走 9.2.2。"
+      caveat: "守护规则 draft→active 已于 2026-11-15 完成（v1.1.0，5 条 active）；GR-005 趋势窗于同日改为无值声明（v1.2.0），值属运行时产物、未约定即 cannot_evaluate；后续规则变更仍须走 9.2.2。"
       gap_refs: ["D-13", "D-22", "D-23", "D-24"]
 
     - id: 3
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
       verdict: "pass"
       evidence:
-        - "18 张卡片 artifact_version 均为 pilot-20261112.11"
-        - "artifact.yaml version.label = pilot-20261112.11；artifact_seq = 11；registry_version = 1.1.0；framework_version = sha256:469d64c0…b3f8f3"
+        - "18 张卡片 artifact_version 均为 pilot-20261112.13"
+        - "artifact.yaml version.label = pilot-20261112.13；artifact_seq = 13；registry_version = 1.1.0；framework_version = sha256:469d64c0…b3f8f3"
         - "check-card.py --all E4: match=true（18/18；见 fidelity-all.json）"
-      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。2026-11-15 按 .11 重编译：产物序号 10→11，registry_snapshot 对齐现行注册面（approval 1.2.0/6、guard 1.1.0/active、新增 review_points 与 production_schedule），卡内容未变（6 张 0.2.0 精化卡原样）；release.artifact_version 仍指 .10（重编译≠发布）。"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。2026-11-15 按 .13 重编译：产物序号 12→13，registry_snapshot 对齐现行注册面（approval 1.2.1/6、guard 1.2.0/active 含 GR-005 无值声明），卡内容未变（6 张 0.2.0 精化卡原样）；release.artifact_version 仍指 .10（重编译≠发布）。"
       gap_refs: ["D-3"]
 
     - id: 4
@@ -148,7 +156,7 @@ grounding_acceptance:
       evidence:
         - "卡片集：18 张（8 实质卡 G-CAND-01..08＋10 躯干卡），由 registry/scripts/gen_cards.py 从母本 0.18.2 S0–S6 机械生成"
         - "FVR：8 份 fvr-G-CAND-0X.yaml（v1.1.0），39 条硬性质各接一个 registry/checks/ 下真实检查器，wired: true"
-        - "首轮全量：pilot/vertical-slice-20261112/fvr-full-run-1.json，39 行 verdict（hard=39 executed=39；2026-11-14 复跑，9 个检查器升级为内容校验）"
+        - "首轮全量：pilot/vertical-slice-20261112/fvr-full-run-1.json，39 行 verdict（hard=39 executed=39；2026-11-15 .13 复跑；G7 改形态判据后仍 pass）"
         - "实跑分布：pass 39 / fail 0 / escalate 0 / vacuous 9（空真清单见 vacuous-inventory.md）"
         - "check-card.py --all：F1=pass，F2=pass，F3(full)=pass 39/39，F3(scoped)=pass，E4 match=true（18/18），fail_count=0，exit=0"
         - "runner E3：pass（39/39 有 FVR 条目、检查程序与首轮 verdict）"
@@ -165,7 +173,7 @@ grounding_acceptance:
       weak_checks: []
       weak_checks_note: "W1 已于 2026-11-15 由人工核升级为机械校验（候选 B；边界与固定观测项经人类批准）。当前无弱校验项。"
       packed_upgrade: "已完成（2026-11-15）：W1 按候选 B 升级为机械校验，证据固定字段含 excluded_dynamic_loads（当前值 1）。"
-      caveat: "0 条 escalate、0 条 fail；39 条 pass 中 9 条 vacuous（空真），其余 30 条全部为机械校验（W1 于 2026-11-15 升级，不再有人工核项）。"
+      caveat: "0 条 escalate、0 条 fail；39 条 pass 中 9 条 vacuous（空真），其余 30 条全部为机械校验（W1 于 2026-11-15 升级，不再有人工核项）。其中 G7 为**形态判据**：只判 GR-005 趋势窗的声明形态是否合规，不代表趋势检测已实现，也不构成对任何运行时窗口取值的验证。"
       gap_refs: ["D-9"]
       gap_status: "已闭合（D-9）：接线与全量执行证据齐备；escalate 与 fail 均已清零；W1 已于 2026-11-15 升级为机械校验。"
 
@@ -220,7 +228,7 @@ grounding_acceptance:
       name: "部署可行性勘察结论已登记（批准角色存在性、P0 响应能力、CI 能力）"
       verdict: "pass"
       evidence:
-        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.0）"
+        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.1）"
         - "P0 响应：confirmed_absent（D-16 registry/production_schedule.yaml v0.6.0；alert_channel=none、pager=none、ack_sla=none 三槽均逐字；三者为独立字段：通道／分页器／确认时限，非互斥选项）；9.3 缺陷原判保留、效力按 INT-D16-9.3-SCOPE-01 挂起（非 Waiver／无豁免效力／不改判定，仅 status=not_in_scope ∧ review_at 非空时可用）"
         - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
       reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 响应为 confirmed_absent，9.3 缺陷原判保留、效力在 status=not_in_scope ∧ review_at 非空时挂起（INT-D16-9.3-SCOPE-01）。**判据六成立的依据是声明完整，与缺陷是否生效无关；pass 不代表 P0 响应能力存在，也不代表缺陷被豁免。**"
@@ -229,13 +237,13 @@ grounding_acceptance:
           state: "confirmed_present"
           declared_by: "user"
           declared_at: "2026-11-12T23:10:00+08:00"
-          evidence: "registry/approval_registry.yaml（sha256 4551962be1c4725061df79978bdc454e71b60b99b29b02099cb273fdcf809292），pact-dsh v1.2.0，6 类决策，主批准人 user"
+          evidence: "registry/approval_registry.yaml（sha256 99ce650c9d4d78cb9d27dfbe965a746c1fc599196352eba6d0ee8cb0261ce866），pact-dsh v1.2.1，6 类决策，主批准人 user"
           source: "人类用户 user 于 2026-11-12 裁定"
           conversion_event: null
           deadline: null
           confirmed_by: "user"
           confirmed_at: "2026-11-12T23:10:00+08:00"
-          version: "approval_registry 1.2.0"
+          version: "approval_registry 1.2.1"
         - dimension: "p0_response"
           state: "confirmed_absent"
           declared_by: "onlookor"

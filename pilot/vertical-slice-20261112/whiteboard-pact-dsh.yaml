@@ -2,7 +2,12 @@
 #
 # 依据：母本 0.7（白板谓词集）＋0.21（五状态机）＋0.21.6（机器层谓词）
 # 性质：pilot 记录，不是部署实例的正式白板。
-# 本轮变更（2026-11-15，重编译 .11→.12，无人类批准要求）：production_schedule
+# 本轮变更（2026-11-15，重编译 .12→.13，人类 user 批准）：guard_registry 1.1.0→1.2.0
+#   （GR-005 趋势窗改为无值声明，ADR-GUARD-02；G7 改为形态判据，值不参与判定）与
+#   approval_registry 1.2.0→1.2.1（第 6 类登记实例）触发 CA-03：SM-CA .12 valid→stale；
+#   随即按 CA-01 记 .13 compiling→valid（E3 全量 39/39、E4 18/18 match、C7 predicate_satisfied=true）。
+#   p2_signals 去值但保留条目（value_state=not_agreed）；本次为重编译，未发布。
+# 前轮变更（2026-11-15，重编译 .11→.12，无人类批准要求）：production_schedule
 #   0.4.0→0.6.0（pager=none 三槽齐；9.3 缺陷按 INT-D16-9.3-SCOPE-01 范围限定挂起）
 #   与 grounding 1.19.0→1.21.0 触发 CA-03：SM-CA .11 valid→stale；随即按 CA-01 记
 #   .12 compiling→valid（E3 全量 39/39、E4 18/18 match、C7 predicate_satisfied=true）。
@@ -168,12 +173,17 @@ whiteboard:
     human_review:
       - {property: W1, approved_by: user, approver_kind: human, approved_at: "2026-11-14",
          conclusion: "W1 接缝封闭：覆盖面为 module_inventory 全部 9 个单元（index、loop-entry、config、govern、loop-core、names、observer、pact-backend、wasm-backend）。逐一核对模块间调用与 import，未发现经由未声明接口的跨模块访问，无例外。"}
-    # G7 P2 信号（2026-11-14 人类批准：趋势窗按次数，metric/value 均可配，默认 count）
+    # G7 P2 信号（2026-11-15 按 ADR-GUARD-02 改为无值声明：值属运行时产物，未约定即 cannot_evaluate）
     p2_signals:
-      - {id: GR-005, source: "registry/guard_registry.yaml", level: P2,
-         alarm_threshold: "漂移只登记不追",
-         trend_window: {metric: count, value: 10, configurable: true},
-         note: "GR-005 按次数计窗口（默认 10 次）；metric 可改 time（天），value 可配"}
+      - id: GR-005
+        source: "registry/guard_registry.yaml"
+        level: P2
+        alarm_threshold: "漂移只登记不追"
+        trend_window:                 # 只声明形态，不含值（不得补默认值／示例值）
+          metric: {type: "enum: count|time", values: [count, time], required: true, unconfigured: "cannot_evaluate"}
+          value: {type: number, range: ">= 1", required: true, unconfigured: "cannot_evaluate"}
+        value_state: "not_agreed"      # 值未约定：本部署尚未与项目用户约定，未约定即 cannot_evaluate
+        note: "趋势窗为无值声明：metric 取 count（次数）/time（天），取值与长度仅在挂载期约定并留快照指纹。本条目只证明声明形态齐备，不代表趋势检测已实现，也不构成对任何运行时窗口取值的验证。"
 
   absent:                        # 按规程应写而未写
     - expr: "（无）"
@@ -207,14 +217,16 @@ whiteboard:
         - {from: "provisional", to: "approved", trigger: "retro_approve", actor: "human(user)", at: "2026-11-13", basis: "10.2.5 达 6/6，临时保守通道经人类事后追认"}
       governance_risk: "GOV-PACT-001（备选链为空）"
     SM-CA:
-      artifact: "pilot-20261112.12"
+      artifact: "pilot-20261112.13"
       state: "valid"
-      version_vector: {framework_version: "sha256:469d64c0…", registry_version: "1.1.0", artifact_seq: 12}
+      version_vector: {framework_version: "sha256:469d64c0…", registry_version: "1.2.0", artifact_seq: 13}
       transitions:
         - {from: "compiling", to: "valid", trigger: "compile_success ∧ fidelity_pass", actor: "system", at: "2026-11-15", basis: "CA-01；E3 全量 39/39、E4 match=true（18/18）；C7 predicate_satisfied=true（.12 重编译）"}
         - {from: "valid", to: "stale", trigger: "registry_change", actor: "system", at: "2026-11-15", basis: "CA-03：production_schedule 0.4.0→0.6.0（pager=none、INT-D16-9.3-SCOPE-01）与 grounding 1.19.0→1.21.0；版本监听，非人工判定"}
-      supersedes: "pilot-20261112.11"
-      note: "本状态为 .12 重编译后的 valid。前序 .11 因 production_schedule／grounding 变更按 CA-03 记 stale；.10 因注册面变更、.9 因 H-1 后 framework_version 失配亦曾记 stale。重编译映射行见 artifact.yaml recompile_map。.12 未发布（release.artifact_version 仍指 .10）。"
+        - {from: "valid", to: "stale", trigger: "registry_change", actor: "system", at: "2026-11-15", basis: "CA-03：guard_registry 1.1.0→1.2.0（GR-005 趋势窗改为无值声明，ADR-GUARD-02；9.2.2 注册表变更）"}
+        - {from: "compiling", to: "valid", trigger: "compile_success ∧ fidelity_pass", actor: "system", at: "2026-11-15", basis: "CA-01；E3 全量 39/39、E4 match=true（18/18）、check-card --all fail_count=0；C7 predicate_satisfied=true（.13 重编译）"}
+      supersedes: "pilot-20261112.12"
+      note: "本状态为 .13 重编译后的 valid。前序 .12 因 guard_registry 1.1.0→1.2.0 按 CA-03 记 stale；.11 因 production_schedule／grounding 变更亦曾记 stale；.10 因注册面变更、.9 因 H-1 后 framework_version 失配亦曾记 stale。重编译映射行见 artifact.yaml recompile_map。.13 未发布（release.artifact_version 仍指 .10）。"
 
   open_obligations:
     - id: "SO-PILOT-1"
