@@ -17,18 +17,20 @@
 #   declared_by=onlookor（排期声明人，与批准人语义分离）；新增 review_at 承载复核日；
 #   release_mechanism 保留原值并记 release_execution=not_executed；alert_channel=none 逐字；
 #   declared_at 用完整 datetime；M-2 两段分写；M-4 补「无备份」；M-6 补原因。
-#   仅 p0_response.state 的记录口径待裁（C-3）。
+# 2026-11-15（15:38+08:00）：人类裁定 C-3：无告警通道即无 ack SLA。
+#   ack_sla=none 逐字落；p0_response.state 转 confirmed_absent；missing 清空。
+#   pager 仍未获回答，保持 null（未填 none），缺口记入 meta.open_notes。
 
 meta:
   law_file: ../软件工程元框架成文法.md
-  registry_version: {major: 0, minor: 3, patch: 0}
+  registry_version: {major: 0, minor: 4, patch: 0}
   obligation_anchor:
     source_type: clause_id
     value: "10.2.5-6"
     quote: "部署可行性勘察结论已登记（批准角色、P0 响应、CI）；P0 响应 conversion_event＝首次生产部署前"
     verified: true
   schema_status: schema+instance
-  instance_state: "1 个部署实例（pact-dsh）；M-1～M-6 与 C-1～C-4、三处说明缺口均按 2026-11-15 人类裁定落实；仅 p0_response.state 记录口径待裁（C-3）"
+  instance_state: "1 个部署实例（pact-dsh）；M-1～M-6 与 C-1～C-4、三处说明缺口均按 2026-11-15 人类裁定落实；missing 已清空；pager 未获回答，保持 null"
   status_domain: [pending, confirmed_present, not_in_scope, confirmed_absent]
   status_basis: "M-1『本阶段不部署』→ not_in_scope；C-3 不改变该结论"
   note: "本文件不含任何由 agent 推测的日期、环境或责任人；未答字段一律 null。"
@@ -54,16 +56,12 @@ meta:
     - {id: "C-1", ruling: "人类裁定第 2 条：新增 review_at 承载 2026-12-31；date 保持 null", applied: "entry_fields 增补 first_production_deployment.review_at；entries[0].review_at=2026-12-31"}
     - {id: "C-2", ruling: "人类裁定第 3 条：release_mechanism 保留原值，按『机制留着、本阶段不执行』记录", applied: "release_mechanism 未改；meta.release_execution.status=not_executed"}
     - {id: "C-4", ruling: "人类裁定第 5 条：declared_at 取当前时间，按 datetime 带时区写", applied: "declared_at=2026-11-15T15:28:33+08:00"}
-  pending_conflicts:
-    - id: "C-3"
-      item: "M-5"
-      raw: "none"
-      conflict: "alert_channel=none 已逐字落；pager／ack_sla 仍属未回答（null）。若据 alert_channel=none 推 p0_response.state=confirmed_absent，会连带覆盖 ack_sla 的未回答语义"
-      state: "待人类裁定 p0_response.state 的记录口径；当前保持 undetermined"
-      handling_by_agent: "未推 confirmed_absent；pager/ack_sla 保持 null"
+    - {id: "C-3", ruling: "人类 2026-11-15 裁定：无告警通道即无 ack SLA；ack_sla=none，state 转 confirmed_absent，missing 清空；pager 不得代填", applied: "ack_sla=none；p0_response.state=confirmed_absent；missing=[]；pager 保持 null 并记 open_notes"}
   open_notes:
     - "M-4：按裁定第 7 条记为 onlookor（无备份）；未另设 backup 字段。"
     - "M-6：按裁定第 8 条 rollback_window=none，原因＝尚未确立机制。"
+    - "M-5 pager：人类仅回答 alert_channel 与 ack_sla，pager 未获回答，保持 null（未代填 none）。schema 无『三槽齐备才可记 confirmed_absent』的约束，故该项不阻断 C-3 的状态转换；但 pager 仍是本维度唯一未答字段。"
+    - "C-3 后果：p0_response.state=confirmed_absent 按 9.3 判部署形态可行性缺陷；与 status=not_in_scope（本阶段不部署）并存，不互相覆盖。"
   concurrency_gate:
     protocol: "#9（编译规范 11.4 并发协议）"
     status: "not_triggered"
@@ -106,12 +104,11 @@ entries:
     p0_response:
       on_call_owner: "onlookor（无备份）" # M-4（人类裁定第 7 条）
       alert_channel: "none"            # M-5 逐字（人类裁定第 4 条）
-      pager: null                      # M-5 未回答
-      ack_sla: null                    # M-5 未回答
-      state: "undetermined"            # 不推 confirmed_absent，见 C-3
+      pager: null                      # M-5 pager 未获回答（人类仅答 alert_channel 与 ack_sla）
+      ack_sla: "none"                  # C-3：无告警通道即无 ack SLA（人类 2026-11-15 裁定）
+      state: "confirmed_absent"        # C-3：人类裁定转 confirmed_absent；pager 未答不阻断（schema 无三槽约束）
     declared_by: "onlookor"            # 排期声明人（人类裁定第 1 条）
     declared_at: "2026-11-15T15:28:33+08:00"  # 人类裁定第 5 条
     source: "人类用户 user 于 2026-11-15 转达；原话逐字见 meta.declaration_raw"
-    missing:
-      - "p0_response.state 的记录口径（alert_channel=none、ack_sla 未答；C-3，待裁）"
-    consequence_if_unfilled: "2026-12-31 到期仍空白 → p0_response 强制转 confirmed_absent，按 9.3 判部署形态可行性缺陷"
+    missing: []                        # C-3 后已无剩余空缺；pager 缺口见 meta.open_notes
+    consequence_if_unfilled: "无剩余空缺。已生效后果：p0_response.state=confirmed_absent → 按 9.3 判部署形态可行性缺陷（与 status=not_in_scope 并存）"

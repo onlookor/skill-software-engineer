@@ -18,7 +18,7 @@ source_anchors:
 - '0.6'
 - 0.20.2
 - 4.2.4
-artifact_version: pilot-20261112.10
+artifact_version: pilot-20261112.11
 variant_note: "本 kind 无自有 0.18.4 变体（待 0.18.8 补登记）。0.18.4 第 4 行要点仅作参考、非本 kind 变体：逐数据集合迭代执行；S6 恒为高影响（批准注册类目）。本卡按通用 S0–S6 执行。"
 trigger:
   event_pattern: '[决策点声明：DP_id, aspect=4, kind=DFL, question, affected_predicates] ∧ ¬selection_procedure(DP, ·, ·)'

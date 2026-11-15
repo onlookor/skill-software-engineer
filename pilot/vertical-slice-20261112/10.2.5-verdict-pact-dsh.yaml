@@ -77,13 +77,18 @@
 #     M-6 原因=尚未确立机制；declared_at=2026-11-15T15:28:33+08:00；
 #     #9 登记 not_triggered（依据 M-3=single_writer）；p0_response.state 保持 undetermined（C-3 待裁）；
 #     母本未改、锚漂移 0。下一步 `.11` 重编译（artifact 快照、18 卡、C7、SM-CA）。
+#   v1.18.0 → v1.19.0（2026-11-15，C-3 裁定落实）：
+#     ack_sla=none；p0_response.state undetermined→confirmed_absent（人类裁定：无告警通道即无 ack SLA）；
+#     production_schedule v0.3.0→0.4.0，missing 清空；pager 仍未答、保持 null（未代填 none）；
+#     confirmed_absent 的后果按 9.3 判部署形态可行性缺陷，与 status=not_in_scope 并存；
+#     母本未改、锚漂移 0；分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.18.0"
+  version: "1.19.0"
   deployment: "pact-dsh"
   executed_at: "2026-11-15T11:20:00+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.10"
+  artifact: "pilot-20261112.11"
   not_in_scope_this_round: []
 
   criteria:
@@ -105,23 +110,23 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.1.0 → 成立"
-        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.1.0（5 类决策，含「编译规程变更」）→ 成立"
-        - "守护规则注册表：registry/guard_registry.yaml，GRD v1.0.0，5 条（draft）→ 成立（非空且版本在案）"
+        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.2.0（6 类决策，含「编译规程变更」与「守护规则激活」）→ 成立"
+        - "守护规则注册表：registry/guard_registry.yaml，GRD v1.1.0，5 条均 active（2026-11-15 经 ADR-GUARD-ACT-01 批准；status_note 同步）→ 成立"
         - "FVR：registry/fvr_registry.yaml，FVRREG v1.1.0，8 个 FVR 集（G-CAND-01..08），39 条硬性质 → 成立"
         - "投影规则：registry/projection_registry.yaml，PRJREG v1.0.0，4 条现行规则（PR-01～04，active）→ 成立"
-      reason: "5/5 均非空且带 registry_version。**但 pass 只证明注册面存在与版本在案**：守护规则 5 条均为 `draft`，尚未取得 9.2.2 要求的完整 ADR＋批准，不可消费；FVR 集已覆盖 39 条硬性质（接线与执行证据见判据四）。"
+      reason: "5/5 均非空且带 registry_version。**但 pass 只证明注册面存在与版本在案**：守护规则已于 2026-11-15 由 5 条 draft 转为 5 条 active（ADR-GUARD-ACT-01，人类批准），可消费；FVR 集已覆盖 39 条硬性质（接线与执行证据见判据四）。"
       count: "5/5"
-      caveat: "守护规则 draft→active 需 9.2.2 批准。"
+      caveat: "守护规则 draft→active 已于 2026-11-15 完成（v1.1.0，5 条 active）；后续规则变更仍须走 9.2.2。"
       gap_refs: ["D-13", "D-22", "D-23", "D-24"]
 
     - id: 3
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
       verdict: "pass"
       evidence:
-        - "18 张卡片 artifact_version 均为 pilot-20261112.10"
-        - "artifact.yaml version.label = pilot-20261112.10；registry_version = 1.1.0；framework_version = sha256:469d64c0…b3f8f3"
-        - "check-card.py --all E4: match=true（见 fidelity-all.json）"
-      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。2026-11-15 按 C7-A 重编译：产物序号 9→10，仅对齐版本三元组，卡内容未变（6 张 0.2.0 精化卡原样）。"
+        - "18 张卡片 artifact_version 均为 pilot-20261112.11"
+        - "artifact.yaml version.label = pilot-20261112.11；artifact_seq = 11；registry_version = 1.1.0；framework_version = sha256:469d64c0…b3f8f3"
+        - "check-card.py --all E4: match=true（18/18；见 fidelity-all.json）"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。2026-11-15 按 .11 重编译：产物序号 10→11，registry_snapshot 对齐现行注册面（approval 1.2.0/6、guard 1.1.0/active、新增 review_points 与 production_schedule），卡内容未变（6 张 0.2.0 精化卡原样）；release.artifact_version 仍指 .10（重编译≠发布）。"
       gap_refs: ["D-3"]
 
     - id: 4
@@ -132,7 +137,7 @@ grounding_acceptance:
         - "FVR：8 份 fvr-G-CAND-0X.yaml（v1.1.0），39 条硬性质各接一个 registry/checks/ 下真实检查器，wired: true"
         - "首轮全量：pilot/vertical-slice-20261112/fvr-full-run-1.json，39 行 verdict（hard=39 executed=39；2026-11-14 复跑，9 个检查器升级为内容校验）"
         - "实跑分布：pass 39 / fail 0 / escalate 0 / vacuous 9（空真清单见 vacuous-inventory.md）"
-        - "check-card.py --all：F1=pass，F2=escalate，F3(full)=pass 39/39，E4 match=true，exit=0"
+        - "check-card.py --all：F1=pass，F2=pass，F3(full)=pass 39/39，F3(scoped)=pass，E4 match=true（18/18），fail_count=0，exit=0"
         - "runner E3：pass（39/39 有 FVR 条目、检查程序与首轮 verdict）"
       reason: "判据四的两要件均成立：全部 39 条硬性质有 FVR 条目并接到可执行检查器；全量执行有落盘工件。**pass 不代表 39 条均为实质性质成立**：其中 9 条为 vacuous（空真，域本身无实例或显式空集），其余 30 条为机械校验。v1.14.0 起 0 条 fail、0 条 escalate：X2/X5/T6/G3 经 ADR 批准迁入、兼容策略登记、契约测试新增、回滚与风格符合性登记后转 pass。V1/W4 为机械校验：V1 读取目标仓库源码的相对 import 边并逐边核对层规则，W4 读取源码写点/创建点核对所有权（已用注入反例验证二者会 fail）。T4/W2 经新增 test/index.test.js 与 test/loop-entry.test.js 转 pass；T6 经新增 test/contract.test.js 转 pass，`npm test` 61/61 通过，三处入口/契约测试均未改生产代码。W1 已于 2026-11-15 升级为机械校验（候选 B）：9 单元 / 11 边 / 15 绑定 / 0 违规，静态 ESM 范围内无越界访问。"
       interpretation:
@@ -203,9 +208,9 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.0）"
-        - "P0 响应：undetermined（D-16 已由 user 转达、declared_by=onlookor；alert_channel=none 已逐字落，pager/ack_sla 未答；推 confirmed_absent 会覆盖 ack_sla 未答语义，故 state 不转，C-3 待裁）"
+        - "P0 响应：confirmed_absent（D-16 registry/production_schedule.yaml v0.4.0；alert_channel=none、ack_sla=none 均逐字；pager 未答保持 null；2026-11-15 人类裁定『无告警通道即无 ack SLA』）"
         - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
-      reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 为 undetermined，且已附 conversion_event 与 deadline（2026-12-31）→ 声明完整，判据成立。**pass 只代表声明完整，不代表 P0 响应能力存在。**"
+      reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 响应为 confirmed_absent，按 9.3 判部署形态可行性缺陷（判据六仍成立＝声明完整，不因缺陷而失败）。**pass 只代表声明完整，不代表 P0 响应能力存在。**"
       grounding_status:
         - dimension: "approval_role_instances"
           state: "confirmed_present"
@@ -219,17 +224,19 @@ grounding_acceptance:
           confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "approval_registry 1.2.0"
         - dimension: "p0_response"
-          state: "undetermined"
+          state: "confirmed_absent"
           declared_by: "onlookor"
           declared_at: "2026-11-15T15:28:33+08:00"
-          evidence: "registry/production_schedule.yaml（status=not_in_scope，v0.3.0）：declared_by=onlookor；alert_channel=none；pager/ack_sla 保持 null；p0_response.state 保持 undetermined（C-3）"
+          evidence: "registry/production_schedule.yaml（status=not_in_scope，v0.4.0）：alert_channel=none、ack_sla=none；pager 保持 null（未答）；state=confirmed_absent"
           source: "registry/production_schedule.yaml（人类 user 转达，declared_by=onlookor）"
-          conversion_event: "首次生产部署前"
-          deadline: "2026-12-31"
-          deadline_basis: "人类用户 user 于 2026-11-12 批准推荐值；不等于生产排期"
-          confirmed_by: null
-          confirmed_at: null
-          version: "n/a"
+          conversion_event: null
+          deadline: null
+          review_at: "2026-12-31"
+          review_at_basis: "M-1 复核日期（人类裁定第 2 条）；转换已完成，不再作 conversion deadline 使用"
+          confirmed_by: "user"
+          confirmed_at: "2026-11-15T15:38:00+08:00"
+          confirmation_note: "按 R7-11，undetermined→confirmed_absent 应由运维责任方确认；本次为人类用户裁定（经父会话转达），未另行具名运维责任方，亦未由 agent 代确认。"
+          version: "production_schedule 0.4.0"
         - dimension: "ci_capability"
           state: "confirmed_present"
           declared_by: "user"
@@ -242,7 +249,7 @@ grounding_acceptance:
           confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "ci.yml（未版本化）"
       gap_refs: ["D-16"]
-      gap_status: "D-16 六项已落库（registry/production_schedule.yaml v0.3.0，status=not_in_scope，declared_by=onlookor）；C-1/C-2/C-4 已按 2026-11-15 裁定落实；仅 C-3（alert_channel=none、ack_sla 未答时 state 的记录口径）待裁；p0_response 仍 undetermined。"
+      gap_status: "D-16 已闭合（registry/production_schedule.yaml v0.4.0，status=not_in_scope，declared_by=onlookor，missing=[]）；C-1～C-4 已按 2026-11-15 裁定全部落实；p0_response=confirmed_absent；pager 未答但 schema 无三槽齐备约束，不阻断声明完整性（缺口见该文件 meta.open_notes）。"
 
   summary:
     pass: 6
@@ -261,7 +268,7 @@ grounding_acceptance:
     closed_this_round: [4]
     still_pending: []
     caveats:
-      - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；2026-12-31 到期未转则强制转 confirmed_absent 并按 9.3 判部署形态可行性缺陷"
+      - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；p0_response=confirmed_absent（人类 2026-11-15 裁定，无告警通道即无 ack SLA），已按 9.3 判部署形态可行性缺陷；pager 为该维度唯一未答字段（保持 null）"
       - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
       - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"
       - "判据四 pass 只证明接线与全量执行证据；39 条中 0 条 fail、0 条 escalate、9 条 vacuous，不等于 39 条性质均实质成立；V1/W4 为机械校验，W1 为人工核"

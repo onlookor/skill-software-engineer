@@ -2,7 +2,12 @@
 #
 # 依据：母本 0.7（白板谓词集）＋0.21（五状态机）＋0.21.6（机器层谓词）
 # 性质：pilot 记录，不是部署实例的正式白板。
-# 本轮变更（2026-11-15，系统迁移，无人类批准要求）：按 CA-01 记 SM-CA compiling→valid
+# 本轮变更（2026-11-15，重编译 .10→.11，无人类批准要求）：注册面变更
+#   （approval 1.1.0→1.2.0、guard 1.0.0/draft→1.1.0/active、新增 review_points 与
+#   production_schedule）触发 CA-03：SM-CA .10 valid→stale；随即按 CA-01 记
+#   .11 compiling→valid（E3 全量 39/39、E4 18/18 match、C7 predicate_satisfied=true）。
+#   本次为重编译，未发布（artifact.release.artifact_version 仍指 .10）。
+# 前轮变更（2026-11-15，系统迁移，无人类批准要求）：按 CA-01 记 SM-CA compiling→valid
 #   （trigger=compile_success ∧ fidelity_pass，actor=system；E3 全量 39/39、E4 match=true）。
 #   .9 的 framework_version 在 H-1 后失配，按 CA-03 应记 stale；重编译映射行见 artifact.yaml。
 # 本轮变更（2026-11-14，人类批准五条，登记人 user）：
@@ -33,7 +38,7 @@ whiteboard:
     aspect_8: 1                  # 批 A：契约测试与单元测试登记面
     aspect_9: 1                  # 批 A：deploy_strategy
     aspect_10: 0                 # 无投影物化（D-11）
-  artifact_version: "pilot-20261112.9"
+  artifact_version: "pilot-20261112.11"
   target_repo: "/home/user/projects/pact-dsh"   # 机械校验读取的源码根；pilot 本地事实
 
   committed:                     # 已写入（有 step_log 指针）
@@ -197,13 +202,14 @@ whiteboard:
         - {from: "provisional", to: "approved", trigger: "retro_approve", actor: "human(user)", at: "2026-11-13", basis: "10.2.5 达 6/6，临时保守通道经人类事后追认"}
       governance_risk: "GOV-PACT-001（备选链为空）"
     SM-CA:
-      artifact: "pilot-20261112.10"
+      artifact: "pilot-20261112.11"
       state: "valid"
-      version_vector: {framework_version: "sha256:469d64c0…", registry_version: "1.1.0", artifact_seq: 10}
+      version_vector: {framework_version: "sha256:469d64c0…", registry_version: "1.1.0", artifact_seq: 11}
       transitions:
-        - {from: "compiling", to: "valid", trigger: "compile_success ∧ fidelity_pass", actor: "system", at: "2026-11-15", basis: "CA-01；E3 全量 39/39（FVR 接线＋首轮 verdict）、E4 match=true；C7 predicate_satisfied=true"}
-      supersedes: "pilot-20261112.9"
-      note: "pilot-20261112.9 的 framework_version 在 H-1 母本改动后失配，按 CA-03 应记 stale；重编译映射行见 artifact.yaml recompile_map。"
+        - {from: "compiling", to: "valid", trigger: "compile_success ∧ fidelity_pass", actor: "system", at: "2026-11-15", basis: "CA-01；E3 全量 39/39（FVR 接线＋首轮 verdict）、E4 match=true（18/18）；C7 predicate_satisfied=true（.11 重编译）"}
+        - {from: "valid", to: "stale", trigger: "registry_change", actor: "system", at: "2026-11-15", basis: "CA-03：registry_snapshot 变更（approval 1.1.0→1.2.0、guard 1.0.0/draft→1.1.0/active、新增 review_points 1.0.0 与 production_schedule 0.4.0）；版本监听，非人工判定"}
+      supersedes: "pilot-20261112.10"
+      note: "本状态为 .11 重编译后的 valid。前序 .10 因注册面变更按 CA-03 记 stale；.9 因 H-1 后 framework_version 失配亦曾记 stale。重编译映射行见 artifact.yaml recompile_map。.11 未发布（release.artifact_version 仍指 .10）。"
 
   open_obligations:
     - id: "SO-PILOT-1"

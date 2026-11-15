@@ -3,7 +3,7 @@
 > 对象：[registry/production_schedule.yaml](production_schedule.yaml) 的 `entries[0]`（deployment: pact-dsh）。
 > 用途：供人类责任方逐项填写 M-1～M-6。**本说明不提供默认值、不提供推荐值、不代填任何一项。**
 > 约定：YAML 中 `null` 一律表示「未回答」，不是「无」或「不适用」；「无」「不适用」「本阶段不做」必须显式写出。
-> 2026-11-15 状态：C-1／C-2／C-4 已按人类裁定落实；仅 C-3（`p0_response.state` 在 `alert_channel=none`、`ack_sla` 未答时的记录口径）待裁。本说明保留为后续填报与复核依据。
+> 2026-11-15 状态：C-1～C-4 已按人类裁定全部落实（C-3：无告警通道即无 ack SLA，`ack_sla: none`、`state: confirmed_absent`、`missing` 清空）；`pager` 仍未获回答，保持 `null`，未代填 `none`。本说明保留为后续填报与复核依据。
 
 ## 0 填写纪律
 
@@ -176,6 +176,8 @@ p0_response:
 - 即使 M-4 有值班人，没有通道和 SLA 仍不能判 `confirmed_present`。
 - P0 事件只能靠事后发现，响应义务无法计时。
 - 与 M-2 联动：环境不可达时，通道声明会被判为不可行。
+
+**本实例（2026-11-15 人类裁定）**：`alert_channel: none` → `ack_sla: none`（无告警通道即无 ack SLA）→ `p0_response.state: confirmed_absent`，`missing` 清空。`pager` 仍未获回答，保持 `null`，未代填 `none`；该字段是本维度唯一未答项，但 schema 未规定「三槽齐备才可记 `confirmed_absent`」，故不阻断状态转换。
 
 **示例答案（虚构，不是建议值）**
 ```yaml
