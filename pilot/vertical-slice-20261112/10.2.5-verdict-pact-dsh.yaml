@@ -82,13 +82,26 @@
 #     production_schedule v0.3.0→0.4.0，missing 清空；pager 仍未答、保持 null（未代填 none）；
 #     confirmed_absent 的后果按 9.3 判部署形态可行性缺陷，与 status=not_in_scope 并存；
 #     母本未改、锚漂移 0；分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
+#   v1.19.0 → v1.20.0（2026-11-15，pager 续裁）：
+#     pager 亦记 none（整套告警机制没有，不是某一槽留空）；三槽均为 none，state 维持 confirmed_absent；
+#     production_schedule v0.4.0→0.5.0，missing 仍为空；
+#     更正字段语义：alert_channel／pager／ack_sla 为三个独立字段（通道／分页器／确认时限），非互斥选项；
+#     9.3 缺陷的降级形态待人类选择（规范无既定降级等级），本轮未改判；
+#     本轮未重编译（.11 快照仍指 production_schedule 0.4.0／本文件 1.19.0 → 待 .12）；
+#     母本未改、锚漂移 0；分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
+#   v1.20.0 → v1.21.0（2026-11-15，人类选定额 A）：
+#     9.3 部署形态可行性缺陷保留原判与依据，按 INT-D16-9.3-SCOPE-01 在
+#     status=not_in_scope ∧ review_at 非空时挂起效力；该解释不是 Waiver、不产生豁免、不改判定、
+#     不得被其他条目自动套用；判据六 evidence/caveat 同步，缺陷未被洗成 pass；
+#     production_schedule v0.5.0→0.6.0；本轮完成 .12 重编译（artifact snapshot 与 18 卡对齐）。
+#     母本未改、锚漂移 0；分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.19.0"
+  version: "1.21.0"
   deployment: "pact-dsh"
   executed_at: "2026-11-15T11:20:00+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.11"
+  artifact: "pilot-20261112.12"
   not_in_scope_this_round: []
 
   criteria:
@@ -208,9 +221,9 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.0）"
-        - "P0 响应：confirmed_absent（D-16 registry/production_schedule.yaml v0.4.0；alert_channel=none、ack_sla=none 均逐字；pager 未答保持 null；2026-11-15 人类裁定『无告警通道即无 ack SLA』）"
+        - "P0 响应：confirmed_absent（D-16 registry/production_schedule.yaml v0.6.0；alert_channel=none、pager=none、ack_sla=none 三槽均逐字；三者为独立字段：通道／分页器／确认时限，非互斥选项）；9.3 缺陷原判保留、效力按 INT-D16-9.3-SCOPE-01 挂起（非 Waiver／无豁免效力／不改判定，仅 status=not_in_scope ∧ review_at 非空时可用）"
         - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
-      reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 响应为 confirmed_absent，按 9.3 判部署形态可行性缺陷（判据六仍成立＝声明完整，不因缺陷而失败）。**pass 只代表声明完整，不代表 P0 响应能力存在。**"
+      reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 响应为 confirmed_absent，9.3 缺陷原判保留、效力在 status=not_in_scope ∧ review_at 非空时挂起（INT-D16-9.3-SCOPE-01）。**判据六成立的依据是声明完整，与缺陷是否生效无关；pass 不代表 P0 响应能力存在，也不代表缺陷被豁免。**"
       grounding_status:
         - dimension: "approval_role_instances"
           state: "confirmed_present"
@@ -227,7 +240,7 @@ grounding_acceptance:
           state: "confirmed_absent"
           declared_by: "onlookor"
           declared_at: "2026-11-15T15:28:33+08:00"
-          evidence: "registry/production_schedule.yaml（status=not_in_scope，v0.4.0）：alert_channel=none、ack_sla=none；pager 保持 null（未答）；state=confirmed_absent"
+          evidence: "registry/production_schedule.yaml（status=not_in_scope，v0.6.0）：alert_channel=none、pager=none、ack_sla=none（三槽均 none）；state=confirmed_absent；deployment_feasibility_defect.disposition=suspended_by_scope_interpretation（INT-D16-9.3-SCOPE-01）"
           source: "registry/production_schedule.yaml（人类 user 转达，declared_by=onlookor）"
           conversion_event: null
           deadline: null
@@ -236,7 +249,14 @@ grounding_acceptance:
           confirmed_by: "user"
           confirmed_at: "2026-11-15T15:38:00+08:00"
           confirmation_note: "按 R7-11，undetermined→confirmed_absent 应由运维责任方确认；本次为人类用户裁定（经父会话转达），未另行具名运维责任方，亦未由 agent 代确认。"
-          version: "production_schedule 0.4.0"
+          version: "production_schedule 0.6.0"
+          defect_disposition:
+            ref: "INT-D16-9.3-SCOPE-01"
+            state: "suspended_by_scope_interpretation"
+            effective_scope: "not_in_scope"
+            not_waiver: true
+            basis: "母本 9.3 以『部署』为前提；本阶段未进入生产部署，缺陷无可作用对象"
+            reapplies_when: "首次生产部署决策前；或 status 改为非 not_in_scope；或 review_at 复核决定进入部署"
         - dimension: "ci_capability"
           state: "confirmed_present"
           declared_by: "user"
@@ -249,7 +269,7 @@ grounding_acceptance:
           confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "ci.yml（未版本化）"
       gap_refs: ["D-16"]
-      gap_status: "D-16 已闭合（registry/production_schedule.yaml v0.4.0，status=not_in_scope，declared_by=onlookor，missing=[]）；C-1～C-4 已按 2026-11-15 裁定全部落实；p0_response=confirmed_absent；pager 未答但 schema 无三槽齐备约束，不阻断声明完整性（缺口见该文件 meta.open_notes）。"
+      gap_status: "D-16 已闭合（registry/production_schedule.yaml v0.6.0，status=not_in_scope，declared_by=onlookor，missing=[]）；C-1～C-4、C-3b 与 A-1 均按 2026-11-15 裁定落实；p0_response 三槽均 none、state=confirmed_absent；9.3 缺陷原判保留、效力挂起（INT-D16-9.3-SCOPE-01，非 Waiver／无豁免）。"
 
   summary:
     pass: 6
@@ -264,13 +284,13 @@ grounding_acceptance:
     card_evaluable: true
     basis: "8 张实质卡均有 S0–S6 与逐目标 verdict；F1 pass、F3 39/39、E4 match。"
     decision_effective: true
-    basis_2: "六判据全过（6/6），接地成立；真实分布 pass 39 / fail 0 / escalate 0 / vacuous 9；X2／X5／T6／G3 已于 v1.14.0 转 pass（ADR 经人类批准迁入目标仓、兼容策略登记、契约测试新增并在 CI 执行、回滚与 5 条风格符合性登记）；T4/W2 经入口测试转 pass；V1/W4 为机械校验，W1 仍为人工核 pass 并单列打包升级；9 条 vacuous 为空真，不计作实质性质成立。"
+    basis_2: "六判据全过（6/6），接地成立；真实分布 pass 39 / fail 0 / escalate 0 / vacuous 9；X2／X5／T6／G3 已于 v1.14.0 转 pass（ADR 经人类批准迁入目标仓、兼容策略登记、契约测试新增并在 CI 执行、回滚与 5 条风格符合性登记）；T4/W2 经入口测试转 pass；V1/W4/W1 均为机械校验（W1 候选 B 于 2026-11-15 落地）；9 条 vacuous 为空真，不计作实质性质成立。"
     closed_this_round: [4]
     still_pending: []
     caveats:
-      - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；p0_response=confirmed_absent（人类 2026-11-15 裁定，无告警通道即无 ack SLA），已按 9.3 判部署形态可行性缺陷；pager 为该维度唯一未答字段（保持 null）"
+      - "判据六 pass 只代表声明完整，不代表 P0 响应能力存在；p0_response=confirmed_absent（三槽均 none）；9.3 缺陷原判保留，仅效力在 status=not_in_scope ∧ review_at 非空时挂起（INT-D16-9.3-SCOPE-01）——该挂起不是 Waiver、不产生豁免、不改判定，也未被计入任何 pass"
       - "判据点一是追溯评审：ADR-DP1-STYLE 已于 2026-11-12 批准，『批准前』时序无法追溯满足"
       - "判据五的字段形态是本轮部署级约定（D-17），母本无 scheduled(rp) schema"
-      - "判据四 pass 只证明接线与全量执行证据；39 条中 0 条 fail、0 条 escalate、9 条 vacuous，不等于 39 条性质均实质成立；V1/W4 为机械校验，W1 为人工核"
-      - "判据一 pass 的右项为 0.7 声明值，兜底指纹覆盖自动发现的全部 14 个机器层谓词块（134 行）；若母本新增/删除谓词块而版本未递增，PV-3 会点名失败"
+      - "判据四 pass 只证明接线与全量执行证据；39 条中 0 条 fail、0 条 escalate、9 条 vacuous，不等于 39 条性质均实质成立；V1/W4/W1 均为机械校验"
+      - "判据一 pass 的右项为 0.7 声明值，兜底指纹覆盖自动发现的全部 17 个机器层谓词块（pv-1.1）；若母本新增/删除谓词块而版本未递增，PV-3 会点名失败"
       - "ADR-DP1-STYLE 已于 2026-11-13 转为 approved（SM-DR `provisional → approved`，retro_approve，human `user`）；批准证据指针为 2026-11-13 本轮对话人类口头批准"

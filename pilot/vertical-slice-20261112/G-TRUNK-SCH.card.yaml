@@ -17,7 +17,7 @@ source_anchors:
 - '0.6'
 - 0.20.2
 - 5.2.4
-artifact_version: pilot-20261112.11
+artifact_version: pilot-20261112.12
 variant_note: "本 kind 无自有 0.18.4 变体（0.18.1 列为未登记 5 类之一，待 0.18.8 补登记）。0.17.3：未登记决策点的 kind 中 participates: true 的「暂按通用 S0–S6 执行」——本卡据此。种子数据源＝5.2.4。"
 trigger:
   event_pattern: '[决策点声明：DP_id, aspect=5, kind=SCH, question, affected_predicates] ∧ ¬selection_procedure(DP, ·, ·)'

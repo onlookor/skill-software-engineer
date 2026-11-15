@@ -328,8 +328,8 @@
   "F2_verdict": "pass",
   "F1_verdict": "pass",
   "E4": {
-    "card_artifact_version": "pilot-20261112.11",
-    "artifact_label": "pilot-20261112.11",
+    "card_artifact_version": "pilot-20261112.12",
+    "artifact_label": "pilot-20261112.12",
     "registry_version": {
       "major": 1,
       "minor": 1,

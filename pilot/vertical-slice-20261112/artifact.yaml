@@ -1,7 +1,11 @@
 # 编译产物清单（试跑切片，非发布）——2026-11-14 批 A 登记与判定升级
 compilation_artifact:
   version:
-    label: "pilot-20261112.11"   # 卡片 artifact_version 指向此标签；三元组见下
+    label: "pilot-20261112.12"   # 卡片 artifact_version 指向此标签；三元组见下
+    # .12（2026-11-15，重编译；未发布）：production_schedule 0.4.0→0.6.0（pager=none 三槽齐、
+    #   9.3 缺陷按 INT-D16-9.3-SCOPE-01 范围限定挂起、原判与依据保留）；grounding 1.19.0→1.21.0；
+    #   18 张卡 artifact_version .11→.12；.11 按 CA-03 记 stale；C7 version_consistent=true；
+    #   release 块仍指 .10。
     # .11（2026-11-15，重编译；未发布）：registry_snapshot 对齐 approval 1.2.0/6 与
     #   guard 1.1.0/active（含 status_note），新增 review_points 1.0.0/5 与
     #   production_schedule 0.4.0/not_in_scope（p0_response=confirmed_absent）；grounding 1.18.0→1.19.0；18 张卡
@@ -12,7 +16,7 @@ compilation_artifact:
     #   按 CA-01 执行并记入白板 state_machines.SM-CA；发布动作（对外发布）仍未执行。
     framework_version: "sha256:469d64c023a830148180efc8f00e671838d5af538c4b7d8389f697090cb3f8f3"
     registry_version: {major: 1, minor: 1, patch: 0}
-    artifact_seq: 11
+    artifact_seq: 12
   # 编译规范 8.1：version = (framework_version, registry_version, artifact_seq)
   # framework_version 用母本内容哈希：母本未声明语义版本号（见 run-log §6 D-3）；
   #   但模式版本是谓词块级语义版本（0.7），与 framework_version 不同层，勿混。
@@ -56,6 +60,9 @@ compilation_artifact:
   #   基线变更理由＝兜底盲区（非谓词语义变更）；人类批准 2026-11-14（user）。母本未再改动（sha 469d64c0…）。
   # 0.23.8 不变式 3：stale → 重编译映射行（.9 因 framework_version 失配按 CA-03 应记 stale）
   recompile_map:
+    - {artifact_id: "pilot-dsh", from_version: "pilot-20261112.11", to_version: "pilot-20261112.12",
+       changed_entries: ["production_schedule 0.4.0→0.6.0（pager=none；C-3b 字段语义更正；INT-D16-9.3-SCOPE-01 范围限定挂起，缺陷原判与依据保留）", "grounding 1.19.0→1.21.0（判据六 evidence/caveat 同步）", "18 张卡 artifact_version .11→.12"],
+       recompiled_at: "2026-11-15"}
     - {artifact_id: "pilot-dsh", from_version: "pilot-20261112.10", to_version: "pilot-20261112.11",
        changed_entries: ["registry_snapshot approval 1.1.0/5→1.2.0/6", "guard 1.0.0/draft→1.1.0/active（status_note 同步）", "新增 review_points 1.0.0/5", "新增 production_schedule 0.4.0/not_in_scope（p0_response=confirmed_absent）", "grounding 1.18.0→1.19.0", "18 张卡 artifact_version .10→.11"],
        recompiled_at: "2026-11-15"}
@@ -69,7 +76,7 @@ compilation_artifact:
     published_at: "2026-11-15"
     authority: "人类用户 user 明确指示「发布」（2026-11-15，经父会话转达）；agent 未自批，也未写入批准人"
     artifact_version: "pilot-20261112.10"
-    recompiled_not_published: "pilot-20261112.11（2026-11-15 重编译；未发布，本块 artifact_version 仍指 .10）"
+    recompiled_not_published: "pilot-20261112.12（2026-11-15 重编译；未发布，本块 artifact_version 仍指 .10）"
     published_set: ["artifact.yaml", "c7-coverage-report.yaml", "18 张 *.card.yaml", "fidelity-all.json", "fvr-full-run-1.json"]
     coverage_report: "pilot/vertical-slice-20261112/c7-coverage-report.yaml（三清单随产物发布，非阻塞）"
     supersedes: "pilot-20261112.9（stale）；CA-06 valid→archived 不适用（stale 无归档迁移），以 recompile_map 记录 .9→.10"
@@ -117,7 +124,7 @@ compilation_artifact:
     method_registry: {file: registry/method_registry.yaml, sha256: "aaa8361eb14694813c2cd7a29673afaa350a5596cfb6e0859cdb1e5b6a435ffd", entries: 138, version: "1.1.0"}
     approval_registry: {file: registry/approval_registry.yaml, sha256: "4551962be1c4725061df79978bdc454e71b60b99b29b02099cb273fdcf809292", deployment: pact-dsh, version: "1.2.0", decision_classes: 6}
     review_points: {file: registry/review_points.yaml, id: RP-PACT-DSH-001, version: "1.0.0", entries: 5, sha256: "3bb08e13db9508842b875cb919e157935275fdb86d92d4e56b057da425722d02", checked_by: "10.2.5 判据五（D-17 O1）"}
-    production_schedule: {file: registry/production_schedule.yaml, id: PS-PACT-DSH-001, version: "0.4.0", entries: 1, status: not_in_scope, p0_response_state: confirmed_absent, sha256: "711f1961f3c24309bca26de13985f0e05e420bb806714d2e1311ba5410fda443", checked_by: "10.2.5 判据六（D-16）", note: "pager 未答保持 null；missing=[]"}
+    production_schedule: {file: registry/production_schedule.yaml, id: PS-PACT-DSH-001, version: "0.6.0", entries: 1, status: not_in_scope, p0_response_state: confirmed_absent, p0_slots: "alert_channel=none/pager=none/ack_sla=none", defect_disposition: "suspended_by_scope_interpretation（INT-D16-9.3-SCOPE-01；非 Waiver）", sha256: "241e909bc40ea12303b1751589f78f111d7de61fbedb4500cc6351e83b6988db", checked_by: "10.2.5 判据六（D-16）", note: "missing=[]；缺陷原判保留，仅效力在 status=not_in_scope ∧ review_at 非空时挂起"}
     compilation_regime_changes: {file: registry/compilation_regime_changes.yaml, sha256: "7ae2eed0d1053e24a390ea7b6b0a70ed55dffe86ea7db8f5ba51edc89fab1610", version: "1.0.0", entries: 4, all_approved: true, checked_by: "E7"}
     predicate_vocabulary: {file: registry/predicate_vocabulary.yaml, sha256: "b7a59fad1a51c3e270056329b6fd6e566889c934a12bd73d995ef5048fbefb12"}
     profiles: {file: registry/profiles.yaml, kinds: 18, sha256: "623af138471e2e140d5fd8663dfd25f6537e96c56147cf48b3d202b4f5c4679d"}
@@ -134,8 +141,8 @@ compilation_artifact:
   verdicts:
     s4: {file: pilot/vertical-slice-20261112/s4-verdict-pact-dsh.yaml, id: S4-DP-1-STYLE-20261112, version: "1.3.0", aggregate: reachable_with_cost, sha256: "5e55ca7523acf65e11fa38d8eb9184f7cc9060f3c6b1163d4b3bff2bf3b6cd2c"}
     adr: {file: pilot/vertical-slice-20261112/ADR-DP1-STYLE.md, id: ADR-DP1-STYLE, decision_state: approved, state_history: ["approved", "provisional", "approved"], last_transition: {from: provisional, to: approved, trigger: retro_approve, by: user, approver_kind: human, at: "2026-11-13", evidence: "人类口头批准，来源 2026-11-13 本轮对话"}}
-    grounding: {file: pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml, id: GA-PACT-DSH-20261112-5, version: "1.19.0", pass: 6, fail: 0}
-  fidelity_record: "fidelity-all.json（check-card.py --all，18/18，E4 match=true，fail_count=0）＋ fidelity.json（G-CAND-01 单卡样本；其 F3 full=5/39 属单卡口径，聚合判据以 --all 为准）＋ fvr-full-run-1.json（39 行，2026-11-15 .11 复跑：pass 39 / fail 0 / escalate 0 / vacuous 9）"
+    grounding: {file: pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml, id: GA-PACT-DSH-20261112-5, version: "1.21.0", pass: 6, fail: 0}
+  fidelity_record: "fidelity-all.json（check-card.py --all，18/18，E4 match=true，fail_count=0）＋ fidelity.json（G-CAND-01 单卡样本；其 F3 full=5/39 属单卡口径，聚合判据以 --all 为准）＋ fvr-full-run-1.json（39 行，2026-11-15 .12 复跑：pass 39 / fail 0 / escalate 0 / vacuous 9）"
   coverage_report:
     file: pilot/vertical-slice-20261112/c7-coverage-report.yaml
     generated_by: pilot/vertical-slice-20261112/c7-coverage.py
@@ -145,5 +152,5 @@ compilation_artifact:
       questionable_source_unverified: 0
       external_class_inventory: 34
     c7_predicate_check: {version_consistent: true, fidelity_pass: true, predicate_satisfied: true}
-    note: "编译规范 5.1 C7：三清单随产物发布、非空不阻塞（唯一发布阈值＝悬空引用类锚定缺口=0，见 C2）。SM-CA .11 compiling→valid 已于 2026-11-15 按 CA-01 记入白板（.10 因注册面变更按 CA-03 记 stale）；对外发布未执行，release.artifact_version 仍指 .10。"
-  scope_note: "本产物为 .11（2026-11-15 重编译，未发布）：registry_snapshot 对齐 approval 1.2.0/6、guard 1.1.0/5 条 active（status_note 同步），新增 review_points 1.0.0/5 与 production_schedule 0.4.0（status=not_in_scope，p0_response=confirmed_absent，pager 未答保持 null，missing=[]）；grounding 1.19.0；18 张卡 artifact_version 全量对齐 .11；C7 version_consistent=true。本产物含 18 张卡（10 实质＋8 躯干；DFL／STP／CSL／OWN／SCH／RLP 于 2026-11-14 由躯干升为 0.2.0 实质卡，余 DPS／CRD／CFG／SRC 仍为躯干）与 8 份 FVR，覆盖母本 39 条硬性质。母本 0.18.6 已补登记 selection_context，pattern_version 为 pv-1.1（母本行数 4,811 不变、锚漂移 0、母本 sha 469d64c0… 未变）。10.2.5 为 6/6，真实分布为 pass 39 / fail 0 / escalate 0 / vacuous 9。其中 9 条 vacuous 为空真（域本身无实例或显式空集，X6 为 shared_data_access 显式空集）、W1 为机械校验（候选 B，2026-11-15 落地：9 单元 / 11 边 / 15 绑定 / 0 违规 / excluded_dynamic_loads=1），其余 30 条为机械校验；引 6/6 处均须附此分布。x2/x5/t6/g3 已转 pass：ADR-0002-CT-PACT-BACKEND-01 经人类 user 2026-11-14 批准并迁入目标仓 adr/（approved_by=user、approver_kind=human、approved_at=2026-11-14，Agent 未自批），白板登记 compat_policy（契约版本与包版本解耦，破坏性变更保留旧面「一个小版本或 30 天，取较长者」），新增 test/contract.test.js 覆盖七方法/错误码并断言旧面只增不删，contract_tests 登记为 in_ci: true，DEP-PACT-DSH-01 登记回滚（发补丁版回退＋对缺陷版 deprecate）与 5 条 style_conformance。T4/W2 由 test/index.test.js 与 test/loop-entry.test.js 转 pass；`npm test` 61/61，三处新增测试均未改生产代码。G7 转 pass：GR-005 趋势窗 {metric: count, value: 10, configurable: true}。V1 与 W4 为机械校验：V1 扫描目标仓库 9 个单元源码的 11 条相对 import 边，逐边核对 3 条 forbidden 层规则；W4 扫描源码写点/创建点，核对 events.jsonl 唯一写点 observer、唯一创建点 index；二者均以注入反例验证会 fail。W1 已于 2026-11-15 由人工核升级为机械校验（候选 B），不再单列「将来升级」。硬目标 4 条（G-LAT-01／G-AVL-01／G-LT-01／G-CON-01a），G-CON-01b 为软目标不参与 S4 判定。母本行数 4811 未变。"
+    note: "编译规范 5.1 C7：三清单随产物发布、非空不阻塞（唯一发布阈值＝悬空引用类锚定缺口=0，见 C2）。SM-CA .12 compiling→valid 已于 2026-11-15 按 CA-01 记入白板（.11 因 production_schedule 0.4.0→0.6.0 按 CA-03 记 stale）；对外发布未执行，release.artifact_version 仍指 .10。"
+  scope_note: "本产物为 .12（2026-11-15 重编译，未发布）：registry_snapshot 对齐 approval 1.2.0/6、guard 1.1.0/5 条 active（status_note 同步）、review_points 1.0.0/5 与 production_schedule 0.6.0（status=not_in_scope；p0_response 三槽 alert_channel/pager/ack_sla 均为 none，state=confirmed_absent，missing=[]；9.3 缺陷原判与依据保留，按 INT-D16-9.3-SCOPE-01 范围限定挂起——非 Waiver、无豁免效力、不改判定）；grounding 1.21.0；18 张卡 artifact_version 全量对齐 .12；C7 version_consistent=true。本产物含 18 张卡（10 实质＋8 躯干；DFL／STP／CSL／OWN／SCH／RLP 于 2026-11-14 由躯干升为 0.2.0 实质卡，余 DPS／CRD／CFG／SRC 仍为躯干）与 8 份 FVR，覆盖母本 39 条硬性质。母本 0.18.6 已补登记 selection_context，pattern_version 为 pv-1.1（母本行数 4,811 不变、锚漂移 0、母本 sha 469d64c0… 未变）。10.2.5 为 6/6，真实分布为 pass 39 / fail 0 / escalate 0 / vacuous 9。其中 9 条 vacuous 为空真（域本身无实例或显式空集，X6 为 shared_data_access 显式空集）、W1 为机械校验（候选 B，2026-11-15 落地：9 单元 / 11 边 / 15 绑定 / 0 违规 / excluded_dynamic_loads=1），其余 30 条为机械校验；引 6/6 处均须附此分布。x2/x5/t6/g3 已转 pass：ADR-0002-CT-PACT-BACKEND-01 经人类 user 2026-11-14 批准并迁入目标仓 adr/（approved_by=user、approver_kind=human、approved_at=2026-11-14，Agent 未自批），白板登记 compat_policy（契约版本与包版本解耦，破坏性变更保留旧面「一个小版本或 30 天，取较长者」），新增 test/contract.test.js 覆盖七方法/错误码并断言旧面只增不删，contract_tests 登记为 in_ci: true，DEP-PACT-DSH-01 登记回滚（发补丁版回退＋对缺陷版 deprecate）与 5 条 style_conformance。T4/W2 由 test/index.test.js 与 test/loop-entry.test.js 转 pass；`npm test` 61/61，三处新增测试均未改生产代码。G7 转 pass：GR-005 趋势窗 {metric: count, value: 10, configurable: true}。V1 与 W4 为机械校验：V1 扫描目标仓库 9 个单元源码的 11 条相对 import 边，逐边核对 3 条 forbidden 层规则；W4 扫描源码写点/创建点，核对 events.jsonl 唯一写点 observer、唯一创建点 index；二者均以注入反例验证会 fail。W1 已于 2026-11-15 由人工核升级为机械校验（候选 B），不再单列「将来升级」。硬目标 4 条（G-LAT-01／G-AVL-01／G-LT-01／G-CON-01a），G-CON-01b 为软目标不参与 S4 判定。母本行数 4811 未变。"

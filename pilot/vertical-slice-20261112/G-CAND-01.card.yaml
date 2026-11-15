@@ -14,7 +14,7 @@ source_anchors:
 - 0.17.4
 - '0.6'
 - 0.20.2
-artifact_version: pilot-20261112.11
+artifact_version: pilot-20261112.12
 trigger:
   event_pattern: '[决策点声明：DP_id, aspect=1, kind=STY, question, affected_predicates] ∧ ¬selection_procedure(DP, ·, ·)'
   guard_conditions:

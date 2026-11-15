@@ -7,7 +7,7 @@ version:
   major: 0
   minor: 1
   patch: 0
-artifact_version: pilot-20261112.11
+artifact_version: pilot-20261112.12
 outputs:
   predicate_writes: []
 registry_refs:

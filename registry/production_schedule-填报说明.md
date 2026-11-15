@@ -3,7 +3,7 @@
 > 对象：[registry/production_schedule.yaml](production_schedule.yaml) 的 `entries[0]`（deployment: pact-dsh）。
 > 用途：供人类责任方逐项填写 M-1～M-6。**本说明不提供默认值、不提供推荐值、不代填任何一项。**
 > 约定：YAML 中 `null` 一律表示「未回答」，不是「无」或「不适用」；「无」「不适用」「本阶段不做」必须显式写出。
-> 2026-11-15 状态：C-1～C-4 已按人类裁定全部落实（C-3：无告警通道即无 ack SLA，`ack_sla: none`、`state: confirmed_absent`、`missing` 清空）；`pager` 仍未获回答，保持 `null`，未代填 `none`。本说明保留为后续填报与复核依据。
+> 2026-11-15 状态：C-1～C-4 与 C-3b 已按人类裁定全部落实（三槽均 `none`、`state: confirmed_absent`、`missing` 清空）。9.3 缺陷降级形态待人类选择；本轮未重编译（`.11` 快照仍指 v0.4.0，待 `.12`）。本说明保留为后续填报与复核依据。
 
 ## 0 填写纪律
 
@@ -162,9 +162,9 @@ p0_response:
 - 若当前没有任何告警能力，必须写 `alert_channel: "none"`——这是事实，会导向 `confirmed_absent`，不得用「邮件」搪塞。
 
 **格式／取值范围**
-- `alert_channel`：`pager｜IM 群（写明群标识）｜电话｜邮件｜none` 之一，可附目标标识。
-- `ack_sla`：ISO 8601 时长（如 `PT30M`）或「≤30 分钟」。
-- `pager`：有则写服务名/号码；没有则写显式字符串 `"未配置"`——**不得写 `null`**（本文件 `null` 专指「未回答」，两者必须区分）。
+- `alert_channel`：`pager｜IM 群（写明群标识）｜电话｜邮件｜none` 之一，可附目标标识。**「之一」只是通道字段自身的取值域，不是要求在 `alert_channel`／`pager`／`ack_sla` 三字段之间选一个**——三者独立。
+- `ack_sla`：ISO 8601 时长（如 `PT30M`）或「≤30 分钟」；确认时限与通道、分页器各自独立。
+- `pager`：有则写服务名/号码；没有则写显式字符串 `"none"`（整套告警机制没有）或 `"未配置"`（有机制但未接分页器）——**不得写 `null`**（本文件 `null` 专指「未回答」，两者必须区分）。`pager` 与 `alert_channel`、`ack_sla` 是三个独立问题，不是互斥选项。
 
 **谁消费它**
 - 判据六 `p0_response` 的「能力存在」判断。
@@ -177,7 +177,9 @@ p0_response:
 - P0 事件只能靠事后发现，响应义务无法计时。
 - 与 M-2 联动：环境不可达时，通道声明会被判为不可行。
 
-**本实例（2026-11-15 人类裁定）**：`alert_channel: none` → `ack_sla: none`（无告警通道即无 ack SLA）→ `p0_response.state: confirmed_absent`，`missing` 清空。`pager` 仍未获回答，保持 `null`，未代填 `none`；该字段是本维度唯一未答项，但 schema 未规定「三槽齐备才可记 `confirmed_absent`」，故不阻断状态转换。
+**本实例（2026-11-15 人类裁定）**：`alert_channel: none`、`pager: none`、`ack_sla: none`（整套告警机制没有，不是某一槽留空）→ `p0_response.state: confirmed_absent`，`missing` 清空。
+
+**字段语义（更正记录，来源：人类 2026-11-15 续裁）**：`alert_channel`／`pager`／`ack_sla` 是三个独立字段——通道（告警发往何处）、分页器（是否呼叫值班人）、确认时限（多久内必须确认）；**不是互斥选项**。此前说明把三槽平铺陈述，造成「几选一」的误读，该误读来自 agent 的表述，不是用户原意。
 
 **示例答案（虚构，不是建议值）**
 ```yaml
