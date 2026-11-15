@@ -252,7 +252,7 @@
 
 ### 15.6 人类裁定与执行（2026-11-15）
 
-- **C7-A**：批准「重编译」。产物三元组对齐现行母本：`framework_version → 469d64c0…`、`artifact_seq 9→10`、label `pilot-20261112.10`；18 张卡 `artifact_version` 全量对齐，**卡内容 0 变化**（6 张 0.2.0 精化卡原样）；`version_consistent` 转 true。发布动作仍未执行。
+- **C7-A**：批准「重编译」。产物三元组对齐现行母本：`framework_version → 469d64c0…`、`artifact_seq 9→10`、label `pilot-20261112.10`；18 张卡 `artifact_version` 全量对齐，**卡内容 0 变化**（6 张 0.2.0 精化卡原样）；`version_consistent` 转 true。SM-CA `compiling→valid` 已于同日按 **CA-01**（permission=system）执行并记入白板；对外发布动作仍未执行。
 - **C7-B**：16 条软性质维持非阻塞缺口（3.3）。
 - **C7-C**：34 条 external 接受为出处构成清单，注明依据为 2026-09 历史快照。
 - **C7-D**：W1 保持人工核结论，升级前置判据未定义。

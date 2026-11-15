@@ -27,7 +27,7 @@ c7_predicate_check:
     pass: true
     source: pilot/vertical-slice-20261112/fidelity-all.json
   predicate_satisfied: true
-  publish_note: 本报告只核对判定谓词，不执行 SM-CA compiling→valid 与发布动作
+  publish_note: 本报告只核对判定谓词；SM-CA compiling→valid 见白板 state_machines.SM-CA，对外发布动作不在本脚本
 anchor_gap_list:
   source: registry/scripts/anchor_index.py（F-1–F-10，输出 registry/anchor_index/summary.json）
   status: 由锚索引生成，本脚本不重复计算

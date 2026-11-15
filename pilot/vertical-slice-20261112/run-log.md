@@ -1435,3 +1435,34 @@ C7 三清单数据源现已齐备：锚定缺口＝`anchor_index`（本轮 0 缺
 ### 33.6 待提交文件
 
 见本节之后 `git status`：上一轮 5 个文件（`c7-coverage.py`、`c7-coverage-report.yaml`、`artifact.yaml`、`escalate-adjudication-20261113.md`、`run-log.md`）＋本轮 18 张卡＋`10.2.5-verdict-pact-dsh.yaml`＋`编译规范.md`。不推送。
+
+## 34. SM-CA `compiling → valid` 迁移（2026-11-15，系统权限）
+
+### 34.1 前置条件核对（母本 0.23.9，不本地改口径）
+
+- **CA-01**：`compiling → valid`；guard = `compile_success ∧ fidelity_pass`；permission = **`system`**；evidence = 「E3/E4 检查通过」。
+- 结论：**无需人类批准记录、无需母本改动**；不走批准注册表，按 system 权限执行。
+- 证据现状：E3 = 39 条硬性质全部有 FVR 条目与首轮 verdict（39/39）；E4 = `check-card.py --all` match=true。guard 两分量均成立。
+
+### 34.2 迁移记录
+
+- 白板 `state_machines.SM-CA`：artifact `pilot-20261112.10`、state `valid`、
+  `version_vector {framework_version: sha256:469d64c0…, registry_version: 1.1.0, artifact_seq: 10}`；
+  transition `{from: compiling, to: valid, trigger: "compile_success ∧ fidelity_pass", actor: system, at: 2026-11-15}`。
+- `pilot-20261112.9` 的 `framework_version` 在 H-1 后失配，按 **CA-03** 应记 `stale`；已在
+  `artifact.yaml` 增 `recompile_map` 行（0.23.8 不变式 3：`artifact_id／from_version／to_version／changed_entries／recompiled_at`）。
+- **对外发布仍未执行**：状态迁移（SM-CA）≠ 发布动作；发布仍待人类另行决定。
+
+### 34.3 未精化 kind 的处置（按既有记录，不新立裁定）
+
+- 既有记录（本日志 §30，2026-11-14）：`CFG／CRD／DPS／SRC` 价值链在本切片未打通、无自有或未登记 0.18.4 变体，**登记为后续批次**。
+- 本轮处置：**维持不精化**，四张 `G-TRUNK-*` 卡保持 0.1.0 机械骨架，不新增步骤或上游依赖（避免把未消费谓词写成硬依赖、制造假 DAG）。
+- 触发条件沿用既有口径：CFG 待 SCH 部署/调度产物、CRD 待 CFG、DPS 待方面 8/9 质量与可观测产出、SRC 待目标仓 source registry 实体；变体登记须人类走 0.18.8／R2。此项不是 fail，不计入判据。
+
+### 34.4 迁移后复跑
+
+- 判据一：`pv-1.1`，17 块，aggregate `f329ce90ad77…`。
+- 全量：`hard=39 executed=39 blocks=17 pass=39 fail=0 escalate=0 vacuous=9`。
+- 卡检：`cards=18 F1=pass F2=pass F3(full)=pass 39/39 E4 match=True fail_count=0`。
+- 锚索引：`CFG-01／ESC-01／F-1～F-10` 全 pass，F-9 986 对，`failures: []`。
+- 母本未改（4,811 行、`469d64c0…`）；本轮改动未提交、未推送。

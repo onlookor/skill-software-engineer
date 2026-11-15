@@ -203,7 +203,7 @@ def c7_predicate(mother_text: str, mr: dict) -> dict:
                              'F3_full': f3, 'pass': fid_pass,
                              'source': 'pilot/vertical-slice-20261112/fidelity-all.json'},
         'predicate_satisfied': version_consistent and fid_pass,
-        'publish_note': '本报告只核对判定谓词，不执行 SM-CA compiling→valid 与发布动作',
+        'publish_note': '本报告只核对判定谓词；SM-CA compiling→valid 见白板 state_machines.SM-CA，对外发布动作不在本脚本',
     }
 
 
