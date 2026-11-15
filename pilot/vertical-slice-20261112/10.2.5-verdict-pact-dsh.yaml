@@ -102,13 +102,18 @@
 #     判据二 evidence 写入弱判据标签：G7 只判可配置项是否被正确声明，**不代表趋势检测已实现**，
 #     也**不构成对任何运行时窗口取值的验证**；
 #     母本未改、锚漂移 0；分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
+#   v1.22.0 → v1.23.0（2026-11-15，人类裁定：批准人字段回溯＋重编译 .14）：
+#     批准人 A 类 5 文件 11 处、B 类 8 文件统一写为 GitHub 账户名 `onlookor`；C 类历史叙述／
+#     运行日志不回溯（改了会失真）。approval_registry 1.2.1→1.2.2、grounding 1.23.0、
+#     18 卡与产物标签对齐 .14；判据二／三／六证据同步；母本未改、锚漂移 0；
+#     分布不变（39/0/0/9），六判据仍 **6/6**（附同一分布）。
 grounding_acceptance:
   id: "GA-PACT-DSH-20261112-5"
-  version: "1.22.0"
+  version: "1.23.0"
   deployment: "pact-dsh"
-  executed_at: "2026-11-15T22:11:40+08:00"
+  executed_at: "2026-11-15T22:48:10+08:00"
   executor: "agent（本会话）"
-  artifact: "pilot-20261112.13"
+  artifact: "pilot-20261112.14"
   not_in_scope_this_round: []
 
   criteria:
@@ -130,7 +135,7 @@ grounding_acceptance:
       verdict: "pass"
       evidence:
         - "方法注册表：registry/method_registry.yaml，138 条，registry_version 1.1.0 → 成立"
-        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.2.1（6 类决策，含「编译规程变更」与「守护规则注册表变更」；第 6 类已登记 2 个适用实例）→ 成立"
+        - "批准注册表：registry/approval_registry.yaml，pact-dsh v1.2.2（6 类决策，含「编译规程变更」与「守护规则注册表变更」；第 6 类已登记 2 个适用实例；批准人字段按人类裁定回溯为 onlookor，C 类历史叙述不回溯）→ 成立"
         - "守护规则注册表：registry/guard_registry.yaml，GRD v1.2.0，5 条均 active（2026-11-15 经 ADR-GUARD-ACT-01 批准；v1.2.0 经 ADR-GUARD-02 将 GR-005 趋势窗改为无值声明）→ 成立"
         - "**弱判据标签（G7）**：G7 现为**形态判据**，只判定「可配置项是否被正确声明」（metric 为 count|time 枚举、value 为 number 且带 range、两者均声明 unconfigured=cannot_evaluate）；值不参与判定。该 pass **不代表趋势检测已实现**，也**不构成对任何运行时窗口取值的验证**。"
         - "FVR：registry/fvr_registry.yaml，FVRREG v1.1.0，8 个 FVR 集（G-CAND-01..08），39 条硬性质 → 成立"
@@ -144,10 +149,10 @@ grounding_acceptance:
       name: "技能卡片编译产物版本与注册表版本一致（E4）"
       verdict: "pass"
       evidence:
-        - "18 张卡片 artifact_version 均为 pilot-20261112.13"
-        - "artifact.yaml version.label = pilot-20261112.13；artifact_seq = 13；registry_version = 1.1.0；framework_version = sha256:469d64c0…b3f8f3"
+        - "18 张卡片 artifact_version 均为 pilot-20261112.14"
+        - "artifact.yaml version.label = pilot-20261112.14；artifact_seq = 14；registry_version = 1.1.0；framework_version = sha256:469d64c0…b3f8f3"
         - "check-card.py --all E4: match=true（18/18；见 fidelity-all.json）"
-      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。2026-11-15 按 .13 重编译：产物序号 12→13，registry_snapshot 对齐现行注册面（approval 1.2.1/6、guard 1.2.0/active 含 GR-005 无值声明），卡内容未变（6 张 0.2.0 精化卡原样）；release.artifact_version 仍指 .10（重编译≠发布）。"
+      reason: "卡片↔产物标签一致；framework_version 用母本内容哈希（母本无语义版本号，D-3 延续）。2026-11-15 按 .14 重编译：产物序号 13→14，registry_snapshot 对齐现行注册面（approval 1.2.2/6、guard 1.2.0/active 含 GR-005 无值声明），卡内容未变（6 张 0.2.0 精化卡原样）；release.artifact_version 仍指 .10（重编译≠发布）。"
       gap_refs: ["D-3"]
 
     - id: 4
@@ -156,7 +161,7 @@ grounding_acceptance:
       evidence:
         - "卡片集：18 张（8 实质卡 G-CAND-01..08＋10 躯干卡），由 registry/scripts/gen_cards.py 从母本 0.18.2 S0–S6 机械生成"
         - "FVR：8 份 fvr-G-CAND-0X.yaml（v1.1.0），39 条硬性质各接一个 registry/checks/ 下真实检查器，wired: true"
-        - "首轮全量：pilot/vertical-slice-20261112/fvr-full-run-1.json，39 行 verdict（hard=39 executed=39；2026-11-15 .13 复跑；G7 改形态判据后仍 pass）"
+        - "首轮全量：pilot/vertical-slice-20261112/fvr-full-run-1.json，39 行 verdict（hard=39 executed=39；2026-11-15 .14 复跑；G7 改形态判据后仍 pass）"
         - "实跑分布：pass 39 / fail 0 / escalate 0 / vacuous 9（空真清单见 vacuous-inventory.md）"
         - "check-card.py --all：F1=pass，F2=pass，F3(full)=pass 39/39，F3(scoped)=pass，E4 match=true（18/18），fail_count=0，exit=0"
         - "runner E3：pass（39/39 有 FVR 条目、检查程序与首轮 verdict）"
@@ -228,33 +233,33 @@ grounding_acceptance:
       name: "部署可行性勘察结论已登记（批准角色存在性、P0 响应能力、CI 能力）"
       verdict: "pass"
       evidence:
-        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.1）"
+        - "批准角色：confirmed_present（registry/approval_registry.yaml v1.2.2）"
         - "P0 响应：confirmed_absent（D-16 registry/production_schedule.yaml v0.6.0；alert_channel=none、pager=none、ack_sla=none 三槽均逐字；三者为独立字段：通道／分页器／确认时限，非互斥选项）；9.3 缺陷原判保留、效力按 INT-D16-9.3-SCOPE-01 挂起（非 Waiver／无豁免效力／不改判定，仅 status=not_in_scope ∧ review_at 非空时可用）"
         - "CI：confirmed_present（.github/workflows/ci.yml#L18-L19：npm run check；npm test）"
       reason: "三项状态与 declared_by/declared_at/evidence/source 已齐；P0 响应为 confirmed_absent，9.3 缺陷原判保留、效力在 status=not_in_scope ∧ review_at 非空时挂起（INT-D16-9.3-SCOPE-01）。**判据六成立的依据是声明完整，与缺陷是否生效无关；pass 不代表 P0 响应能力存在，也不代表缺陷被豁免。**"
       grounding_status:
         - dimension: "approval_role_instances"
           state: "confirmed_present"
-          declared_by: "user"
+          declared_by: "onlookor"
           declared_at: "2026-11-12T23:10:00+08:00"
-          evidence: "registry/approval_registry.yaml（sha256 99ce650c9d4d78cb9d27dfbe965a746c1fc599196352eba6d0ee8cb0261ce866），pact-dsh v1.2.1，6 类决策，主批准人 user"
-          source: "人类用户 user 于 2026-11-12 裁定"
+          evidence: "registry/approval_registry.yaml（sha256 8f5830507acab7299bbaac785b4cd8d93b5972817c21dfc7431ccdf165203fef），pact-dsh v1.2.2，6 类决策，主批准人 onlookor"
+          source: "人类用户 onlookor 于 2026-11-12 裁定"
           conversion_event: null
           deadline: null
-          confirmed_by: "user"
+          confirmed_by: "onlookor"
           confirmed_at: "2026-11-12T23:10:00+08:00"
-          version: "approval_registry 1.2.1"
+          version: "approval_registry 1.2.2"
         - dimension: "p0_response"
           state: "confirmed_absent"
           declared_by: "onlookor"
           declared_at: "2026-11-15T15:28:33+08:00"
           evidence: "registry/production_schedule.yaml（status=not_in_scope，v0.6.0）：alert_channel=none、pager=none、ack_sla=none（三槽均 none）；state=confirmed_absent；deployment_feasibility_defect.disposition=suspended_by_scope_interpretation（INT-D16-9.3-SCOPE-01）"
-          source: "registry/production_schedule.yaml（人类 user 转达，declared_by=onlookor）"
+          source: "registry/production_schedule.yaml（人类 onlookor 转达，declared_by=onlookor）"
           conversion_event: null
           deadline: null
           review_at: "2026-12-31"
           review_at_basis: "M-1 复核日期（人类裁定第 2 条）；转换已完成，不再作 conversion deadline 使用"
-          confirmed_by: "user"
+          confirmed_by: "onlookor"
           confirmed_at: "2026-11-15T15:38:00+08:00"
           confirmation_note: "按 R7-11，undetermined→confirmed_absent 应由运维责任方确认；本次为人类用户裁定（经父会话转达），未另行具名运维责任方，亦未由 agent 代确认。"
           version: "production_schedule 0.6.0"
@@ -267,13 +272,13 @@ grounding_acceptance:
             reapplies_when: "首次生产部署决策前；或 status 改为非 not_in_scope；或 review_at 复核决定进入部署"
         - dimension: "ci_capability"
           state: "confirmed_present"
-          declared_by: "user"
+          declared_by: "onlookor"
           declared_at: "2026-11-12T23:10:00+08:00"
           evidence: ".github/workflows/ci.yml#L18-L19（npm run check；npm test，Node 20/22 矩阵）"
           source: "仓库文件"
           conversion_event: null
           deadline: null
-          confirmed_by: "user"
+          confirmed_by: "onlookor"
           confirmed_at: "2026-11-12T23:10:00+08:00"
           version: "ci.yml（未版本化）"
       gap_refs: ["D-16"]

@@ -2,7 +2,10 @@
 #
 # 依据：母本 0.7（白板谓词集）＋0.21（五状态机）＋0.21.6（机器层谓词）
 # 性质：pilot 记录，不是部署实例的正式白板。
-# 本轮变更（2026-11-15，重编译 .12→.13，人类 user 批准）：guard_registry 1.1.0→1.2.0
+# 本轮变更（2026-11-15，重编译 .13→.14，人类裁定）：批准人字段回溯——A 类 5 文件 11 处、B 类 8 文件
+#   统一写为 GitHub 账户名 onlookor；C 类历史叙述／运行日志不回溯（改了会失真）。approval_registry
+#   1.2.1→1.2.2 触发 CA-03：SM-CA .13 valid→stale；随即按 CA-01 记 .14 compiling→valid。
+# 前轮变更（2026-11-15，重编译 .12→.13，人类 user 批准）：guard_registry 1.1.0→1.2.0
 #   （GR-005 趋势窗改为无值声明，ADR-GUARD-02；G7 改为形态判据，值不参与判定）与
 #   approval_registry 1.2.0→1.2.1（第 6 类登记实例）触发 CA-03：SM-CA .12 valid→stale；
 #   随即按 CA-01 记 .13 compiling→valid（E3 全量 39/39、E4 18/18 match、C7 predicate_satisfied=true）。
@@ -163,15 +166,15 @@ whiteboard:
     owned_by:
       - {owner: observer, object: events.jsonl, right: write,
          evidence: "src/observer.js:16 appendFileSync（唯一写点）；默认文件名 src/observer.js:9",
-         human_review: {approved_by: user, approver_kind: human, approved_at: "2026-11-14",
+         human_review: {approved_by: onlookor, approver_kind: human, approved_at: "2026-11-14",
                         note: "单一所有者已由人类确认：observer 持写入权；本轮已升级为机械校验"}}
       - {owner: index, object: events.jsonl, right: create_and_configure,
          evidence: "index.js:13 创建 FileSink；路径由 config.mirrorDir 决定，null 时不创建",
-         human_review: {approved_by: user, approver_kind: human, approved_at: "2026-11-14",
+         human_review: {approved_by: onlookor, approver_kind: human, approved_at: "2026-11-14",
                         note: "同一确认：index 持创建/配置权，与写入权分离；本轮已升级为机械校验"}}
     # W1 接缝封闭（2026-11-14 人类裁定方案 A：人工核结论）
     human_review:
-      - {property: W1, approved_by: user, approver_kind: human, approved_at: "2026-11-14",
+      - {property: W1, approved_by: onlookor, approver_kind: human, approved_at: "2026-11-14",
          conclusion: "W1 接缝封闭：覆盖面为 module_inventory 全部 9 个单元（index、loop-entry、config、govern、loop-core、names、observer、pact-backend、wasm-backend）。逐一核对模块间调用与 import，未发现经由未声明接口的跨模块访问，无例外。"}
     # G7 P2 信号（2026-11-15 按 ADR-GUARD-02 改为无值声明：值属运行时产物，未约定即 cannot_evaluate）
     p2_signals:
@@ -217,16 +220,18 @@ whiteboard:
         - {from: "provisional", to: "approved", trigger: "retro_approve", actor: "human(user)", at: "2026-11-13", basis: "10.2.5 达 6/6，临时保守通道经人类事后追认"}
       governance_risk: "GOV-PACT-001（备选链为空）"
     SM-CA:
-      artifact: "pilot-20261112.13"
+      artifact: "pilot-20261112.14"
       state: "valid"
-      version_vector: {framework_version: "sha256:469d64c0…", registry_version: "1.2.0", artifact_seq: 13}
+      version_vector: {framework_version: "sha256:469d64c0…", registry_version: "1.2.0", artifact_seq: 14}
       transitions:
         - {from: "compiling", to: "valid", trigger: "compile_success ∧ fidelity_pass", actor: "system", at: "2026-11-15", basis: "CA-01；E3 全量 39/39、E4 match=true（18/18）；C7 predicate_satisfied=true（.12 重编译）"}
         - {from: "valid", to: "stale", trigger: "registry_change", actor: "system", at: "2026-11-15", basis: "CA-03：production_schedule 0.4.0→0.6.0（pager=none、INT-D16-9.3-SCOPE-01）与 grounding 1.19.0→1.21.0；版本监听，非人工判定"}
         - {from: "valid", to: "stale", trigger: "registry_change", actor: "system", at: "2026-11-15", basis: "CA-03：guard_registry 1.1.0→1.2.0（GR-005 趋势窗改为无值声明，ADR-GUARD-02；9.2.2 注册表变更）"}
         - {from: "compiling", to: "valid", trigger: "compile_success ∧ fidelity_pass", actor: "system", at: "2026-11-15", basis: "CA-01；E3 全量 39/39、E4 match=true（18/18）、check-card --all fail_count=0；C7 predicate_satisfied=true（.13 重编译）"}
-      supersedes: "pilot-20261112.12"
-      note: "本状态为 .13 重编译后的 valid。前序 .12 因 guard_registry 1.1.0→1.2.0 按 CA-03 记 stale；.11 因 production_schedule／grounding 变更亦曾记 stale；.10 因注册面变更、.9 因 H-1 后 framework_version 失配亦曾记 stale。重编译映射行见 artifact.yaml recompile_map。.13 未发布（release.artifact_version 仍指 .10）。"
+        - {from: "valid", to: "stale", trigger: "registry_change", actor: "system", at: "2026-11-15", basis: "CA-03：approval_registry 1.2.1→1.2.2（批准人字段 A／B 类回溯为 onlookor，人类裁定）"}
+        - {from: "compiling", to: "valid", trigger: "compile_success ∧ fidelity_pass", actor: "system", at: "2026-11-15", basis: "CA-01；E3 全量 39/39、E4 match=true（18/18）、check-card --all fail_count=0；C7 predicate_satisfied=true（.14 重编译）"}
+      supersedes: "pilot-20261112.13"
+      note: "本状态为 .14 重编译后的 valid。前序 .13 因 approval_registry 1.2.1→1.2.2 按 CA-03 记 stale；.12 因 guard_registry 1.1.0→1.2.0 亦曾记 stale；.11 因 production_schedule／grounding 变更、.10 因注册面变更、.9 因 H-1 后 framework_version 失配亦曾记 stale。重编译映射行见 artifact.yaml recompile_map。.14 未发布（release.artifact_version 仍指 .10）。"
 
   open_obligations:
     - id: "SO-PILOT-1"

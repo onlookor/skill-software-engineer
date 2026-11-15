@@ -8,7 +8,7 @@
 | 关联记录 | `pilot/vertical-slice-20261112/run-log.md` §4、§10、§29；`escalate-adjudication-20261113.md` §14 |
 | 起草 | 2026-11-14，Agent（本会话） |
 | 决策记录状态 | **`approved`** |
-| `approved_by` | `user` |
+| `approved_by` | `onlookor` |
 | `approver_kind` | `human` |
 | `approved_at` | `2026-11-14` |
 | 批准依据 | 2026-11-14 人类批准（父会话转达，取建议默认 A）；**Agent 未自批** |

@@ -21,7 +21,7 @@
 | `pool_capacity.yaml` | 池容量注册表（C-6＋C-7 合并）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `event_catalog.yaml` | 领域事件目录（C-9）：指针表 schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `guard_registry.yaml` | 守护规则注册表（9.2.2）：schema＋5 条 draft 规则（均待 9.2.2 批准） | 本文件头（自建，D-22） |
-| `approval_registry.yaml` | 批准角色注册表（0.5.1）：pact-dsh v1.1.0，5 类决策，主批准人 user | 本文件头（自建，D-13） |
+| `approval_registry.yaml` | 批准角色注册表（0.5.1）：pact-dsh v1.1.0，5 类决策，主批准人 onlookor | 本文件头（自建，D-13） |
 | `compilation_regime_changes.yaml` | 编译规程变更登记表（E7／0.25.1）：3 条已回填，均人类批准，哈希链连续 | 本文件头（自建，E7 判定数据源） |
 | `fvr_registry.yaml` | FVR 注册面索引（10.2.4）：登记 FVR 集的版本与摘要，条目本体随卡片 | 本文件头（自建，D-24） |
 | `projection_registry.yaml` | 投影规则注册表（10.2.5 判据二）：注册表→人类层投影 4 条 | 本文件头（自建，D-23） |

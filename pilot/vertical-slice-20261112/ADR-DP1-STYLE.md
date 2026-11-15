@@ -4,9 +4,9 @@
 - 步骤：`0.18.2 S6`（决策落地）
 - 日期：2026-11-12
 - 执行者：agent（本会话）
-- 批准人：`user`（人类用户本人，批准角色注册表 `registry/approval_registry.yaml` 的"风格定案"主批准人）
+- 批准人：`onlookor`（人类用户本人，批准角色注册表 `registry/approval_registry.yaml` 的"风格定案"主批准人）
 - 批准时间：2026-11-12T21:29:21+08:00（S6(ii) 原批准）
-- 事后追认：`user`，2026-11-13（SM-DR `provisional → approved`，trigger `retro_approve`，权限 human）
+- 事后追认：`onlookor`，2026-11-13（SM-DR `provisional → approved`，trigger `retro_approve`，权限 human）
 - 批准证据：人类口头批准，来源＝2026-11-13 本轮对话（父会话转达，裁定两件事之一：「ADR-DP1-STYLE 转 `approved`，按 SM-DR 状态机做正式迁移，不跳级」）
 - 批准时限：48 小时（届满 2026-11-14T21:29:21+08:00）
 - 备选链：空（`GOV-PACT-001`：主批准人不可用即构成批准不可达）
@@ -58,7 +58,7 @@ style(pact-dsh, (·, ·, 同步请求-响应, ·))
 >
 > **输入版本更新（2026-11-12 第 2 批，ADR-TS-CON-01b）**：目标集 v1.2.0 `sha256:7a37e340…fa2990`、包络绑定 v1.2.0 `sha256:3bfb3f89…0fc6ac`、S4 verdict v1.2.0 `sha256:11e82e3f…0f76ae`。G-CON-01 拆为 G-CON-01a（硬）＋ G-CON-01b（软）；判定谓词仍 pass。
 >
-> **输入版本更新（2026-11-13 治理回填）**：批准角色注册表升 1.1.0 `sha256:9658bc9f…530f2`（新增「编译规程变更」决策类，主批准人 `user`）；产物清单为 `pilot-20261112.9`。决策记录状态同日由 `provisional` 转 `approved`（SM-DR `retro_approve`）。
+> **输入版本更新（2026-11-13 治理回填）**：批准角色注册表升 1.1.0 `sha256:9658bc9f…530f2`（新增「编译规程变更」决策类，主批准人 `onlookor`）；产物清单为 `pilot-20261112.9`。决策记录状态同日由 `provisional` 转 `approved`（SM-DR `retro_approve`）。
 
 ## 5 代价量化清单（6.2.4 Q4：有代价可达必入 ADR）
 
@@ -93,7 +93,7 @@ style(pact-dsh, (·, ·, 同步请求-响应, ·))
 
 1. **2026-11-12：`approved`**。`user` 按批准角色注册表批准（S6(ii) 成立、S6(v) 解除）。
 2. **2026-11-12：`approved → provisional`**。10.2.5 当时 3/6 未过，按母本 10.2.5 末段「未过验收判据而开始产出设计决策 = 框架未接地运行，其产出决策全部标 `provisional`」，trigger `grounding_fail`，权限 system。下游只许软约束消费并附张力承认 ADR（7.2.5）。
-3. **2026-11-13：`provisional → approved`**。判据一/二/四相继闭合，10.2.5 达 6/6，临时保守通道被人类事后追认：trigger `retro_approve`，权限 human，批准人 `user`，批准证据＝2026-11-13 本轮对话人类口头批准（父会话转达）。**该迁移由人类裁定，Agent 未自批。**
+3. **2026-11-13：`provisional → approved`**。判据一/二/四相继闭合，10.2.5 达 6/6，临时保守通道被人类事后追认：trigger `retro_approve`，权限 human，批准人 `onlookor`，批准证据＝2026-11-13 本轮对话人类口头批准（父会话转达）。**该迁移由人类裁定，Agent 未自批。**
 
 追认后的下游约束：本决策回落到 `approved` 的完整可消费集合；§5 的可推翻指标仍逐条有效，任一触发即须重裁。
 
@@ -120,6 +120,6 @@ style(pact-dsh, (·, ·, 同步请求-响应, ·))
 ## 10 结论三元组
 
 - S4 判定谓词：`pass`（STY-001 对 4 个硬目标均 `reachable_with_cost`）
-- S6(ii)：`pass`（完整 ADR + 批准；批准人 `user`，2026-11-12T21:29:21+08:00）
+- S6(ii)：`pass`（完整 ADR + 批准；批准人 `onlookor`，2026-11-12T21:29:21+08:00）
 - S6(v)：`解除`（批准可达；`GOV-PACT-001` 仍为已知风险）
 - 决策记录状态：`approved`（10.2.5 6/6；`provisional → approved` 已于 2026-11-13 由 `user` 以 `retro_approve` 追认）

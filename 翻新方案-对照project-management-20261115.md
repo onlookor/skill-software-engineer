@@ -592,7 +592,7 @@ trend_window: {metric: count, value: 10, configurable: true}
 - **落地形态**：`params.trend_window` 只留 `metric`（`type: "enum: count|time"`、`values: [count, time]`、`required: true`、`unconfigured: cannot_evaluate`）与 `value`（`type: number`、`range: ">= 1"`、`required: true`、`unconfigured: cannot_evaluate`）；删除 `value: 10` 与 `configurable`，无默认值、示例值、推荐值。
 - **`g7` 的影响面与处置**：改动前 `g7` 读白板 `p2_signals[].trend_window` 并要求 `value > 0`，是全仓唯一消费该值的代码（全仓 `.py` 无一处引用 `guard_registry`）。若只改注册表，白板的值会变成「无编译期来源的运行时值」；若连白板一起删值，`g7` 会失去可判对象。人类裁定走 **选项 B**：`g7` 改为**形态判据**，只判「可配置项是否被正确声明」，**值不参与判定**；白板删值但保留条目（`value_state: not_agreed`），**不得删空 `p2_signals`**（否则走「显式空集 → pass ＋ vacuous」，属洗白）。
 - **取舍理由**：形态判据**弱而诚实**——它只证明「声明齐备」，不证明趋势检测已实现，也不验证任何运行时窗口取值；相比「造一个值让判据转 pass」或「保留默认值 10」，它不产生伪证据。该弱判据标签已写入 `10.2.5-verdict` 判据二／判据四的 `evidence`／`caveat` 与 `g7` 的 pass 理由，不只留在本文档。
-- **批准与执行**：`adr/ADR-GUARD-02-approved-20261115-GR-005趋势窗无值声明与G7形态判据.md`，批准人 user、批准日期 2026-11-15、agent 未自批；`approval_registry.yaml` 升 1.2.1 并在第 6 类登记第 2 个适用实例。
+- **批准与执行**：`adr/ADR-GUARD-02-approved-20261115-GR-005趋势窗无值声明与G7形态判据.md`，批准人 onlookor、批准日期 2026-11-15、agent 未自批；`approval_registry.yaml` 升 1.2.1 并在第 6 类登记第 2 个适用实例。
 - **复跑**：`runner` 39 条 pass 39／fail 0／escalate 0／vacuous 9；`project.py --check` 硬失败 0；判据一 pass；`check-card --all` 18/18、`E4 match=true`、`fail_count=0`；C7 `version_consistent=true`、`predicate_satisfied=true`。
 - **未做**：母本未改；未发布（`release.artifact_version` 仍指 `.10`）；未推送。
 

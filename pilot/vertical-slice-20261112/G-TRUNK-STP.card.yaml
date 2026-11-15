@@ -19,7 +19,7 @@ source_anchors:
 - '0.6'
 - 0.20.2
 - 4.2.2
-artifact_version: pilot-20261112.13
+artifact_version: pilot-20261112.14
 variant_note: "本 kind 无自有 0.18.4 变体（待 0.18.8 补登记）。0.18.4 第 5 行要点仅作参考、非本 kind 变体：S5 先验权重消费风格默认；S4 卡片聚合最重（Z7 联动）。本卡按通用 S0–S6 执行。"
 trigger:
   event_pattern: '[决策点声明：DP_id, aspect=5, kind=STP, question, affected_predicates] ∧ ¬selection_procedure(DP, ·, ·)'

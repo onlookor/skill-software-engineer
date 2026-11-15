@@ -8,7 +8,7 @@
 | 影响级别 | 中（`registry/guard_registry.yaml` 5 条状态迁移＋版本；不改母本、不改锚索引、不改 `pattern_version`） |
 | 关联条款 | 母本 9.2.2（守护规则注册表条目形态／变更＝完整 ADR＋批准）；0.5.1（批准角色注册表）；0.17.2（条目状态枚举）；编译规范 2.3(a)（draft 不可消费） |
 | 关联缺口 | D-22（守护规则注册表 schema）、D-13/D-20（批准角色注册表 schema） |
-| 批准来源 | 人类用户 user 于 2026-11-15 经父会话明确指示「先声明『守护规则注册表变更』这个决策类，再处理 5 条 `draft→active`。同时修正两处已查出的不一致」；agent 未自批，也未把 agent 写为批准人 |
+| 批准来源 | 人类用户 onlookor 于 2026-11-15 经父会话明确指示「先声明『守护规则注册表变更』这个决策类，再处理 5 条 `draft→active`。同时修正两处已查出的不一致」；agent 未自批，也未把 agent 写为批准人 |
 
 ## 1. 范围与判定依据
 
@@ -18,13 +18,13 @@
 
 ## 2. 决策
 
-- **D1 决策类声明**：在 `registry/approval_registry.yaml` 新增第 6 个决策类「守护规则注册表变更」，`applies_to: ["registry/guard_registry.yaml 的规则新增/改级/改参/状态迁移"]`，主批准人 user（human），备选链为空（沿用单人项目明示）。approval_registry 升版 1.1.0 → 1.2.0。
+- **D1 决策类声明**：在 `registry/approval_registry.yaml` 新增第 6 个决策类「守护规则注册表变更」，`applies_to: ["registry/guard_registry.yaml 的规则新增/改级/改参/状态迁移"]`，主批准人 onlookor（human），备选链为空（沿用单人项目明示）。approval_registry 升版 1.1.0 → 1.2.0。
   - 理由：原 5 类中「方法注册表变更」的 `applies_to` 只覆盖 `method_registry.yaml`；按 0.5.1，未声明类别的高影响决策无受理方、须走阻塞路径。此为该路径的解除条件。
 - **D2 五条激活**：GR-001～GR-005 全部 `draft → active`，`version: 1.0.0 → 1.1.0`。`consumption_states: [active, seed]` 不变；激活后规则可被编译消费。
 - **D3 出处形态**：GR-001/002/003 原 `source_adr` 填的是母本/编译规范条款，不满足 9.2.2「出处＝决策 ADR 或外部强加」的字面。本 ADR 作为三条规则的决策记录（草案选项 c：合并 ADR、逐条给依据），`source_adr` 分别改为 `ADR-GUARD-ACT-01 §3.1/§3.2/§3.3`，母本条款退为「依据」列。
 - **D4 GR-003 参数订正**：`params.threshold` 由 `"覆盖 39/39；当前 5/39"` 订正为 `"覆盖 39/39；当前 39/39（pass 39 / fail 0 / escalate 0 / vacuous 9）"`。旧值是切片初期读数，与 2026-11-15 全量复跑不符。
 - **D5 GR-004/005 日期订正**：`source_adr` 中 `approved 2026-11-11` 订正为 `approved 2026-11-09`，与 ADR 本体一致。
-- **D6 批准**：本 ADR 由人类用户 user 批准（来源见上表）。agent 只执行登记，不充当批准人。
+- **D6 批准**：本 ADR 由人类用户 onlookor 批准（来源见上表）。agent 只执行登记，不充当批准人。
 - **D7 产物影响**：`artifact.yaml` 的 `registry_snapshot.guard_registry` 仍记 v1.0.0／5 条 draft，将随下一次 `.11` 重编译更新；本轮不重编译。
 - **D8 未做**：未改母本；未改任何检查器；未改 `review_points`／`production_schedule`（另案）。
 
@@ -109,7 +109,7 @@
 
 | 项 | 值 |
 |---|---|
-| 批准人 | user（human） |
+| 批准人 | onlookor（human） |
 | 批准日期 | 2026-11-15 |
 | 批准依据 | 人类用户经父会话明确指示（见首表「批准来源」） |
 | 执行者 | agent（仅登记，非批准人） |
