@@ -1466,3 +1466,31 @@ C7 三清单数据源现已齐备：锚定缺口＝`anchor_index`（本轮 0 缺
 - 卡检：`cards=18 F1=pass F2=pass F3(full)=pass 39/39 E4 match=True fail_count=0`。
 - 锚索引：`CFG-01／ESC-01／F-1～F-10` 全 pass，F-9 986 对，`failures: []`。
 - 母本未改（4,811 行、`469d64c0…`）；本轮改动未提交、未推送。
+
+## 35. C7 发布（2026-11-15，人类明确指示）
+
+### 35.1 发布前置核对
+
+- C7 发布操作三项：①`compilation_artifact(version, framework_version, registry_version, cards)` 装配；②SM-CA `compiling → valid`；③覆盖率报告（锚定缺口／软性质未覆盖／存疑来源）随产物发布。
+- 权限：C7 属编译规程执行；`approval_registry` 的 5 类决策（风格定案／分解主策略／方法注册表变更／冲突矩阵例外覆盖／编译规程变更）**不含「产物发布」**，故无 0.5 类批准要求。人类 2026-11-15 明确指示「发布」，如实登记为指示来源；**agent 未自批，也未写入批准人**。
+- 三项现状：装配完成（`pilot-20261112.10`）；SM-CA 已 `valid`（CA-01，§34）；覆盖率报告在产物目录并登记于 `artifact.coverage_report`。三项齐备。
+- 外部目标：规范与仓库均未定义发布目标／注册表／凭证；目标仓 `/home/user/projects/pact-dsh` 不消费编译产物 → **无外部投放**，按「仓库内发布」登记，不假装已投放到远端，也未推送 git。
+
+### 35.2 发布记录
+
+- `artifact.yaml` 新增 `release` 块：`status=published（仓库内发布）`、`published_at=2026-11-15`、`authority=人类用户 user 明确指示`、`published_set`、`coverage_report`、`supersedes`。
+- `pilot-20261112.9` 为 `stale`：**CA-06 `valid→archived` 不适用**（.9 非 valid，且 SM-CA 表无 `stale→archived`），按 0.23.8 以 `recompile_map` 记录 `.9→.10`。
+
+### 35.3 发布后复跑
+
+- 判据一：`pv-1.1`，17 块，aggregate `f329ce90ad77…`。
+- 全量：`hard=39 executed=39 blocks=17 pass=39 fail=0 escalate=0 vacuous=9`。
+- 卡检：`cards=18 F1=pass F2=pass F3(full)=pass 39/39 E4 match=True fail_count=0`。
+- 锚索引：`CFG-01／ESC-01／F-1～F-10` 全 pass，F-9 986 对，`failures: []`。
+- 母本未改（4,811 行、`469d64c0…`）。
+
+### 35.4 继续推进：当前无可自主推进项
+
+- **4 个未精化 kind（CFG／CRD／DPS／SRC）**：按既有记录维持后续批次，触发条件（价值链打通／0.18.4 变体登记）未满足，不精化、不新增依赖。
+- **需人类裁定／动作**：`guard_registry` 5 条 `draft→active`（9.2.2 批准）；W1 升级前须定义「已声明接口」判据；D-17（母本无 `scheduled(rp)` schema）；D-16（无生产排期）；#9 并发协议（多写入方部署决策触发）。
+- 结论：无新的可机械推进项，停在此处等人类裁定；不重做已闭合项。

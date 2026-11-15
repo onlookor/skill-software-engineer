@@ -55,6 +55,16 @@ compilation_artifact:
     - {artifact_id: "pilot-dsh", from_version: "pilot-20261112.9", to_version: "pilot-20261112.10",
        changed_entries: ["framework_version c0bb9879…→469d64c0…", "artifact_seq 9→10", "18 张卡 artifact_version .9→.10"],
        recompiled_at: "2026-11-15"}
+  # C7 发布记录（2026-11-15）。编译规范 C7 的发布操作＝装配产物＋SM-CA compiling→valid＋覆盖率报告随产物发布；
+  # 规范未定义外部发布目标/凭证，故为仓库内发布，未向任何远端或注册表投放，也未推送 git。
+  release:
+    status: "published（仓库内发布）"
+    published_at: "2026-11-15"
+    authority: "人类用户 user 明确指示「发布」（2026-11-15，经父会话转达）；agent 未自批，也未写入批准人"
+    artifact_version: "pilot-20261112.10"
+    published_set: ["artifact.yaml", "c7-coverage-report.yaml", "18 张 *.card.yaml", "fidelity-all.json", "fvr-full-run-1.json"]
+    coverage_report: "pilot/vertical-slice-20261112/c7-coverage-report.yaml（三清单随产物发布，非阻塞）"
+    supersedes: "pilot-20261112.9（stale）；CA-06 valid→archived 不适用（stale 无归档迁移），以 recompile_map 记录 .9→.10"
   cards:
     # 10 实质卡（S0–S6）＋8 躯干卡；14 张已精化为 0.2.0（DFL／STP 与 D3 的 CSL／OWN／SCH／RLP），
     #   余 4 张（DPS／CRD／CFG／SRC）仍 0.1.0 机械骨架。生成器对 version ≥ 0.2.0 的卡读回跳过。
