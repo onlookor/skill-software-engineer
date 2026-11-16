@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""V01–V08：缺陷复现—最小修复技能的可执行校验器。
+"""V01–V08：缺陷复现—最小修复技能的可执行自动检查。
 
 约定：退出码 0＝pass，1＝fail，3＝cannot_evaluate（缺配置／缺输入／不可判）。
 用法：
-    python3 validate.py --config <挂载期配置快照.yaml> [--only V01 V02 ...]
+    python3 validate.py --config <配置快照.yaml> [--only V01 V02 ...]
 
-配置快照里的七项挂载期声明只从文件读取；本文件不内置任何项的值、默认值、示例值。
+配置快照里的七项使用前约定只从文件读取；本文件不内置任何项的值、默认值、示例值。
 缺任一项即 cannot_evaluate（退出码 3），不静默通过。
 """
 from __future__ import annotations
@@ -356,7 +356,7 @@ def v02(ctx: Ctx) -> Result:
         fps.append(fingerprint(out, ctx.repo))
     if len(set(fps)) != 1:
         detail = "；".join(f"run{i + 1}={fp}" for i, fp in enumerate(fps))
-        return bad("V02", "连跑指纹不一致：" + detail)
+        return bad("V02", "连跑失败摘要不一致：" + detail)
     declared = data.get("fingerprint")
     if not isinstance(declared, dict) or not nonempty_str(declared.get("run1")):
         return cannot("V02", "repro.md.fingerprint 缺失，无法与实跑比对")
@@ -367,7 +367,7 @@ def v02(ctx: Ctx) -> Result:
             f"声明值={declared.get('run1')}",
             f"实跑值={fps[0]}",
         )
-    return ok("V02", f"连跑 {runs} 次均非 0，指纹一致：{fps[0]}")
+    return ok("V02", f"连跑 {runs} 次均非 0，失败摘要一致：{fps[0]}")
 
 
 def v03(ctx: Ctx) -> Result:
@@ -570,7 +570,7 @@ def v08(ctx: Ctx) -> Result:
     if not single_line(used):
         problems.append("test_command_used 缺失或不是单行")
     elif used != test_cmd:
-        problems.append("test_command_used 与挂载期 test_command 不逐字一致")
+        problems.append("test_command_used 与约定的 test_command 不逐字一致")
 
     phases = log.get("phases")
     if not isinstance(phases, list) or len(phases) != 3:
@@ -617,8 +617,8 @@ VALIDATORS = {
 
 
 def main(argv: list[str]) -> int:
-    parser = argparse.ArgumentParser(description="V01–V08 校验器（退出码 0／1／3）")
-    parser.add_argument("--config", required=True, help="挂载期配置快照 YAML 路径")
+    parser = argparse.ArgumentParser(description="V01–V08 自动检查（退出码 0／1／3）")
+    parser.add_argument("--config", required=True, help="配置快照 YAML 路径")
     parser.add_argument("--only", nargs="*", choices=sorted(VALIDATORS), help="只跑指定项")
     args = parser.parse_args(argv)
 

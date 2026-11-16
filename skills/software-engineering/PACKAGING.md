@@ -1,88 +1,143 @@
-# 打包与安装
+# 安装与第一次使用
 
-> 目标：用户**不克隆仓库**也能装。本文件既是打包清单，也是安装说明。
-> 版本以 `SKILL.md` frontmatter 的 `version` 为唯一来源；当前 `0.2.0`。
+> 版本 **0.3.0**（版本号唯一来源是 `SKILL.md` 开头的 `version`，打包时自动读取，不另行维护）。
+> 目标：不克隆仓库也能安装；装完能用示例自检，再拿一个真 bug 走一遍。
 
-## 一、包里放什么
+## 一、包里有什么
 
-只放运行技能所需的最小集合，全部来自 `skills/software-engineering/`：
+| 路径 | 内容 |
+|---|---|
+| `README.md` | 使用者说明：做什么、不做什么、对强/弱模型的好处、企业场景 |
+| `SKILL.md` | 技能入口：状态路由表、必须始终遵守的规则、使用前约定 |
+| `stages/` | 三份阶段说明：复现、定位并最小修复、验证 |
+| `schemas/` | 四类交付物与卡点日志的格式说明 |
+| `validators/` | 八项自动检查、一项人工清单、卡点日志检查 |
+| `examples/defect-repro-fix/` | 可一条命令跑通的完整示例 |
+| `BACKFLOW.md` | 卡点日志怎么汇总、谁分诊、版本怎么递增 |
+| `PACKAGING.md` | 本文件 |
+| `PACKAGE-MANIFEST.txt` | 打包时生成：版本号与逐文件摘要 |
 
-| 路径 | 内容 | 为什么在包里 |
-|---|---|---|
-| `SKILL.md` | 路由表、不变量、挂载期交互协议、七项无值声明 | 技能入口，必须常驻可读 |
-| `stages/S1-repro.md`、`S2-localize-fix.md`、`S3-verify.md` | 三张阶段卡 | 路由命中后要加载 |
-| `schemas/repro.md`、`failing-test.md`、`fix-patch.md`、`verify-log.md`、`blocker-log.md` | 交付物 schema 与卡点日志 schema | 产出格式与机器可判部分 |
-| `validators/validate.py`、`check_blocker_log.py`、`V09-checklist.md`、`README.md` | V01–V08 可执行、V09 人工清单、卡点日志校验 | 交付物与日志校验 |
-| `examples/defect-repro-fix/` | 真 bug、失败测试、补丁、配置快照、`run.py`、`README.md` | 装完即可自检一条命令 |
-| `PACKAGING.md`、`BACKFLOW.md` | 本文件与回流流程 | 安装说明与卡点回流随包走 |
+## 二、包里不装什么
 
-包内另生成 `PACKAGE-MANIFEST.txt`（版本号＋逐文件 sha256），不手工维护。
+以下内容属于**仓库内部资产或内部测试证据**，对使用者无用，一律不进包：
 
-## 二、包里不放什么
+- `registry/`、`pilot/`、`adr/`、`archieve/`、`pact/` 等仓库内部目录；
+- 仓库根目录的规范原文、修订记录、总账/施工单/方案等文档；
+- 任何运行日志、索引与基线文件、仓库内部检查脚本与卡片；
+- 内部测试证据 `tests/`、打包脚本 `scripts/`；
+- `.git`、`__pycache__`、示例运行产物 `work/`。
 
-以下一律**不进入分发包**，它们属于编译工作区资产或本仓内部证据，对装技能的用户既无用又是噪声：
+打包脚本会在归档后**反向核对**：归档里只要出现上述名字之一，立即失败并删除本次产物。
 
-- `registry/`、`pilot/`、`adr/`、`archieve/`、`pact/`；
-- 母本 `软件工程元框架成文法.md` 及其 changelog、编译规范、总账/施工单/方案/白板等根目录文档；
-- 任何 run-log、编译产物、锚索引、`anchor_baseline.json`、检查器脚本与卡片；
-- 本仓内部测试证据 `skills/software-engineering/tests/`（如路由测试记录）；
-- 打包脚本自身 `skills/software-engineering/scripts/`；
-- `.git`、`__pycache__`、`*.pyc`、示例运行产物 `examples/*/work/`。
+## 三、打包产物
 
-打包脚本会在归档后**反向断言**：归档内不得出现上述任何名字，出现即以退出码 1 失败。
-
-## 三、产物形态
-
-每次打包产出两件等价物（同一份内容）：
+每次打包产出同一份内容的两种形态：
 
 ```
-dist/software-engineering-0.2.0/                  # 目录形态，顶层即技能根
-dist/software-engineering-0.2.0.tar.gz            # 归档形态
-dist/software-engineering-0.2.0.tar.gz.sha256     # 归档校验值
+dist/software-engineering-0.3.0/                  # 目录形态，顶层就是技能目录
+dist/software-engineering-0.3.0.tar.gz            # 归档形态（分发用）
+dist/software-engineering-0.3.0.tar.gz.sha256     # 归档摘要（校验用）
 ```
 
-目录形态的顶层目录就是安装后的技能目录，`SKILL.md` 在它下面第一层。
-
-## 四、谁来打包、谁来装、装到哪
+## 四、谁打包、谁安装、装到哪
 
 | 角色 | 动作 | 在哪 |
 |---|---|---|
-| 维护者（交付方） | 运行打包命令，产出 `dist/` 下两件产物 | 本仓根目录 |
-| 发布者（交付方） | 把 `*.tar.gz` 与 `*.sha256` 作为 release 附件提供 | 仓库的 release / 内部分发点（本仓不出自动化） |
-| 安装者（使用方） | 下载归档 → 校验 sha256 → 解包 → 放进 agent 的 skills 目录 | 目标机器 |
+| 维护者 | 运行打包命令，产出 `dist/` 下两件产物 | 仓库根目录 |
+| 发布者 | 把 `*.tar.gz` 与 `*.sha256` 作为 release 附件提供 | 发布渠道由使用方自定 |
+| 安装者 | 下载 → 校验 → 解包 → 改名 → 放进 skills 目录 | 目标机器 |
 
-**装到哪里**：装到目标 agent 的「技能目录」下，目录名取 `software-engineering`，使入口为 `<skills-dir>/software-engineering/SKILL.md`。本仓自身的形态就是 `<workspace>/skills/software-engineering/`，可作参照；具体目录名由宿主 agent 的约定决定，本文件不替宿主定默认值。
+**装到哪里**：目标 agent 的「技能目录」下，目录名用 `software-engineering`，使入口为 `<技能目录>/software-engineering/SKILL.md`。技能目录的具体位置由宿主 agent 的约定决定（例如工作区下的 `skills/`），本文件不替宿主定默认值。
 
-## 五、可执行命令
+## 五、一步步安装
 
-打包（维护者，在仓库根目录）：
+### 1. 下载
 
-```bash
-python3 skills/software-engineering/scripts/build_package.py
-```
+取得 `software-engineering-0.3.0.tar.gz` 与 `software-engineering-0.3.0.tar.gz.sha256` 两个文件。全程不需要访问代码仓库。
 
-脚本只用 Python 标准库，不引入新依赖；版本号从 `SKILL.md` 读取，不另行维护；重复运行会先清空 `dist/` 下同名产物。
-
-安装（使用方，不需要仓库）：
+### 2. 校验
 
 ```bash
-sha256sum -c software-engineering-0.2.0.tar.gz.sha256
-tar -xzf software-engineering-0.2.0.tar.gz
-# 得到 software-engineering-0.2.0/；移动到 agent 的 skills 目录并改名为 software-engineering
-mv software-engineering-0.2.0 <skills-dir>/software-engineering
+sha256sum -c software-engineering-0.3.0.tar.gz.sha256
 ```
 
-装完自检（可选，不需要真实项目）：
+必须显示「成功／OK」。不一致就停止，重新下载；**不得跳过校验直接解包**。
+
+### 3. 解包
 
 ```bash
-python3 <skills-dir>/software-engineering/examples/defect-repro-fix/run.py
+tar -xzf software-engineering-0.3.0.tar.gz
 ```
 
-退出码 0 表示示例闭环（V01–V08）在安装位置上跑通；它只证明安装完整，不证明技能在真实仓库上可用。
+得到目录 `software-engineering-0.3.0/`，`SKILL.md` 在它下面第一层。
+
+### 4. 改名
+
+```bash
+mv software-engineering-0.3.0 software-engineering
+```
+
+### 5. 放进 skills 目录
+
+```bash
+mv software-engineering <你的技能目录>/
+```
+
+最终应是 `<你的技能目录>/software-engineering/SKILL.md`、`.../stages/`、`.../validators/` 等。
+
+### 6. 约定七项信息（缺一项就不能开始）
+
+技能开始工作前，需要你和部署负责人逐项约定下面七项，并把约定结果记成一份**配置快照**（项名＋值＋约定时间＋双方身份）。技能本身**不给默认值、示例值或推荐值**；任一项没约定，这一步就停在「无法判定」，不会开始复现。
+
+| 项 | 要约定什么 |
+|---|---|
+| `repo_path` | 要修的那个仓库根目录 |
+| `test_command` | 跑测试的那条命令（0 表示通过） |
+| `build_command` | 构建命令；没有构建就明确记「未配置构建」 |
+| `repro_runs` | 复现至少跑几次（不少于 2） |
+| `repro_timeout_seconds` | 单次复现的超时上限 |
+| `allowed_scope` | 允许改动的文件范围 |
+| `cache_cleanup_policy` | 缓存与构建产物怎么清、在哪一步之前清 |
+
+> 为什么第七项也必须约定：测试若复用了上一次的缓存，可能出现「撤掉补丁还是通过」的假象。策略未约定，按「无法判定」处理，不回落为通过。
+
+### 7. 装完先自检（不需要真项目）
+
+```bash
+python3 <你的技能目录>/software-engineering/examples/defect-repro-fix/run.py
+```
+
+看到退出码 0，且 `examples/defect-repro-fix/work/` 下出现复现记录、三段验证日志与修复报告，说明**安装完整**。这只证明包装对了，不证明它在你的仓库上可用。
+
+### 8. 拿一个真 bug 走一遍
+
+给技能：一个仓库根、一条稳定复现的失败（报错文本或失败用例 id）。然后按状态往下走，会依次得到：
+
+1. **复现记录**：失败命令、非 0 退出码、两次运行的失败输出摘要一致、失败用例能单独跑失败；
+2. **失败测试**：修复前单独运行必定失败；
+3. **补丁文件**：能干净应用，只改约定范围内的文件；
+4. **三段验证日志**：修复前失败 → 打补丁后通过 → 撤掉补丁再次失败；
+5. **修复报告**：写明改了哪些文件，以及根因是否有直接证据（没有就只能写「未验证根因」）。
+
+### 9. 什么才算这轮成立
+
+同时满足才算：
+
+- 复现记录过了通过条件（退出码非 0、两次失败摘要一致、用例可独立失败）；
+- 补丁在复现记录通过**之后**才出现，且只动约定范围；
+- 三段验证齐全，第三段确实再次失败；
+- 八项自动检查全部通过，人工清单逐项签字；
+- 修复报告没有把「未验证根因」写成「已修复」。
+
+任一条不满足，这轮就不成立；复现不出来的情况，正确结果**不是**勉强给补丁，而是停下并留下「无法复现」上报记录。
 
 ## 六、失败处理
 
-- 归档内出现「不放什么」中的任何名字 → 脚本退出码 1，删除本次产物，不发布。
-- `SKILL.md` 缺 `version` 或版本串非法（非 `X.Y.Z`）→ 退出码 1。
-- 白名单路径缺失 → 退出码 1（缺 `SKILL.md`、`stages/`、`schemas/`、`validators/`、`examples/` 任一）。
-- 安装后自检非 0 → 先核对版本与 sha256 是否匹配，再查宿主 agent 的 skills 目录约定；不得跳过校验直接覆盖旧版本。
+| 现象 | 处理 |
+|---|---|
+| 摘要校验不一致 | 停止，重新下载；不得跳过校验 |
+| 归档里出现「不装什么」中的名字 | 打包脚本退出码 1，删除本次产物，不发布 |
+| `SKILL.md` 缺版本号或版本号格式不对 | 打包脚本退出码 1 |
+| 少了 `SKILL.md`／`stages/`／`schemas/`／`validators/`／`examples/` 任一项 | 打包脚本退出码 1 |
+| 自检非 0 | 先核对版本与摘要是否匹配，再检查技能目录约定；不要直接覆盖旧版本 |
+| 七项信息缺项 | 停在「无法判定」，补齐约定后重来；不得先跑再补 |

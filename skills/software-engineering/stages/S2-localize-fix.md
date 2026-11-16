@@ -2,7 +2,7 @@
 stage: "S2-localize-fix"
 title: "定位与最小修复"
 requirements:
-  entry_gate: "S1 已出门（repro.md 过门、失败用例可独立失败）"
+  entry: "S1 已通过（复现记录通过、失败用例可独立失败）"
   config: ["test_command", "allowed_scope"]
 inputs:
   - "repro.md"
@@ -32,11 +32,11 @@ validators: ["V04", "V05", "V06", "V07"]
 
 ## 输入
 
-- `repro.md`（S1 输出，已过门）
+- `repro.md`（S1 输出，已通过）
 - `tests/repro_<slug>.<ext>`（S1 输出）
-- 依赖的挂载期配置：`test_command`、`allowed_scope`。未约定 → `cannot_evaluate`。
+- 依赖的使用前约定项：`test_command`、`allowed_scope`。未约定 → `cannot_evaluate`。
 
-S1 未出门即进入本 stage 属跳步；检出即停，回 S1。
+S1 未通过就进入本阶段属跳步；发现即停，回 S1。
 
 ## 步骤
 
@@ -45,7 +45,7 @@ S1 未出门即进入本 stage 属跳步；检出即停，回 S1。
 3. 写 `localization.md`：机制断言＋证据＋`evidence_kind`（`direct` │ `indirect` │ `hypothesis`）。
    - `direct` 仅当能在日志／栈中直接指出成因语句；
    - 无直接证据时只能是 `hypothesis`，不得写成结论句。
-4. 写最小 diff，落为 `fix.patch`（unified diff，含 `touched_files`、`patch_sha256`）。
+4. 写最小 diff，落为 `fix.patch`（统一 diff 格式，含 `touched_files`、`patch_sha256`）。
 5. 跑「复现用例」与「既有测试」两条命令（后者命令与 S1 相同）。
 
 ## 输出
@@ -53,11 +53,11 @@ S1 未出门即进入本 stage 属跳步；检出即停，回 S1。
 - `localization.md`
 - `fix.patch`
 
-`localization.md` 随 `fix.patch` 一起交出；它是本 stage 的内部产物，不构成第五种出口交付物类型。
+`localization.md` 随 `fix.patch` 一起交出；它是本阶段的内部产物，不构成第五种交付物类型。
 
 ### `localization.md` 的机器可读部分
 
-Markdown 前的 YAML frontmatter（V05／V06／V09 读取）：
+Markdown 前的 YAML 头（V05／V06／V09 读取）：
 
 ```yaml
 ---
@@ -71,7 +71,7 @@ estimated_diff_lines: <integer>
 
 正文写机制断言与证据。`files` 之外的文件不得出现在 `fix.patch` 中；`evidence_kind` 非法或缺席即 V06 fail。
 
-## 通过门（前四条机器判；第五条只在「标注存在且取值合法」这一层机器判）
+## 通过条件（前四条由自动检查判定；第五条只在「标注存在且取值合法」这一层自动判）
 
 1. 复现用例转绿。
 2. 既有测试全绿（命令与 S1 相同）。
@@ -79,8 +79,8 @@ estimated_diff_lines: <integer>
 4. `fix.patch` 的测试断言行零改动（diff 中 `tests/` 与 `*_test.*` 的断言行）。
 5. `localization.md` 的成因结论必须带 `evidence_kind` 标注（`direct` │ `indirect` │ `hypothesis`）。
 
-判定者：V04（`git apply --check`）、V05（范围黑名单）、V06（断言行与措辞黑名单）、V07（既有测试全绿）。
-第 5 条的标注是否**成立**靠人判，见 V09。
+判定者：V04（能否干净应用）、V05（改动范围黑名单）、V06（断言行与措辞黑名单）、V07（既有测试全绿）。
+第 5 条的标注是否**成立**只能由人判断，见 V09。
 
 **最小性对照**：`touched_files` 数与 diff 行数须与 `localization.md` 的预估一致；不一致即把 `evidence_kind` 强制降为 `hypothesis`。
 
@@ -89,4 +89,4 @@ estimated_diff_lines: <integer>
 - **补丁不转绿 → 回滚补丁、保留定位记录，回 S1 复核复现，或判 `blocked`。**
 - **必须改测试才能转绿 → fail（禁止）；在报告写明「修复未成立」。**
 - 若 S1 已确认可复现而 S2 无解，标 `blocked`，不得以「部分修复」结案。
-- 不得为了过门而放宽断言、改验收命令或扩大 `allowed_scope`。
+- 不得为了通过而放宽断言、改验收命令或扩大 `allowed_scope`。

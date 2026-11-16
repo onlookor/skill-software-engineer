@@ -20,7 +20,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 DIST = ROOT.parent.parent / "dist"
 
-INCLUDE_FILES = ("SKILL.md", "PACKAGING.md", "BACKFLOW.md")
+INCLUDE_FILES = ("README.md", "SKILL.md", "PACKAGING.md", "BACKFLOW.md")
 INCLUDE_DIRS = ("stages", "schemas", "validators", "examples")
 
 EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "work", "dist", "build", ".pytest_cache"}

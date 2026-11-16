@@ -2,14 +2,14 @@
 stage: "S3-verify"
 title: "验证"
 requirements:
-  entry_gate: "S2 已出门（fix.patch 存在且过门）"
+  entry: "S2 已通过（fix.patch 存在且通过）"
   config: ["test_command", "repro_timeout_seconds"]
 inputs:
   - "fix.patch"
   - "repro.md"
 steps:
   - "git stash／干净检出，确认工作区无未提交改动"
-  - "第①段：base 上跑复现命令，记录退出码（应 ≠ 0）"
+  - "第①段：修复前跑复现命令，记录退出码（应 ≠ 0）"
   - "第②段：应用 fix.patch，跑复现命令与全量测试，记录退出码（均应为 0）"
   - "第③段：撤销 fix.patch，再跑复现命令，记录退出码（应 ≠ 0）"
   - "写 verify.log（含 test_command_used 原文；三段各含 command／exit_code／started_at／duration）与 fix-report.md"
@@ -17,7 +17,7 @@ outputs:
   - "verify.log"
   - "fix-report.md"
 gate:
-  - "从干净检出起跑，三段命令顺序固定：①base 上复现失败 ②应用补丁后复现转绿且全量测试绿 ③撤销补丁后复现再次失败"
+  - "从干净检出起跑，三段命令顺序固定：①修复前复现失败 ②应用补丁后复现转绿且全量测试绿 ③撤销补丁后复现再次失败"
   - "verify.log 记录 commit、patch sha256、每段命令、退出码、时间戳"
   - "三段缺一即 fail"
 on_fail:
@@ -29,16 +29,16 @@ validators: ["V08"]
 
 ## 输入
 
-- `fix.patch`（S2 输出，已过门）
+- `fix.patch`（S2 输出，已通过）
 - `repro.md`（S1 输出）
-- 依赖的挂载期配置：`test_command`、`repro_timeout_seconds`。未约定 → `cannot_evaluate`。
+- 依赖的使用前约定项：`test_command`、`repro_timeout_seconds`。未约定 → `cannot_evaluate`。
 
-S2 未出门即写 `verify.log` 属跳步；检出即停，回 S2。
+S2 未通过就写 `verify.log` 属跳步；发现即停，回 S2。
 
 ## 步骤
 
 1. `git stash`／干净检出，确认工作区无未提交改动；记录 commit。
-2. 第①段：base 上跑复现命令，记录退出码。
+2. 第①段：修复前跑复现命令，记录退出码。
 3. 第②段：应用 `fix.patch`，跑复现命令与全量测试，记录退出码。
 4. 第③段：撤销 `fix.patch`，再跑复现命令，记录退出码。
 5. 写 `verify.log`（`test_command_used` 记逐字原文）与 `fix-report.md`。
@@ -48,11 +48,11 @@ S2 未出门即写 `verify.log` 属跳步；检出即停，回 S2。
 - `verify.log`
 - `fix-report.md`
 
-`fix-report.md` 是本 stage 的内部产物，不构成第五种出口交付物类型。
+`fix-report.md` 是本阶段的内部产物，不构成第五种交付物类型。
 
 ### `fix-report.md` 的机器可读部分
 
-Markdown 前的 YAML frontmatter（V06／V09 读取）：
+Markdown 前的 YAML 头（V06／V09 读取）：
 
 ```yaml
 ---
@@ -68,13 +68,13 @@ evidence_kind: direct | indirect | hypothesis
 - 无人复核 V09 时 `status` 只能是 `fixed_unverified_root_cause`。
 - 任一段验证不成立时 `status` 写 `not_fixed`。
 
-## 通过门（全机器判）
+## 通过条件（全部由自动检查判定）
 
-1. 从干净检出起跑，三段命令顺序固定：**①base 上复现失败 ②应用补丁后复现转绿且全量测试绿 ③撤销补丁后复现再次失败**。
+1. 从干净检出起跑，三段命令顺序固定：**①修复前复现失败 ②应用补丁后复现转绿且全量测试绿 ③撤销补丁后复现再次失败**。
 2. `verify.log` 记录 commit、patch sha256、每段命令、退出码、时间戳。
 3. **三段缺一即 fail。**
 
-判定者：V08。第③段（撤销后复败）是防「碰巧通过」的最低成本替代。
+判定者：V08。第③段（撤销后再次失败）是防「碰巧通过」的最低成本替代。
 
 ## 失败处理
 

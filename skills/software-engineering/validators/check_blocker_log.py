@@ -5,7 +5,7 @@
     python3 check_blocker_log.py <blocker-log.yaml>
 
 退出码：0＝合格或「未记录」；1＝存在不合格记录。
-「未记录」按约定不判 fail。机器校验通过不等于可提交——仍需人判。
+「未记录」按约定不判 fail。机器校验通过不等于可提交——仍需人判断。
 """
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ except ImportError:  # pragma: no cover
     sys.exit(1)
 
 ALLOWED_KEYS = {"card_file", "card_section", "type", "summary", "skill_version"}
-TYPES = {"字段缺", "表述歧义", "门不清", "缺外部信息"}
+TYPES = {"字段缺", "表述歧义", "通过条件不清", "缺外部信息"}
 CARD_FILES = {
     "SKILL.md", "S1-repro.md", "S2-localize-fix.md", "S3-verify.md",
     "repro.md", "failing-test.md", "fix-patch.md", "verify-log.md",
@@ -120,7 +120,7 @@ def main(argv: list[str]) -> int:
         for msg in problems:
             print(msg)
         return 1
-    print(f"合格：{len(data)} 条记录通过机器校验；仍需人判（黑名单判不了不带点的仓库名／主机名／账号，也判不了描述是否真的抽象）")
+    print(f"合格：{len(data)} 条记录通过机器校验；仍需人判断（黑名单判不了不带点的仓库名／主机名／账号，也判不了描述是否真的抽象）")
     return 0
 
 

@@ -8,7 +8,7 @@
 python3 skills/software-engineering/examples/defect-repro-fix/run.py
 ```
 
-脚本在 `work/` 下重建临时 git 仓（`work/` 已被本目录 `.gitignore` 忽略），按 S1→S2→S3 生成交付物并调用 validator；V01–V08 全 pass 时退出码 0，任一 fail 时退出码 1。每次运行都会先删掉 `work/` 再重建，产物保留在 `work/` 供检查。
+脚本在 `work/` 下重建临时 git 仓（`work/` 已被本目录 `.gitignore` 忽略），按 S1→S2→S3 生成交付物并调用自动检查；V01–V08 全 pass 时退出码 0，任一 fail 时退出码 1。每次运行都会先删掉 `work/` 再重建，产物保留在 `work/` 供检查。
 
 依赖：`python3` 与 `PyYAML`（`validators/validate.py` 已要求），无其它依赖；git 身份是 `example@example.invalid`／`example`，不含任何真实凭证。
 
@@ -21,15 +21,15 @@ python3 skills/software-engineering/examples/defect-repro-fix/run.py
 | `artifacts/repro_add.py` | 失败测试：单独运行即失败 |
 | `artifacts/fix.patch` | 最小补丁：只改 `calc.py` 一行 |
 | `artifacts/localization.md` | 定位记录：`evidence_kind: direct` |
-| `config.yaml` | **挂载期快照样例**（七项声明各有值） |
+| `config.yaml` | **使用前快照样例**（七项声明各有值） |
 | `run.py` | 编排脚本 |
 | `work/` | 运行后生成：`repro.md`、`tests/repro_add.meta.yaml`、`verify.log`、`fix-report.md` 等 |
 
-`repro.md` 的 commit、失败指纹、时间戳，以及 `verify.log` 的 patch sha 与三段结果都依赖实际运行，因此由 `run.py` 现场生成，不静态保存。
+`repro.md` 的 commit、失败摘要、时间戳，以及 `verify.log` 的 patch sha 与三段结果都依赖实际运行，因此由 `run.py` 现场生成，不静态保存。
 
 ## 它如何被 `validate.py` 消费
 
-**是 V01–V08 的真实输入，不只作演示。** 消费方式：本目录的 `config.yaml` 就是 `validate.py --config` 的输入（挂载期快照），`work/` 就是其中的 `repo_path`；`run.py` 只是按 S1→S2→S3 的时序把交付物写进 `work/`，再在三个正确的状态点调用同一个校验器：
+**是 V01–V08 的真实输入，不只作演示。** 消费方式：本目录的 `config.yaml` 就是 `validate.py --config` 的输入（使用前快照），`work/` 就是其中的 `repo_path`；`run.py` 只是按 S1→S2→S3 的时序把交付物写进 `work/`，再在三个正确的状态点调用同一个自动检查：
 
 | 时点 | 调用 | 原因 |
 |---|---|---|
@@ -38,7 +38,7 @@ python3 skills/software-engineering/examples/defect-repro-fix/run.py
 | 补丁应用后 | V07 | 既有测试全绿 |
 | 写完 `verify.log` | V08 | 只读日志与补丁 |
 
-它**不是**仓的常驻 CI 门：只证明示例自身的闭环能跑通，不替代真实仓的验收；`V09` 是人工清单，本脚本不跑。`config.yaml` 是挂载期快照（运行时产物），与 `SKILL.md` 的 `mount_declarations` 声明是两回事——声明本身不含任何值。
+它**不是**仓的常驻检查：只证明示例自身的闭环能跑通，不替代真实仓的验收；`V09` 是人工清单，本脚本不跑。`config.yaml` 是使用前快照（运行时产物），与 `SKILL.md` 的 `mount_declarations` 声明是两回事——声明本身不含任何值。
 
 ## 缓存与构建产物
 

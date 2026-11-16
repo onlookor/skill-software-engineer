@@ -6,7 +6,7 @@
 
 脚本在 work/ 下重建一个临时 git 仓（真 bug＋既有测试），按 S1→S2→S3 的顺序
 生成交付物，并在正确的状态点调用 validators/validate.py 的 V01–V08。
-任何一条 validator 非 0，脚本以非 0 退出。V09 是人工清单，本脚本不跑。
+任何一条自动检查非 0，脚本以非 0 退出。V09 是人工清单，本脚本不跑。
 """
 from __future__ import annotations
 
@@ -82,7 +82,7 @@ def main() -> int:
     shutil.copy(HERE / "artifacts" / "fix.patch", WORK / "fix.patch")
     shutil.copy(HERE / "artifacts" / "localization.md", WORK / "localization.md")
 
-    # S1：连跑两次取指纹
+    # S1：连跑两次取失败摘要
     fingerprints, codes = [], []
     for _ in range(cfg["repro_runs"]):
         code, out = _v.run_command(repro_cmd, WORK, timeout)
@@ -100,7 +100,7 @@ def main() -> int:
     }
     (WORK / "repro.md").write_text(
         "---\n" + yaml.safe_dump(repro, sort_keys=False, allow_unicode=True) + "---\n\n"
-        "在 base 上单独运行失败用例，连续两次失败且指纹一致。\n",
+        "在 base 上单独运行失败用例，连续两次失败且失败摘要一致。\n",
         encoding="utf-8",
     )
     meta = {
@@ -115,12 +115,12 @@ def main() -> int:
     )
 
     failed: list[str] = []
-    print("\n== S1 门（补丁前）")
+    print("\n== S1 通过条件（补丁前）")
     for vid in ("V01", "V02", "V03"):
         if run_validator(vid) != 0:
             failed.append(vid)
 
-    print("\n== S2 门（补丁未应用）")
+    print("\n== S2 通过条件（补丁未应用）")
     for vid in ("V04", "V05", "V06"):
         if run_validator(vid) != 0:
             failed.append(vid)
@@ -174,7 +174,7 @@ def main() -> int:
         "三段验证已由 run.py 执行；V09 未复核，状态不升格为 fixed。\n",
         encoding="utf-8",
     )
-    print("\n== S3 门（日志已写）")
+    print("\n== S3 通过条件（日志已写）")
     if run_validator("V08") != 0:
         failed.append("V08")
 
