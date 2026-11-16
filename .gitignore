@@ -26,3 +26,6 @@ registry/anchor_index/resolvability.csv
 registry/anchor_index/row_keys.csv
 registry/anchor_index/summary.json
 registry/anchor_index/targets.csv
+
+# 技能分发包构建产物（skills/software-engineering/scripts/build_package.py 生成，不入库）
+/dist/

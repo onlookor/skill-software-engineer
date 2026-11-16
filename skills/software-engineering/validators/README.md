@@ -58,3 +58,13 @@ python3 validate.py --config <挂载期配置快照.yaml> --only V01 V02
 
 - 任何一项缺输入或执行超时 → 退出码 3，不当作 pass，也不当作 fail。
 - 不得用「都跑过了」代替「每条都判过」；`cannot_evaluate` 必须原样上报。
+
+## 附：卡点日志校验（不属于 V01–V09）
+
+`check_blocker_log.py` 校验部署侧「卡点日志」的形状与脱敏黑名单，规则源见 [../schemas/blocker-log.md](../schemas/blocker-log.md)。
+
+- 用法：`python3 check_blocker_log.py <blocker-log.yaml>`；
+- 文件不存在或为空 → 输出「未记录」，退出码 0，**不判 fail**；
+- 存在不合格记录 → 退出码 1；
+- 机器校验通过 ≠ 可提交：不带点的仓库名／主机名／账号与「描述是否真的抽象」只能人判；默认不上传，由人看过再决定是否提交。
+- 它不改变技能能执行哪些任务，不属于任务交付物，也不参与 V01–V09 的判定。
