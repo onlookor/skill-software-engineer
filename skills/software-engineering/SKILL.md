@@ -5,14 +5,14 @@ description: >-
   复现证据、失败测试、最小补丁与三段验证日志。Reproduce-fix-verify a defect in an
   existing repository; produce repro evidence, a failing test, a minimal patch, and a
   three-phase verification log.
-version: "0.3.0"
+version: "0.4.0"
 entry: "stages/S1-repro.md"
 stages: ["stages/S1-repro.md", "stages/S2-localize-fix.md", "stages/S3-verify.md"]
 validators: ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08", "V09"]
 mount_declarations:            # 使用前必须约定的七项；缺一即 cannot_evaluate（无法判定）
   - {name: repo_path, type: path, range: "必须存在、可读、是 git 仓根", unconfigured: cannot_evaluate}
   - {name: test_command, type: "string（单行命令）", range: "非空；退出码语义明确（0＝通过）", unconfigured: cannot_evaluate}
-  - {name: build_command, type: "string（单行命令）", range: "非空", unconfigured: "不判通过：记 build_not_configured 并在报告标注"}
+  - {name: build_command, type: "string（单行命令）", range: "非空", unconfigured: "不判通过；V01–V08 不执行构建（交付物不依赖构建）"}
   - {name: repro_runs, type: integer, range: ">= 2", unconfigured: cannot_evaluate}
   - {name: repro_timeout_seconds, type: integer, range: ">= 1", unconfigured: cannot_evaluate}
   - {name: allowed_scope, type: "list<path>", range: "非空；每项必须是仓内路径", unconfigured: cannot_evaluate}
@@ -74,7 +74,7 @@ mount_declarations:            # 使用前必须约定的七项；缺一即 cann
 - 使用前向项目用户逐项确认**七项约定**（`SKILL.md` 开头 `mount_declarations` 列出的七项）：`repo_path`、`test_command`、`build_command`、`repro_runs`、`repro_timeout_seconds`、`allowed_scope`、`cache_cleanup_policy`。
 - 第七项「缓存与构建产物清理策略」只声明四项：项名、类型、取值范围、未配置时的行为（`cannot_evaluate`）。**不给任何值、示例值或推荐做法。**
 - 任一项未约定时按 `cannot_evaluate` 处理：不加载任何阶段说明、不开始 S1，不得默认「已清理」或「无需清理」，**不得回落为通过**。
-- 确认后落一份**配置快照**（项名＋值＋约定时间＋双方身份），并计算快照摘要；后续报告引用该摘要。
+- 确认后落一份**配置快照**：七项（项名＋值）＋可选元数据 `agreed_at`（ISO-8601 约定时间）与 `agreed_by`（恰好两项非空身份：部署方、使用方）。元数据只作记录，**不属于七项**，也不参与「缺一即无法判定」；加载器接受这两个键并校验格式，其余未声明键一律判非法。
 - 跨配置不可比：换配置即换摘要，不得把两套配置下的验证日志混用。
 - 未确认的项一律 `cannot_evaluate`；不得先跑后退回补配置。
 - 本技能文件只声明项名与约束，**不含任何值、示例值、推荐值**。
@@ -82,7 +82,7 @@ mount_declarations:            # 使用前必须约定的七项；缺一即 cann
 ### 为什么只有一张清单
 
 - **只有一张**：七项约定，S0 与自动检查判的是同一个对象。分开数会漏项——少答第七项时，自动检查仍会去判交付物。
-- **区别在判法**：前六项由自动检查直接使用或核对（`build_command` 未配置记 `build_not_configured`，不判通过）；第七项自动检查只判存在、类型与非空，**判不了策略是否足以排除缓存与构建产物复用**，该充分性只由人判断（见 V09 第 5 项）。
+- **区别在判法**：前六项由自动检查直接使用或核对；`build_command` 只校验类型与单行，V01–V08 不执行构建——当前四类交付物都不依赖构建，自动执行构建只会引入副作用与超时，因此**不承诺** `build_not_configured` 这一状态。第七项自动检查只判存在、类型与非空，**判不了策略是否足以排除缓存与构建产物复用**，该充分性只由人判断（见 V09 第 5 项）。
 - **影响**：配置快照必须含第七项，否则一律 `cannot_evaluate`；快照因此多一段自由文本，摘要随之变化，跨快照不可比。
 
 ## 明确不做（十方面）

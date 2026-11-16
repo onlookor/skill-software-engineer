@@ -26,13 +26,19 @@ INCLUDE_DIRS = ("stages", "schemas", "validators", "examples")
 EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "work", "dist", "build", ".pytest_cache"}
 EXCLUDE_SUFFIXES = {".pyc", ".pyo"}
 
-# 不得进入分发包的名字：编译工作区资产与本仓内部证据。
-FORBIDDEN_NAMES = {
-    "registry", "pilot", "adr", "archieve", "pact", "tests", "scripts",
+# 递归禁用：这些名字出现在归档的任意层级都判失败（仓库内部资产与内部证据）。
+FORBIDDEN_ANYWHERE = {
+    "registry", "pilot", "adr", "archieve", "pact", "scripts",
     "run-log", "run_log", "anchor_baseline.json",
     "软件工程元框架成文法.md", "软件工程元框架成文法-changlog.md",
-    "编译规范.md", "changelog.md",
+    "编译规范.md", "编译规范-changlog.md", "changelog.md",
 }
+
+# 顶层禁用：只有顶层 tests/ 是内部测试证据；随包示例仓内合法地含有嵌套 tests/ 目录，
+# 因此 tests 只查顶层，其余名字递归查整棵树。
+FORBIDDEN_TOP_LEVEL = {"tests"}
+
+FORBIDDEN_NAMES = FORBIDDEN_ANYWHERE | FORBIDDEN_TOP_LEVEL
 
 
 def fail(msg: str, staging: Path | None = None) -> int:
@@ -122,12 +128,15 @@ def main() -> int:
     with tarfile.open(archive, "r:gz") as tar:
         packaged = [Path(m.name).relative_to(pkg_name) for m in tar.getmembers() if m.isfile()]
 
-    # 顶层禁用：编译工作区资产与内部证据；任意层禁用：缓存与示例运行产物。
+    # 递归遍历整棵树：内部资产出现在任意层级都拒绝；tests 只查顶层。
     hits = sorted({
         token
         for rel in packaged
-        for token in ([rel.parts[0]] if rel.parts[0] in FORBIDDEN_NAMES else [])
-        + [part for part in rel.parts if part in {"__pycache__", "work"}]
+        for token in (
+            ([rel.parts[0]] if rel.parts[0] in FORBIDDEN_TOP_LEVEL else [])
+            + [part for part in rel.parts if part in FORBIDDEN_ANYWHERE]
+            + [part for part in rel.parts if part in {"__pycache__", "work"}]
+        )
     })
     if hits:
         archive.unlink(missing_ok=True)

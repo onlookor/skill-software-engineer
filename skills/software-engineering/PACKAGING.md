@@ -1,6 +1,6 @@
 # 安装与第一次使用
 
-> 版本 **0.3.0**（版本号唯一来源是 `SKILL.md` 开头的 `version`，打包时自动读取，不另行维护）。
+> 版本 **0.4.0**（版本号唯一来源是 `SKILL.md` 开头的 `version`，打包时自动读取，不另行维护）。
 > 目标：不克隆仓库也能安装；装完能用示例自检，再拿一个真 bug 走一遍。
 
 ## 一、包里有什么
@@ -34,9 +34,9 @@
 每次打包产出同一份内容的两种形态：
 
 ```
-dist/software-engineering-0.3.0/                  # 目录形态，顶层就是技能目录
-dist/software-engineering-0.3.0.tar.gz            # 归档形态（分发用）
-dist/software-engineering-0.3.0.tar.gz.sha256     # 归档摘要（校验用）
+dist/software-engineering-0.4.0/                  # 目录形态，顶层就是技能目录
+dist/software-engineering-0.4.0.tar.gz            # 归档形态（分发用）
+dist/software-engineering-0.4.0.tar.gz.sha256     # 归档摘要（校验用）
 ```
 
 ## 四、谁打包、谁安装、装到哪
@@ -53,12 +53,12 @@ dist/software-engineering-0.3.0.tar.gz.sha256     # 归档摘要（校验用）
 
 ### 1. 下载
 
-取得 `software-engineering-0.3.0.tar.gz` 与 `software-engineering-0.3.0.tar.gz.sha256` 两个文件。全程不需要访问代码仓库。
+取得 `software-engineering-0.4.0.tar.gz` 与 `software-engineering-0.4.0.tar.gz.sha256` 两个文件。全程不需要访问代码仓库。
 
 ### 2. 校验
 
 ```bash
-sha256sum -c software-engineering-0.3.0.tar.gz.sha256
+sha256sum -c software-engineering-0.4.0.tar.gz.sha256
 ```
 
 必须显示「成功／OK」。不一致就停止，重新下载；**不得跳过校验直接解包**。
@@ -66,15 +66,15 @@ sha256sum -c software-engineering-0.3.0.tar.gz.sha256
 ### 3. 解包
 
 ```bash
-tar -xzf software-engineering-0.3.0.tar.gz
+tar -xzf software-engineering-0.4.0.tar.gz
 ```
 
-得到目录 `software-engineering-0.3.0/`，`SKILL.md` 在它下面第一层。
+得到目录 `software-engineering-0.4.0/`，`SKILL.md` 在它下面第一层。
 
 ### 4. 改名
 
 ```bash
-mv software-engineering-0.3.0 software-engineering
+mv software-engineering-0.4.0 software-engineering
 ```
 
 ### 5. 放进 skills 目录
@@ -87,7 +87,7 @@ mv software-engineering <你的技能目录>/
 
 ### 6. 约定七项信息（缺一项就不能开始）
 
-技能开始工作前，需要你和部署负责人逐项约定下面七项，并把约定结果记成一份**配置快照**（项名＋值＋约定时间＋双方身份）。技能本身**不给默认值、示例值或推荐值**；任一项没约定，这一步就停在「无法判定」，不会开始复现。
+技能开始工作前，需要你和部署负责人逐项约定下面七项，并把约定结果记成一份**配置快照**（七项的项名＋值，可另记 `agreed_at` 约定时间与 `agreed_by` 双方身份；这两项元数据不属于七项）。技能本身**不给默认值、示例值或推荐值**；任一项没约定，这一步就停在「无法判定」，不会开始复现。
 
 | 项 | 要约定什么 |
 |---|---|

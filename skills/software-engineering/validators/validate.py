@@ -58,6 +58,9 @@ CONFIG_KEYS = (
     "cache_cleanup_policy",
 )
 
+# 快照元数据：不参与「七项缺一即无法判定」，只用于记录约定时间与双方身份。
+SNAPSHOT_META_KEYS = ("agreed_at", "agreed_by")
+
 
 class Ctx:
     def __init__(self, cfg: dict, repo: Path):
@@ -83,7 +86,7 @@ def load_config(path: Path) -> tuple[dict, list[str]]:
         return {}, [f"配置快照不是合法 YAML：{exc}"]
     if not isinstance(raw, dict):
         return {}, ["配置快照必须是 mapping"]
-    unknown = sorted(set(raw) - set(CONFIG_KEYS))
+    unknown = sorted(set(raw) - set(CONFIG_KEYS) - set(SNAPSHOT_META_KEYS))
     if unknown:
         errors.append(f"配置快照含未声明项：{', '.join(unknown)}")
     cfg = {k: raw[k] for k in CONFIG_KEYS if k in raw}
@@ -149,6 +152,19 @@ def load_config(path: Path) -> tuple[dict, list[str]]:
     policy = cfg.get("cache_cleanup_policy")
     if not isinstance(policy, str) or not policy.strip():
         errors.append("cache_cleanup_policy 未约定或不是非空字符串")
+
+    agreed_at = raw.get("agreed_at")
+    if agreed_at is not None and not _isoish(agreed_at):
+        errors.append("agreed_at 已给出但不是 ISO-8601 日期或日期时间")
+
+    agreed_by = raw.get("agreed_by")
+    if agreed_by is not None:
+        if (
+            not isinstance(agreed_by, list)
+            or len(agreed_by) != 2
+            or not all(nonempty_str(x) for x in agreed_by)
+        ):
+            errors.append("agreed_by 已给出但必须恰好两项非空身份（部署方与使用方）")
 
     return cfg, errors
 
@@ -239,6 +255,61 @@ def parse_iso(v) -> bool:
             return True
         except ValueError:
             return False
+
+
+def _isoish(v) -> bool:
+    """YAML 会把裸日期解析成 date/datetime，这里一并接受。"""
+    if isinstance(v, (date, datetime)):
+        return True
+    return parse_iso(v)
+
+
+def load_repro_meta(repo: Path) -> tuple[dict | None, str | None]:
+    """读取唯一的 tests/repro_*.meta.yaml。"""
+    metas = sorted((repo / "tests").glob("repro_*.meta.yaml"))
+    if not metas:
+        return None, "缺 tests/repro_*.meta.yaml"
+    if len(metas) > 1:
+        return None, "tests/ 下有多份 repro_*.meta.yaml，无法判定是哪一件"
+    try:
+        meta = yaml.safe_load(metas[0].read_text(encoding="utf-8"))
+    except yaml.YAMLError as exc:
+        return None, f"{metas[0].name} 不是合法 YAML：{exc}"
+    if not isinstance(meta, dict):
+        return None, f"{metas[0].name} 必须是 mapping"
+    return meta, None
+
+
+def command_references(cmd: str, meta: dict) -> bool:
+    """命令是否引用了元数据记录的测试文件或 test_id（用于绑定失败来源）。"""
+    refs: list[str] = []
+    file_ref = str(meta.get("file") or "")
+    if file_ref:
+        refs.append(file_ref)
+        refs.append(Path(file_ref).name)
+    test_id = str(meta.get("test_id") or "")
+    if test_id:
+        refs.append(test_id)
+        refs.append(test_id.split(".")[-1])
+    return any(ref and ref in cmd for ref in refs)
+
+
+def diff_line_count(text: str) -> int:
+    """统计补丁中实际增删的行数（不含 +++/--- 文件头）。"""
+    n = 0
+    for line in text.splitlines():
+        if line.startswith(("+++", "---")):
+            continue
+        if line[:1] in ("+", "-"):
+            n += 1
+    return n
+
+
+def git(repo: Path, *args: str, timeout: int = 120) -> subprocess.CompletedProcess:
+    return subprocess.run(
+        ["git", "-C", str(repo), *args],
+        capture_output=True, text=True, timeout=timeout,
+    )
 
 
 def patch_map(text: str) -> dict[str, list[str]]:
@@ -340,6 +411,15 @@ def v02(ctx: Ctx) -> Result:
     cmd = data.get("command")
     if not single_line(cmd):
         return cannot("V02", "repro.md.command 缺失或不可执行")
+    meta, merr = load_repro_meta(ctx.repo)
+    if merr:
+        return cannot("V02", merr)
+    if not command_references(cmd, meta):
+        return bad(
+            "V02",
+            "复现命令未引用元数据记录的失败测试文件或 test_id，"
+            "无法区分真实失败与恒真失败命令",
+        )
     runs = ctx.get("repro_runs")
     timeout = ctx.get("repro_timeout_seconds")
     fps, outs = [], []
@@ -352,6 +432,12 @@ def v02(ctx: Ctx) -> Result:
             return cannot("V02", f"第 {i + 1} 次运行无法启动：{exc}")
         if code == 0:
             return bad("V02", f"第 {i + 1} 次运行退出码为 0（期望非 0）")
+        if not out.strip():
+            return bad(
+                "V02",
+                f"第 {i + 1} 次运行输出为空；空输出无法构成失败证据，"
+                "且空输出摘要恒为同一值",
+            )
         outs.append(code)
         fps.append(fingerprint(out, ctx.repo))
     if len(set(fps)) != 1:
@@ -371,25 +457,39 @@ def v02(ctx: Ctx) -> Result:
 
 
 def v03(ctx: Ctx) -> Result:
-    metas = sorted((ctx.repo / "tests").glob("repro_*.meta.yaml"))
-    if not metas:
-        return cannot("V03", "缺 tests/repro_*.meta.yaml")
-    if len(metas) > 1:
-        return cannot("V03", "tests/ 下有多份 repro_*.meta.yaml，无法判定是哪一件")
-    meta_path = metas[0]
-    try:
-        meta = yaml.safe_load(meta_path.read_text(encoding="utf-8"))
-    except yaml.YAMLError as exc:
-        return cannot("V03", f"{meta_path.name} 不是合法 YAML：{exc}")
-    if not isinstance(meta, dict):
-        return cannot("V03", f"{meta_path.name} 必须是 mapping")
+    meta, merr = load_repro_meta(ctx.repo)
+    if merr:
+        return cannot("V03", merr)
     problems: list[str] = []
-    if not nonempty_str(meta.get("file")) or not (ctx.repo / str(meta.get("file"))).exists():
-        problems.append("file 缺失或指向的文件不存在")
+    file_ref = meta.get("file")
+    if not nonempty_str(file_ref):
+        problems.append("file 缺失或为空")
+    else:
+        test_file = ctx.repo / str(file_ref)
+        if not test_file.exists():
+            problems.append("file 指向的文件不存在")
+        elif not test_file.is_file():
+            problems.append("file 指向的不是文件")
+        elif test_file.stat().st_size == 0:
+            problems.append("失败测试文件为空")
+        else:
+            body = test_file.read_text(encoding="utf-8", errors="replace")
+            if (
+                not ASSERT_RE.search(body)
+                and "def test" not in body
+                and "class Test" not in body
+            ):
+                problems.append("失败测试文件不含断言或测试定义")
     if not nonempty_str(meta.get("test_id")):
         problems.append("test_id 缺失或为空")
-    if not single_line(meta.get("single_run_command")):
+    single = meta.get("single_run_command")
+    if not single_line(single):
         problems.append("single_run_command 缺失或不是单行")
+    elif nonempty_str(file_ref) and not command_references(single, meta):
+        problems.append(
+            "single_run_command 未引用 file 指向的测试文件或 test_id，"
+            "无法确认它执行的是该失败测试"
+        )
     if not hexish(meta.get("base_commit")):
         problems.append("base_commit 不是 7–40 位十六进制")
     if not nonempty_str(meta.get("expected_failure")):
@@ -397,10 +497,7 @@ def v03(ctx: Ctx) -> Result:
     if problems:
         return bad("V03", *problems)
     try:
-        head = subprocess.run(
-            ["git", "-C", str(ctx.repo), "rev-parse", "HEAD"],
-            capture_output=True, text=True, timeout=30,
-        )
+        head = git(ctx.repo, "rev-parse", "HEAD", timeout=30)
     except (OSError, subprocess.SubprocessError) as exc:
         return cannot("V03", f"git rev-parse 失败：{exc}")
     if head.returncode != 0:
@@ -479,6 +576,31 @@ def v06(ctx: Ctx) -> Result:
         return bad("V06", f"localization.md.evidence_kind 非法：{kind!r}")
 
     text = patch.read_text(encoding="utf-8", errors="replace")
+    problems: list[str] = []
+
+    est_files = loc.get("estimated_touched_files")
+    est_lines = loc.get("estimated_diff_lines")
+    actual_files = len(patch_map(text))
+    actual_lines = diff_line_count(text)
+    if not _is_int(est_files) or est_files < 0:
+        problems.append(
+            "localization.md.estimated_touched_files 缺失或不是非负整数，无法做最小性对照"
+        )
+    elif est_files != actual_files:
+        problems.append(
+            f"最小性对照不一致：预估触及 {est_files} 个文件，实际 {actual_files} 个"
+            "（不一致时 evidence_kind 只能按 hypothesis 重写）"
+        )
+    if not _is_int(est_lines) or est_lines < 0:
+        problems.append(
+            "localization.md.estimated_diff_lines 缺失或不是非负整数，无法做最小性对照"
+        )
+    elif est_lines != actual_lines:
+        problems.append(
+            f"最小性对照不一致：预估改动 {est_lines} 行，实际 {actual_lines} 行"
+            "（不一致时 evidence_kind 只能按 hypothesis 重写）"
+        )
+
     violations: list[str] = []
     for path, lines in patch_map(text).items():
         if not is_test_path(path):
@@ -488,10 +610,8 @@ def v06(ctx: Ctx) -> Result:
                 continue
             if ASSERT_RE.search(line[1:]):
                 violations.append(f"{path}: {line[:160]}")
-    problems: list[str] = []
     if violations:
         problems.append("测试断言行发生改动：" + " | ".join(violations[:5]))
-
     banned = ("根因已确认", "彻底修复", "问题已解决")
     if kind == "hypothesis":
         hits = []
@@ -510,7 +630,7 @@ def v06(ctx: Ctx) -> Result:
             problems.append("hypothesis 下出现冒充措辞：" + "；".join(hits))
     if problems:
         return bad("V06", *problems)
-    return ok("V06", f"测试断言行零改动；evidence_kind={kind}")
+    return ok("V06", f"测试断言行零改动；最小性对照一致；evidence_kind={kind}")
 
 
 def v07(ctx: Ctx) -> Result:
@@ -607,7 +727,148 @@ def v08(ctx: Ctx) -> Result:
                 problems.append("第 2 段命令未包含全量测试命令")
     if problems:
         return bad("V08", *problems)
-    return ok("V08", "三段齐备，退出码序列＝非0／0／非0，sha 与补丁一致")
+
+    # 以下不采信日志自述：核对 HEAD、工作区，并实际重跑三段。
+    try:
+        head = git(ctx.repo, "rev-parse", "HEAD", timeout=30)
+    except (OSError, subprocess.SubprocessError) as exc:
+        return cannot("V08", f"git rev-parse 失败：{exc}")
+    if head.returncode != 0:
+        return cannot("V08", f"git rev-parse 失败：{head.stderr.strip()}")
+    head_sha = head.stdout.strip()
+    if str(log["commit"]).lower() != head_sha.lower():
+        return bad(
+            "V08",
+            "verify.log.commit 与当前 HEAD 不一致",
+            f"log={log['commit']}",
+            f"HEAD={head_sha}",
+        )
+
+    try:
+        dirty = git(ctx.repo, "status", "--porcelain", "--untracked-files=no", timeout=30)
+    except (OSError, subprocess.SubprocessError) as exc:
+        return cannot("V08", f"git status 失败：{exc}")
+    if dirty.returncode != 0:
+        return cannot("V08", f"git status 失败：{dirty.stderr.strip()}")
+    if dirty.stdout.strip():
+        return bad(
+            "V08",
+            "工作区有未提交的已跟踪文件改动，无法确认验证日志对应干净检出",
+            dirty.stdout.strip()[:800],
+        )
+
+    try:
+        can_apply = git(
+            ctx.repo, "apply", "--check", "--whitespace=nowarn", "fix.patch", timeout=120
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return cannot("V08", f"git apply --check 失败：{exc}")
+    if can_apply.returncode != 0:
+        return bad(
+            "V08",
+            "fix.patch 当前无法干净应用（可能已被应用），无法重跑第①段",
+            can_apply.stderr.strip()[:400],
+        )
+
+    timeout = ctx.get("repro_timeout_seconds")
+
+    def rerun(label: str, command: str) -> int:
+        try:
+            code, _out = run_command(command, ctx.repo, timeout)
+        except subprocess.TimeoutExpired:
+            raise RuntimeError(f"{label}重跑超时，无法判定")
+        except OSError as exc:
+            raise RuntimeError(f"{label}重跑无法启动：{exc}")
+        return code
+
+    # 第①段：补丁未应用，应失败
+    try:
+        c1 = rerun("第①段", phases[0]["command"])
+    except RuntimeError as exc:
+        return cannot("V08", str(exc))
+    if c1 == 0:
+        return bad("V08", "第①段重跑退出码为 0（期望非 0）")
+    if c1 != phases[0]["exit_code"]:
+        return bad(
+            "V08",
+            "第①段重跑退出码与日志不一致",
+            f"重跑={c1}",
+            f"日志={phases[0]['exit_code']}",
+        )
+
+    # 第②段：应用补丁后应为 0；无论成败都撤销补丁
+    try:
+        applied = git(
+            ctx.repo, "apply", "--whitespace=nowarn", "fix.patch", timeout=120
+        )
+    except (OSError, subprocess.SubprocessError) as exc:
+        return cannot("V08", f"重跑时应用 fix.patch 失败：{exc}")
+    if applied.returncode != 0:
+        return cannot("V08", "重跑时无法应用 fix.patch：" + applied.stderr.strip()[:400])
+    try:
+        try:
+            c2 = rerun("第②段", phases[1]["command"])
+        except RuntimeError as exc:
+            return cannot("V08", str(exc))
+        if c2 != 0:
+            return bad("V08", f"第②段重跑退出码={c2}（期望 0）")
+        if c2 != phases[1]["exit_code"]:
+            return bad(
+                "V08",
+                "第②段重跑退出码与日志不一致",
+                f"重跑={c2}",
+                f"日志={phases[1]['exit_code']}",
+            )
+    finally:
+        try:
+            reverted = git(
+                ctx.repo, "apply", "-R", "--whitespace=nowarn", "fix.patch", timeout=120
+            )
+        except (OSError, subprocess.SubprocessError):
+            reverted = None
+    if reverted is None or reverted.returncode != 0:
+        return cannot("V08", "重跑后撤销 fix.patch 失败，工作区可能已污染")
+
+    # 第③段：撤补丁后应再次失败
+    try:
+        c3 = rerun("第③段", phases[2]["command"])
+    except RuntimeError as exc:
+        return cannot("V08", str(exc))
+    if c3 == 0:
+        return bad("V08", "第③段重跑退出码为 0（撤补丁后仍未复败）")
+    if c3 != phases[2]["exit_code"]:
+        return bad(
+            "V08",
+            "第③段重跑退出码与日志不一致",
+            f"重跑={c3}",
+            f"日志={phases[2]['exit_code']}",
+        )
+
+    # 未复核根因不得写成 fixed：status=fixed 必须有 V09 签字
+    report, rerr = load_frontmatter(ctx.repo / "fix-report.md")
+    if rerr:
+        return bad("V08", "缺 fix-report.md 或格式不合法：" + rerr)
+    status = report.get("status")
+    if status not in ("fixed", "fixed_unverified_root_cause", "not_fixed"):
+        return bad("V08", f"fix-report.md.status 非法：{status!r}")
+    if status == "fixed":
+        sign = report.get("v09_signoff")
+        if (
+            not isinstance(sign, dict)
+            or not nonempty_str(sign.get("reviewer"))
+            or not _isoish(sign.get("date"))
+        ):
+            return bad(
+                "V08",
+                "fix-report.md.status=fixed 但缺 V09 签字（v09_signoff.reviewer／date）；"
+                "无人复核时不得写 fixed",
+            )
+
+    return ok(
+        "V08",
+        "三段已实际重跑（非0／0／非0）；commit 与 HEAD 一致；"
+        "工作区无已跟踪改动；sha 与补丁一致",
+    )
 
 
 VALIDATORS = {

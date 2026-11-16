@@ -70,6 +70,10 @@ def check_record(idx: int, rec) -> list[str]:
     section = rec.get("card_section")
     if not isinstance(section, str) or not SECTION_RE.fullmatch(section.strip()):
         problems.append(f"{where}：card_section 缺失或含不允许字符（限 1–40 字符）")
+    else:
+        for label, pattern in BLACKLIST:
+            if pattern.search(section.strip()):
+                problems.append(f"{where}：card_section 命中黑名单「{label}」")
 
     kind = rec.get("type")
     if kind not in TYPES:

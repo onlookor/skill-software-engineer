@@ -1,7 +1,7 @@
 # V09 人工清单：根因陈述
 
 > 唯一人工项。自动检查判不了的只有一件事：`localization.md` 的根因陈述与 `evidence_kind` 是否**成立**。
-> 复核人逐项签字并附证据；未签字时交付物状态保持 `fixed_unverified_root_cause`，不得升格为 `fixed`。
+> 复核人逐项签字并附证据；未签字时交付物状态保持 `fixed_unverified_root_cause`，写 `fixed` 会被 V08 判 fail（V08 要求 `v09_signoff.reviewer` 与 `v09_signoff.date`）。
 
 ## 复核对象
 
@@ -16,7 +16,7 @@
 | 1 | `evidence_kind` 与证据强度相符 | `direct` 必须能在日志／栈中直接指出成因语句；无此证据只能是 `indirect` 或 `hypothesis` | ☐ | |
 | 2 | 机制断言说的是机制，不是表层现象 | 断言对象是异常类型／返回码／状态字段等机制层可观察量 | ☐ | |
 | 3 | 成因与失败测试断言同源 | 修复的机制与失败测试断言的机制是同一个 | ☐ | |
-| 4 | 最小性对照一致 | `touched_files` 数与 diff 行数符合 `localization.md` 预估；不一致则 `evidence_kind` 已被降为 `hypothesis` | ☐ | |
+| 4 | 最小性对照一致 | `touched_files` 数与 diff 行数符合 `localization.md` 预估；不一致时 V06 已判 fail，须按实际重写 `localization.md` | ☐ | |
 | 5 | 第③段反向删证成立 | 撤销补丁后复现复败；并用 `cache_cleanup_policy` 与 `test_command_used` 核对缓存与构建产物复用已被排除 | ☐ | |
 | 6 | 无冒充措辞 | `hypothesis` 下未出现「根因已确认／彻底修复／问题已解决」；状态未写 `fixed` | ☐ | |
 | 7 | 成因唯一性未被宣称 | 报告没有把「该输入下失败消失」说成「根因唯一」 | ☐ | |
@@ -24,7 +24,7 @@
 ## 结论
 
 - [ ] 全部通过 → `localization.md` 的根因陈述成立，`fix-report.md` 可按其 `evidence_kind` 记状态。
-- [ ] 任一项不通过 → 状态只能 `fixed_unverified_root_cause`；写明不通过项与原因。
+- [ ] 任一项不通过 → 状态只能 `fixed_unverified_root_cause`；写明不通过项与原因，且不得写入 `v09_signoff`。
 
 复核人：____________　日期：____________　配置快照摘要：____________
 

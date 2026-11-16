@@ -36,7 +36,7 @@ python3 skills/software-engineering/examples/defect-repro-fix/run.py
 | 补丁前 | V01 V02 V03 | V03 要求 HEAD 等于 `base_commit` 且用例仍失败 |
 | 补丁未应用 | V04 V05 V06 | `git apply --check` 要求补丁尚未应用 |
 | 补丁应用后 | V07 | 既有测试全绿 |
-| 写完 `verify.log` | V08 | 只读日志与补丁 |
+| 写完 `verify.log` | V08 | 实际重跑三段，并与日志逐段比对退出码 |
 
 它**不是**仓的常驻检查：只证明示例自身的闭环能跑通，不替代真实仓的验收；`V09` 是人工清单，本脚本不跑。`config.yaml` 是使用前快照（运行时产物），与 `SKILL.md` 的 `mount_declarations` 声明是两回事——声明本身不含任何值。
 

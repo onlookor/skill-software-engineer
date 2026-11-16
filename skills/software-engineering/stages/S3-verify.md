@@ -61,11 +61,14 @@ patch_sha256: <64 位小写十六进制>
 touched_files:
   - <path>
 evidence_kind: direct | indirect | hypothesis
+v09_signoff:            # 仅当 status: fixed 时必填
+  reviewer: <非空身份>
+  date: <ISO-8601>
 ---
 ```
 
 - `evidence_kind: hypothesis` 时 `status` 不得写 `fixed`。
-- 无人复核 V09 时 `status` 只能是 `fixed_unverified_root_cause`。
+- 无人复核 V09 时 `status` 只能是 `fixed_unverified_root_cause`；写 `fixed` 必须带 `v09_signoff`（复核者身份＋日期），否则 **V08 判 fail**——这一条已由 V08 实际执行，不再是文档承诺。
 - 任一段验证不成立时 `status` 写 `not_fixed`。
 
 ## 通过条件（全部由自动检查判定）
@@ -74,10 +77,10 @@ evidence_kind: direct | indirect | hypothesis
 2. `verify.log` 记录 commit、patch sha256、每段命令、退出码、时间戳。
 3. **三段缺一即 fail。**
 
-判定者：V08。第③段（撤销后再次失败）是防「碰巧通过」的最低成本替代。
+判定者：V08。V08 不只读日志：它核对 `commit` 与 HEAD、识别已跟踪文件的脏改动，并实际重跑三段（第②段前应用补丁、结束后撤销），逐段比对退出码。第③段（撤销后再次失败）是防「碰巧通过」的最低成本替代。
 
 ## 失败处理
 
 - **任一段不成立 → fail，`fix-report` 写「未修复」，禁止降级为 pass。**
 - 不得把「第二段绿」单独当成功；不得跳过第①或第③段。
-- `evidence_kind` 为 `hypothesis` 时，`fix-report.md` 的状态只能是 `fixed_unverified_root_cause`，不得写 `fixed`；无人复核 V09 时状态保持该值，不得升格。
+- `evidence_kind` 为 `hypothesis` 时，`fix-report.md` 的状态只能是 `fixed_unverified_root_cause`，不得写 `fixed`；无人复核 V09 时状态保持该值，不得升格（写 `fixed` 而无 `v09_signoff` 会被 V08 判 fail）。

@@ -17,7 +17,7 @@
 - 只触及 `localization.md` 列出的文件。
 - 测试断言行零改动（`tests/` 与 `*_test.*` 的断言行）。
 - 不得为了让检查通过而改验收命令、放宽断言或扩大 `allowed_scope`。
-- 最小性对照：`touched_files` 数与 diff 行数须与 `localization.md` 的预估一致；不一致即把 `evidence_kind` 强制降为 `hypothesis`。
+- 最小性对照：`touched_files` 数与 diff 行数须与 `localization.md` 的 `estimated_touched_files`／`estimated_diff_lines` 一致；缺失或不一致即由 V06 判 fail，须按实际重写 `localization.md`，并把 `evidence_kind` 按 `hypothesis` 处理。
 
 ## 模板（占位符不是值）
 
