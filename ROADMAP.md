@@ -28,12 +28,12 @@
 |---|---|---|---|---|---|
 | **M0** | 阶段 A | `registry/profiles.yaml`、`method_registry.yaml`、`guard_registry.yaml`、`fvr_registry.yaml`、`projection_registry.yaml` 五文件存在；`pact/` 至少 3 个 `se_tier*_*.pact` | 五注册表最小集、档位结构位基线 | 无 | `todo.md` 3.10 |
 | **M1** | 阶段 B | `registry/method_registry.yaml` 的 `meta.entry_count` ≥ 1；`pilot/vertical-slice-20261112/artifact.yaml` 的 `compilation_artifact.version.label` 非空（LRM 已越） | 种子条目、Waiver 登记 | M0 | `todo.md` 3.8 |
-| **M2** | 阶段 C | `artifact.yaml` 的 `compilation_artifact.version.label` 非空；`编译规范.md` 正文在位 | 编译产物、忠实性检查、FVR 接线 | M1 | `todo.md` 3.1／3.2／3.3／3.4／3.6／3.7／3.9 |
+| **M2** | 阶段 C | `artifact.yaml` 的 `compilation_artifact.version.artifact_seq ≥ 2`，且 `cards` 至少 1 项、`recompile_map` 至少 1 项（与 M1 的标签判据不同源；命令可按 `python3 -c` 或 `project.py` 状态块核对） | 编译产物、忠实性检查、FVR 接线 | M1 | `todo.md` 3.1／3.2／3.3／3.4／3.6／3.7／3.9 |
 | **M3** | 阶段 D | `pilot/vertical-slice-20261112/10.2.5-verdict-pact-dsh.yaml` 的 `grounding_acceptance.summary.pass = 6` 且 `fail = 0`；`todo.md` 3.5／3.8 关闭 | 10.2.5 判定、试点记录 | M2 | `todo.md` 3.5 |
 | **M4** | 技能层（开发侧／部署侧／回流三层） | `skills/software-engineering/validators/validate.py` 提供 V01–V08 可执行检查；`skills/software-engineering/tests/negative/run_negative.py` 全部用例拦截；包内示例 `examples/defect-repro-fix/run.py` 退出 0 | 技能包（`SKILL.md`、`stages/`、`schemas/`、`validators/`、`examples/`）、回流说明 | 与 M3 **并行**，不以其关闭为前提 | 新增里程碑；不并入 C／D 出口 |
 | **M5** | 分发件 | `python3 skills/software-engineering/scripts/build_package.py` 退出 0；`dist/software-engineering-<version>.tar.gz` 与 `.sha256` 存在；解包后包内示例退出 0 | 归档、摘要、随包 README／PACKAGING | 与 M3 **并行**；出口**不绑定** M6 批准或第三轮复核 | 新增里程碑；不并入 C／D 出口 |
-| **M6** | 独立复核制度 | `独立复核规程.md` 经人类批准；`review/` 下的复核记录与批次对应 | 复核规程、复核记录 | 人类批准；与 M3／M4／M5 并行 | 新增里程碑；复核制度批准状态归本项，不串入 M5 |
-| **M7** | 发布点 | annotated tag 指向 `HEAD`，且 tag 名为 `release-*` 或 `vX.Y.Z`；未满足时不打标签 | annotated tag、发布说明 | M3–M6 各自出口；由人类决定是否打标签 | 发布动作 |
+| **M6** | 独立复核制度 | 存在 `review/approval.md`：frontmatter 的 `decision: approved`、`approved_by` 非空、`approved_at` 为日期，且 `procedure_sha256` 与当前 `独立复核规程.md` 内容哈希一致；`review/` 下的复核记录与批次对应。批准记录须由人类书写，执行方不得代笔（流程约束；文件校验不能证明作者身份） | 复核规程、批准记录、复核记录 | 人类批准；与 M3／M4／M5 并行 | 新增里程碑；复核制度批准状态归本项，不串入 M5 |
+| **M7** | 发布点 | annotated tag 指向 `HEAD`（轻量 tag 不算），且 tag 名为 `release-*` 或 `vX.Y.Z`；未满足时不打标签 | annotated tag、发布说明 | M3–M6 各自出口；由人类决定是否打标签 | 发布动作 |
 
 **并行关系（人类裁定，2026-11-16）**：M4、M5 是与 M3 并行的独立线，不因 M3 未闭合而阻塞；M4、M5 是新增里程碑，不并入 C／D 的出口；M5 的关闭条件不绑定「人类批准复核制度」和「第三轮复核通过」。
 

@@ -2023,4 +2023,4 @@
 - **数据来源层**（yaml 行内注释）：narrative: 人工判断；impact: 骨架源/交叉表源；statement: 骨架源/人工判断；affected: 人工判断；route: 人工判断；closure: 人工判断；note: 交叉表源；status: 人工判断；judgment: 人工判断/交叉表源/骨架源；obligation: 骨架源/人工判断；consumer: 人工判断；evidence: 人工判断
 
 ---
-生成于 2026-11-15T13:57:36｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`aaa8361eb146`；`profiles.yaml`→`623af138471e`；`predicate_vocabulary.yaml`→`b7a59fad1a51`
+生成于 2026-11-16T23:51:44｜源哈希（sha256 前 12 位）：`method_registry.yaml`→`aaa8361eb146`；`profiles.yaml`→`623af138471e`；`predicate_vocabulary.yaml`→`b7a59fad1a51`

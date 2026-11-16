@@ -9,7 +9,7 @@ inputs:
   env_notes: {type: text, required: false}
 steps:
   - "读构建文件与测试入口"
-  - "按约定的 test_command 装依赖并跑一次"
+  - "按约定的 test_command 跑一次既有测试（命令形式为 `python3 -I <仓内相对路径>`）"
   - "写失败用例 tests/repro_<slug>.<ext>"
   - "连跑 repro_runs 次，取失败摘要（异常类型＋关键栈帧＋断言差异）"
 outputs:
@@ -38,7 +38,7 @@ validators: ["V01", "V02", "V03"]
 ## 步骤
 
 1. 读构建文件与测试入口，确认测试框架与用例布局。
-2. 按约定的 `test_command` 装依赖并跑一次，记录退出码。
+2. 按约定的 `test_command` 跑一次既有测试（命令形式为 `python3 -I <仓内相对路径>`），记录退出码。
 3. 写失败用例 `tests/repro_<slug>.<ext>`：断言机制层可观察量（异常类型／返回码／状态字段），不写表层输出字符串。
 4. 连跑 `repro_runs` 次，逐次记录退出码与失败摘要；`repro_timeout_seconds` 为单次超时上限。
 5. 填 `repro.md`（八个字段，格式见 `schemas/repro.md`）。

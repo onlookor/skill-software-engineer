@@ -15,9 +15,9 @@
 
 | 字段 | 类型 | 约束 | 可自动判定 | 只能由人判断 |
 |---|---|---|---|---|
-| `file` | string | 指向测试文件，仓内相对路径，文件存在、非空、含**非恒真**断言 | 存在、非空、含非恒真断言（V03） | 断言语义上是否真的成立（只识别固定恒真写法） |
+| `file` | string | 指向测试文件，**仓内 `tests/` 相对路径**（绝对路径、仓外路径、软链出仓均不合格），文件存在、非空、含**非恒真**断言 | 路径形式、存在、非空、含非恒真断言（V03） | 断言语义上是否真的成立（只识别固定恒真写法） |
 | `test_id` | string | 非空 | 存在且非空；被 `single_run_command` 引用 | 用例 id 是否确为该用例 |
-| `single_run_command` | string | 非空、单行、**单条简单命令**（禁止 `;`／`&&`／`||`／管道／重定向／注释／`-c`）；只跑该用例；必须由已知启动器执行 `file` 或 `test_id` | V03 实际运行必失败；简单命令与执行绑定（V03 判） | 命令语义上是否真的只跑了该用例（仍可绕过） |
+| `single_run_command` | string | 非空、单行，且只能是 `python3 -I <仓内相对路径>`；脚本必须与 `file` 是同一文件；只跑该用例 | V03 实际运行必失败；白名单形式与脚本绑定（V03 判） | 命令语义上是否真的只跑了该用例（仍可绕过） |
 | `base_commit` | string | 7–40 位十六进制；等于 S1 时的 HEAD | V03 比对 HEAD | 该 commit 是否为用户所指版本 |
 | `expected_failure` | string | 非空；期望的失败信息 | 存在且非空 | 失败信息是否对应机制层可观察量 |
 
@@ -32,7 +32,7 @@
 ```yaml
 file: "tests/repro_<slug>.<ext>"
 test_id: "<string>"
-single_run_command: "<单行命令>"
+single_run_command: "python3 -I tests/repro_<slug>.<ext>"
 base_commit: "<7–40 位十六进制>"
 expected_failure: "<string>"
 ```
@@ -40,6 +40,6 @@ expected_failure: "<string>"
 ## 判不了的部分
 
 - 用例是否覆盖真实使用场景：没有可自动判定的标准，只能由人判断。
-- `single_run_command` 是否真的只跑了该用例：V03 只认「单条简单命令＋已知启动器＋独立参数含该文件或 test_id」且「实际失败」，无法证明命令内部没有绕过；复合命令与内联代码（`-c`）直接拒绝。
+- `single_run_command` 是否真的只跑了该用例：V03 只认「`python3 -I <仓内相对路径>`＋脚本与 `file` 同一文件＋实际失败」，无法证明命令内部没有绕过；`bash`／`env`／赋值前缀／`-m`／`-c`／参数与复合命令直接拒绝。
 - 断言是否语义上恒真：只识别 `assertTrue(True)`、`assert 1`、`assertEqual(5, 5)` 这类固定写法；用变量或函数调用伪装的恒真断言判不了。
 - `base_commit` 对应版本是否就是用户报障的版本：只能由人判断。

@@ -28,7 +28,7 @@
 | `archieve/` | archived | 历轮讨论记录，只读 | 只读 |
 | `skills/software-engineering/` | active | 技能包源（`SKILL.md`、`stages/`、`schemas/`、`validators/`、`examples/`、内部 `tests/`、`scripts/`） | 交付方 |
 | `dist/` | generated | 打包产物（目录、`.tar.gz`、`.sha256`）；由 `build_package.py` 生成，不手工放入 | 生成物 |
-| `review/` | internal | 独立复核记录；**当前未启用**（尚无复核记录），不随包发布 | 复核者／执行者 |
+| `review/` | internal | 独立复核记录与人类批准记录（M6 要求 `review/approval.md`）；**当前未创建**，不随包发布 | 复核者／人类批准人 |
 | `resources/` | ignored | 本地参考资料，不入库（`.gitignore`） | 只读 |
 
 **边界**：本文件不判断文件内容是否正确，只登记状态；内容冲突由 `CHANGELOG.md` 的批次与 `todo.md` 的条目承载。

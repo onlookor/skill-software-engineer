@@ -24,3 +24,22 @@
   5. **文档同步**：技能 `README.md` 与 `PACKAGING.md` 删除版本字面量；`PACKAGING.md` 八处路径改 `${VERSION}` 占位；`编译规范.md` 文件头删除「当前状态」，改为指向 `todo.md` 3.7 的登记指针；`AGENTS.MD` 补充第 11–12 条的适用范围，并登记 `skills/`、`dist/`、`review/`；`翻新方案` §76 的现状数字按实测修正。
 - **关联 ADR**：无
 - **备注**：`独立复核规程.md` 仍为草案（待人类批准）；本批次不据此声称任何产物「已复核」或「已验证」。
+
+## 批次 0002 — 2026-11-16
+
+- **批次号**：0002
+- **日期**：2026-11-16
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（V02／V03／V06／V07／V08、受控执行引导、覆盖采集、补丁区域解析）
+  - 文档：`skills/software-engineering/SKILL.md`、`validators/README.md`、`schemas/repro.md`、`schemas/failing-test.md`、`schemas/fix-patch.md`、`stages/S1-repro.md`、`stages/S2-localize-fix.md`、`stages/S3-verify.md`、`examples/defect-repro-fix/*`
+  - 打包：`skills/software-engineering/scripts/build_package.py`
+  - 负向用例：`skills/software-engineering/tests/negative/run_negative.py`
+  - 调度：`registry/scripts/project.py`、`ROADMAP.md`、`README.md`、`STATE.md`
+- **变更摘要**：
+  1. **环境隔离（人类批准「执行证据」路径）**：复现命令与测试命令只接受 `python3 -I <仓内相对路径>` 恰好三词；`bash`／`env`／赋值前缀／`-m`／`-c`／参数与复合命令直接拒绝，不再剥前缀兼容。执行时清空全部 `PYTHON*` 环境变量，以 `-I -S -B` 启动引导，显式屏蔽 `sitecustomize`／`usercustomize`，工作目录钉在仓根。V03 的测试文件路径只接受仓内 `tests/` 相对路径，绝对路径／仓外／软链出仓直接判 fail，与 schema 对齐。
+  2. **执行证据（覆盖率）**：base 与 patched 两态都在受控执行下用标准库 `trace` 采集覆盖行；补丁在生产代码上删除的行必须在 base 态被复现测试执行到，新增的行必须在 patched 态被执行到，任一交集为空即 fail。覆盖率工具不可执行时返回 `cannot_evaluate`。标准库实现，不新增挂载期声明、不新增交付物，按扩张锁定口径不构成扩张。
+  3. **文档承诺清理**：删除 `validators/README.md` 与 `schemas/repro.md` 中「V08 兜底」的不实表述（V08 只复跑同一命令并核对覆盖交集）；V06 的覆盖范围改为事实口径（`tests/` 路径的改写、改名、移出；`tests/` 之外夹具不在其内），改名按 diff 的 a 侧旧路径判定；`schemas/failing-test.md` 与 V03 实现对齐。
+  4. **打包断言收紧**：内部资产与 `tests/` 判定改为大小写不敏感并忽略前导点；软链按解析后的真实路径判定，指向仓外或内部资产即拒包；版本字面量匹配前做字符串常量折叠，拒绝 `"0.6." + "0"` 这类邻接拼接。
+  5. **调度层假门**：M2 改用 `artifact_seq`／卡片数／重编译次数作为独立出口，与 M1 的标签判据不同源；M6 改为要求 `review/approval.md`（`decision/approved_by/approved_at`＋与当前复核规程内容哈希一致），删除「文档里出现某个词」判据；M7 要求 annotated tag 且指向当前 HEAD，轻量 tag 不算；根 `README.md` 的阶段释义收敛为指向 `ROADMAP.md` 的单份语义。
+- **关联 ADR**：无
+- **备注**：本批次只提交，不推送、不打标签；未做自评，不写「已验证」。五个复核变体（C1／C2／C4／C6／C7）已自测，结果见第二份阶段报告，不以本条目替代报告。

@@ -15,7 +15,7 @@
 ## 硬约束
 
 - 只触及 `localization.md` 列出的文件。
-- 测试路径零改动：`tests/` 与 `*_test.*` 下**已有文件**不得出现任何增删行（断言、测试数据、夹具一律不改）；只允许新增 `tests/repro_*` 失败测试文件。
+- `tests/` 路径已有文件不得被改写、被改名、被移出 `tests/`（改名按 diff 的 a 侧旧路径判定）；只允许新增 `tests/repro_*` 失败测试文件。该条只保护 `tests/` 路径名，不保护行为：`tests/` 之外的夹具或数据文件改动不在 V06 覆盖范围。
 - 不得为了让检查通过而改验收命令、放宽断言或扩大 `allowed_scope`。
 - 最小性对照：`touched_files` 数与 diff 行数须与 `localization.md` 的 `estimated_touched_files`／`estimated_diff_lines` 一致；缺失或不一致即由 V06 判 fail，须按实际重写 `localization.md`，并把 `evidence_kind` 按 `hypothesis` 处理。
 
@@ -35,4 +35,4 @@ diff --git a/<path> b/<path>
 
 - 补丁语义是否正确：V04 只判可应用，不判语义。
 - 改动是否「最小」：没有可自动判定的标准；只登记 `touched_files` 数与 diff 行数供复核。
-- 是否以其他方式把测试变恒真：V06 判「测试目录已有文件零改动」与「新增文件必须是 repro_*」，但新增 repro 测试内部是否恒真只由 V03 的固定写法识别兜底。
+- 是否以其他方式把测试变恒真：V06 判「`tests/` 路径已有文件不被改写／改名／移出」与「新增文件必须是 `repro_*`」，但新增 repro 测试内部是否恒真只由 V03 的固定写法识别，并最终由 V08 的执行覆盖证据约束（补丁行必须被该测试实际执行到）。

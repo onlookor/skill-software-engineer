@@ -60,7 +60,7 @@ def clear_caches() -> None:
 
 def main() -> int:
     cfg = yaml.safe_load(CONFIG.read_text(encoding="utf-8"))
-    repro_cmd = "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'repro_add.py'"
+    repro_cmd = "python3 -I tests/repro_add.py"
     test_cmd = cfg["test_command"]
     timeout = cfg["repro_timeout_seconds"]
 
@@ -79,6 +79,7 @@ def main() -> int:
     print(f"   base commit={head}")
 
     shutil.copy(HERE / "artifacts" / "repro_add.py", WORK / "tests" / "repro_add.py")
+    shutil.copy(HERE / "artifacts" / "run_all.py", WORK / "tests" / "run_all.py")
     shutil.copy(HERE / "artifacts" / "fix.patch", WORK / "fix.patch")
     shutil.copy(HERE / "artifacts" / "localization.md", WORK / "localization.md")
 
@@ -127,12 +128,19 @@ def main() -> int:
 
     print("\n== S3 三段验证")
 
-    def timed(cmd: str) -> dict:
+    def timed(cmd: str, label: str | None = None) -> dict:
         started = datetime.datetime.now().astimezone()
-        code, _out = _v.run_command(cmd, WORK, timeout)
+        if label is None:
+            code, _out = _v.run_command(cmd, WORK, timeout)
+        else:
+            # 第②段在日志里记复合命令，但执行时两条命令分开跑：
+            # 复合命令不能作为复现命令单独执行，也不允许拼接。
+            first, _o1 = _v.run_command(repro_cmd, WORK, timeout)
+            second, _o2 = _v.run_command(test_cmd, WORK, timeout)
+            code = 0 if first == 0 and second == 0 else 1
         ended = datetime.datetime.now().astimezone()
         return {
-            "command": cmd,
+            "command": label or cmd,
             "exit_code": code,
             "started_at": started.isoformat(timespec="seconds"),
             "duration": round((ended - started).total_seconds(), 3),
@@ -146,7 +154,7 @@ def main() -> int:
     print("  补丁已应用")
     if run_validator("V07") != 0:
         failed.append("V07")
-    p2 = timed(f"{repro_cmd} && {test_cmd}")
+    p2 = timed(repro_cmd, label=f"{repro_cmd} && {test_cmd}")
     print(f"  第②段 复现转绿且全量测试绿：exit={p2['exit_code']}")
     sh("git apply -R fix.patch")
     clear_caches()

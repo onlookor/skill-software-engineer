@@ -5,13 +5,13 @@ description: >-
   复现证据、失败测试、最小补丁与三段验证日志。Reproduce-fix-verify a defect in an
   existing repository; produce repro evidence, a failing test, a minimal patch, and a
   three-phase verification log.
-version: "0.5.0"
+version: "0.6.0"
 entry: "stages/S1-repro.md"
 stages: ["stages/S1-repro.md", "stages/S2-localize-fix.md", "stages/S3-verify.md"]
 validators: ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08", "V09"]
 mount_declarations:            # 使用前必须约定的七项；缺一即 cannot_evaluate（无法判定）
   - {name: repo_path, type: path, range: "必须存在、可读、是 git 仓根", unconfigured: cannot_evaluate}
-  - {name: test_command, type: "string（单行命令）", range: "非空；退出码语义明确（0＝通过）", unconfigured: cannot_evaluate}
+  - {name: test_command, type: "string（单行命令）", range: "非空；只能是 `python3 -I <仓内相对路径>`；退出码语义明确（0＝通过）", unconfigured: cannot_evaluate}
   - {name: build_command, type: "string（单行命令）", range: "非空", unconfigured: "不判通过；V01–V08 不执行构建（交付物不依赖构建）"}
   - {name: repro_runs, type: integer, range: ">= 2", unconfigured: cannot_evaluate}
   - {name: repro_timeout_seconds, type: integer, range: ">= 1", unconfigured: cannot_evaluate}
@@ -64,10 +64,11 @@ mount_declarations:            # 使用前必须约定的七项；缺一即 cann
 
 1. **不跳步**：S1 没通过不写补丁；S2 没通过不写验证日志；失败处理不得「先继续再补」。
 2. **不改判定标准**：不得修改测试断言、不得修改验收命令使其通过；V06 会判。
-3. **不越界**：补丁只触及定位说明里列出的文件；范围之外一律不动。
-4. **不编值**：七项使用前约定只从约定结果来；缺项即 `cannot_evaluate`，不得用「常见取值」代填，也不得默认「无需清理」。
-5. **不冒充**：根因没有直接证据时，状态只能写 `fixed_unverified_root_cause`（修复未验证根因），不得写 `fixed`，不得出现「根因已确认／彻底修复／问题已解决」。
-6. **不洗白**：宁 fail 不 vacuous；空集、跳过、缺证据一律不算通过。
+3. **只查产物不算证据**：复现测试必须在受控执行（`python3 -I`、清空 `PYTHON*`、屏蔽 `sitecustomize`）下跑到补丁改动过的生产代码行；补丁行与实测覆盖行交集为空即未证明修复，不得写成通过。
+4. **不越界**：补丁只触及定位说明里列出的文件；范围之外一律不动。
+5. **不编值**：七项使用前约定只从约定结果来；缺项即 `cannot_evaluate`，不得用「常见取值」代填，也不得默认「无需清理」。
+6. **不冒充**：根因没有直接证据时，状态只能写 `fixed_unverified_root_cause`（修复未验证根因），不得写 `fixed`，不得出现「根因已确认／彻底修复／问题已解决」。
+7. **不洗白**：宁 fail 不 vacuous；空集、跳过、缺证据一律不算通过。
 
 ## 交互协议（使用前，不是安装后自动生效）
 

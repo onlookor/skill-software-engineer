@@ -3065,33 +3065,105 @@ def _grounding_summary() -> tuple[int, int] | None:
     return None
 
 
+def _artifact_shape() -> tuple[int, int, int] | None:
+    """M2 的独立出口：编译序号、卡片数、重编译次数，不依赖标签字符串。"""
+    path = PILOT_DIR / 'artifact.yaml'
+    if not path.is_file():
+        return None
+    try:
+        doc = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
+    except yaml.YAMLError:
+        return None
+    ca = doc.get('compilation_artifact') or {}
+    seq = (ca.get('version') or {}).get('artifact_seq')
+    cards = ca.get('cards')
+    remap = ca.get('recompile_map')
+    if isinstance(seq, int) and isinstance(cards, list) and isinstance(remap, list):
+        return seq, len(cards), len(remap)
+    return None
+
+
+def _approval_record() -> tuple[bool, str]:
+    """M6 的独立出口：review/approval.md 必须绑定当前复核规程的内容哈希。
+
+    文件校验只能证明「存在一份与当前规程对应的批准记录」，不能证明
+    记录确由人类书写；后者仍是流程约束，不由代码冒充。
+    """
+    path = SE_DIR / 'review' / 'approval.md'
+    if not path.is_file():
+        return False, '未批准（缺 review/approval.md）'
+    if not REVIEW_PROC.is_file():
+        return False, '无法判定（缺独立复核规程.md）'
+    text = path.read_text(encoding='utf-8')
+    lines = text.splitlines()
+    if not lines or lines[0].strip() != '---':
+        return False, '未批准（approval.md 缺 frontmatter）'
+    try:
+        end = lines.index('---', 1)
+        meta = yaml.safe_load('\n'.join(lines[1:end])) or {}
+    except (ValueError, yaml.YAMLError):
+        return False, '未批准（approval.md 不可解析）'
+    if meta.get('decision') != 'approved':
+        return False, '未批准（decision 不是 approved）'
+    by = meta.get('approved_by')
+    if not isinstance(by, str) or not by.strip():
+        return False, '未批准（缺 approved_by）'
+    if not isinstance(meta.get('approved_at'), (str, datetime.date)):
+        return False, '未批准（缺 approved_at）'
+    expected = hashlib.sha256(REVIEW_PROC.read_bytes()).hexdigest()
+    if meta.get('procedure_sha256') != expected:
+        return False, '未批准（批准记录与当前复核规程不一致）'
+    return True, f'已批准（{by.strip()}）'
+
+
+def _annotated_release_at_head(tags: list[str] | None) -> str | None:
+    """M7 的独立出口：release 标签必须是 annotated 且指向当前 HEAD。"""
+    if not tags:
+        return None
+
+    def git(*args: str) -> str | None:
+        try:
+            out = subprocess.run(['git', *args], cwd=str(SE_DIR),
+                                 capture_output=True, text=True, timeout=10)
+        except (OSError, subprocess.SubprocessError):
+            return None
+        return out.stdout.strip() if out.returncode == 0 else None
+
+    head_sha = git('rev-parse', 'HEAD')
+    if not head_sha:
+        return None
+    for tag in reversed([t for t in tags if RELEASE_TAG_RE.match(t)]):
+        if git('cat-file', '-t', tag) != 'tag':
+            continue
+        if git('rev-list', '-n1', tag) == head_sha:
+            return tag
+    return None
+
+
 def stage_facts(tags: list[str] | None) -> str:
     regs_ok = all((REG_DIR / name).is_file() for name in MIN_REGISTRIES)
     pacts = list((SE_DIR / 'pact').glob('se_tier*_*.pact'))
     label = _artifact_label()
+    shape = _artifact_shape()
     version = _skill_version()
     grounding = _grounding_summary()
-    proc = REVIEW_PROC.read_text(encoding='utf-8') if REVIEW_PROC.is_file() else ''
-    release = [t for t in (tags or []) if RELEASE_TAG_RE.match(t)]
+    review = _approval_record()[1]
+    release = _annotated_release_at_head(tags)
     skill_ok = version is not None and (SKILL_DIR / 'validators' / 'validate.py').is_file()
     dist_ok = version is not None and all(
         (DIST_DIR / f'software-engineering-{version}.tar.gz{suffix}').is_file()
         for suffix in ('', '.sha256'))
-    if '待人类批准' in proc:
-        review = '待人类批准'
-    elif '已批准' in proc:
-        review = '已批准'
-    else:
-        review = '未登记'
+    compile_ok = shape is not None and shape[0] >= 2 and shape[1] >= 1 and shape[2] >= 1
     parts = [
         'A ' + ('已越' if regs_ok and len(pacts) >= 3 else '未完成'),
         'B ' + ('已越 LRM' if label else '未越 LRM'),
-        'C ' + (f'已越（{label}）' if label else '未完成'),
+        'C ' + (f'已越（seq {shape[0]}／{shape[1]} 卡／{shape[2]} 次重编译）'
+                if compile_ok else '未完成'),
         'D ' + (f'{grounding[0]}/6' if grounding else '无法判定'),
         'M4 技能层 ' + (f'v{version}' if skill_ok else '未落地'),
         'M5 分发件 ' + (f'v{version} 已产出' if dist_ok else '未产出'),
         'M6 复核制度 ' + review,
-        'M7 发布 ' + (release[-1] if release else '未开始'),
+        'M7 发布 ' + (release if release else '未开始（无 annotated tag 指向 HEAD）'),
     ]
     return '｜'.join(parts)
 

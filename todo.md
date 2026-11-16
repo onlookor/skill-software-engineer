@@ -7,7 +7,7 @@
 > **编号纪律**：按成文法 0.22 承诺一（编号稳定性），新增工作项追加编号而不重排既有条目；执行优先级以各项标注为准。
 
 <!-- STATUS:BEGIN -->
-当前状态：条目 138｜母本 4811 行 / 592239 字节｜ADR 37 份｜tag 13 个：anchor-B-1、cost-C-20261112、layer-B0、layer-B1、layer-B2、layer-B3a、layer-B3b、layer-B4、layer-B5、layer-B6、layer-B7、layer-close-20261111、layer-skill-narrow-20261116｜阶段 A 已越｜B 已越 LRM｜C 已越（pilot-20261112.14）｜D 6/6｜M4 技能层 v0.5.0｜M5 分发件 v0.5.0 已产出｜M6 复核制度 待人类批准｜M7 发布 未开始｜--check 硬失败 0
+当前状态：条目 138｜母本 4811 行 / 592239 字节｜ADR 37 份｜tag 13 个：anchor-B-1、cost-C-20261112、layer-B0、layer-B1、layer-B2、layer-B3a、layer-B3b、layer-B4、layer-B5、layer-B6、layer-B7、layer-close-20261111、layer-skill-narrow-20261116｜阶段 A 已越｜B 已越 LRM｜C 已越（seq 14／18 卡／5 次重编译）｜D 6/6｜M4 技能层 v0.6.0｜M5 分发件 v0.6.0 已产出｜M6 复核制度 未批准（缺 review/approval.md）｜M7 发布 未开始（无 annotated tag 指向 HEAD）｜--check 硬失败 0
 <!-- STATUS:END -->
 
 > 上块由 `registry/scripts/project.py --project` 按事实重写，`--check` 逐项比对；块内数值不得手改。其中「阶段」字段的里程碑定义与出口条件见 `ROADMAP.md`，状态由事实生成。

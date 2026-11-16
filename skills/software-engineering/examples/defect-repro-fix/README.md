@@ -42,4 +42,4 @@ python3 skills/software-engineering/examples/defect-repro-fix/run.py
 
 ## 缓存与构建产物
 
-示例的缓存清理策略写在 `config.yaml` 的 `cache_cleanup_policy` 中并被执行：S3 第②、③段前清空 `__pycache__`，测试命令带 `PYTHONDONTWRITEBYTECODE=1`。第③段的失效实例与触发条件见 [validators/README.md](../../validators/README.md) 的「第③段（撤补丁复败）的证据有效性前提」。
+示例的缓存清理策略写在 `config.yaml` 的 `cache_cleanup_policy` 中并被执行：S3 第②、③段前清空 `__pycache__`；校验器以受控隔离模式运行测试（清空 `PYTHON*` 环境变量、`-B` 不写字节码、屏蔽 `sitecustomize`／`usercustomize`）。第③段的失效实例与触发条件见 [validators/README.md](../../validators/README.md) 的「第③段（撤补丁复败）的证据有效性前提」。

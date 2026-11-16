@@ -12,10 +12,13 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import json
+import os
 import re
 import shlex
 import subprocess
 import sys
+import tempfile
 from datetime import date, datetime
 from pathlib import Path
 
@@ -230,17 +233,172 @@ def fingerprint(text: str, repo: Path) -> str:
     return hashlib.sha256(t.encode("utf-8")).hexdigest()
 
 
-def run_command(cmd: str, cwd: Path, timeout: int) -> tuple[int, str]:
+# 受控执行引导：在解释器隔离模式下运行声明的测试脚本。
+# - `-I`：隔离模式（忽略 PYTHON* 环境变量、不加脚本目录、不加用户 site）；
+# - `-S`：跳过 site 初始化，从而不执行 sitecustomize；
+# - 引导内只恢复系统 site-packages（不执行 sitecustomize/usercustomize），
+#   把仓库根放到 sys.path[0]，工作目录钉在仓库根；
+# - trace 模式下用标准库 trace 采集覆盖行，JSON 写回给校验器。
+# 覆盖率工具用标准库实现，不引入新依赖，也不属于新的挂载期能力声明。
+BOOTSTRAP = r'''
+import json, os, runpy, sys, trace
+
+repo, script, mode, out = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+os.chdir(repo)
+sys.path.insert(0, repo)
+# 测试脚本里常见 `unittest.main()`：它按 sys.argv 解析用例名，这里必须去掉引导参数。
+sys.argv = [script]
+try:
+    import site
+    for d in site.getsitepackages():
+        if os.path.isdir(d):
+            site.addsitedir(d)
+except Exception:
+    pass
+# 显式屏蔽：即使仓库根或 site-packages 里有同名模块，也不得被导入。
+sys.modules["sitecustomize"] = None
+sys.modules["usercustomize"] = None
+
+
+def main():
     try:
-        proc = subprocess.run(
-            cmd, shell=True, cwd=str(cwd), capture_output=True, text=True,
-            timeout=timeout,
+        runpy.run_path(script, run_name="__main__")
+        return 0
+    except SystemExit as exc:
+        code = exc.code
+        if code is None:
+            return 0
+        return code if isinstance(code, int) else 1
+    except BaseException:
+        return 1
+
+
+if mode == "plain":
+    sys.exit(main())
+
+tracer = trace.Trace(count=True, trace=False,
+                     ignoredirs=[sys.prefix, sys.exec_prefix])
+code = 0
+try:
+    tracer.runfunc(lambda: sys.exit(main()))
+except SystemExit as exc:
+    val = exc.code
+    code = 0 if val is None else (val if isinstance(val, int) else 1)
+except BaseException:
+    code = 1
+covered = {}
+for (fn, lineno), _count in tracer.results().counts.items():
+    try:
+        rel = os.path.relpath(os.path.realpath(fn), repo)
+    except ValueError:
+        continue
+    if rel.startswith(".."):
+        continue
+    covered.setdefault(rel.replace(os.sep, "/"), []).append(lineno)
+with open(out, "w", encoding="utf-8") as fh:
+    json.dump({"exit": code,
+               "covered": {k: sorted(set(v)) for k, v in covered.items()}},
+              fh)
+sys.exit(0)
+'''
+
+_INTERPRETER_RE = re.compile(r"^python(?:3(?:\.\d+)?)?$")
+
+
+def parse_isolated_command(cmd, repo: Path) -> tuple[Path | None, str | None]:
+    """只接受 `python3 -I <仓内相对路径>`；返回 (脚本绝对路径, 问题描述)。"""
+    if not isinstance(cmd, str) or not cmd.strip():
+        return None, "命令为空"
+    if "\n" in cmd or "\r" in cmd:
+        return None, "命令含换行"
+    try:
+        tokens = shlex.split(cmd)
+    except ValueError:
+        return None, "命令无法按 shell 规则切分"
+    if len(tokens) != 3:
+        return None, (
+            "只允许 `python3 -I <仓内相对路径>`（恰好三个词；"
+            "不接参数、不接 -m/-c、不使用 bash/env/赋值前缀）"
         )
-    except subprocess.TimeoutExpired:
-        raise
-    except OSError as exc:
-        raise RuntimeError(str(exc))
-    return proc.returncode, (proc.stdout or "") + (proc.stderr or "")
+    if not _INTERPRETER_RE.fullmatch(Path(tokens[0]).name):
+        return None, "解释器只允许 python3（隔离模式）"
+    if tokens[1] != "-I":
+        return None, "解释器必须带 -I（隔离模式）"
+    raw = tokens[2]
+    rel = Path(raw)
+    if rel.is_absolute():
+        return None, "路径必须是仓内相对路径，不接受绝对路径"
+    if ".." in rel.parts:
+        return None, "路径含 ..，可能指向仓外"
+    try:
+        real = (repo / rel).resolve(strict=True)
+    except OSError:
+        return None, f"测试文件不存在：{raw}"
+    root = repo.resolve()
+    if real != root and root not in real.parents:
+        return None, "路径解析后落在仓库之外（含软链指向仓外）"
+    if not real.is_file():
+        return None, "路径不是文件"
+    return real, None
+
+
+def _clean_env() -> dict:
+    """清空所有 PYTHON* 环境变量（PYTHONPATH／PYTHONSTARTUP／PYTHONHOME 等）。"""
+    return {k: v for k, v in os.environ.items() if not k.startswith("PYTHON")}
+
+
+def _exec_isolated(repo: Path, script: Path, timeout: int, trace_mode: bool):
+    """在隔离引导下执行脚本；返回 (退出码, 输出, 覆盖行或 None)。"""
+    with tempfile.TemporaryDirectory(prefix="validate-iso-") as tmpdir:
+        tmp = Path(tmpdir)
+        boot = tmp / "bootstrap.py"
+        boot.write_text(BOOTSTRAP, encoding="utf-8")
+        out = tmp / "coverage.json"
+        argv = [sys.executable or "python3", "-I", "-S", "-B", str(boot),
+                str(repo), str(script), "trace" if trace_mode else "plain", str(out)]
+        try:
+            proc = subprocess.run(
+                argv, cwd=str(repo), env=_clean_env(),
+                capture_output=True, text=True, timeout=timeout,
+            )
+        except subprocess.TimeoutExpired:
+            raise
+        except OSError as exc:
+            raise RuntimeError(str(exc))
+        text = (proc.stdout or "") + (proc.stderr or "")
+        covered = None
+        if trace_mode:
+            if proc.returncode != 0 or not out.exists():
+                raise RuntimeError(
+                    "覆盖率采集无法执行（受控引导退出码="
+                    f"{proc.returncode}）：" + text.strip()[-500:]
+                )
+            try:
+                covered = json.loads(out.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError) as exc:
+                raise RuntimeError(f"覆盖率结果不可读：{exc}")
+            code = covered.get("exit")
+            if not isinstance(code, int):
+                raise RuntimeError("覆盖率结果缺退出码")
+            return code, text, covered
+        return proc.returncode, text, None
+
+
+def run_command(cmd: str, cwd: Path, timeout: int) -> tuple[int, str]:
+    """按白名单形式解释并受控执行命令（非 trace 模式）。"""
+    script, problem = parse_isolated_command(cmd, cwd)
+    if problem:
+        raise RuntimeError(problem)
+    code, text, _covered = _exec_isolated(cwd, script, timeout, trace_mode=False)
+    return code, text
+
+
+def run_traced_command(cmd: str, repo: Path, timeout: int):
+    """受控执行并采集覆盖行；返回 (退出码, 输出, covered)。"""
+    script, problem = parse_isolated_command(cmd, repo)
+    if problem:
+        raise RuntimeError(problem)
+    return _exec_isolated(repo, script, timeout, trace_mode=True)
 
 
 def parse_iso(v) -> bool:
@@ -281,16 +439,28 @@ def load_repro_meta(repo: Path) -> tuple[dict | None, str | None]:
     return meta, None
 
 
-# 可夹带第二条命令的 shell 结构：分号、逻辑连接、管道、重定向、注释、子命令、花括号展开。
-SHELL_META_RE = re.compile(r"[;&|<>`$(){}\n\r#]")
+def repo_relative_test_path(raw, repo: Path) -> tuple[Path | None, str | None]:
+    """测试文件必须是仓内 tests/ 下的相对路径；返回 (解析后的真实路径, 问题)。"""
+    if not nonempty_str(raw):
+        return None, "file 缺失或为空"
+    p = Path(raw)
+    if p.is_absolute():
+        return None, "file 必须是仓内相对路径，不接受绝对路径"
+    if ".." in p.parts:
+        return None, "file 含 ..，可能指向仓外"
+    if not p.parts or p.parts[0].lower().lstrip(".") != "tests":
+        return None, "file 必须位于仓内 tests/ 下"
+    try:
+        real = (repo / p).resolve(strict=True)
+    except OSError:
+        return None, "file 指向的文件不存在"
+    root = repo.resolve()
+    if real != root and root not in real.parents:
+        return None, "file 解析后落在仓库之外（含软链指向仓外）"
+    if not real.is_file():
+        return None, "file 指向的不是文件"
+    return real, None
 
-# 允许作为「执行测试」的启动器；其余命令即使含文件名也不认。
-RUNNERS = {
-    "python", "python3", "pytest", "py.test", "node", "nodejs", "npm", "npx",
-    "yarn", "pnpm", "bun", "deno", "uv", "poetry", "pdm", "pipenv", "tox",
-    "nox", "go", "cargo", "mvn", "gradle", "dotnet", "ruby", "php", "bundle",
-    "rake", "bash", "sh", "make", "test", "unittest",
-}
 
 # 可识别的恒真／常量断言：只覆盖固定写法，语义上的「恒真」判不了。
 TRIVIAL_ASSERTIONS = (
@@ -299,53 +469,6 @@ TRIVIAL_ASSERTIONS = (
     re.compile(r"\bassertTrue\(\s*(True|1|true)\s*\)"),
     re.compile(r"\bassertEqual\(\s*([0-9]+)\s*,\s*\1\s*\)"),
 )
-
-
-def simple_command_problem(cmd: str) -> str | None:
-    """命令必须是单条简单命令；返回问题描述，没问题返回 None。"""
-    if not isinstance(cmd, str) or not cmd.strip():
-        return "命令为空"
-    if "\n" in cmd or "\r" in cmd:
-        return "命令含换行"
-    if SHELL_META_RE.search(cmd):
-        return "命令含可夹带第二条命令的 shell 结构（; && || 管道 重定向 注释 子命令）"
-    try:
-        tokens = shlex.split(cmd)
-    except ValueError:
-        return "命令无法按 shell 规则切分"
-    if not tokens:
-        return "命令为空"
-    if any(t in ("-c", "-e") for t in tokens[1:]):
-        return "命令使用内联代码开关（-c/-e），无法确认执行的是该测试文件"
-    return None
-
-
-def _command_parts(cmd: str) -> list[str] | None:
-    try:
-        tokens = shlex.split(cmd)
-    except ValueError:
-        return None
-    i = 0
-    if tokens and Path(tokens[0]).name == "env":
-        i = 1
-    while i < len(tokens) and re.fullmatch(r"[A-Za-z_]\w*=.*", tokens[i]):
-        i += 1
-    return tokens[i:]
-
-
-def command_binds(cmd: str, meta: dict) -> bool:
-    """命令的独立参数里必须出现测试文件路径／文件名／test_id，且由已知启动器执行。"""
-    parts = _command_parts(cmd)
-    if not parts:
-        return False
-    runner = Path(parts[0]).name
-    if runner not in RUNNERS and not runner.startswith("python"):
-        return False
-    file_ref = str(meta.get("file") or "")
-    test_id = str(meta.get("test_id") or "")
-    refs = {file_ref, Path(file_ref).name, test_id}
-    refs.discard("")
-    return any(token in refs for token in parts[1:])
 
 
 def has_nontrivial_assertion(body: str) -> bool:
@@ -380,18 +503,72 @@ def git(repo: Path, *args: str, timeout: int = 120) -> subprocess.CompletedProce
     )
 
 
-def patch_map(text: str) -> dict[str, list[str]]:
-    files: dict[str, list[str]] = {}
-    cur = None
+def patch_entries(text: str) -> list[dict]:
+    """解析补丁为逐文件条目：保留 a 侧与 b 侧路径（改名时两者不同）。"""
+    entries: list[dict] = []
+    cur: dict | None = None
     for line in text.splitlines():
         m = re.match(r"^diff --git a/(.+?) b/(.+)$", line)
         if m:
-            cur = m.group(2)
-            files.setdefault(cur, [])
+            cur = {"a": m.group(1), "b": m.group(2), "lines": []}
+            entries.append(cur)
             continue
-        if cur is not None:
-            files[cur].append(line)
-    return files
+        if cur is None:
+            continue
+        m = re.match(r"^rename from (.+)$", line)
+        if m:
+            cur["a"] = m.group(1)
+            continue
+        m = re.match(r"^rename to (.+)$", line)
+        if m:
+            cur["b"] = m.group(1)
+            continue
+        cur["lines"].append(line)
+    return entries
+
+
+def patch_map(text: str) -> dict[str, list[str]]:
+    """b 侧路径 → 行；仅用于「补丁触及了哪些文件」。"""
+    return {entry["b"]: entry["lines"] for entry in patch_entries(text)}
+
+
+def production_patch_regions(text: str) -> tuple[dict[str, set[int]], dict[str, set[int]]]:
+    """生产代码被补丁改动的行：返回 (base 侧, patched 侧) 的路径→行号集合。
+
+    base 侧取被删除的 a 文件行号，patched 侧取被新增的 b 文件行号；
+    改名时两侧路径各自生效。测试路径与上下文行不计入。
+    """
+    base: dict[str, set[int]] = {}
+    patched: dict[str, set[int]] = {}
+    for entry in patch_entries(text):
+        a_path, b_path = entry["a"], entry["b"]
+        a_test, b_test = is_test_path(a_path), is_test_path(b_path)
+        a_lines: set[int] = set()
+        b_lines: set[int] = set()
+        a_cur = b_cur = None
+        for line in entry["lines"]:
+            m = re.match(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@", line)
+            if m:
+                a_cur, b_cur = int(m.group(1)), int(m.group(2))
+                continue
+            if a_cur is None:
+                continue
+            if line.startswith("+"):
+                if not b_test:
+                    b_lines.add(b_cur)
+                b_cur += 1
+            elif line.startswith("-"):
+                if not a_test:
+                    a_lines.add(a_cur)
+                a_cur += 1
+            elif line.startswith(" ") or line == "":
+                a_cur += 1
+                b_cur += 1
+        if a_lines:
+            base.setdefault(a_path, set()).update(a_lines)
+        if b_lines:
+            patched.setdefault(b_path, set()).update(b_lines)
+    return base, patched
 
 
 def under_scope(path: str, scope: list[str]) -> bool:
@@ -405,9 +582,12 @@ def under_scope(path: str, scope: list[str]) -> bool:
 def is_test_path(path: str) -> bool:
     parts = path.split("/")
     name = parts[-1]
-    if any(p in ("tests", "test", "__tests__") for p in parts[:-1]):
+    dirs = [p.lower().lstrip(".") for p in parts[:-1]]
+    if any(p in ("tests", "test", "__tests__") for p in dirs):
         return True
-    return bool(re.match(r"^(test_.*|.*_test\.[^.]+|.*\.test\.[^.]+|.*\.spec\.[^.]+)$", name))
+    return bool(re.match(
+        r"^(test_.*|.*_test\.[^.]+|.*\.test\.[^.]+|.*\.spec\.[^.]+)$", name.lower()
+    ))
 
 
 ASSERT_RE = re.compile(
@@ -479,17 +659,21 @@ def v02(ctx: Ctx) -> Result:
     cmd = data.get("command")
     if not single_line(cmd):
         return cannot("V02", "repro.md.command 缺失或不可执行")
-    cmd_problem = simple_command_problem(cmd)
-    if cmd_problem:
-        return bad("V02", "复现命令必须是单条简单命令：" + cmd_problem)
     meta, merr = load_repro_meta(ctx.repo)
     if merr:
         return cannot("V02", merr)
-    if not command_binds(cmd, meta):
+    test_real, ferr = repo_relative_test_path(meta.get("file"), ctx.repo)
+    if ferr:
+        return bad("V02", "repro 元数据的 file 不合格：" + ferr)
+    script, cmd_problem = parse_isolated_command(cmd, ctx.repo)
+    if cmd_problem:
+        return bad("V02", "复现命令只允许 `python3 -I <仓内相对路径>`：" + cmd_problem)
+    if script != test_real:
         return bad(
             "V02",
-            "复现命令必须是由已知启动器执行的单条命令，"
-            "且其独立参数含测试文件或 test_id；否则无法确认它真的执行了该测试",
+            "复现命令执行的脚本与 repro 元数据的 file 不一致",
+            f"命令={script.relative_to(ctx.repo.resolve()).as_posix()}",
+            f"file={meta.get('file')}",
         )
     runs = ctx.get("repro_runs")
     timeout = ctx.get("repro_timeout_seconds")
@@ -532,38 +716,34 @@ def v03(ctx: Ctx) -> Result:
     if merr:
         return cannot("V03", merr)
     problems: list[str] = []
-    file_ref = meta.get("file")
-    if not nonempty_str(file_ref):
-        problems.append("file 缺失或为空")
+    test_real, ferr = repo_relative_test_path(meta.get("file"), ctx.repo)
+    if ferr:
+        problems.append(ferr)
+    elif test_real.stat().st_size == 0:
+        problems.append("失败测试文件为空")
     else:
-        test_file = ctx.repo / str(file_ref)
-        if not test_file.exists():
-            problems.append("file 指向的文件不存在")
-        elif not test_file.is_file():
-            problems.append("file 指向的不是文件")
-        elif test_file.stat().st_size == 0:
-            problems.append("失败测试文件为空")
-        else:
-            body = test_file.read_text(encoding="utf-8", errors="replace")
-            if not has_nontrivial_assertion(body):
-                problems.append(
-                    "失败测试文件没有可判定的非恒真断言"
-                    "（只有 assertTrue(True) 这类常量断言也算不合格）"
-                )
+        body = test_real.read_text(encoding="utf-8", errors="replace")
+        if not has_nontrivial_assertion(body):
+            problems.append(
+                "失败测试文件没有可判定的非恒真断言"
+                "（只有 assertTrue(True) 这类常量断言也算不合格）"
+            )
     if not nonempty_str(meta.get("test_id")):
         problems.append("test_id 缺失或为空")
     single = meta.get("single_run_command")
     if not single_line(single):
         problems.append("single_run_command 缺失或不是单行")
-    elif simple_command_problem(single):
-        problems.append(
-            "single_run_command 不是单条简单命令：" + str(simple_command_problem(single))
-        )
-    elif not command_binds(single, meta):
-        problems.append(
-            "single_run_command 未由已知启动器执行该测试文件或 test_id，"
-            "无法确认它真的在执行该失败测试"
-        )
+    else:
+        script, cmd_problem = parse_isolated_command(single, ctx.repo)
+        if cmd_problem:
+            problems.append(
+                "single_run_command 只允许 `python3 -I <仓内相对路径>`：" + cmd_problem
+            )
+        elif test_real is not None and script != test_real:
+            problems.append(
+                "single_run_command 执行的脚本与 file 不一致，"
+                "无法确认它真的在执行该失败测试"
+            )
     if not hexish(meta.get("base_commit")):
         problems.append("base_commit 不是 7–40 位十六进制")
     if not nonempty_str(meta.get("expected_failure")):
@@ -676,9 +856,9 @@ def v06(ctx: Ctx) -> Result:
         )
 
     violations: list[str] = []
-    for path, lines in patch_map(text).items():
-        if not is_test_path(path):
-            continue
+    for entry in patch_entries(text):
+        old, new, lines = entry["a"], entry["b"], entry["lines"]
+        old_test, new_test = is_test_path(old), is_test_path(new)
         is_new = any(
             line.startswith("--- /dev/null") or line.startswith("new file mode")
             for line in lines
@@ -687,14 +867,19 @@ def v06(ctx: Ctx) -> Result:
             line for line in lines
             if line[:1] in ("+", "-") and not line.startswith(("+++", "---"))
         ]
-        if is_new:
-            if not re.search(r"(^|/)repro_[^/]+$", path):
-                violations.append(f"{path}: 新增测试文件不是 repro_*")
-        elif changed:
-            violations.append(
-                f"{path}: 测试目录下已有文件被改写 {len(changed)} 行"
-                "（断言、测试数据、夹具一律不改）"
-            )
+        if new_test:
+            if is_new:
+                if not re.search(r"(^|/)repro_[^/]+$", new):
+                    violations.append(f"{new}: 新增测试文件不是 repro_*")
+            elif old != new:
+                violations.append(f"{old} -> {new}: 测试路径文件被改名或移动")
+            elif changed:
+                violations.append(
+                    f"{new}: 测试目录下已有文件被改写 {len(changed)} 行"
+                    "（断言、测试数据、夹具一律不改）"
+                )
+        elif old_test and old != new:
+            violations.append(f"{old} -> {new}: 测试路径文件被移出 tests 区域")
     if violations:
         problems.append("测试路径改动违规：" + " | ".join(violations[:5]))
     banned = ("根因已确认", "彻底修复", "问题已解决")
@@ -715,13 +900,16 @@ def v06(ctx: Ctx) -> Result:
             problems.append("hypothesis 下出现冒充措辞：" + "；".join(hits))
     if problems:
         return bad("V06", *problems)
-    return ok("V06", f"测试目录已有文件零改动；最小性对照一致；evidence_kind={kind}")
+    return ok("V06", f"补丁未改写测试路径已有文件（含改名与测试数据）；最小性对照一致；evidence_kind={kind}")
 
 
 def v07(ctx: Ctx) -> Result:
     cmd = ctx.get("test_command")
     if not single_line(cmd):
         return cannot("V07", "test_command 未约定或不可执行")
+    script, problem = parse_isolated_command(cmd, ctx.repo)
+    if problem:
+        return bad("V07", "test_command 只允许 `python3 -I <仓内相对路径>`：" + problem)
     timeout = ctx.get("repro_timeout_seconds")
     try:
         code, out = run_command(cmd, ctx.repo, timeout)
@@ -754,6 +942,12 @@ def v08(ctx: Ctx) -> Result:
         return cannot("V08", "repro.md.command 缺失")
     if not single_line(test_cmd):
         return cannot("V08", "test_command 未约定")
+    _rs, rp = parse_isolated_command(repro_cmd, ctx.repo)
+    if rp:
+        return bad("V08", "repro.md.command 非法：" + rp)
+    _ts, tp = parse_isolated_command(test_cmd, ctx.repo)
+    if tp:
+        return bad("V08", "test_command 非法：" + tp)
 
     problems: list[str] = []
     if not nonempty_str(log.get("run_id")):
@@ -856,28 +1050,28 @@ def v08(ctx: Ctx) -> Result:
         )
 
     timeout = ctx.get("repro_timeout_seconds")
+    patch_text = patch.read_text(encoding="utf-8", errors="replace")
 
-    repro, rerr = load_frontmatter(ctx.repo / "repro.md")
-    if rerr:
-        return bad("V08", "缺 repro.md 或格式不合法：" + rerr)
-    repro_cmd = repro.get("command")
-    rp = simple_command_problem(repro_cmd)
-    if rp:
-        return bad("V08", "repro.md.command 不是可单独重跑的简单命令：" + rp)
-    test_cmd = ctx.get("test_command")
+    def rerun_traced(label: str, command: str):
+        try:
+            return run_traced_command(command, ctx.repo, timeout)
+        except subprocess.TimeoutExpired:
+            raise RuntimeError(f"{label}重跑超时，无法判定")
+        except RuntimeError as exc:
+            raise RuntimeError(f"{label}重跑无法执行：{exc}")
 
-    def rerun(label: str, command: str) -> int:
+    def rerun_plain(label: str, command: str) -> int:
         try:
             code, _out = run_command(command, ctx.repo, timeout)
         except subprocess.TimeoutExpired:
             raise RuntimeError(f"{label}重跑超时，无法判定")
-        except OSError as exc:
-            raise RuntimeError(f"{label}重跑无法启动：{exc}")
+        except RuntimeError as exc:
+            raise RuntimeError(f"{label}重跑无法执行：{exc}")
         return code
 
-    # 第①段：补丁未应用，单独重跑复现命令，应失败
+    # 第①段：补丁未应用，单独重跑复现命令（同时采集 base 覆盖行），应失败
     try:
-        c1 = rerun("第①段", repro_cmd)
+        c1, _o1, cov_base = rerun_traced("第①段", repro_cmd)
     except RuntimeError as exc:
         return cannot("V08", str(exc))
     if c1 == 0:
@@ -901,7 +1095,7 @@ def v08(ctx: Ctx) -> Result:
         return cannot("V08", "重跑时无法应用 fix.patch：" + applied.stderr.strip()[:400])
     try:
         try:
-            c2_repro = rerun("第②段-复现", repro_cmd)
+            c2_repro, _o2, cov_patched = rerun_traced("第②段-复现", repro_cmd)
         except RuntimeError as exc:
             return cannot("V08", str(exc))
         if c2_repro != 0:
@@ -910,8 +1104,32 @@ def v08(ctx: Ctx) -> Result:
                 f"第②段单独重跑复现命令退出码={c2_repro}（期望 0）；"
                 "整条命令为 0 不能代替复现转绿",
             )
+        # 覆盖率：补丁触及的生产代码行，必须在 base 与 patched 两态都被该测试执行到。
+        base_regions, patched_regions = production_patch_regions(patch_text)
+        if not base_regions and not patched_regions:
+            return bad(
+                "V08",
+                "补丁未在生产代码上触碰任何行，无法证明修复与复现测试相关",
+            )
+        base_cov = {k: set(v) for k, v in ((cov_base or {}).get("covered") or {}).items()}
+        patched_cov = {
+            k: set(v) for k, v in ((cov_patched or {}).get("covered") or {}).items()
+        }
+        gaps: list[str] = []
+        for path, lines in base_regions.items():
+            if not (lines & base_cov.get(path, set())):
+                gaps.append(f"{path}（base）")
+        for path, lines in patched_regions.items():
+            if not (lines & patched_cov.get(path, set())):
+                gaps.append(f"{path}（patched）")
+        if gaps:
+            return bad(
+                "V08",
+                "补丁行未被复现测试覆盖，无法证明该测试与修复相关："
+                + "、".join(gaps[:5]),
+            )
         try:
-            c2_tests = rerun("第②段-全量测试", test_cmd)
+            c2_tests = rerun_plain("第②段-全量测试", test_cmd)
         except RuntimeError as exc:
             return cannot("V08", str(exc))
         if c2_tests != 0:
@@ -930,7 +1148,7 @@ def v08(ctx: Ctx) -> Result:
 
     # 第③段：撤补丁后单独重跑复现命令，应再次失败
     try:
-        c3 = rerun("第③段", repro_cmd)
+        c3 = rerun_plain("第③段", repro_cmd)
     except RuntimeError as exc:
         return cannot("V08", str(exc))
     if c3 == 0:

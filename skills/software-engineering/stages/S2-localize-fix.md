@@ -20,7 +20,7 @@ gate:
   - "复现用例转绿"
   - "既有测试全绿（命令与 S1 相同）"
   - "fix.patch 只触及 localization.md 列出的文件"
-  - "测试路径下已有文件零改动（diff 中 tests/ 与 *_test.* 的任何增删行）；只允许新增 tests/repro_* 测试文件"
+  - "tests/ 路径下已有文件不被改写、不被改名、不被移出 tests/（改名按 diff 的 a 侧旧路径判定）；只允许新增 tests/repro_* 测试文件"
   - "localization.md 的成因结论必须带 evidence_kind 标注（direct│indirect│hypothesis）"
 on_fail:
   - "补丁不转绿 → 回滚补丁、保留定位记录，回 S1 复核复现，或判 blocked"
@@ -76,10 +76,10 @@ estimated_diff_lines: <integer>
 1. 复现用例转绿。
 2. 既有测试全绿（命令与 S1 相同）。
 3. `fix.patch` 只触及 `localization.md` 列出的文件。
-4. 测试路径下已有文件零改动（`tests/` 与 `*_test.*` 的任何增删行，含测试数据与夹具）；只允许新增 `tests/repro_*` 测试文件。
+4. `tests/` 路径下已有文件不被改写、不被改名、不被移出 `tests/`（改名按 diff 的 a 侧旧路径判定）；只允许新增 `tests/repro_*` 测试文件。该条只保护 `tests/` 路径名，不保护行为：`tests/` 之外的夹具或数据文件被改动不在 V06 覆盖范围，由 S3 的覆盖证据间接约束。
 5. `localization.md` 的成因结论必须带 `evidence_kind` 标注（`direct` │ `indirect` │ `hypothesis`）。
 
-判定者：V04（能否干净应用）、V05（改动范围黑名单）、V06（测试路径零改动、最小性对照、措辞黑名单）、V07（既有测试全绿）。
+判定者：V04（能否干净应用）、V05（改动范围黑名单）、V06（`tests/` 路径改写／改名／移出、最小性对照、措辞黑名单）、V07（既有测试全绿）。
 第 5 条的标注是否**成立**只能由人判断，见 V09。
 
 **最小性对照（V06 判定）**：`touched_files` 数与 diff 行数须与 `localization.md` 的 `estimated_touched_files`／`estimated_diff_lines` 一致。缺失或不一致 → **V06 判 fail**，须按实际改动重写 `localization.md`，并把 `evidence_kind` 按 `hypothesis` 处理。这里选择判 fail 而不是静默改值：静默降级会掩盖「预估与实际不符」这件事本身。
