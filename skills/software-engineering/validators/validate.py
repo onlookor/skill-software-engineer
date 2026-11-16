@@ -5,7 +5,8 @@
 用法：
     python3 validate.py --config <挂载期配置快照.yaml> [--only V01 V02 ...]
 
-配置快照里的六项只从文件读取；本文件不内置任何项的值、默认值、示例值。
+配置快照里的七项挂载期声明只从文件读取；本文件不内置任何项的值、默认值、示例值。
+缺任一项即 cannot_evaluate（退出码 3），不静默通过。
 """
 from __future__ import annotations
 
@@ -54,6 +55,7 @@ CONFIG_KEYS = (
     "repro_runs",
     "repro_timeout_seconds",
     "allowed_scope",
+    "cache_cleanup_policy",
 )
 
 
@@ -143,6 +145,10 @@ def load_config(path: Path) -> tuple[dict, list[str]]:
                 errors.append(f"allowed_scope 项不是仓内相对路径：{entry}")
             elif not (Path(repo_val).expanduser() / p).exists():
                 errors.append(f"allowed_scope 项在仓内不存在：{entry}")
+
+    policy = cfg.get("cache_cleanup_policy")
+    if not isinstance(policy, str) or not policy.strip():
+        errors.append("cache_cleanup_policy 未约定或不是非空字符串")
 
     return cfg, errors
 

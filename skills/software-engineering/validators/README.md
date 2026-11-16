@@ -9,7 +9,8 @@ python3 validate.py --config <挂载期配置快照.yaml>            # 跑 V01�
 python3 validate.py --config <挂载期配置快照.yaml> --only V01 V02
 ```
 
-- 配置快照六项（`repo_path`／`test_command`／`build_command`／`repro_runs`／`repro_timeout_seconds`／`allowed_scope`）只从 `--config` 指向的文件读取。**本目录不含任何项的值、默认值、示例值、推荐值。**
+- 配置快照七项（`repo_path`／`test_command`／`build_command`／`repro_runs`／`repro_timeout_seconds`／`allowed_scope`／`cache_cleanup_policy`）只从 `--config` 指向的文件读取，与 `SKILL.md` 的 `mount_declarations` 一一对应。**本目录不含任何项的值、默认值、示例值、推荐值。**
+- 缺任一项 → 退出码 3，不静默通过。前六项由 validator 直接消费或校验；`cache_cleanup_policy` 只判存在、类型与非空，策略是否足以排除缓存与构建产物复用只能人判。
 - 缺项、类型不符、越界 → `cannot_evaluate`（退出码 3）；`build_command` 未配置不阻塞本组校验，但报告须标 `build_not_configured`，该项不判 pass。
 - 交付物位置：`repro.md`、`localization.md`、`fix.patch`、`verify.log`、`fix-report.md` 在仓根；失败测试与元数据在 `tests/`。
 
