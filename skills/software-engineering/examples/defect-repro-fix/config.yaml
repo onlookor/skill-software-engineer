@@ -1,0 +1,7 @@
+repo_path: work
+test_command: "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*.py'"
+repro_runs: 2
+repro_timeout_seconds: 30
+allowed_scope:
+  - calc.py
+cache_cleanup_policy: "S3 第②段与第③段前各清空一次 work 内 __pycache__；测试命令以 PYTHONDONTWRITEBYTECODE=1 运行，不使用其它缓存或构建产物。"
