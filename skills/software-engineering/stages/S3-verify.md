@@ -12,7 +12,7 @@ steps:
   - "第①段：base 上跑复现命令，记录退出码（应 ≠ 0）"
   - "第②段：应用 fix.patch，跑复现命令与全量测试，记录退出码（均应为 0）"
   - "第③段：撤销 fix.patch，再跑复现命令，记录退出码（应 ≠ 0）"
-  - "写 verify.log（三段各含 command／exit_code／started_at／duration）与 fix-report.md"
+  - "写 verify.log（含 test_command_used 原文；三段各含 command／exit_code／started_at／duration）与 fix-report.md"
 outputs:
   - "verify.log"
   - "fix-report.md"
@@ -41,7 +41,7 @@ S2 未出门即写 `verify.log` 属跳步；检出即停，回 S2。
 2. 第①段：base 上跑复现命令，记录退出码。
 3. 第②段：应用 `fix.patch`，跑复现命令与全量测试，记录退出码。
 4. 第③段：撤销 `fix.patch`，再跑复现命令，记录退出码。
-5. 写 `verify.log` 与 `fix-report.md`。
+5. 写 `verify.log`（`test_command_used` 记逐字原文）与 `fix-report.md`。
 
 ## 输出
 

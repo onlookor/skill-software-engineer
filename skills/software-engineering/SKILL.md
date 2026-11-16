@@ -16,6 +16,8 @@ config_declared:
   - {name: repro_runs, type: integer, range: ">= 2", unconfigured: cannot_evaluate}
   - {name: repro_timeout_seconds, type: integer, range: ">= 1", unconfigured: cannot_evaluate}
   - {name: allowed_scope, type: "list<path>", range: "非空；每项必须是仓内路径", unconfigured: cannot_evaluate}
+mount_required_declarations:
+  - {name: cache_cleanup_policy, type: "string（策略声明）", range: "非空；须覆盖测试运行所使用的缓存与构建产物，并说明清理发生在哪一步之前", unconfigured: cannot_evaluate}
 ---
 
 # 软件工程技能：缺陷复现—最小修复
@@ -43,7 +45,7 @@ config_declared:
 - 要测试策略、覆盖率提升、性能/安全专项 → 不在本技能；— test strategy, coverage, performance, security audits: out of scope.
 - 要部署、发布、运维、数据迁移 → 不在本技能；— deploy, release, ops, data migration: out of scope.
 - 失败**无法复现** → 停在 S1 报 `escalate`，**不进入 S2**；— cannot reproduce: stop at S1 with `escalate`; never enter S2.
-- 六项配置任一未约定 → 报 `cannot_evaluate`，先做挂载期约定。— any of the six config items unset: `cannot_evaluate`; agree them at mount time first.
+- 六项配置或挂载必答项「缓存与构建产物清理策略」任一未约定 → 报 `cannot_evaluate`，先做挂载期约定。— any of the six config items or the mandatory mount item “cache and build-artifact cleanup policy” unset: `cannot_evaluate`; agree them at mount time first.
 
 ## 路由表（状态 → 意图信号 → 加载哪个子文件）
 
@@ -51,7 +53,7 @@ config_declared:
 
 | 状态 | 意图信号 | 加载 |
 |---|---|---|
-| S0 未挂载 | 六项配置有任一未约定 | 不加载 stage；先按「交互协议」做挂载约定 |
+| S0 未挂载 | 六项配置或「缓存与构建产物清理策略」有任一未约定 | 不加载 stage；先按「交互协议」做挂载约定 |
 | S1 待复现 | 有仓与失败描述；无 `repro.md`，或 `repro.md` 的门未过 | `stages/S1-repro.md` |
 | S1 不可复现 | 已尝试且稳定复现不了 | 不加载 S2；输出 `escalate` 记录并结束 |
 | S2 待定位修复 | `repro.md` 已过门（退出码≠0、指纹一致、用例可独立失败）；无 `fix.patch` | `stages/S2-localize-fix.md` |
@@ -64,13 +66,15 @@ config_declared:
 1. **不跳步**：S1 未出门不写补丁；S2 未出门不写 `verify.log`；`on_fail` 不得「先继续再补」。
 2. **不改判据**：不得修改测试断言、不得修改验收命令使其通过；V06 会判。
 3. **不越界**：补丁只触及 `localization.md` 列出的文件；范围之外一律不动。
-4. **不编值**：六项配置只从挂载期约定来；缺项即 `cannot_evaluate`，不得用「常见取值」代填。
+4. **不编值**：六项配置与挂载必答项只从挂载期约定来；缺项即 `cannot_evaluate`，不得用「常见取值」代填，也不得默认「无需清理」。
 5. **不冒充**：根因无直接证据时，状态只能写 `fixed_unverified_root_cause`，不得写 `fixed`，不得出现「根因已确认／彻底修复／问题已解决」。
 6. **不洗白**：宁 fail 不 vacuous；空集、跳过、缺证据一律不算通过。
 
 ## 交互协议（挂载期，不是编译期）
 
 - 挂载时向项目用户逐项确认六项配置：`repo_path`、`test_command`、`build_command`、`repro_runs`、`repro_timeout_seconds`、`allowed_scope`。
+- **必答项**：「缓存与构建产物清理策略」（`cache_cleanup_policy`）。只声明四项：项名、类型（策略声明）、取值范围（见 frontmatter）、未配置时的行为（`cannot_evaluate`）。**不给任何值、示例值或推荐做法。**
+- 该必答项未约定时按 `cannot_evaluate` 处理：不加载任何 stage、不开始 S1，不得默认「已清理」或「无需清理」，**不得回落为通过**。
 - 确认后落一份**配置快照**（项名＋值＋约定时间＋双方身份），并计算快照指纹；后续报告引用该指纹。
 - 跨配置不可比：换配置即换指纹，不得把两套配置下的 `verify.log` 混用。
 - 未确认的项一律 `cannot_evaluate`；不得先跑后退回补配置。

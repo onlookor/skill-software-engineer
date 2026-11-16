@@ -560,6 +560,12 @@ def v08(ctx: Ctx) -> Result:
     elif log["patch_sha256"] != actual_sha:
         problems.append(f"patch_sha256 与 fix.patch 不一致：log={log['patch_sha256']} actual={actual_sha}")
 
+    used = log.get("test_command_used")
+    if not single_line(used):
+        problems.append("test_command_used 缺失或不是单行")
+    elif used != test_cmd:
+        problems.append("test_command_used 与挂载期 test_command 不逐字一致")
+
     phases = log.get("phases")
     if not isinstance(phases, list) or len(phases) != 3:
         problems.append("phases 缺失或不是恰好 3 段")
