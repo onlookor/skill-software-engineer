@@ -73,7 +73,7 @@
 
 ## 二、本项目现状与偏差
 
-`[事实]` 软工仓顶层：30 个 md、`adr/`、`archieve/`、`pact/`、`pilot/`、`registry/`；无 `SKILL.md`；无 `ROADMAP.md`；无 `STATE.md`；无 `CHARTER.md`；无 `REQUIREMENTS`；`todo.md` 178 行；`changelog.md` 2,995 行。
+`[事实]` 软工仓顶层（2026-11-16 复核）：35 个 md、`adr/`、`archieve/`、`pact/`、`pilot/`、`registry/`、`skills/`、`dist/`；技能包入口在 `skills/software-engineering/SKILL.md`；`ROADMAP.md`、`STATE.md`、`CHANGELOG.md` 已于 2026-11-16 建立；无 `CHARTER.md`；无 `REQUIREMENTS`；`todo.md` 193 行；`软件工程元框架成文法-changlog.md` 2,995 行（原文写的 `changelog.md` 不是仓内文件名）。
 
 | 维度 | 参照物 | 软工现状 | 偏差性质 |
 |---|---|---|---|

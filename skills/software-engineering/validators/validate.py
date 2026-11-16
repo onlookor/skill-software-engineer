@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import re
+import shlex
 import subprocess
 import sys
 from datetime import date, datetime
@@ -280,18 +281,85 @@ def load_repro_meta(repo: Path) -> tuple[dict | None, str | None]:
     return meta, None
 
 
-def command_references(cmd: str, meta: dict) -> bool:
-    """命令是否引用了元数据记录的测试文件或 test_id（用于绑定失败来源）。"""
-    refs: list[str] = []
+# 可夹带第二条命令的 shell 结构：分号、逻辑连接、管道、重定向、注释、子命令、花括号展开。
+SHELL_META_RE = re.compile(r"[;&|<>`$(){}\n\r#]")
+
+# 允许作为「执行测试」的启动器；其余命令即使含文件名也不认。
+RUNNERS = {
+    "python", "python3", "pytest", "py.test", "node", "nodejs", "npm", "npx",
+    "yarn", "pnpm", "bun", "deno", "uv", "poetry", "pdm", "pipenv", "tox",
+    "nox", "go", "cargo", "mvn", "gradle", "dotnet", "ruby", "php", "bundle",
+    "rake", "bash", "sh", "make", "test", "unittest",
+}
+
+# 可识别的恒真／常量断言：只覆盖固定写法，语义上的「恒真」判不了。
+TRIVIAL_ASSERTIONS = (
+    re.compile(r"\bassert\s+(True|1)\s*$"),
+    re.compile(r"\bassert\s+not\s+(False|0)\s*$"),
+    re.compile(r"\bassertTrue\(\s*(True|1|true)\s*\)"),
+    re.compile(r"\bassertEqual\(\s*([0-9]+)\s*,\s*\1\s*\)"),
+)
+
+
+def simple_command_problem(cmd: str) -> str | None:
+    """命令必须是单条简单命令；返回问题描述，没问题返回 None。"""
+    if not isinstance(cmd, str) or not cmd.strip():
+        return "命令为空"
+    if "\n" in cmd or "\r" in cmd:
+        return "命令含换行"
+    if SHELL_META_RE.search(cmd):
+        return "命令含可夹带第二条命令的 shell 结构（; && || 管道 重定向 注释 子命令）"
+    try:
+        tokens = shlex.split(cmd)
+    except ValueError:
+        return "命令无法按 shell 规则切分"
+    if not tokens:
+        return "命令为空"
+    if any(t in ("-c", "-e") for t in tokens[1:]):
+        return "命令使用内联代码开关（-c/-e），无法确认执行的是该测试文件"
+    return None
+
+
+def _command_parts(cmd: str) -> list[str] | None:
+    try:
+        tokens = shlex.split(cmd)
+    except ValueError:
+        return None
+    i = 0
+    if tokens and Path(tokens[0]).name == "env":
+        i = 1
+    while i < len(tokens) and re.fullmatch(r"[A-Za-z_]\w*=.*", tokens[i]):
+        i += 1
+    return tokens[i:]
+
+
+def command_binds(cmd: str, meta: dict) -> bool:
+    """命令的独立参数里必须出现测试文件路径／文件名／test_id，且由已知启动器执行。"""
+    parts = _command_parts(cmd)
+    if not parts:
+        return False
+    runner = Path(parts[0]).name
+    if runner not in RUNNERS and not runner.startswith("python"):
+        return False
     file_ref = str(meta.get("file") or "")
-    if file_ref:
-        refs.append(file_ref)
-        refs.append(Path(file_ref).name)
     test_id = str(meta.get("test_id") or "")
-    if test_id:
-        refs.append(test_id)
-        refs.append(test_id.split(".")[-1])
-    return any(ref and ref in cmd for ref in refs)
+    refs = {file_ref, Path(file_ref).name, test_id}
+    refs.discard("")
+    return any(token in refs for token in parts[1:])
+
+
+def has_nontrivial_assertion(body: str) -> bool:
+    """测试文件里至少有一行不是可识别的恒真／常量断言。"""
+    candidates = [
+        line for line in body.splitlines()
+        if ASSERT_RE.search(line) or re.search(r"\bassert\b", line)
+    ]
+    if not candidates:
+        return False
+    return any(
+        not any(pattern.search(line) for pattern in TRIVIAL_ASSERTIONS)
+        for line in candidates
+    )
 
 
 def diff_line_count(text: str) -> int:
@@ -411,14 +479,17 @@ def v02(ctx: Ctx) -> Result:
     cmd = data.get("command")
     if not single_line(cmd):
         return cannot("V02", "repro.md.command 缺失或不可执行")
+    cmd_problem = simple_command_problem(cmd)
+    if cmd_problem:
+        return bad("V02", "复现命令必须是单条简单命令：" + cmd_problem)
     meta, merr = load_repro_meta(ctx.repo)
     if merr:
         return cannot("V02", merr)
-    if not command_references(cmd, meta):
+    if not command_binds(cmd, meta):
         return bad(
             "V02",
-            "复现命令未引用元数据记录的失败测试文件或 test_id，"
-            "无法区分真实失败与恒真失败命令",
+            "复现命令必须是由已知启动器执行的单条命令，"
+            "且其独立参数含测试文件或 test_id；否则无法确认它真的执行了该测试",
         )
     runs = ctx.get("repro_runs")
     timeout = ctx.get("repro_timeout_seconds")
@@ -474,21 +545,24 @@ def v03(ctx: Ctx) -> Result:
             problems.append("失败测试文件为空")
         else:
             body = test_file.read_text(encoding="utf-8", errors="replace")
-            if (
-                not ASSERT_RE.search(body)
-                and "def test" not in body
-                and "class Test" not in body
-            ):
-                problems.append("失败测试文件不含断言或测试定义")
+            if not has_nontrivial_assertion(body):
+                problems.append(
+                    "失败测试文件没有可判定的非恒真断言"
+                    "（只有 assertTrue(True) 这类常量断言也算不合格）"
+                )
     if not nonempty_str(meta.get("test_id")):
         problems.append("test_id 缺失或为空")
     single = meta.get("single_run_command")
     if not single_line(single):
         problems.append("single_run_command 缺失或不是单行")
-    elif nonempty_str(file_ref) and not command_references(single, meta):
+    elif simple_command_problem(single):
         problems.append(
-            "single_run_command 未引用 file 指向的测试文件或 test_id，"
-            "无法确认它执行的是该失败测试"
+            "single_run_command 不是单条简单命令：" + str(simple_command_problem(single))
+        )
+    elif not command_binds(single, meta):
+        problems.append(
+            "single_run_command 未由已知启动器执行该测试文件或 test_id，"
+            "无法确认它真的在执行该失败测试"
         )
     if not hexish(meta.get("base_commit")):
         problems.append("base_commit 不是 7–40 位十六进制")
@@ -605,13 +679,24 @@ def v06(ctx: Ctx) -> Result:
     for path, lines in patch_map(text).items():
         if not is_test_path(path):
             continue
-        for line in lines:
-            if line.startswith(("+++", "---")) or not line[:1] in ("+", "-"):
-                continue
-            if ASSERT_RE.search(line[1:]):
-                violations.append(f"{path}: {line[:160]}")
+        is_new = any(
+            line.startswith("--- /dev/null") or line.startswith("new file mode")
+            for line in lines
+        )
+        changed = [
+            line for line in lines
+            if line[:1] in ("+", "-") and not line.startswith(("+++", "---"))
+        ]
+        if is_new:
+            if not re.search(r"(^|/)repro_[^/]+$", path):
+                violations.append(f"{path}: 新增测试文件不是 repro_*")
+        elif changed:
+            violations.append(
+                f"{path}: 测试目录下已有文件被改写 {len(changed)} 行"
+                "（断言、测试数据、夹具一律不改）"
+            )
     if violations:
-        problems.append("测试断言行发生改动：" + " | ".join(violations[:5]))
+        problems.append("测试路径改动违规：" + " | ".join(violations[:5]))
     banned = ("根因已确认", "彻底修复", "问题已解决")
     if kind == "hypothesis":
         hits = []
@@ -630,7 +715,7 @@ def v06(ctx: Ctx) -> Result:
             problems.append("hypothesis 下出现冒充措辞：" + "；".join(hits))
     if problems:
         return bad("V06", *problems)
-    return ok("V06", f"测试断言行零改动；最小性对照一致；evidence_kind={kind}")
+    return ok("V06", f"测试目录已有文件零改动；最小性对照一致；evidence_kind={kind}")
 
 
 def v07(ctx: Ctx) -> Result:
@@ -716,7 +801,7 @@ def v08(ctx: Ctx) -> Result:
             problems.append(f"第 {want_no} 段退出码为 0（期望非 0）")
         if want_kind == "zero" and ec != 0:
             problems.append(f"第 2 段退出码={ec}（期望 0）")
-        if not parse_iso(ph.get("started_at")):
+        if not _isoish(ph.get("started_at")):
             problems.append(f"phases[{idx}].started_at 缺失或不是 ISO-8601")
         if ph.get("duration") is None or ph.get("duration") == "":
             problems.append(f"phases[{idx}].duration 缺失")
@@ -772,6 +857,15 @@ def v08(ctx: Ctx) -> Result:
 
     timeout = ctx.get("repro_timeout_seconds")
 
+    repro, rerr = load_frontmatter(ctx.repo / "repro.md")
+    if rerr:
+        return bad("V08", "缺 repro.md 或格式不合法：" + rerr)
+    repro_cmd = repro.get("command")
+    rp = simple_command_problem(repro_cmd)
+    if rp:
+        return bad("V08", "repro.md.command 不是可单独重跑的简单命令：" + rp)
+    test_cmd = ctx.get("test_command")
+
     def rerun(label: str, command: str) -> int:
         try:
             code, _out = run_command(command, ctx.repo, timeout)
@@ -781,9 +875,9 @@ def v08(ctx: Ctx) -> Result:
             raise RuntimeError(f"{label}重跑无法启动：{exc}")
         return code
 
-    # 第①段：补丁未应用，应失败
+    # 第①段：补丁未应用，单独重跑复现命令，应失败
     try:
-        c1 = rerun("第①段", phases[0]["command"])
+        c1 = rerun("第①段", repro_cmd)
     except RuntimeError as exc:
         return cannot("V08", str(exc))
     if c1 == 0:
@@ -796,7 +890,7 @@ def v08(ctx: Ctx) -> Result:
             f"日志={phases[0]['exit_code']}",
         )
 
-    # 第②段：应用补丁后应为 0；无论成败都撤销补丁
+    # 第②段：应用补丁后，复现命令与测试命令分别重跑，各自必须为 0
     try:
         applied = git(
             ctx.repo, "apply", "--whitespace=nowarn", "fix.patch", timeout=120
@@ -807,18 +901,23 @@ def v08(ctx: Ctx) -> Result:
         return cannot("V08", "重跑时无法应用 fix.patch：" + applied.stderr.strip()[:400])
     try:
         try:
-            c2 = rerun("第②段", phases[1]["command"])
+            c2_repro = rerun("第②段-复现", repro_cmd)
         except RuntimeError as exc:
             return cannot("V08", str(exc))
-        if c2 != 0:
-            return bad("V08", f"第②段重跑退出码={c2}（期望 0）")
-        if c2 != phases[1]["exit_code"]:
+        if c2_repro != 0:
             return bad(
                 "V08",
-                "第②段重跑退出码与日志不一致",
-                f"重跑={c2}",
-                f"日志={phases[1]['exit_code']}",
+                f"第②段单独重跑复现命令退出码={c2_repro}（期望 0）；"
+                "整条命令为 0 不能代替复现转绿",
             )
+        try:
+            c2_tests = rerun("第②段-全量测试", test_cmd)
+        except RuntimeError as exc:
+            return cannot("V08", str(exc))
+        if c2_tests != 0:
+            return bad("V08", f"第②段重跑测试命令退出码={c2_tests}（期望 0）")
+        if phases[1]["exit_code"] != 0:
+            return bad("V08", "verify.log 第②段记录的退出码不是 0")
     finally:
         try:
             reverted = git(
@@ -829,9 +928,9 @@ def v08(ctx: Ctx) -> Result:
     if reverted is None or reverted.returncode != 0:
         return cannot("V08", "重跑后撤销 fix.patch 失败，工作区可能已污染")
 
-    # 第③段：撤补丁后应再次失败
+    # 第③段：撤补丁后单独重跑复现命令，应再次失败
     try:
-        c3 = rerun("第③段", phases[2]["command"])
+        c3 = rerun("第③段", repro_cmd)
     except RuntimeError as exc:
         return cannot("V08", str(exc))
     if c3 == 0:

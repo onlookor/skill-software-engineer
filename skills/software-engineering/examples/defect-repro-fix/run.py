@@ -69,7 +69,7 @@ def main() -> int:
         shutil.rmtree(WORK)
     (WORK / "tests").mkdir(parents=True)
     shutil.copy(HERE / "base" / "calc.py", WORK / "calc.py")
-    shutil.copy(HERE / "base" / "tests" / "test_calc.py", WORK / "tests" / "test_calc.py")
+    shutil.copy(HERE / "base" / "existing-tests" / "test_calc.py", WORK / "tests" / "test_calc.py")
     sh("git init -q")
     sh("git config user.email example@example.invalid")
     sh("git config user.name example")

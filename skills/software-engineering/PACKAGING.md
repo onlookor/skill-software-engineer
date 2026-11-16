@@ -1,6 +1,6 @@
 # 安装与第一次使用
 
-> 版本 **0.4.0**（版本号唯一来源是 `SKILL.md` 开头的 `version`，打包时自动读取，不另行维护）。
+> 版本号唯一来源是 `SKILL.md` 开头的 `version`，打包时自动读取，本文件不记录具体版本。
 > 目标：不克隆仓库也能安装；装完能用示例自检，再拿一个真 bug 走一遍。
 
 ## 一、包里有什么
@@ -24,19 +24,20 @@
 - `registry/`、`pilot/`、`adr/`、`archieve/`、`pact/` 等仓库内部目录；
 - 仓库根目录的规范原文、修订记录、总账/施工单/方案等文档；
 - 任何运行日志、索引与基线文件、仓库内部检查脚本与卡片；
-- 内部测试证据 `tests/`、打包脚本 `scripts/`；
+- 内部测试证据：任意层级的 `tests/` 目录（随包示例仓用来模拟「既有测试」的夹具不叫 `tests/`，而是 `base/existing-tests/`，因此无需例外）；
+- 打包脚本 `scripts/`；
 - `.git`、`__pycache__`、示例运行产物 `work/`。
 
-打包脚本会在归档后**反向核对**：归档里只要出现上述名字之一，立即失败并删除本次产物。
+打包脚本会在归档后**反向核对**：归档里只要出现上述名字之一（`tests/` 出现在任意层级都算），立即失败并删除本次产物。
 
 ## 三、打包产物
 
-每次打包产出同一份内容的两种形态：
+每次打包产出同一份内容的两种形态。下文用 `${VERSION}` 代表版本号（取自 `SKILL.md` 的 `version`），执行前先设置 `VERSION=<实际版本号>`：
 
 ```
-dist/software-engineering-0.4.0/                  # 目录形态，顶层就是技能目录
-dist/software-engineering-0.4.0.tar.gz            # 归档形态（分发用）
-dist/software-engineering-0.4.0.tar.gz.sha256     # 归档摘要（校验用）
+dist/software-engineering-${VERSION}/                  # 目录形态，顶层就是技能目录
+dist/software-engineering-${VERSION}.tar.gz            # 归档形态（分发用）
+dist/software-engineering-${VERSION}.tar.gz.sha256     # 归档摘要（校验用）
 ```
 
 ## 四、谁打包、谁安装、装到哪
@@ -53,12 +54,12 @@ dist/software-engineering-0.4.0.tar.gz.sha256     # 归档摘要（校验用）
 
 ### 1. 下载
 
-取得 `software-engineering-0.4.0.tar.gz` 与 `software-engineering-0.4.0.tar.gz.sha256` 两个文件。全程不需要访问代码仓库。
+取得 `software-engineering-${VERSION}.tar.gz` 与 `software-engineering-${VERSION}.tar.gz.sha256` 两个文件。全程不需要访问代码仓库。
 
 ### 2. 校验
 
 ```bash
-sha256sum -c software-engineering-0.4.0.tar.gz.sha256
+sha256sum -c software-engineering-${VERSION}.tar.gz.sha256
 ```
 
 必须显示「成功／OK」。不一致就停止，重新下载；**不得跳过校验直接解包**。
@@ -66,15 +67,15 @@ sha256sum -c software-engineering-0.4.0.tar.gz.sha256
 ### 3. 解包
 
 ```bash
-tar -xzf software-engineering-0.4.0.tar.gz
+tar -xzf software-engineering-${VERSION}.tar.gz
 ```
 
-得到目录 `software-engineering-0.4.0/`，`SKILL.md` 在它下面第一层。
+得到目录 `software-engineering-${VERSION}/`，`SKILL.md` 在它下面第一层。
 
 ### 4. 改名
 
 ```bash
-mv software-engineering-0.4.0 software-engineering
+mv software-engineering-${VERSION} software-engineering
 ```
 
 ### 5. 放进 skills 目录

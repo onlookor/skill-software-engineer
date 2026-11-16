@@ -3018,6 +3018,84 @@ def _adr_count() -> int:
     return len(list(adr_dir.glob('ADR-*.md'))) if adr_dir.is_dir() else 0
 
 
+# ── 阶段字段：A–D（接地编译）＋ M4 技能层 / M5 分发件 / M6 复核制度 / M7 发布 ──
+# 定义与出口条件见 ROADMAP.md；本处只从事实计算状态，不读任何手写状态副本。
+SKILL_DIR = SE_DIR / 'skills' / 'software-engineering'
+DIST_DIR = SE_DIR / 'dist'
+PILOT_DIR = SE_DIR / 'pilot' / 'vertical-slice-20261112'
+REVIEW_PROC = SE_DIR / '独立复核规程.md'
+RELEASE_TAG_RE = re.compile(r'^(?:release-|v\d+\.\d+\.\d+$)')
+MIN_REGISTRIES = ('profiles.yaml', 'method_registry.yaml', 'guard_registry.yaml',
+                  'fvr_registry.yaml', 'projection_registry.yaml')
+
+
+def _skill_version() -> str | None:
+    path = SKILL_DIR / 'SKILL.md'
+    if not path.is_file():
+        return None
+    m = re.search(r'^version:\s*"?([0-9]+\.[0-9]+\.[0-9]+)"?\s*$',
+                  path.read_text(encoding='utf-8'), re.MULTILINE)
+    return m.group(1) if m else None
+
+
+def _artifact_label() -> str | None:
+    path = PILOT_DIR / 'artifact.yaml'
+    if not path.is_file():
+        return None
+    try:
+        doc = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
+    except yaml.YAMLError:
+        return None
+    label = ((doc.get('compilation_artifact') or {}).get('version') or {}).get('label')
+    return label if isinstance(label, str) and label.strip() else None
+
+
+def _grounding_summary() -> tuple[int, int] | None:
+    path = PILOT_DIR / '10.2.5-verdict-pact-dsh.yaml'
+    if not path.is_file():
+        return None
+    try:
+        doc = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
+    except yaml.YAMLError:
+        return None
+    summary = (doc.get('grounding_acceptance') or {}).get('summary') or {}
+    passed, failed = summary.get('pass'), summary.get('fail')
+    if isinstance(passed, int) and isinstance(failed, int):
+        return passed, failed
+    return None
+
+
+def stage_facts(tags: list[str] | None) -> str:
+    regs_ok = all((REG_DIR / name).is_file() for name in MIN_REGISTRIES)
+    pacts = list((SE_DIR / 'pact').glob('se_tier*_*.pact'))
+    label = _artifact_label()
+    version = _skill_version()
+    grounding = _grounding_summary()
+    proc = REVIEW_PROC.read_text(encoding='utf-8') if REVIEW_PROC.is_file() else ''
+    release = [t for t in (tags or []) if RELEASE_TAG_RE.match(t)]
+    skill_ok = version is not None and (SKILL_DIR / 'validators' / 'validate.py').is_file()
+    dist_ok = version is not None and all(
+        (DIST_DIR / f'software-engineering-{version}.tar.gz{suffix}').is_file()
+        for suffix in ('', '.sha256'))
+    if '待人类批准' in proc:
+        review = '待人类批准'
+    elif '已批准' in proc:
+        review = '已批准'
+    else:
+        review = '未登记'
+    parts = [
+        'A ' + ('已越' if regs_ok and len(pacts) >= 3 else '未完成'),
+        'B ' + ('已越 LRM' if label else '未越 LRM'),
+        'C ' + (f'已越（{label}）' if label else '未完成'),
+        'D ' + (f'{grounding[0]}/6' if grounding else '无法判定'),
+        'M4 技能层 ' + (f'v{version}' if skill_ok else '未落地'),
+        'M5 分发件 ' + (f'v{version} 已产出' if dist_ok else '未产出'),
+        'M6 复核制度 ' + review,
+        'M7 发布 ' + (release[-1] if release else '未开始'),
+    ]
+    return '｜'.join(parts)
+
+
 def todo_facts(ctx: dict, hard_fail_count: int) -> dict:
     """状态块的事实源：条目数、母本行/字节、ADR 份数、tag 全表、--check 硬失败数。"""
     law_bytes = LAW_PATH.read_bytes()
@@ -3029,6 +3107,7 @@ def todo_facts(ctx: dict, hard_fail_count: int) -> dict:
         'adr': _adr_count(),
         'tags': tags,
         'hard': hard_fail_count,
+        'stage': stage_facts(tags),
     }
 
 
@@ -3036,7 +3115,7 @@ def render_todo_status(f: dict) -> str:
     tags = '、'.join(f['tags']) if f['tags'] else ('（git 不可用）' if f['tags'] is None else '（无）')
     n_tag = len(f['tags']) if f['tags'] is not None else 0
     return (f'当前状态：条目 {f["entries"]}｜母本 {f["law_lines"]} 行 / {f["law_bytes"]} 字节｜'
-            f'ADR {f["adr"]} 份｜tag {n_tag} 个：{tags}｜--check 硬失败 {f["hard"]}')
+            f'ADR {f["adr"]} 份｜tag {n_tag} 个：{tags}｜阶段 {f["stage"]}｜--check 硬失败 {f["hard"]}')
 
 
 def _todo_lines() -> list[str]:

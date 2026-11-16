@@ -68,7 +68,8 @@ v09_signoff:            # 仅当 status: fixed 时必填
 ```
 
 - `evidence_kind: hypothesis` 时 `status` 不得写 `fixed`。
-- 无人复核 V09 时 `status` 只能是 `fixed_unverified_root_cause`；写 `fixed` 必须带 `v09_signoff`（复核者身份＋日期），否则 **V08 判 fail**——这一条已由 V08 实际执行，不再是文档承诺。
+- 无人复核 V09 时 `status` 只能是 `fixed_unverified_root_cause`；写 `fixed` 必须带 `v09_signoff`（复核者身份＋日期），否则 **V08 判 fail**。
+- **V09 签字的边界**：V08 只能检查 `v09_signoff.reviewer` 非空、`date` 是 ISO-8601，**不能证明签字人真的做过复核、也不能证明其身份**。字段填谁都一样通过。`fixed` 是否成立最终由人负责，V08 只挡住「写 `fixed` 却连签字字段都没有」这一种情况。
 - 任一段验证不成立时 `status` 写 `not_fixed`。
 
 ## 通过条件（全部由自动检查判定）
@@ -77,7 +78,7 @@ v09_signoff:            # 仅当 status: fixed 时必填
 2. `verify.log` 记录 commit、patch sha256、每段命令、退出码、时间戳。
 3. **三段缺一即 fail。**
 
-判定者：V08。V08 不只读日志：它核对 `commit` 与 HEAD、识别已跟踪文件的脏改动，并实际重跑三段（第②段前应用补丁、结束后撤销），逐段比对退出码。第③段（撤销后再次失败）是防「碰巧通过」的最低成本替代。
+判定者：V08。V08 不只读日志：它核对 `commit` 与 HEAD、识别已跟踪文件的脏改动，并实际重跑三段；第②段把**复现命令与测试命令分开单独重跑**，各自必须为 0（整条命令为 0 不能代替复现转绿），结束后撤销补丁。第③段（撤销后再次失败）是防「碰巧通过」的最低成本替代。
 
 ## 失败处理
 

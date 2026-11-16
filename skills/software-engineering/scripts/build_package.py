@@ -27,18 +27,17 @@ EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "work", "dist", "build", ".pytest_ca
 EXCLUDE_SUFFIXES = {".pyc", ".pyo"}
 
 # 递归禁用：这些名字出现在归档的任意层级都判失败（仓库内部资产与内部证据）。
+# tests 也在其中：内部测试证据不随包分发；示例仓需要模拟「既有测试」的夹具
+# 命名为 base/existing-tests/，因此不需要为 tests 开例外。
 FORBIDDEN_ANYWHERE = {
-    "registry", "pilot", "adr", "archieve", "pact", "scripts",
+    "registry", "pilot", "adr", "archieve", "pact", "scripts", "tests",
     "run-log", "run_log", "anchor_baseline.json",
     "软件工程元框架成文法.md", "软件工程元框架成文法-changlog.md",
     "编译规范.md", "编译规范-changlog.md", "changelog.md",
 }
 
-# 顶层禁用：只有顶层 tests/ 是内部测试证据；随包示例仓内合法地含有嵌套 tests/ 目录，
-# 因此 tests 只查顶层，其余名字递归查整棵树。
-FORBIDDEN_TOP_LEVEL = {"tests"}
-
-FORBIDDEN_NAMES = FORBIDDEN_ANYWHERE | FORBIDDEN_TOP_LEVEL
+# 版本字面量只允许出现在这两处：唯一来源 SKILL.md 与打包时生成的清单。
+VERSION_LITERAL_ALLOWED = {"SKILL.md", "PACKAGE-MANIFEST.txt"}
 
 
 def fail(msg: str, staging: Path | None = None) -> int:
@@ -128,19 +127,34 @@ def main() -> int:
     with tarfile.open(archive, "r:gz") as tar:
         packaged = [Path(m.name).relative_to(pkg_name) for m in tar.getmembers() if m.isfile()]
 
-    # 递归遍历整棵树：内部资产出现在任意层级都拒绝；tests 只查顶层。
+    # 递归遍历整棵树：内部资产与 tests/ 出现在任意层级都拒绝。
     hits = sorted({
         token
         for rel in packaged
         for token in (
-            ([rel.parts[0]] if rel.parts[0] in FORBIDDEN_TOP_LEVEL else [])
-            + [part for part in rel.parts if part in FORBIDDEN_ANYWHERE]
+            [part for part in rel.parts if part in FORBIDDEN_ANYWHERE]
             + [part for part in rel.parts if part in {"__pycache__", "work"}]
         )
     })
     if hits:
         archive.unlink(missing_ok=True)
         return fail("归档含禁用项：" + ", ".join(hits), staging)
+
+    # 版本号单一来源：除 SKILL.md 与 PACKAGE-MANIFEST.txt 外，包内任何文件
+    # 出现当前版本字面量都判失败，防止 README／PACKAGING 又长出第二份版本号。
+    dup_version = sorted(
+        rel.as_posix()
+        for rel in packaged
+        if rel.as_posix() not in VERSION_LITERAL_ALLOWED
+        and version in (staging / rel).read_text(encoding="utf-8", errors="replace")
+    )
+    if dup_version:
+        archive.unlink(missing_ok=True)
+        return fail(
+            f"版本字面量 {version} 只允许出现在 SKILL.md 与 PACKAGE-MANIFEST.txt，"
+            "以下文件重复了版本号：" + ", ".join(dup_version),
+            staging,
+        )
 
     digest = sha256(archive)
     digest_file.write_text(f"{digest}  {archive.name}\n", encoding="utf-8")

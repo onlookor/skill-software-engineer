@@ -7,10 +7,25 @@
 > **编号纪律**：按成文法 0.22 承诺一（编号稳定性），新增工作项追加编号而不重排既有条目；执行优先级以各项标注为准。
 
 <!-- STATUS:BEGIN -->
-当前状态：条目 138｜母本 4811 行 / 592239 字节｜ADR 37 份｜tag 12 个：anchor-B-1、cost-C-20261112、layer-B0、layer-B1、layer-B2、layer-B3a、layer-B3b、layer-B4、layer-B5、layer-B6、layer-B7、layer-close-20261111｜--check 硬失败 0
+当前状态：条目 138｜母本 4811 行 / 592239 字节｜ADR 37 份｜tag 13 个：anchor-B-1、cost-C-20261112、layer-B0、layer-B1、layer-B2、layer-B3a、layer-B3b、layer-B4、layer-B5、layer-B6、layer-B7、layer-close-20261111、layer-skill-narrow-20261116｜阶段 A 已越｜B 已越 LRM｜C 已越（pilot-20261112.14）｜D 6/6｜M4 技能层 v0.5.0｜M5 分发件 v0.5.0 已产出｜M6 复核制度 待人类批准｜M7 发布 未开始｜--check 硬失败 0
 <!-- STATUS:END -->
 
-> 上块由 `registry/scripts/project.py --project` 按事实重写，`--check` 逐项比对；块内数值不得手改。
+> 上块由 `registry/scripts/project.py --project` 按事实重写，`--check` 逐项比对；块内数值不得手改。其中「阶段」字段的里程碑定义与出口条件见 `ROADMAP.md`，状态由事实生成。
+
+> **排期字段（2026-11-16 起）**：每条仍以本文正文的完成状态为准，另按下表归属里程碑；出口条件只在 `ROADMAP.md` 定义，不在本文件重复。
+>
+> | 条目 | 里程碑 | 性质 | 前置依赖 |
+> |---|---|---|---|
+> | 3.1 | M2 | 汇编 | — |
+> | 3.2 | M2 | 汇编 | — |
+> | 3.3 | M2 | 编辑（保真审计） | — |
+> | 3.4 | M2 | 验证 | — |
+> | 3.5 | M3 | 验证（真实项目试点） | M2 |
+> | 3.6 | M2 | 参数化 | 3.7 |
+> | 3.7 | M2 | 起草 | — |
+> | 3.8 | M1 | 知识层填充 | 3.4、M0 |
+> | 3.9 | M2 | 验证（走查补例） | 3.4 |
+> | 3.10 | M1 | 形式层落地 | M0 |
 
 ### 3.1 方面间约束全景矩阵（汇编任务）
 

@@ -17,7 +17,7 @@ python3 skills/software-engineering/examples/defect-repro-fix/run.py
 | 路径 | 内容 |
 |---|---|
 | `base/calc.py` | 真 bug：`add()` 写成了减法 |
-| `base/tests/test_calc.py` | 既有测试（base 上全绿） |
+| `base/existing-tests/test_calc.py` | 既有测试（base 上全绿） |
 | `artifacts/repro_add.py` | 失败测试：单独运行即失败 |
 | `artifacts/fix.patch` | 最小补丁：只改 `calc.py` 一行 |
 | `artifacts/localization.md` | 定位记录：`evidence_kind: direct` |

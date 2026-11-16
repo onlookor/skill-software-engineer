@@ -14,6 +14,7 @@ import contextlib
 import hashlib
 import importlib.util
 import io
+import re
 import shutil
 import subprocess
 import sys
@@ -140,6 +141,104 @@ def case_silent_failure(tmp: Path) -> str:
     return "V02 拦住无输出的恒真失败命令"
 
 
+def case_composite_command(tmp: Path) -> str:
+    """复合命令＋恒真断言：V02/V03 必须拦住。"""
+    repo = tmp / "composite"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "repro_fake.py").write_text(
+        "import unittest\n\n"
+        "class T(unittest.TestCase):\n"
+        "    def test_x(self):\n"
+        "        self.assertTrue(True)\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    (repo / "tests" / "repro_fake.meta.yaml").write_text(
+        "\n".join([
+            "file: tests/repro_fake.py",
+            "test_id: T.test_x",
+            "single_run_command: python3 tests/repro_fake.py; true",
+            f"base_commit: {sha}",
+            "expected_failure: should fail",
+        ]) + "\n",
+        encoding="utf-8",
+    )
+    (repo / "repro.md").write_text(
+        "---\nrepo:\n  url: local\n  commit: %s\n"
+        "command: python3 tests/repro_fake.py; true\nexpected: fail\n"
+        "actual: pass\nexit_code: 1\n---\n" % sha,
+        encoding="utf-8",
+    )
+    cfg = tmp / "composite-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V02", "V03"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
+    assert "单条简单命令" in out and "非恒真断言" in out, out
+    return "V02/V03 拦住复合命令与 assertTrue(True)"
+
+
+def case_phase2_or_true(tmp: Path) -> str:
+    """第②段用「失败复现 || true」伪造：V08 分开重跑必须拦住。"""
+    repo = tmp / "phase2"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "repro_bug.py").write_text(
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n"
+        "assert add(1, 2) == 3, 'add broken'\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    patch_text = (
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -1,2 +1,3 @@\n"
+        " def add(a, b):\n"
+        "     return a - b\n"
+        "+# noop\n"
+    )
+    (repo / "fix.patch").write_text(patch_text, encoding="utf-8")
+    patch_sha = hashlib.sha256(patch_text.encode("utf-8")).hexdigest()
+    (repo / "repro.md").write_text(
+        "---\nrepo:\n  url: local\n  commit: %s\n"
+        "command: python3 tests/repro_bug.py\nexpected: fail\nactual: pass\nexit_code: 1\n---\n"
+        % sha,
+        encoding="utf-8",
+    )
+    test_cmd = "python3 -m unittest discover -s tests -p 'test_*.py'"
+    (repo / "verify.log").write_text(
+        f"run_id: fake\ncommit: {sha}\npatch_sha256: {patch_sha}\n"
+        f"test_command_used: \"{test_cmd}\"\n"
+        "phases:\n"
+        "  - phase: 1\n    command: python3 tests/repro_bug.py\n    exit_code: 1\n"
+        "    started_at: 2026-11-16T00:00:00\n    duration: 0.1\n"
+        "  - phase: 2\n"
+        "    command: \"python3 tests/repro_bug.py || true; "
+        f"{test_cmd}\"\n    exit_code: 0\n"
+        "    started_at: 2026-11-16T00:00:01\n    duration: 0.1\n"
+        "  - phase: 3\n    command: python3 tests/repro_bug.py\n    exit_code: 1\n"
+        "    started_at: 2026-11-16T00:00:02\n    duration: 0.1\n",
+        encoding="utf-8",
+    )
+    (repo / "fix-report.md").write_text(
+        f"---\nstatus: fixed_unverified_root_cause\npatch_sha256: {patch_sha}\n"
+        "touched_files:\n  - calc.py\nevidence_kind: direct\n---\n",
+        encoding="utf-8",
+    )
+    cfg = tmp / "phase2-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V08"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
+    assert "第②段单独重跑复现命令" in out, out
+    return "V08 拦住第②段「失败复现 || true」的伪造"
+
+
 def case_test_constant_patch(tmp: Path) -> str:
     """改测试常量凑绿而 bug 未修：V06 必须拦住。"""
     repo = tmp / "patch-test"
@@ -178,7 +277,7 @@ def case_test_constant_patch(tmp: Path) -> str:
     res = run_validator(repo, cfg, ["V06"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "V06" in out and "断言行" in out, out
+    assert "V06" in out and "测试路径改动违规" in out, out
     return "V06 拦住改测试常量凑绿"
 
 
@@ -227,12 +326,72 @@ def case_nested_forbidden_asset(tmp: Path) -> str:
     return "打包脚本拒绝嵌套禁用资产并删除产物"
 
 
+def case_nested_tests_dir(tmp: Path) -> str:
+    """嵌套 tests/ 目录：打包脚本必须拒绝并删除产物。"""
+    src = tmp / "pkg-src-tests"
+    shutil.copytree(
+        PKG,
+        src,
+        ignore=shutil.ignore_patterns(".git", "dist", "__pycache__", "work", "build"),
+    )
+    nested = src / "validators" / "tests"
+    nested.mkdir(parents=True)
+    (nested / "leak.md").write_text("internal evidence\n", encoding="utf-8")
+
+    builder = load_module("build_package_negative_tests", BUILDER)
+    builder.ROOT = src
+    builder.DIST = tmp / "dist-tests"
+    err = io.StringIO()
+    with contextlib.redirect_stderr(err):
+        code = builder.main()
+    assert code == 1, f"应被拒却退出 {code}\n{err.getvalue()}"
+    assert "tests" in err.getvalue(), err.getvalue()
+    archives = list((tmp / "dist-tests").glob("*.tar.gz"))
+    assert not archives, f"失败后仍留下归档：{archives}"
+    return "打包脚本拒绝任意层级的 tests/ 并删除产物"
+
+
+def case_version_literal_dup(tmp: Path) -> str:
+    """README 里重复版本字面量：打包脚本反向断言必须拦住。"""
+    src = tmp / "pkg-src-version"
+    shutil.copytree(
+        PKG,
+        src,
+        ignore=shutil.ignore_patterns(".git", "dist", "__pycache__", "work", "build"),
+    )
+    version = re.search(
+        r'^version:\s*"?([0-9]+\.[0-9]+\.[0-9]+)"?\s*$',
+        (src / "SKILL.md").read_text(encoding="utf-8"),
+        re.MULTILINE,
+    ).group(1)
+    readme = src / "README.md"
+    readme.write_text(
+        readme.read_text(encoding="utf-8") + f"\n> 版本 {version}\n", encoding="utf-8"
+    )
+
+    builder = load_module("build_package_negative_version", BUILDER)
+    builder.ROOT = src
+    builder.DIST = tmp / "dist-version"
+    err = io.StringIO()
+    with contextlib.redirect_stderr(err):
+        code = builder.main()
+    assert code == 1, f"应被拒却退出 {code}\n{err.getvalue()}"
+    assert "版本字面量" in err.getvalue(), err.getvalue()
+    archives = list((tmp / "dist-version").glob("*.tar.gz"))
+    assert not archives, f"失败后仍留下归档：{archives}"
+    return "打包脚本拒绝 README 里重复的版本号"
+
+
 CASES = [
     case_empty_test_and_patch,
     case_silent_failure,
+    case_composite_command,
+    case_phase2_or_true,
     case_test_constant_patch,
     case_blocker_port,
     case_nested_forbidden_asset,
+    case_nested_tests_dir,
+    case_version_literal_dup,
 ]
 
 
