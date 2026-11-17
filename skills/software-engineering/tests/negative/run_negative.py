@@ -14,6 +14,7 @@ import contextlib
 import hashlib
 import importlib.util
 import io
+import os
 import re
 import shutil
 import subprocess
@@ -562,8 +563,11 @@ def case_c1_runner_fake(tmp: Path) -> str:
     res = run_validator(repo, cfg, ["V02", "V03", "V04", "V05", "V06", "V08"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "补丁行未被复现测试覆盖" in out, out
-    return "C1 被覆盖率拦住：补丁行未被测试执行"
+    assert (
+        "补丁行未被复现测试覆盖" in out
+        or ("白名单" in out and "不得使用 open" in out)
+    ), out
+    return "C1 被拦住：读文件文本的假 runner 进不了白名单（或覆盖交集为空）"
 
 
 def case_c2_pythonpath_shadow(tmp: Path) -> str:
@@ -654,8 +658,12 @@ def case_c4_dead_code(tmp: Path) -> str:
     res = run_validator(repo, cfg, ["V02", "V03", "V04", "V05", "V06", "V08"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "补丁行未被复现测试覆盖" in out, out
-    return "C4 被覆盖率拦住：死代码行没有被测试执行"
+    assert (
+        "补丁行未被复现测试覆盖" in out
+        or "不是函数／方法体内的改动" in out
+        or ("白名单" in out and "不得使用 open" in out)
+    ), out
+    return "C4 被拦住：读源码的死代码假修复（覆盖／结构／白名单）"
 
 
 def case_c6_sitecustomize(tmp: Path) -> str:
@@ -750,8 +758,11 @@ def case_c7_fixture_outside_tests(tmp: Path) -> str:
     res = run_validator(repo, cfg, ["V02", "V03", "V04", "V05", "V06", "V08"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "补丁行未被复现测试覆盖" in out, out
-    return "C7 被覆盖率拦住：夹具改动无法被测试执行覆盖"
+    assert (
+        "补丁行未被复现测试覆盖" in out
+        or ("白名单" in out and "不得使用 open" in out)
+    ), out
+    return "C7 被拦住：读夹具的假修复进不了白名单（或覆盖交集为空）"
 
 
 def case_test_rename_out(tmp: Path) -> str:
@@ -821,6 +832,213 @@ def case_mutation_insensitive_added(tmp: Path) -> str:
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
     assert "变异检验未通过" in out and "calc.py:3" in out, out
     return "V08 拦住被覆盖但对测试不敏感的补丁行"
+
+
+def case_mutation_crash_not_kill(tmp: Path) -> str:
+    """B3：测试在断言前崩溃。变异只让测试崩溃（IndexError），V08 不得算作杀死变异。"""
+    repo = tmp / "mutation-crash"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def pick(data):\n    return data[1]\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
+    (repo / "tests" / "repro_bug.py").write_text(
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import pick\n"
+        "assert pick([1]) == 1, 'pick wrong'\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    (repo / "fix.patch").write_text(
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -1,2 +1,2 @@\n"
+        " def pick(data):\n"
+        "-    return data[1]\n"
+        "+    return data[0]\n",
+        encoding="utf-8",
+    )
+    repro_cmd = "python3 -I tests/repro_bug.py"
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py")
+    write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg = tmp / "mutation-crash-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V08"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
+    assert "变异检验未通过" in out, out
+    assert "不算断言失败" in out or "未以断言失败告终" in out, out
+    return "V08 不把测试崩溃当作杀死变异"
+
+
+def case_mutation_immutable_only(tmp: Path) -> str:
+    """补丁只新增一行注释：造不出任何变异，run_mutation_checks 必须 fail。"""
+    repo = tmp / "mutation-immutable"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
+    commit_all(repo)
+    patch_text = (
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -1,2 +1,3 @@\n"
+        " def add(a, b):\n"
+        "     return a + b\n"
+        "+    # behavior marker\n"
+    )
+    v = load_module("validate_for_immutable", VALIDATE)
+    failures = v.run_mutation_checks(
+        repo.resolve(), "python3 -I tests/run_all.py", 30, patch_text
+    )
+    assert failures, "只改注释的补丁不应通过变异检验"
+    assert any("造不出可编译变异" in f for f in failures), failures
+    return "变异检验对只改注释的补丁不 vacuous pass"
+
+
+def case_import_time_fake_fixes(tmp: Path) -> str:
+    """B1/B2/B4/A1/A3：改动全在导入期，V06 的结构规则必须逐一拦住。"""
+    repo = tmp / "import-time"
+    init_repo(repo)
+    (repo / "calc.py").write_text(
+        '"""old module docstring."""\n'
+        "import unittest\n"
+        "EXPECTED = 3\n"
+        "\n"
+        "def add(a, b):\n"
+        "    return a - b\n",
+        encoding="utf-8",
+    )
+    commit_all(repo)
+    variants = {
+        "B1 模块级写 fd 并 os._exit": (
+            "@@ -5,2 +5,5 @@\n"
+            " def add(a, b):\n"
+            "     return a - b\n"
+            "+import os\n"
+            "+os.write(1, b\"\")\n"
+            "+os._exit(0)\n",
+            3,
+        ),
+        "B2 模块 docstring": (
+            "@@ -1,1 +1,1 @@\n"
+            '-"""old module docstring."""\n'
+            '+"""new module docstring."""\n',
+            2,
+        ),
+        "B4 模块级字符串 marker": (
+            "@@ -5,2 +5,3 @@\n"
+            " def add(a, b):\n"
+            "     return a - b\n"
+            '+MARKER = "fixed"\n',
+            1,
+        ),
+        "A1 顶层常量": (
+            "@@ -1,3 +1,3 @@\n"
+            ' """old module docstring."""\n'
+            " import unittest\n"
+            "-EXPECTED = 3\n"
+            "+EXPECTED = 4\n",
+            2,
+        ),
+        "A3 导入期类属性猴补丁": (
+            "@@ -5,2 +5,3 @@\n"
+            " def add(a, b):\n"
+            "     return a - b\n"
+            "+unittest.TestCase.assertEqual = lambda *a, **k: None\n",
+            1,
+        ),
+    }
+    cfg = tmp / "import-time-config.yaml"
+    write_config(repo, cfg)
+    blocked = []
+    for name, (hunk, diff_lines) in variants.items():
+        (repo / "fix.patch").write_text(
+            "diff --git a/calc.py b/calc.py\n"
+            "--- a/calc.py\n"
+            "+++ b/calc.py\n" + hunk,
+            encoding="utf-8",
+        )
+        (repo / "localization.md").write_text(
+            "---\nevidence_kind: direct\nfiles:\n  - calc.py\n"
+            f"estimated_touched_files: 1\nestimated_diff_lines: {diff_lines}\n---\n"
+            "机制：导入期改动。\n",
+            encoding="utf-8",
+        )
+        res = run_validator(repo, cfg, ["V06"])
+        out = res.stdout + res.stderr
+        assert res.returncode == 1, f"{name} 未被拦住：退出 {res.returncode}\n{out}"
+        assert "不是函数／方法体内的改动" in out, f"{name}\n{out}"
+        blocked.append(name)
+    return f"V06 拦住 {len(blocked)} 种导入期假修复"
+
+
+def case_test_whitelist_violation(tmp: Path) -> str:
+    """复现测试读文件／碰环境／起子进程／exec：V03 白名单必须拦住。"""
+    repo = tmp / "test-whitelist"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
+    bodies = {
+        "open 读源码": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "src = open('calc.py').read()\n"
+            "assert 'return a - b' in src\n"
+        ),
+        "os 环境变量": (
+            "import os\n"
+            "assert os.environ.get('HOME'), 'home'\n"
+        ),
+        "subprocess": (
+            "import subprocess\n"
+            "result = subprocess.run(['true'])\n"
+            "assert result.returncode == 0, 'failed'\n"
+        ),
+        "exec": (
+            "exec('x = 1')\n"
+            "assert x == 1\n"
+        ),
+    }
+    cfg = tmp / "test-whitelist-config.yaml"
+    write_config(repo, cfg)
+    for name, body in bodies.items():
+        (repo / "tests" / "repro_white.py").write_text(body, encoding="utf-8")
+        sha = commit_all(repo)
+        repro_cmd = "python3 -I tests/repro_white.py"
+        write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_white.py")
+        res = run_validator(repo, cfg, ["V03"])
+        out = res.stdout + res.stderr
+        assert res.returncode == 1, f"{name} 未被白名单拦住：退出 {res.returncode}\n{out}"
+        assert "白名单" in out, f"{name}\n{out}"
+    return f"V03 白名单拦住 {len(bodies)} 种越界复现测试"
+
+
+def case_package_special_bits_and_symlinks(tmp: Path) -> str:
+    """打包：setuid 源文件、断链、目录软链都必须显式拒收，不得静默入包／跳过。"""
+    # 1) setuid 源文件
+    src = _copy_pkg(tmp, "pkg-src-setuid")
+    victim = src / "validators" / "validate.py"
+    os.chmod(victim, 0o4755)
+    code, err = _build_variant(src, tmp / "dist-setuid", "build_package_neg_setuid")
+    assert code == 1, f"带 setuid 的源文件未被拒：退出 {code}\n{err}"
+    assert "特殊位" in err and "未入包" in err, err
+
+    # 2) 断链
+    src = _copy_pkg(tmp, "pkg-src-broken-link")
+    (src / "validators" / "broken.md").symlink_to(src / "validators" / "missing.md")
+    code, err = _build_variant(src, tmp / "dist-broken-link", "build_package_neg_broken")
+    assert code == 1, f"断链未被拒：退出 {code}\n{err}"
+    assert "断链" in err and "未入包" in err, err
+
+    # 3) 归带绝对路径的目录软链
+    src = _copy_pkg(tmp, "pkg-src-dir-link")
+    (src / "validators" / "dir-link").symlink_to((src / "examples").resolve())
+    code, err = _build_variant(src, tmp / "dist-dir-link", "build_package_neg_dirlink")
+    assert code == 1, f"目录软链未被拒：退出 {code}\n{err}"
+    assert "目录的软链" in err and "未入包" in err, err
+    return "打包显式拒收 setuid 源文件、断链与目录软链"
 
 
 def case_comment_assertion(tmp: Path) -> str:
@@ -1022,6 +1240,11 @@ CASES = [
     case_c7_fixture_outside_tests,
     case_test_rename_out,
     case_mutation_insensitive_added,
+    case_mutation_crash_not_kill,
+    case_mutation_immutable_only,
+    case_import_time_fake_fixes,
+    case_test_whitelist_violation,
+    case_package_special_bits_and_symlinks,
     case_comment_assertion,
     case_string_assertion,
 ]

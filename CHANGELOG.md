@@ -46,6 +46,7 @@
 
 ## 批次 0003 — 2026-11-17
 
+
 - **批次号**：0003
 - **日期**：2026-11-17
 - **涉及文件**：
@@ -61,3 +62,23 @@
   4. **第四轮余账**：覆盖率输出改经继承 fd，不再把输出路径放进 argv；V03 按 tokenize 去掉注释与字符串后匹配断言；M2 绑定 `label`／最新重编译记录／母本哈希与提交日期；打包拒绝同形字与含空白路径、硬链接，并对 f-string／`format`／转义／UTF-16 内嵌版本号做反向断言；`first_observed` 口径统一为接受 `str`／`date`／`datetime`；解释器收紧为字面量 `python3`；`validate.py` 在 `python3 -I` 下可自行补回站点目录导入 PyYAML；修正 S2／README 关于夹具覆盖范围与 ROADMAP M6 的不实表述。
 - **关联 ADR**：无
 - **备注**：本批次只提交，不推送、不打标签；未做自评，不写「已验证」。
+
+## 批次 0004 — 2026-11-17
+
+- **批次号**：0004
+- **日期**：2026-11-17
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（变异判据、补丁结构、测试白名单、B3b 多改点回退）
+  - 打包：`skills/software-engineering/scripts/build_package.py`（特殊位拒收与归一、断链／目录软链／特殊文件显式拒收）
+  - 用例：`skills/software-engineering/tests/negative/run_negative.py`、`skills/software-engineering/tests/positive/run_positive.py`
+  - 调度：`registry/scripts/project.py`（删除 M2 自动出口）、`ROADMAP.md`、`todo.md`
+  - 文档：`skills/software-engineering/SKILL.md`、`validators/README.md`、`validators/V09-checklist.md`、`stages/S1-repro.md`、`stages/S2-localize-fix.md`、`stages/S3-verify.md`、`PACKAGING.md`
+- **变更摘要**：
+  1. **变异判据**：只认断言失败（`AssertionError`／unittest `failures>0`／pytest `failed>0`）；崩溃、超时、`SystemExit`／`os._exit` 等提前退出不再算杀死变异。受控执行引导把未捕获异常类型写进覆盖率 JSON。整份补丁造不出可编译变异即 fail，不把 docstring／注释／纯字符串等改不动的行当通过证据。
+  2. **结构约束**：V06 用 AST 校验 `.py` 生产补丁的每个增行／删行都落在函数／方法体内（a 侧按 base、b 侧按补丁后源码），模块级赋值、模块 docstring、导入期调用、类属性猴补丁、装饰器、顶层 `def` 行一律拦。V03／V08 增加复现测试白名单：禁止 `open`、读源码文本、`os`／`subprocess`／`exec`／`eval`／`__import__`、读写环境变量、改写外部文件；正常 `import`／`from ... import` 放行。
+  3. **修 B3b 误杀**：`patch_mutation_targets()` 按上下文行把同一 hunk 切成多个连续改动块，各自记录插入位置并独立回退；同一 hunk 内相隔上下文的两处修改不再报「无法定位删除块」。
+  4. **M2 假出口**：删除 `_artifact_shape()`。`artifact.yaml` 的序号／标签／日期／母本哈希可被写成互相一致的假值，历史产物原样放回也能通过；本仓没有能区分「本轮编译」与「历史产物」的可执行动作。`project.py` 固定显示「C 未判定（M2 无自动出口）」，`ROADMAP.md` 的 M2 改为不设自动出口。
+  5. **打包**：源文件带 setuid／setgid／sticky 即拒收并写明「未入包」；staging 统一 `0644`，tar 成员强制 `0644`／`REGTYPE`，归档后反向核对权限。断链、目录软链、FIFO／设备文件显式拒收，不再被 `is_file()` 静默跳过；打包输出登记「未入包项：0」。
+  6. **文档边界**：天花板段落改为输出通道走环境变量 `SE_COV_FD`，并承认生产补丁同样能伪造；新增「预言取自被测代码本身时任何机械检查都判不出来」的边界，落入 V09 第 8 项，明确不得写成「已解决」。
+- **关联 ADR**：无
+- **备注**：版本 0.7.0 → 0.8.0；负向 34/34、正向 5/5；本批次只提交，不推送、不打标签；未做自评，不写「已验证」。

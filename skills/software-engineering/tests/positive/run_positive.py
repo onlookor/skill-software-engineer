@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 """正向用例：证明「真修复不会被误杀」。
 
-覆盖两类此前会被 V08 误判的场景：
-  - 断言写在 subprocess 子脚本里（父进程只转发退出码）；
+覆盖：
   - 断言写在 threading.Thread 里（异常由测试自己收集后抛出）；
-以及一条纯新增补丁（只加行、base 侧为空），证明它仍要过变异检验。
+  - 纯新增补丁（只加行、base 侧为空），新增守卫行仍要过变异检验；
+  - 正常使用 `import` 与 `from ... import` 的测试放行；
+  - 合法的函数体内修复（改 return 行、加守卫行）不被结构规则误杀。
 
 用法（仓库根目录）：
     python3 skills/software-engineering/tests/positive/run_positive.py
@@ -99,7 +100,7 @@ def case_thread_assertion(tmp: Path) -> str:
 
 
 def case_subprocess_assertion(tmp: Path) -> str:
-    """断言在子进程里：真修复必须能通过 V01–V08（覆盖率要能采到子进程）。"""
+    """断言在子进程里：复现测试白名单不允许 subprocess，本用例必须被拒。"""
     repo = tmp / "subprocess"
     base_fixture(repo)
     (repo / "tests" / "child_check.py").write_text(
@@ -125,8 +126,35 @@ def case_subprocess_assertion(tmp: Path) -> str:
     write_config(repo, cfg)
     res = run_validator(repo, cfg, ALL)
     out = res.stdout + res.stderr
-    assert res.returncode == 0, f"真修复被误杀：退出 {res.returncode}\n{out}"
-    return "子进程断言的真修复通过 V01–V08（子进程覆盖已合并）"
+    assert res.returncode == 1, f"含 subprocess 的复现测试未被白名单拦住：退出 {res.returncode}\n{out}"
+    assert "白名单" in out and "subprocess" in out, out
+    return "复现测试白名单拦住 subprocess"
+
+
+def case_import_forms(tmp: Path) -> str:
+    """正常 import 与 from ... import：白名单必须放行，函数体内修复必须通过。"""
+    repo = tmp / "import-forms"
+    base_fixture(repo)
+    (repo / "tests" / "repro_imports.py").write_text(
+        "import sys\n"
+        "sys.path.insert(0, '.')\n"
+        "import calc\n"
+        "from calc import add\n"
+        "assert add(1, 2) == 3, 'add broken'\n"
+        "assert calc.add(2, 3) == 5, 'calc.add broken'\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    repro_cmd = write_fix(repo, "repro_imports.py")
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_imports.py")
+    write_localization(repo, 2)
+    write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg = tmp / "import-forms-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ALL)
+    out = res.stdout + res.stderr
+    assert res.returncode == 0, f"正常 import 的真修复被误杀：退出 {res.returncode}\n{out}"
+    return "正常 import 与 from import 的测试通过白名单与全部检查"
 
 
 def case_pure_addition(tmp: Path) -> str:
@@ -148,6 +176,8 @@ def case_pure_addition(tmp: Path) -> str:
         "    safe_div(1, 0)\n"
         "except ValueError:\n"
         "    pass\n"
+        "except BaseException as exc:\n"
+        "    raise AssertionError('unexpected %s' % type(exc).__name__) from exc\n"
         "else:\n"
         "    raise AssertionError('expected ValueError')\n",
         encoding="utf-8",
@@ -176,7 +206,65 @@ def case_pure_addition(tmp: Path) -> str:
     return "纯新增补丁通过覆盖与变异检验"
 
 
-CASES = [case_thread_assertion, case_subprocess_assertion, case_pure_addition]
+def case_two_change_points(tmp: Path) -> str:
+    """B3b：两个改点落在同一个 hunk、中间隔两行上下文，不得误报无法定位删除块。"""
+    repo = tmp / "two-points"
+    init_repo(repo)
+    (repo / "calc.py").write_text(
+        "def add(a, b):\n"
+        "    return a - b\n"
+        "\n"
+        "def mul(a, b):\n"
+        "    return a / b\n",
+        encoding="utf-8",
+    )
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text(
+        "import sys\nsys.exit(0)\n",
+        encoding="utf-8",
+    )
+    (repo / "tests" / "repro_both.py").write_text(
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add, mul\n"
+        "assert add(1, 2) == 3, 'add broken'\n"
+        "assert mul(2, 3) == 6, 'mul broken'\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    repro_cmd = "python3 -I tests/repro_both.py"
+    (repo / "fix.patch").write_text(
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -1,5 +1,5 @@\n"
+        " def add(a, b):\n"
+        "-    return a - b\n"
+        "+    return a + b\n"
+        " \n"
+        " def mul(a, b):\n"
+        "-    return a / b\n"
+        "+    return a * b\n",
+        encoding="utf-8",
+    )
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_both.py")
+    write_localization(repo, 4)
+    write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg = tmp / "two-points-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ALL)
+    out = res.stdout + res.stderr
+    assert res.returncode == 0, f"同一 hunk 双改点的真修复被误杀：退出 {res.returncode}\n{out}"
+    assert "无法定位删除块" not in out, out
+    return "同一 hunk 内两个改动块分别回退，变异检验通过"
+
+
+CASES = [
+    case_thread_assertion,
+    case_subprocess_assertion,
+    case_import_forms,
+    case_pure_addition,
+    case_two_change_points,
+]
 
 
 def main() -> int:

@@ -5,7 +5,7 @@ description: >-
   复现证据、失败测试、最小补丁与三段验证日志。Reproduce-fix-verify a defect in an
   existing repository; produce repro evidence, a failing test, a minimal patch, and a
   three-phase verification log.
-version: "0.7.0"
+version: "0.8.0"
 entry: "stages/S1-repro.md"
 stages: ["stages/S1-repro.md", "stages/S2-localize-fix.md", "stages/S3-verify.md"]
 validators: ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08", "V09"]
@@ -64,7 +64,7 @@ mount_declarations:            # 使用前必须约定的七项；缺一即 cann
 
 1. **不跳步**：S1 没通过不写补丁；S2 没通过不写验证日志；失败处理不得「先继续再补」。
 2. **不改判定标准**：不得修改测试断言、不得修改验收命令使其通过；V06 会判。
-3. **只查产物不算证据**：复现测试必须在受控执行（`python3 -I`、清空 `PYTHON*`、屏蔽 `sitecustomize`）下跑到补丁改动过的生产代码行；补丁行与实测覆盖行交集为空即未证明修复，不得写成通过。还要通过变异检验：对补丁触及的生产代码行造变异后重跑复现测试，必须变红；全部存活即未证明测试对补丁行敏感。同进程证据仍可被测试代码伪造，见 `validators/README.md` 的「已知边界」。
+3. **只查产物不算证据**：复现测试必须在受控执行（`python3 -I`、清空 `PYTHON*`、屏蔽 `sitecustomize`）下跑到补丁改动过的生产代码行；补丁行与实测覆盖行交集为空即未证明修复，不得写成通过。还要通过变异检验：对补丁触及的生产代码行造变异后重跑复现测试，必须以**断言失败**变红；崩溃、超时、提前退出都不算，全部存活即未证明测试对补丁行敏感。补丁改动行必须全部落在函数／方法体内，复现测试只允许调用被测接口并断言（白名单见 `validators/README.md`）。同进程证据仍可被测试代码或生产补丁伪造；**预言取自被测代码本身时，任何机械检查都判不出来**，见 `validators/README.md` 的「已知边界」。
 4. **不越界**：补丁只触及定位说明里列出的文件；范围之外一律不动。
 5. **不编值**：七项使用前约定只从约定结果来；缺项即 `cannot_evaluate`，不得用「常见取值」代填，也不得默认「无需清理」。
 6. **不冒充**：根因没有直接证据时，状态只能写 `fixed_unverified_root_cause`（修复未验证根因），不得写 `fixed`，不得出现「根因已确认／彻底修复／问题已解决」。V09 必须人工执行，仓内字段不能替代复核。

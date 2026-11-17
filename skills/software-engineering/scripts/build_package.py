@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import hashlib
+import os
 import re
 import shutil
 import sys
@@ -144,9 +145,22 @@ def iter_files() -> list[Path]:
         if not base.is_dir():
             raise PackageError(f"白名单目录缺失：{d}/")
         for p in sorted(base.rglob("*")):
-            if not p.is_file():
-                continue
             rel = p.relative_to(ROOT)
+            # 软链与特殊文件必须显式判定，不能靠 is_file() 静默跳过：
+            # 目录软链、断链、FIFO/设备文件一律拒收并写明「未入包」。
+            if p.is_symlink():
+                if not p.exists():
+                    raise PackageError(f"{rel.as_posix()} 是断链，未入包")
+                if p.is_dir():
+                    raise PackageError(
+                        f"{rel.as_posix()} 是指向目录的软链，未入包"
+                    )
+                if not p.is_file():
+                    raise PackageError(
+                        f"{rel.as_posix()} 是特殊文件（非普通文件），未入包"
+                    )
+            elif not p.is_file():
+                continue
             if any(normalize_name(part) in EXCLUDE_NORMALIZED for part in rel.parts):
                 continue
             if p.suffix in EXCLUDE_SUFFIXES:
@@ -162,6 +176,13 @@ def iter_files() -> list[Path]:
                     raise PackageError(
                         f"{rel.as_posix()} 路径分量含空白或不可见字符：{part!r}"
                     )
+            # 特殊位（setuid／setgid／sticky）会随归档成员落到解包后的文件上。
+            # 源文件带特殊位即拒收；归档构建时还会再次归一到 0644。
+            if p.stat().st_mode & 0o7000:
+                raise PackageError(
+                    f"{rel.as_posix()} 带特殊位（mode={oct(p.stat().st_mode & 0o7777)}），"
+                    "未入包"
+                )
             # 硬链接：内容可能来自仓库内部资产，且打包后无法从路径判定来源。
             if p.stat().st_nlink > 1:
                 raise PackageError(
@@ -215,6 +236,8 @@ def build() -> int:
         target = staging / rel
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(src, target)
+        # 归一化：归档里不得出现 setuid／setgid／sticky 或可执行位。
+        os.chmod(target, 0o644)
 
     manifest = [f"package: {pkg_name}", f"version: {version}", "files:"]
     for src in source_files:
@@ -231,11 +254,24 @@ def build() -> int:
             info.mtime = 0
             info.uid = info.gid = 0
             info.uname = info.gname = ""
+            # 归档成员统一为普通文件 0644：不带 setuid／setgid／sticky／可执行位。
+            info.mode = 0o644
+            info.type = tarfile.REGTYPE
             with p.open("rb") as fh:
                 tar.addfile(info, fh)
 
     with tarfile.open(archive, "r:gz") as tar:
-        packaged = [Path(m.name).relative_to(pkg_name) for m in tar.getmembers() if m.isfile()]
+        members = [m for m in tar.getmembers() if m.isfile()]
+        packaged = [Path(m.name).relative_to(pkg_name) for m in members]
+
+    bad_modes = [m.name for m in members if (m.mode & 0o7777) != 0o644]
+    if bad_modes:
+        archive.unlink(missing_ok=True)
+        return fail(
+            "归档成员权限未归一到 0644（疑似 setuid／setgid／sticky）："
+            + ", ".join(bad_modes[:5]),
+            staging,
+        )
 
     # 递归遍历整棵树：内部资产与 tests/ 出现在任意层级都拒绝（大小写不敏感）。
     hits = sorted({
@@ -276,6 +312,8 @@ def build() -> int:
     print(f"版本：{version}")
     print(f"目录：{staging}（{len(packaged)} 个文件，含 PACKAGE-MANIFEST.txt）")
     print(f"归档：{archive}")
+    print("归档成员权限：0644（无 setuid／setgid／sticky／可执行位）")
+    print("未入包项：0（目录软链／断链／特殊文件出现即拒绝，不静默忽略）")
     print(f"校验：{digest_file}  sha256={digest}")
     return 0
 

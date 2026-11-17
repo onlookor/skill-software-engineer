@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 import hashlib
 import io
 import json
@@ -288,6 +289,9 @@ sys.modules["sitecustomize"] = None
 sys.modules["usercustomize"] = None
 
 
+failure = {"error": None}
+
+
 def main():
     try:
         runpy.run_path(script, run_name="__main__")
@@ -296,10 +300,16 @@ def main():
         code = exc.code
         if code is None:
             return 0
-        return code if isinstance(code, int) else 1
-    except BaseException:
+        if not isinstance(code, int):
+            # `sys.exit("msg")` 是提前退出，不是断言失败；记下类型供变异判据区分。
+            failure["error"] = "SystemExit"
+            return 1
+        return code
+    except BaseException as exc:
         # 未捕获异常必须留下输出，否则 V02 无法区分「静默失败」与「真的失败」。
         # 引导自身路径每次都在新的临时目录里，写进输出会让指纹不稳定。
+        # 变异检验需要区分「断言失败」与「崩溃」，这里只记异常类型名。
+        failure["error"] = type(exc).__name__
         import traceback
         sys.stderr.write(traceback.format_exc().replace(boot, "<bootstrap>"))
         return 1
@@ -338,7 +348,7 @@ def _dump(exit_code, tracer=None):
                     covered.setdefault(path, []).extend(
                         x for x in lines if isinstance(x, int)
                     )
-    payload = {"exit": exit_code,
+    payload = {"exit": exit_code, "error": failure["error"],
                "covered": {k: sorted(set(v)) for k, v in covered.items()}}
     with os.fdopen(out_fd, "w", encoding="utf-8") as fh:
         json.dump(payload, fh)
@@ -491,15 +501,24 @@ def _exec_isolated(repo: Path, script: Path, timeout: int, trace_mode: bool):
         code = covered.get("exit")
         if not isinstance(code, int):
             raise RuntimeError("受控执行结果缺退出码")
-        return code, text, (covered if trace_mode else None)
+        error = covered.get("error")
+        if not isinstance(error, str) or not error:
+            error = None
+        return code, text, (covered if trace_mode else None), error
+
+
+def run_command_classified(cmd: str, cwd: Path, timeout: int) -> tuple[int, str, str | None]:
+    """受控执行并返回（退出码, 输出, 未捕获异常类型）；供变异判据区分崩溃与断言失败。"""
+    script, problem = parse_isolated_command(cmd, cwd)
+    if problem:
+        raise RuntimeError(problem)
+    code, text, _covered, error = _exec_isolated(cwd, script, timeout, trace_mode=False)
+    return code, text, error
 
 
 def run_command(cmd: str, cwd: Path, timeout: int) -> tuple[int, str]:
     """按白名单形式解释并受控执行命令（非 trace 模式）。"""
-    script, problem = parse_isolated_command(cmd, cwd)
-    if problem:
-        raise RuntimeError(problem)
-    code, text, _covered = _exec_isolated(cwd, script, timeout, trace_mode=False)
+    code, text, _error = run_command_classified(cmd, cwd, timeout)
     return code, text
 
 
@@ -508,7 +527,8 @@ def run_traced_command(cmd: str, repo: Path, timeout: int):
     script, problem = parse_isolated_command(cmd, repo)
     if problem:
         raise RuntimeError(problem)
-    return _exec_isolated(repo, script, timeout, trace_mode=True)
+    code, text, covered, _error = _exec_isolated(repo, script, timeout, trace_mode=True)
+    return code, text, covered
 
 
 def parse_iso(v) -> bool:
@@ -719,6 +739,196 @@ def is_test_path(path: str) -> bool:
     ))
 
 
+# ---------------------------------------------------------------- 补丁结构约束
+
+def patch_file_edits(text: str) -> list[dict]:
+    """按文件列出补丁的增行／删行及其 a／b 侧行号。"""
+    out: list[dict] = []
+    for entry in patch_entries(text):
+        added: list[tuple[int, str]] = []
+        deleted: list[tuple[int, str]] = []
+        a_cur = b_cur = None
+        lines = entry["lines"]
+        new_file = any(
+            line.startswith("new file mode") or line == "--- /dev/null"
+            for line in lines
+        )
+        deleted_file = any(
+            line.startswith("deleted file mode") or line == "+++ /dev/null"
+            for line in lines
+        )
+        for line in lines:
+            m = re.match(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@", line)
+            if m:
+                a_cur, b_cur = int(m.group(1)), int(m.group(2))
+                continue
+            if a_cur is None:
+                continue
+            if line.startswith("+"):
+                added.append((b_cur, line[1:]))
+                b_cur += 1
+            elif line.startswith("-"):
+                deleted.append((a_cur, line[1:]))
+                a_cur += 1
+            elif line.startswith(" ") or line == "":
+                a_cur += 1
+                b_cur += 1
+        out.append({
+            "a": entry["a"], "b": entry["b"], "lines": lines,
+            "added": added, "deleted": deleted,
+            "new": new_file, "deleted_file": deleted_file,
+        })
+    return out
+
+
+def apply_hunks_to_source(base_text: str, hunk_lines: list[str]) -> str | None:
+    """把补丁的 hunk 应用到 base 源码；上下文不匹配时返回 None。"""
+    base = base_text.splitlines(keepends=True)
+    out: list[str] = []
+    pos = 0
+    in_hunk = False
+    for line in hunk_lines:
+        m = re.match(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@", line)
+        if m:
+            start = int(m.group(1)) - 1
+            if start < pos or start > len(base):
+                return None
+            out.extend(base[pos:start])
+            pos = start
+            in_hunk = True
+            continue
+        if not in_hunk or line.startswith("\\"):
+            continue
+        if line.startswith("+"):
+            out.append(line[1:] + "\n")
+        elif line.startswith("-"):
+            if pos >= len(base) or base[pos].rstrip("\r\n") != line[1:]:
+                return None
+            pos += 1
+        else:
+            text = line[1:] if line.startswith(" ") else line
+            if pos >= len(base) or base[pos].rstrip("\r\n") != text:
+                return None
+            out.append(base[pos])
+            pos += 1
+    out.extend(base[pos:])
+    return "".join(out)
+
+
+def function_body_lines(source: str) -> set[int]:
+    """函数／方法体的行号集合；不含 def 行、装饰器、默认参数与模块级语句。"""
+    tree = ast.parse(source)
+    body: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
+            end = node.end_lineno or node.lineno
+            body.update(range(node.body[0].lineno, end + 1))
+    return body
+
+
+def patch_structural_violations(
+    repo: Path, text: str
+) -> tuple[list[str], list[str]]:
+    """补丁改动行必须全部落在函数／方法体内；返回 (违规, 无法判定)。
+
+    导入期可执行语句（模块级赋值、模块 docstring、导入期调用、类属性猴补丁）
+    都不在函数体内，一律判违规。测试路径不在本规则范围（V06 另行处理）。
+    """
+    violations: list[str] = []
+    cannots: list[str] = []
+    for entry in patch_file_edits(text):
+        paths = [p for p in (entry["a"], entry["b"]) if p and p != "/dev/null"]
+        if not paths or any(is_test_path(p) for p in paths):
+            continue
+        if not any(p.endswith(".py") for p in paths):
+            continue
+        base_body: set[int] = set()
+        base_text = ""
+        if not entry["new"]:
+            base_path = repo / entry["a"]
+            if not base_path.is_file():
+                cannots.append(
+                    f'{entry["a"]}：补丁的 base 侧文件不存在，'
+                    "无法判断改动行是否在函数体内"
+                )
+                continue
+            base_text = base_path.read_text(encoding="utf-8", errors="replace")
+            try:
+                base_body = function_body_lines(base_text)
+            except SyntaxError as exc:
+                cannots.append(f'{entry["a"]}：base 源码无法解析（{exc}）')
+                continue
+        patched_body: set[int] = set()
+        if entry["added"]:
+            if entry["new"]:
+                patched_text = "".join(t + "\n" for _n, t in entry["added"])
+            else:
+                patched_text = apply_hunks_to_source(base_text, entry["lines"])
+            if patched_text is None:
+                cannots.append(f'{entry["b"]}：补丁无法应用到 base 源码，无法判断结构')
+                continue
+            try:
+                patched_body = function_body_lines(patched_text)
+            except SyntaxError as exc:
+                cannots.append(f'{entry["b"]}：补丁后源码无法解析（{exc}）')
+                continue
+        for lineno, line in entry["deleted"]:
+            if lineno not in base_body:
+                violations.append(
+                    f'{entry["a"]}:{lineno} 不是函数／方法体内的改动：'
+                    + line.strip()[:80]
+                )
+        for lineno, line in entry["added"]:
+            if lineno not in patched_body:
+                violations.append(
+                    f'{entry["b"]}:{lineno} 不是函数／方法体内的改动：'
+                    + line.strip()[:80]
+                )
+    return violations, cannots
+
+
+# ---------------------------------------------------------------- 复现测试白名单
+
+BANNED_TEST_MODULES = {
+    "os", "subprocess", "importlib", "builtins", "sitecustomize", "usercustomize",
+    "inspect", "linecache", "shutil",
+}
+BANNED_TEST_NAMES = {
+    "open", "exec", "eval", "__import__", "__builtins__",
+    "getattr", "setattr", "delattr", "globals", "locals", "vars",
+    "__dict__",
+}
+BANNED_TEST_ATTRS = {
+    "open", "read_text", "read_bytes", "write_text", "write_bytes",
+    "readlines", "readline", "getsource", "environ",
+}
+
+
+def test_code_violations(path: Path) -> list[str]:
+    """复现测试只能是「调用被测接口并断言」：不读文件、不碰环境、不起子进程。"""
+    try:
+        source = path.read_text(encoding="utf-8", errors="replace")
+        tree = ast.parse(source)
+    except (OSError, SyntaxError) as exc:
+        return [f"复现测试无法解析：{exc}"]
+    hits: set[str] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Import):
+            for alias in node.names:
+                top = alias.name.split(".")[0]
+                if top in BANNED_TEST_MODULES:
+                    hits.add(f"不得导入 {alias.name}")
+        elif isinstance(node, ast.ImportFrom):
+            module = (node.module or "").split(".")[0]
+            if module in BANNED_TEST_MODULES:
+                hits.add(f"不得从 {node.module} 导入")
+        elif isinstance(node, ast.Name) and node.id in BANNED_TEST_NAMES:
+            hits.add(f"不得使用 {node.id}")
+        elif isinstance(node, ast.Attribute) and node.attr in BANNED_TEST_ATTRS:
+            hits.add(f"不得使用 .{node.attr}")
+    return sorted(hits)
+
+
 # ---------------------------------------------------------------- 变异检验
 
 MUTATION_OP_SWAPS = {
@@ -760,7 +970,7 @@ def mutation_candidates(line: str) -> list[str]:
 
 
 def patch_mutation_targets(text: str) -> list[dict]:
-    """补丁触及的生产代码行：新增行逐行变异，改动块整块回退作删除行变异。"""
+    """补丁触及的生产代码行：新增行逐行变异，每个连续改动块整块回退作删除行变异。"""
     targets: list[dict] = []
     for entry in patch_entries(text):
         a_path, b_path = entry["a"], entry["b"]
@@ -769,32 +979,39 @@ def patch_mutation_targets(text: str) -> list[dict]:
         a_cur = b_cur = None
         added: list[tuple[int, str]] = []
         blocks: list[dict] = []
-        cur: dict | None = None
+        run: dict | None = None
+
+        def flush() -> None:
+            nonlocal run
+            if run is not None and (run["deleted"] or run["added"]):
+                blocks.append(run)
+            run = None
+
         for line in entry["lines"]:
             m = re.match(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@", line)
             if m:
+                flush()
                 a_cur, b_cur = int(m.group(1)), int(m.group(2))
-                cur = {"insert": None, "deleted": [], "added": []}
-                blocks.append(cur)
                 continue
             if a_cur is None:
                 continue
             if line.startswith("+"):
+                if run is None:
+                    run = {"insert": b_cur - 1, "deleted": [], "added": []}
                 added.append((b_cur, line[1:]))
-                if cur is not None:
-                    if cur["insert"] is None:
-                        cur["insert"] = b_cur - 1
-                    cur["added"].append(line[1:])
+                run["added"].append(line[1:])
                 b_cur += 1
             elif line.startswith("-"):
-                if cur is not None and cur["insert"] is None:
-                    cur["insert"] = b_cur - 1
-                if cur is not None:
-                    cur["deleted"].append(line[1:])
+                if run is None:
+                    run = {"insert": b_cur - 1, "deleted": [], "added": []}
+                run["deleted"].append(line[1:])
                 a_cur += 1
             elif line.startswith(" ") or line == "":
+                # 上下文把同一 hunk 切成多个独立改动块；每块单独回退。
+                flush()
                 a_cur += 1
                 b_cur += 1
+        flush()
         revert = [
             (b["insert"], b["deleted"], b["added"])
             for b in blocks
@@ -850,25 +1067,71 @@ def _reverted_block(lines: list[str], insert: int, deleted: list[str],
     return lines[:insert] + restored + lines[end:]
 
 
-def _mutant_killed(repo: Path, cmd: str, timeout: int) -> bool:
+UNITTEST_SUMMARY_RE = re.compile(r"^FAILED \(([^)]*)\)", re.MULTILINE)
+TEST_COUNT_RE = re.compile(r"(\d+) (failed|error|errors)\b")
+
+
+def classify_test_outcome(code: int, text: str, error_type: str | None) -> str:
+    """把一次受控执行归类为 passed／assertion／crash。
+
+    只有 assertion（断言失败）能作为「变异被杀死」的证据。
+    崩溃、提前退出（含 `os._exit`／`SystemExit`）、超时都不算。
+    """
+    if code == 0:
+        return "passed"
+    m = UNITTEST_SUMMARY_RE.search(text)
+    if m:
+        summary = m.group(1)
+        failures = re.search(r"failures=(\d+)", summary)
+        errors = re.search(r"errors=(\d+)", summary)
+        if failures and int(failures.group(1)) > 0:
+            return "assertion"
+        if errors and int(errors.group(1)) > 0:
+            return "crash"
+    counts: dict[str, int] = {}
+    for num, kind in TEST_COUNT_RE.findall(text):
+        counts[kind] = counts.get(kind, 0) + int(num)
+    if counts.get("failed", 0):
+        return "assertion"
+    if counts.get("error", 0) or counts.get("errors", 0):
+        return "crash"
+    if error_type == "AssertionError":
+        return "assertion"
+    if error_type:
+        return "crash"
+    if re.search(r"\bAssertionError\b", text):
+        return "assertion"
+    return "crash"
+
+
+def _mutant_outcome(repo: Path, cmd: str, timeout: int) -> tuple[str, str]:
+    """运行一次变异体，返回（passed／assertion／crash／timeout，说明）。"""
     _clear_pycache(repo)
     try:
-        code, _out = run_command(cmd, repo, timeout)
-    except (subprocess.TimeoutExpired, RuntimeError):
-        return False
-    return code != 0
+        code, text, error = run_command_classified(cmd, repo, timeout)
+    except subprocess.TimeoutExpired:
+        return "timeout", "变异后测试超时"
+    except RuntimeError as exc:
+        return "crash", f"变异后无法受控执行：{exc}"
+    kind = classify_test_outcome(code, text, error)
+    if kind == "crash":
+        return kind, f"退出码={code}，未捕获异常={error or '非断言异常或提前退出'}"
+    return kind, ""
 
 
 def run_mutation_checks(repo: Path, cmd: str, timeout: int, patch_text: str) -> list[str]:
-    """在 patched 态逐行造变异并重跑复现测试；测试必须变红。
+    """在 patched 态逐行造变异并重跑复现测试；测试必须以断言失败变红。
 
     返回失败理由列表；空列表表示补丁触及的生产代码行都被测试敏感覆盖。
     纯新增补丁没有 base 侧删除行，但每个新增行仍要过这一关。
+    整份补丁都造不出可编译变异即 fail，不把「改不动的行」算作通过。
     """
     targets = patch_mutation_targets(patch_text)
     if not targets:
         return ["补丁未在生产代码上触碰任何行，无法造出变异"]
     failures: list[str] = []
+    executed_mutants = 0
+    immutable: list[str] = []
     for target in targets:
         path = repo / target["path"]
         if not path.is_file():
@@ -883,7 +1146,9 @@ def run_mutation_checks(repo: Path, cmd: str, timeout: int, patch_text: str) -> 
                     continue
                 candidates = mutation_candidates(text)
                 if not candidates:
+                    immutable.append(f'{target["path"]}:{lineno}')
                     continue
+                outcomes: list[str] = []
                 killed = False
                 for candidate in candidates:
                     mutated = _replaced_line(lines, lineno - 1, candidate)
@@ -891,14 +1156,22 @@ def run_mutation_checks(repo: Path, cmd: str, timeout: int, patch_text: str) -> 
                     if not _compiles(source, path):
                         continue
                     path.write_text(source, encoding="utf-8")
-                    if _mutant_killed(repo, cmd, timeout):
+                    executed_mutants += 1
+                    kind, _detail = _mutant_outcome(repo, cmd, timeout)
+                    outcomes.append(kind)
+                    if kind == "assertion":
                         killed = True
                         break
                 path.write_text(original, encoding="utf-8")
                 if not killed:
+                    note = ""
+                    if outcomes and all(o != "passed" for o in outcomes):
+                        note = "（变异后测试崩溃或超时，不算断言失败）"
+                    elif not outcomes:
+                        note = "（没有可编译的变异）"
                     failures.append(
-                        f'{target["path"]}:{lineno} 的变异均未使复现测试变红'
-                        "（补丁行未被测试敏感覆盖）"
+                        f'{target["path"]}:{lineno} 的变异均未使复现测试以断言失败变红'
+                        + note
                     )
             for insert, deleted, added in target["revert"]:
                 mutated = _reverted_block(lines, insert, deleted, added)
@@ -912,13 +1185,26 @@ def run_mutation_checks(repo: Path, cmd: str, timeout: int, patch_text: str) -> 
                     )
                     continue
                 path.write_text(source, encoding="utf-8")
-                if not _mutant_killed(repo, cmd, timeout):
+                executed_mutants += 1
+                kind, detail = _mutant_outcome(repo, cmd, timeout)
+                if kind == "passed":
                     failures.append(
                         f'{target["path"]} 的删除行被回退后复现测试仍通过'
                         "（补丁行未被测试敏感覆盖）"
                     )
+                elif kind != "assertion":
+                    failures.append(
+                        f'{target["path"]} 的删除行回退后测试未以断言失败告终'
+                        f"（{detail}），不能算杀死变异"
+                    )
         finally:
             path.write_text(original, encoding="utf-8")
+    if not executed_mutants:
+        # 所有改动行都是 docstring／注释／纯字符串等改不动的行：没有造出任何变异。
+        failures.append(
+            "补丁行全部造不出可编译变异（改不动的行不算敏感覆盖证据）"
+            + ("：" + "、".join(immutable[:8]) if immutable else "")
+        )
     return failures
 
 
@@ -1060,6 +1346,9 @@ def v03(ctx: Ctx) -> Result:
                 "失败测试文件没有可判定的非恒真断言"
                 "（只有 assertTrue(True) 这类常量断言也算不合格）"
             )
+        wl = test_code_violations(test_real)
+        if wl:
+            problems.append("复现测试不在白名单内：" + "；".join(wl[:5]))
     if not nonempty_str(meta.get("test_id")):
         problems.append("test_id 缺失或为空")
     single = meta.get("single_run_command")
@@ -1214,6 +1503,15 @@ def v06(ctx: Ctx) -> Result:
             violations.append(f"{old} -> {new}: 测试路径文件被移出 tests 区域")
     if violations:
         problems.append("测试路径改动违规：" + " | ".join(violations[:5]))
+    struct, struct_cannot = patch_structural_violations(ctx.repo, text)
+    if struct_cannot:
+        return cannot("V06", *struct_cannot[:5])
+    if struct:
+        problems.append(
+            "补丁改动行必须全部落在函数／方法体内"
+            "（不得新增或修改导入期可执行语句）："
+            + " | ".join(struct[:5])
+        )
     banned = ("根因已确认", "彻底修复", "问题已解决")
     if kind == "hypothesis":
         hits = []
@@ -1277,6 +1575,10 @@ def v08(ctx: Ctx) -> Result:
     _rs, rp = parse_isolated_command(repro_cmd, ctx.repo)
     if rp:
         return bad("V08", "repro.md.command 非法：" + rp)
+    if _rs is not None:
+        wl = test_code_violations(_rs)
+        if wl:
+            return bad("V08", "复现测试不在白名单内：" + "；".join(wl[:5]))
     _ts, tp = parse_isolated_command(test_cmd, ctx.repo)
     if tp:
         return bad("V08", "test_command 非法：" + tp)

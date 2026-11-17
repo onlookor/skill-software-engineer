@@ -39,7 +39,7 @@ validators: ["V01", "V02", "V03"]
 
 1. 读构建文件与测试入口，确认测试框架与用例布局。
 2. 按约定的 `test_command` 跑一次既有测试（命令形式为 `python3 -I <仓内相对路径>`），记录退出码。
-3. 写失败用例 `tests/repro_<slug>.<ext>`：断言机制层可观察量（异常类型／返回码／状态字段），不写表层输出字符串。
+3. 写失败用例 `tests/repro_<slug>.<ext>`：断言机制层可观察量（异常类型／返回码／状态字段），不写表层输出字符串。用例只能是「调用被测接口并断言」的单元测试：不得 `open`、不得读取源码文本，不得使用 `os`／`subprocess`／`exec`／`eval`／`__import__`，不得读写环境变量，不得改写 `sitecustomize` 或任何外部文件；正常 `import`／`from ... import` 放行。V03 会按白名单判。
 4. 连跑 `repro_runs` 次，逐次记录退出码与失败摘要；`repro_timeout_seconds` 为单次超时上限。
 5. 填 `repro.md`（八个字段，格式见 `schemas/repro.md`）。
 

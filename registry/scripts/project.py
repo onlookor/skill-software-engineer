@@ -3064,69 +3064,6 @@ def _grounding_summary() -> tuple[int, int] | None:
     return None
 
 
-def _artifact_shape() -> tuple[int, int, int] | None:
-    """M2 的独立出口：序号、卡片数、重编译次数，并绑到本轮真实编译产物。
-
-    仅校验 label 与现有 artifact.yaml 的序号／最新重编译记录／母本哈希／
-    重编译日期一致；手改数字会与其中至少一项对不上。
-    """
-    path = PILOT_DIR / 'artifact.yaml'
-    if not path.is_file():
-        return None
-    try:
-        doc = yaml.safe_load(path.read_text(encoding='utf-8')) or {}
-    except yaml.YAMLError:
-        return None
-    ca = doc.get('compilation_artifact') or {}
-    version = ca.get('version') or {}
-    seq = version.get('artifact_seq')
-    label = version.get('label')
-    cards = ca.get('cards')
-    remap = ca.get('recompile_map')
-    if not (isinstance(seq, int) and isinstance(label, str)
-            and isinstance(cards, list) and isinstance(remap, list) and remap):
-        return None
-    # 标签末段必须就是本次编译序号（如 pilot-20261112.14 ↔ 14）。
-    if label.rsplit('.', 1)[-1] != str(seq):
-        return None
-    # 最新一条重编译记录必须指向当前标签，且母本哈希与当前成文法一致。
-    latest = remap[0] if isinstance(remap[0], dict) else {}
-    if latest.get('to_version') != label:
-        return None
-    if not LAW_PATH.is_file():
-        return None
-    digest = 'sha256:' + hashlib.sha256(LAW_PATH.read_bytes()).hexdigest()
-    if version.get('framework_version') != digest:
-        return None
-    # 重编译日期不得早于母本最后一次提交日期（证明不是拿历史产物顶替）。
-    recompiled = latest.get('recompiled_at')
-    if isinstance(recompiled, str):
-        try:
-            recompiled = datetime.date.fromisoformat(recompiled.strip())
-        except ValueError:
-            return None
-    elif isinstance(recompiled, datetime.datetime):
-        recompiled = recompiled.date()
-    if not isinstance(recompiled, datetime.date):
-        return None
-    try:
-        last_commit = subprocess.run(
-            ['git', 'log', '-1', '--format=%cs', '--', str(LAW_PATH)],
-            cwd=str(SE_DIR.parent), capture_output=True, text=True, timeout=10,
-        )
-    except (OSError, subprocess.SubprocessError):
-        last_commit = None
-    if last_commit is not None and last_commit.returncode == 0:
-        raw = last_commit.stdout.strip()
-        try:
-            law_date = datetime.date.fromisoformat(raw)
-        except ValueError:
-            law_date = None
-        if law_date is not None and recompiled < law_date:
-            return None
-    return seq, len(cards), len(remap)
-
-
 def _approval_record() -> tuple[bool, str]:
     """M6：仓内文件由执行方可写，不能当人类批准门。
 
@@ -3164,7 +3101,6 @@ def stage_facts(tags: list[str] | None) -> str:
     regs_ok = all((REG_DIR / name).is_file() for name in MIN_REGISTRIES)
     pacts = list((SE_DIR / 'pact').glob('se_tier*_*.pact'))
     label = _artifact_label()
-    shape = _artifact_shape()
     version = _skill_version()
     grounding = _grounding_summary()
     review = _approval_record()[1]
@@ -3173,12 +3109,13 @@ def stage_facts(tags: list[str] | None) -> str:
     dist_ok = version is not None and all(
         (DIST_DIR / f'software-engineering-{version}.tar.gz{suffix}').is_file()
         for suffix in ('', '.sha256'))
-    compile_ok = shape is not None and shape[0] >= 2 and shape[1] >= 1 and shape[2] >= 1
     parts = [
         'A ' + ('已越' if regs_ok and len(pacts) >= 3 else '未完成'),
         'B ' + ('已越 LRM' if label else '未越 LRM'),
-        'C ' + (f'已越（seq {shape[0]}／{shape[1]} 卡／{shape[2]} 次重编译）'
-                if compile_ok else '未完成'),
+        # M2 不设自动出口：artifact.yaml 的序号／标签／日期／母本哈希都可被写成互相一致的
+        # 假值，历史产物原样放回也能通过；本仓没有能区分「本轮编译」与「历史产物」的
+        # 可执行编译动作，因此不假装有绑定，固定显示未判定。
+        'C 未判定（M2 无自动出口）',
         'D ' + (f'{grounding[0]}/6' if grounding else '无法判定'),
         'M4 技能层 ' + (f'v{version}' if skill_ok else '未落地'),
         'M5 分发件 ' + (f'v{version} 已产出' if dist_ok else '未产出'),
