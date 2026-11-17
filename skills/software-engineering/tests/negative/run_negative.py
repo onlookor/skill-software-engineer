@@ -364,9 +364,10 @@ def _build_variant(src: Path, dist: Path, name: str) -> tuple[int, str]:
     builder.ROOT = src
     builder.DIST = dist
     err = io.StringIO()
-    with contextlib.redirect_stderr(err):
+    out = io.StringIO()
+    with contextlib.redirect_stderr(err), contextlib.redirect_stdout(out):
         code = builder.main()
-    return code, err.getvalue()
+    return code, err.getvalue() + out.getvalue()
 
 
 def _copy_pkg(tmp: Path, name: str) -> Path:
@@ -478,8 +479,13 @@ def write_repro_and_meta(
 ) -> None:
     """写 repro.md 与 meta；fingerprint 用真实受控执行计算，避免恒等伪造。"""
     v = load_module("validate_for_fixture", VALIDATE)
-    _code, out = v.run_command(repro_cmd, repo.resolve(), 30)
-    fp = v.fingerprint(out, repo.resolve())
+    try:
+        _code, out = v.run_command(repro_cmd, repo.resolve(), 30)
+        fp = v.fingerprint(out, repo.resolve())
+    except v.IntegrityViolation:
+        # 被测代码在导入期改写了断言设施：后续校验会据此判 cannot，
+        # 这里只需一个非空且自洽的指纹占位。
+        fp = "integrity-violation"
     if isinstance(under_test, str):
         under_line = f"under_test: {under_test}\n"
     else:
@@ -932,7 +938,8 @@ def case_mutation_immutable_only(tmp: Path) -> str:
 
 
 def case_import_time_fake_fixes(tmp: Path) -> str:
-    """N2/N3/B1/A3：导入期执行（含「写在函数体里」的钩子）V06 必须判 cannot。"""
+    """导入期伪造：模块级执行仍由 V06 判 cannot；函数体内的钩子改由
+    运行时完整性校验抓住（V08 判 cannot），不再靠语法位置推断。"""
     repo = tmp / "import-time"
     init_repo(repo)
     (repo / "calc.py").write_text(
@@ -965,6 +972,7 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
             "+os.write(1, b\"\")\n"
             "+os._exit(0)\n",
             3,
+            3,
             "模块级可执行语句",
         ),
         "A3 导入期类属性猴补丁": (
@@ -973,29 +981,33 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
             "     return a - b\n"
             "+unittest.TestCase.assertEqual = lambda *a, **k: None\n",
             1,
+            3,
             "模块级可执行语句",
         ),
+        # N2/N3：改动在函数体内，V06 不再按语法位置判 cannot；它们最终要改
+        # 断言设施才能生效，由运行时完整性校验兜住（见下面 V08 用例）。
         "N2 元类 __init__ 内猴补丁": (
             "@@ -6,2 +6,3 @@\n"
             "     def __init__(cls, name, bases, ns):\n"
             "         super().__init__(name, bases, ns)\n"
             "+        unittest.TestCase.assertEqual = lambda *a, **k: None\n",
-            3,
-            "导入期会执行的函数体",
+            1,
+            0,
+            "",
         ),
         "N3 __init_subclass__ 内猴补丁": (
             "@@ -10,2 +10,3 @@\n"
             "     def __init_subclass__(cls, **kwargs):\n"
             "         super().__init_subclass__(**kwargs)\n"
             "+        unittest.TestCase.assertEqual = lambda *a, **k: None\n",
-            3,
-            "导入期会执行的函数体",
+            1,
+            0,
+            "",
         ),
     }
     cfg = tmp / "import-time-config.yaml"
     write_config(repo, cfg)
-    blocked = []
-    for name, (hunk, diff_lines, expect) in variants.items():
+    for name, (hunk, diff_lines, want, expect) in variants.items():
         (repo / "fix.patch").write_text(
             "diff --git a/calc.py b/calc.py\n"
             "--- a/calc.py\n"
@@ -1010,10 +1022,70 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
         )
         res = run_validator(repo, cfg, ["V06"])
         out = res.stdout + res.stderr
-        assert res.returncode == 3, f"{name} 应判 cannot，实际退出 {res.returncode}\n{out}"
-        assert expect in out and "超出本技能适用面" in out, f"{name}\n{out}"
-        blocked.append(name)
-    return f"V06 对 {len(blocked)} 种导入期执行路径判 cannot_evaluate"
+        assert res.returncode == want, f"{name} 退出 {res.returncode}，期望 {want}\n{out}"
+        if expect:
+            assert expect in out and "超出本技能适用面" in out, f"{name}\n{out}"
+
+    # 运行时完整性：补丁把猴补丁写进元类 __init__，V06 放行；V08 在 patched
+    # 态重跑复现测试时比对断言设施，判 cannot_evaluate。
+    fake = tmp / "hook-runtime"
+    init_repo(fake)
+    (fake / "calc.py").write_text(
+        "import unittest\n"
+        "\n"
+        "class Meta(type):\n"
+        "    def __init__(cls, name, bases, ns):\n"
+        "        super().__init__(name, bases, ns)\n"
+        "\n"
+        "class Base(metaclass=Meta):\n"
+        "    pass\n"
+        "\n"
+        "def add(a, b):\n"
+        "    return a - b\n",
+        encoding="utf-8",
+    )
+    (fake / "tests").mkdir()
+    (fake / "tests" / "run_all.py").write_text(
+        "import sys\nsys.exit(0)\n", encoding="utf-8"
+    )
+    (fake / "tests" / "repro_bug.py").write_text(
+        "import sys, unittest\n"
+        "sys.path.insert(0, '.')\n"
+        "from calc import add\n"
+        "\n"
+        "class T(unittest.TestCase):\n"
+        "    def test_add(self):\n"
+        "        self.assertEqual(add(1, 2), 3)\n"
+        "\n"
+        "if __name__ == '__main__':\n"
+        "    unittest.main()\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(fake)
+    (fake / "fix.patch").write_text(
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -3,6 +3,7 @@\n"
+        " class Meta(type):\n"
+        "     def __init__(cls, name, bases, ns):\n"
+        "         super().__init__(name, bases, ns)\n"
+        "+        unittest.TestCase.assertEqual = lambda *a, **k: None\n"
+        " \n"
+        " class Base(metaclass=Meta):\n"
+        "     pass\n",
+        encoding="utf-8",
+    )
+    repro_cmd = "python3 -I tests/repro_bug.py"
+    write_repro_and_meta(fake, sha, repro_cmd, "tests/repro_bug.py")
+    write_verify(fake, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg2 = tmp / "hook-runtime-config.yaml"
+    write_config(fake, cfg2)
+    res = run_validator(fake, cfg2, ["V08"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 3, f"N2 运行时未判 cannot：退出 {res.returncode}\n{out}"
+    assert "断言设施在导入期被改写" in out, out
+    return "V06 拦模块级执行；函数体内导入期猴补丁由运行时完整性判 cannot"
 
 
 def case_test_whitelist_violation(tmp: Path) -> str:
@@ -1088,6 +1160,29 @@ def case_test_whitelist_violation(tmp: Path) -> str:
             "from unittest import TestCase\n"
             "TestCase.assertEqual = lambda *a, **k: None\n"
         ),
+        "unittest.mock": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "from unittest import mock\n"
+            "from calc import add\n"
+            "with mock.patch.object(add, '__doc__', None):\n"
+            "    assert add(1, 2) == 3\n"
+        ),
+        "本地夹具 import": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "from tests.helpers import answer\n"
+            "from calc import add\n"
+            "assert add(1, 2) == answer()\n"
+        ),
+        "int 构造期望值": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "from calc import add\n"
+            "assert add(1, 2) == int('3')\n"
+        ),
+        "期望值取自入口调用": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "from calc import add\n"
+            "assert add(1, 2) == add(1, 2)\n"
+        ),
     }
     cfg = tmp / "test-whitelist-config.yaml"
     write_config(repo, cfg)
@@ -1101,6 +1196,46 @@ def case_test_whitelist_violation(tmp: Path) -> str:
         assert res.returncode == 1, f"{name} 未被白名单拦住：退出 {res.returncode}\n{out}"
         assert "白名单" in out, f"{name}\n{out}"
     return f"V03 白名单拦住 {len(bodies)} 种越界复现测试"
+
+
+def case_under_test_not_callable(tmp: Path) -> str:
+    """under_test 只允许可调用入口：声明成常量时 V01 必须拒。"""
+    repo = tmp / "under-test"
+    init_repo(repo)
+    (repo / "calc.py").write_text(
+        "EXPECTED = 3\n\ndef add(a, b):\n    return a - b\n", encoding="utf-8"
+    )
+    (repo / "tests").mkdir()
+    (repo / "tests" / "repro_bug.py").write_text(
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n"
+        "assert add(1, 2) == 3\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    repro_cmd = "python3 -I tests/repro_bug.py"
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_bug.py", "calc.EXPECTED"
+    )
+    cfg = tmp / "under-test-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V01"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"常量入口未被 V01 拒：退出 {res.returncode}\n{out}"
+    assert "不是模块级可调用入口" in out, out
+    return "V01 拒绝把常量声明为 under_test 入口"
+
+
+def case_package_skipped_count(tmp: Path) -> str:
+    """打包「未入包项」必须是真实计数，不能是常量 0。"""
+    src = _copy_pkg(tmp, "pkg-src-count")
+    cache = src / "validators" / "__pycache__"
+    cache.mkdir()
+    (cache / "leftover.pyc").write_bytes(b"")
+    code, out = _build_variant(src, tmp / "dist-count", "build_package_neg_count")
+    assert code == 0, f"打包不应失败：退出 {code}\n{out}"
+    assert "未入包项：1" in out, out
+    return "打包「未入包项」按实际被排除的文件计数"
 
 
 def case_package_special_bits_and_symlinks(tmp: Path) -> str:
@@ -1339,6 +1474,8 @@ CASES = [
     case_mutation_immutable_only,
     case_import_time_fake_fixes,
     case_test_whitelist_violation,
+    case_under_test_not_callable,
+    case_package_skipped_count,
     case_package_special_bits_and_symlinks,
     case_comment_assertion,
     case_string_assertion,

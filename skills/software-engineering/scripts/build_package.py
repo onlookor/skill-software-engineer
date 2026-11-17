@@ -132,8 +132,10 @@ def read_version() -> str:
     return m.group(1)
 
 
-def iter_files() -> list[Path]:
+def iter_files() -> tuple[list[Path], int]:
+    """返回（入包文件, 被排除而未入包的普通文件数）。"""
     files: list[Path] = []
+    skipped = 0
     root_real = ROOT.resolve()
     for name in INCLUDE_FILES:
         p = ROOT / name
@@ -166,8 +168,10 @@ def iter_files() -> list[Path]:
                     f"{rel.as_posix()} 是特殊文件（FIFO／设备／套接字），未入包"
                 )
             if any(normalize_name(part) in EXCLUDE_NORMALIZED for part in rel.parts):
+                skipped += 1
                 continue
             if p.suffix in EXCLUDE_SUFFIXES:
+                skipped += 1
                 continue
             # 同形字／尾随空格：路径分量必须是 ASCII，且归一化后等于原分量
             # （只允许大小写与 NFKC 等价差异，不允许靠不可见字符伪装）。
@@ -209,7 +213,7 @@ def iter_files() -> list[Path]:
                     f"{rel.as_posix()} 指向内部资产：{real_rel.as_posix()}"
                 )
             files.append(p)
-    return files
+    return files, skipped
 
 
 def sha256(path: Path) -> str:
@@ -234,7 +238,7 @@ def build() -> int:
         elif stale.exists():
             stale.unlink()
 
-    source_files = iter_files()
+    source_files, skipped = iter_files()
     for src in source_files:
         rel = src.relative_to(ROOT)
         target = staging / rel
@@ -317,7 +321,8 @@ def build() -> int:
     print(f"目录：{staging}（{len(packaged)} 个文件，含 PACKAGE-MANIFEST.txt）")
     print(f"归档：{archive}")
     print("归档成员权限：0644（无 setuid／setgid／sticky／可执行位）")
-    print("未入包项：0（目录软链／断链／特殊文件出现即拒绝，不静默忽略）")
+    print(f"未入包项：{skipped}（按排除规则跳过的普通文件；"
+          "目录软链／断链／特殊文件出现即拒绝，不静默忽略）")
     print(f"校验：{digest_file}  sha256={digest}")
     return 0
 

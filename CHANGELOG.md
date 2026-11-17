@@ -103,3 +103,23 @@
   6. **文档口径**：`sitecustomize`／`usercustomize` 屏蔽只对父进程成立，子进程覆盖率注入是另一条路径；V03 条目按实际白名单重写；V09 第 8 项补充「只能使用 `under_test` 入口」。
 - **关联 ADR**：无
 - **备注**：版本号待适用面收窄的裁定后再定，本批次不改 `SKILL.md` 的 `version`、不重打包；负向 34/34、正向 6/6、示例 `run.py` 退出 0；只提交，不推送、不打标签；未做自评，不写「已验证」。
+
+## 批次 0006 — 2026-11-17
+
+- **批次号**：0006
+- **日期**：2026-11-17
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（运行时完整性、期望值字面量、`under_test` 可调用入口、`_pure_value`、移除导入期 AST 推断）
+  - 打包：`skills/software-engineering/scripts/build_package.py`（「未入包项」真实计数）
+  - 用例：`skills/software-engineering/tests/negative/run_negative.py`、`skills/software-engineering/tests/positive/run_positive.py`
+  - 文档：`skills/software-engineering/SKILL.md`、`validators/README.md`、`validators/V09-checklist.md`、`stages/S1-repro.md`、`stages/S2-localize-fix.md`、`stages/S3-verify.md`、`schemas/repro.md`
+  - 技术债：新增仓根 `TECH-DEBT.md`（不随包分发）
+- **变更摘要**：
+  1. **换到运行时完整性基底**：受控执行引导在导入任何仓内代码之前，对 `unittest.TestCase` 断言族、`builtins` 执行入口、`trace`／采集入口、`sys.modules` 基线留可信原件；执行后逐项比对，任一被替换／删除 → `cannot_evaluate`，理由「断言设施在导入期被改写」。不依赖触发方式（元类、`__init_subclass__`、描述符、`cached_property`、`Enum.__new__`、装饰器工厂、新建模块都一视同仁）。V02／V03／V07／V08 与变异检验共用这条判据。
+  2. **V06 停止用语法位置代理导入期可达性**：删除 `IMPORT_TIME_HOOK_NAMES`／`_import_time_function_ids` 等 AST 近似；普通函数／方法体一律放行，只保留「模块级可执行语句 → cannot」与声明式放行。README「导入期」整段改为由运行时完整性覆盖。
+  3. **期望值独立**：断言里的期望值必须是字面量（数字、字符串、`True/False/None`、字面量容器及负号／`~`／`1 << 4`／`2**3` 等算术）；禁止 `int("-1")` 这类调用构造期望值、`unittest.mock`（含 `from unittest import mock`）、`tests.*`、相对导入、与 `under_test` 无关的仓内模块。`under_test` 只允许模块级函数或类，常量与模块名在 V01 就拒（源码定位不到时判 cannot）。
+  4. **修 `_pure_value` 误判**：运算符节点（`ast.operator`／`unaryop`／`cmpop`／`boolop`）不再被当成不纯表达式，`EXPECTED = -1`、`0 - 1`、`~0` 按声明式纯值放行。
+  5. **打包计数**：`iter_files()` 返回实际被排除的普通文件数，输出「未入包项：N」，不再固定打印 0。
+  6. **技术债单独立项**：新增 `TECH-DEBT.md`，逐条记录导入期可达性漏判的 10 类钩子、新建模块与 `allowed_scope` 矛盾、`_pure_value` 误判、`under_test` 允许常量、`mock`／本地夹具、同进程伪造、以及「用句法特征代理语义性质」的共同缺陷；写明将来改版方向需要调用图／动态追踪＋沙箱，不是继续加 AST 规则。
+- **关联 ADR**：无
+- **备注**：版本号仍待「适用面收窄算 minor 还是 major」的人类裁定，本批次不改 `SKILL.md` 的 `version`、不重打包；负向 36/36、正向 6/6、示例 `run.py` 退出 0；只提交，不推送、不打标签；未做自评，不写「已验证」。

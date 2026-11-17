@@ -54,6 +54,10 @@ except ImportError:  # pragma: no cover
 PASS, FAIL, CANNOT = 0, 1, 3
 
 
+class IntegrityViolation(RuntimeError):
+    """运行时完整性校验失败：导入期改写了断言设施或采集入口，执行证据不可信。"""
+
+
 class Result:
     def __init__(self, vid: str, code: int, lines: list[str]):
         self.vid = vid
@@ -267,6 +271,10 @@ def fingerprint(text: str, repo: Path) -> str:
 # - 覆盖率结果经继承的文件描述符写回（fd 号走环境变量，路径不经 argv），
 #   避免测试从 /proc/self/cmdline 读到输出通道。
 # 覆盖率工具用标准库实现，不引入新依赖，也不属于新的挂载期能力声明。
+# - 运行时完整性：在导入任何仓内代码之前对断言设施、内置执行入口、trace
+#   与采集入口、sys.modules 基线留可信原件；执行完毕再比对。被替换／删除即
+#   上报「断言设施在导入期被改写」，校验器据此判 cannot_evaluate。不依赖
+#   触发方式（元类、描述符、cached_property、装饰器、新模块都一样）。
 BOOTSTRAP = r'''
 import json, os, runpy, sys, threading, trace
 
@@ -287,6 +295,60 @@ except Exception:
 # 显式屏蔽：即使仓库根或 site-packages 里有同名模块，也不得被导入。
 sys.modules["sitecustomize"] = None
 sys.modules["usercustomize"] = None
+
+# ---- 运行时完整性：导入任何仓内代码之前留可信原件 ----
+# 断言设施、内置执行入口、trace 与采集入口、sys.modules 基线。
+_ASSERT_FAMILY = (
+    "assertEqual", "assertNotEqual", "assertTrue", "assertFalse",
+    "assertIs", "assertIsNot", "assertIsNone", "assertIsNotNone",
+    "assertIn", "assertNotIn", "assertIsInstance", "assertNotIsInstance",
+    "assertRaises", "assertRaisesRegex", "assertWarns", "assertWarnsRegex",
+    "assertRegex", "assertNotRegex", "assertAlmostEqual",
+    "assertNotAlmostEqual", "assertGreater", "assertGreaterEqual",
+    "assertLess", "assertLessEqual", "assertCountEqual",
+    "assertMultiLineEqual", "assertListEqual", "assertTupleEqual",
+    "assertDictEqual", "assertSetEqual", "assertLogs", "assertNoLogs",
+    "fail", "subTest",
+)
+_GUARD_BUILTINS = (
+    "__import__", "eval", "exec", "compile", "open", "AssertionError",
+)
+
+
+def _integrity_snapshot():
+    import builtins, unittest
+    snap = []
+    tc = unittest.TestCase
+    for name in _ASSERT_FAMILY:
+        snap.append(("unittest.TestCase." + name, tc, name, getattr(tc, name, None)))
+    for name in _GUARD_BUILTINS:
+        snap.append(("builtins." + name, builtins, name, getattr(builtins, name, None)))
+    snap.append(("trace.Trace", trace, "Trace", trace.Trace))
+    for name in ("runfunc", "globaltrace"):
+        snap.append(("trace.Trace." + name, trace.Trace, name,
+                     getattr(trace.Trace, name, None)))
+    snap.append(("threading.settrace", threading, "settrace", threading.settrace))
+    snap.append(("sys.settrace", sys, "settrace", sys.settrace))
+    snap.append(("runpy.run_path", runpy, "run_path", runpy.run_path))
+    modules = [
+        (name, mod) for name, mod in sys.modules.items()
+        if name not in ("__main__", "__mp_main__")
+    ]
+    return snap, modules
+
+
+def _integrity_violations(snap, modules):
+    out = []
+    for label, parent, attr, original in snap:
+        if getattr(parent, attr, None) is not original:
+            out.append(label + " 被替换或删除")
+    for name, mod in modules:
+        if sys.modules.get(name) is not mod:
+            out.append("sys.modules[%r] 被替换或删除" % name)
+    return out
+
+
+_INTEGRITY_SNAP, _INTEGRITY_MODULES = _integrity_snapshot()
 
 
 failure = {"error": None}
@@ -349,7 +411,9 @@ def _dump(exit_code, tracer=None):
                         x for x in lines if isinstance(x, int)
                     )
     payload = {"exit": exit_code, "error": failure["error"],
-               "covered": {k: sorted(set(v)) for k, v in covered.items()}}
+               "covered": {k: sorted(set(v)) for k, v in covered.items()},
+               "integrity": _integrity_violations(
+                   _INTEGRITY_SNAP, _INTEGRITY_MODULES)}
     with os.fdopen(out_fd, "w", encoding="utf-8") as fh:
         json.dump(payload, fh)
 
@@ -501,6 +565,14 @@ def _exec_isolated(repo: Path, script: Path, timeout: int, trace_mode: bool):
         code = covered.get("exit")
         if not isinstance(code, int):
             raise RuntimeError("受控执行结果缺退出码")
+        violations = covered.get("integrity")
+        if not isinstance(violations, list):
+            violations = []
+        violations = [v for v in violations if isinstance(v, str) and v]
+        if violations:
+            raise IntegrityViolation(
+                "断言设施在导入期被改写：" + "；".join(violations[:5])
+            )
         error = covered.get("error")
         if not isinstance(error, str) or not error:
             error = None
@@ -815,28 +887,8 @@ def apply_hunks_to_source(base_text: str, hunk_lines: list[str]) -> str | None:
     return "".join(out)
 
 
-def function_body_lines(source: str) -> set[int]:
-    """函数／方法体的行号集合；不含 def 行、装饰器、默认参数与模块级语句。"""
-    tree = ast.parse(source)
-    body: set[int] = set()
-    for node in ast.walk(tree):
-        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
-            end = node.end_lineno or node.lineno
-            body.update(range(node.body[0].lineno, end + 1))
-    return body
+# ------------------------------------------------------ 声明式 / 可执行语句
 
-
-# ------------------------------------------------------------ 导入期可达性
-
-# 在类创建／模块导入时会被解释器调用的钩子。它们写在函数体里，却在导入期执行，
-# 所以「改动行在函数体内」不足以保证「改动只在调用时生效」。
-IMPORT_TIME_HOOK_NAMES = {
-    "__init__", "__new__", "__prepare__", "__call__", "__getattr__",
-    "__getattribute__", "__setattr__", "__set_name__", "__init_subclass__",
-    "__mro_entries__", "__class_getitem__",
-}
-# 不论所在类是不是元类，这两个都会在「定义子类／创建类」时执行。
-IMPORT_TIME_ALWAYS = {"__init_subclass__", "__set_name__"}
 # 只允许这些装饰器出现在声明式改动里；其它装饰器是导入期任意调用。
 DECLARATIVE_DECORATORS = {
     "dataclass", "field", "property", "staticmethod", "classmethod",
@@ -859,107 +911,14 @@ DANGEROUS_CALL_NAMES = {
 }
 
 
-def _parents(tree: ast.AST) -> dict[ast.AST, ast.AST]:
-    out: dict[ast.AST, ast.AST] = {}
-    for node in ast.walk(tree):
-        for child in ast.iter_child_nodes(node):
-            out[child] = node
-    return out
-
-
-def _collect_import_level_nodes(stmts: list[ast.stmt], out: list[ast.AST]) -> None:
-    """收集模块体／类体在导入期求值的节点；不进入普通函数体。"""
-    for s in stmts:
-        if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef)):
-            for d in s.decorator_list:
-                out.extend(ast.walk(d))
-            for e in s.args.defaults:
-                out.extend(ast.walk(e))
-            for e in s.args.kw_defaults:
-                if e is not None:
-                    out.extend(ast.walk(e))
-            continue
-        if isinstance(s, ast.ClassDef):
-            for d in s.decorator_list:
-                out.extend(ast.walk(d))
-            for b in s.bases:
-                out.extend(ast.walk(b))
-            for kw in s.keywords:
-                out.extend(ast.walk(kw.value))
-            _collect_import_level_nodes(s.body, out)
-            continue
-        # 普通语句整棵子树在导入期求值；若其中嵌套 def/class，其函数体会被
-        # 一并收进来，属保守放大（宁可多判 cannot，不放过导入期执行）。
-        out.extend(ast.walk(s))
-
-
-def _import_time_function_ids(tree: ast.Module) -> set[int]:
-    """保守估算「其函数体可能在导入期执行」的函数集合（按 id 记录）。
-
-    覆盖：元类钩子、`__init_subclass__`／`__set_name__`、模块级 `__getattr__`、
-    模块／类体在导入期引用到的函数（含传递闭包）。这不是「导入期不可达」的
-    完整判据：动态取属性、`getattr`、字符串拼接等仍可绕开，见 README 边界。
-    """
-    parents = _parents(tree)
-    functions = [
-        n for n in ast.walk(tree)
-        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
-    ]
-    metaclasses: set[str] = set()
-    for node in ast.walk(tree):
-        if not isinstance(node, ast.ClassDef):
-            continue
-        if any(isinstance(b, ast.Name) and b.id == "type" for b in node.bases):
-            metaclasses.add(node.name)
-        for kw in node.keywords:
-            if kw.arg == "metaclass" and isinstance(kw.value, ast.Name):
-                metaclasses.add(kw.value.id)
-    marked: set[int] = set()
-    for fn in functions:
-        parent = parents.get(fn)
-        if fn.name in IMPORT_TIME_ALWAYS:
-            marked.add(id(fn))
-        elif (
-            isinstance(parent, ast.ClassDef)
-            and parent.name in metaclasses
-            and fn.name in IMPORT_TIME_HOOK_NAMES
-        ):
-            marked.add(id(fn))
-        elif fn.name == "__getattr__" and not isinstance(parent, ast.ClassDef):
-            marked.add(id(fn))
-    refs: list[ast.AST] = []
-    _collect_import_level_nodes(tree.body, refs)
-    by_name: dict[str, list[ast.AST]] = {}
-    for fn in functions:
-        by_name.setdefault(fn.name, []).append(fn)
-    queue: list[ast.AST] = []
-    for node in refs:
-        if isinstance(node, ast.Name):
-            queue.extend(by_name.get(node.id, []))
-    while queue:
-        fn = queue.pop(0)
-        if id(fn) in marked:
-            continue
-        marked.add(id(fn))
-        for node in ast.walk(fn):
-            if isinstance(node, ast.Name):
-                queue.extend(by_name.get(node.id, []))
-    return marked
-
-
-def _structure_maps(source: str) -> tuple[set[int], set[int], ast.Module]:
-    """返回 (全部函数体行, 导入期可达函数体行, AST)。"""
+def _structure_maps(source: str) -> tuple[set[int], ast.Module]:
+    """返回（全部函数／方法体行, AST）。"""
     tree = ast.parse(source)
     body: set[int] = set()
     for node in ast.walk(tree):
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
             body.update(range(node.body[0].lineno, (node.end_lineno or node.lineno) + 1))
-    hot_ids = _import_time_function_ids(tree)
-    hot: set[int] = set()
-    for node in ast.walk(tree):
-        if id(node) in hot_ids and getattr(node, "body", None):
-            hot.update(range(node.body[0].lineno, (node.end_lineno or node.lineno) + 1))
-    return body, hot, tree
+    return body, tree
 
 
 def _root_name(node: ast.AST) -> str | None:
@@ -969,10 +928,18 @@ def _root_name(node: ast.AST) -> str | None:
 
 
 def _pure_value(node: ast.AST | None) -> bool:
-    """模块级赋值右侧是否只含声明式内容（不调用危险接收者）。"""
+    """模块级赋值右侧是否只含声明式内容（不调用危险接收者）。
+
+    字面量算术（负号、`~`、`1 << 4`、`2**3`）与字面量容器都算纯值；
+    运算符节点本身不是表达式，递归时应直接放行，否则 `-1`、`0 - 1`
+    会被误判成模块级可执行语句。
+    """
     if node is None:
         return True
-    if isinstance(node, (ast.Constant, ast.Name, ast.expr_context)):
+    if isinstance(node, (ast.Constant, ast.Name)):
+        return True
+    if isinstance(node, (ast.operator, ast.unaryop, ast.cmpop, ast.boolop,
+                         ast.expr_context)):
         return True
     if isinstance(node, ast.Attribute):
         return _pure_value(node.value)
@@ -1079,10 +1046,9 @@ SCOPE_MESSAGE = "该缺陷需要改模块级声明，超出本技能适用面"
 def patch_structural_violations(repo: Path, text: str) -> list[str]:
     """检查补丁改动行的执行时机；返回无法判定（cannot_evaluate）的原因。
 
-    规则（不再用「行在不在函数体」当代理）：
-      · 普通函数／方法体内的改动：放行；
-      · 元类钩子、`__init_subclass__`／`__set_name__`、模块级 `__getattr__`、
-        模块级调用链等「导入期会执行」的函数体内改动：cannot_evaluate；
+    规则：
+      · 函数／方法体内的改动：放行（导入期是否可达不再由语法位置推断，
+        由运行时完整性校验覆盖：断言设施在导入期被改写会被直接判 cannot）；
       · 模块级可执行语句（Expr 调用、猴补丁、控制流头等）：cannot_evaluate；
       · 声明式改动（import、模块常量、类属性／dataclass 默认值、docstring、
         声明式装饰器、def/class 头）：放行。
@@ -1097,7 +1063,6 @@ def patch_structural_violations(repo: Path, text: str) -> list[str]:
             continue
         base_text = ""
         base_body: set[int] = set()
-        base_hot: set[int] = set()
         base_tree: ast.Module | None = None
         if not entry["new"]:
             base_path = repo / entry["a"]
@@ -1108,12 +1073,11 @@ def patch_structural_violations(repo: Path, text: str) -> list[str]:
                 continue
             base_text = base_path.read_text(encoding="utf-8", errors="replace")
             try:
-                base_body, base_hot, base_tree = _structure_maps(base_text)
+                base_body, base_tree = _structure_maps(base_text)
             except SyntaxError as exc:
                 cannots.append(f'{entry["a"]}：base 源码无法解析（{exc}）')
                 continue
         patched_body: set[int] = set()
-        patched_hot: set[int] = set()
         patched_tree: ast.Module | None = None
         if entry["added"]:
             if entry["new"]:
@@ -1124,46 +1088,32 @@ def patch_structural_violations(repo: Path, text: str) -> list[str]:
                 cannots.append(f'{entry["b"]}：补丁无法应用到 base 源码，无法判断结构')
                 continue
             try:
-                patched_body, patched_hot, patched_tree = _structure_maps(patched_text)
+                patched_body, patched_tree = _structure_maps(patched_text)
             except SyntaxError as exc:
                 cannots.append(f'{entry["b"]}：补丁后源码无法解析（{exc}）')
                 continue
         for lineno, line in entry["deleted"]:
             if not line.strip():
                 continue
-            if lineno in base_hot:
-                cannots.append(
-                    f'{entry["a"]}:{lineno} 改的是导入期会执行的函数体'
-                    f"（元类钩子／类创建钩子／模块级调用链），{SCOPE_MESSAGE}："
-                    + line.strip()[:80]
-                )
-            elif lineno in base_body:
+            if lineno in base_body:
                 continue
-            else:
-                kind, _reason = _classify_line(base_tree, lineno) if base_tree else ("cannot", "module")
-                if kind != "ok":
-                    cannots.append(
-                        f'{entry["a"]}:{lineno} 改的是模块级可执行语句，'
-                        f"{SCOPE_MESSAGE}：" + line.strip()[:80]
-                    )
+            kind, _reason = _classify_line(base_tree, lineno) if base_tree else ("cannot", "module")
+            if kind != "ok":
+                cannots.append(
+                    f'{entry["a"]}:{lineno} 改的是模块级可执行语句，'
+                    f"{SCOPE_MESSAGE}：" + line.strip()[:80]
+                )
         for lineno, line in entry["added"]:
             if not line.strip():
                 continue
-            if lineno in patched_hot:
-                cannots.append(
-                    f'{entry["b"]}:{lineno} 改的是导入期会执行的函数体'
-                    f"（元类钩子／类创建钩子／模块级调用链），{SCOPE_MESSAGE}："
-                    + line.strip()[:80]
-                )
-            elif lineno in patched_body:
+            if lineno in patched_body:
                 continue
-            else:
-                kind, _reason = _classify_line(patched_tree, lineno) if patched_tree else ("cannot", "module")
-                if kind != "ok":
-                    cannots.append(
-                        f'{entry["b"]}:{lineno} 改的是模块级可执行语句，'
-                        f"{SCOPE_MESSAGE}：" + line.strip()[:80]
-                    )
+            kind, _reason = _classify_line(patched_tree, lineno) if patched_tree else ("cannot", "module")
+            if kind != "ok":
+                cannots.append(
+                    f'{entry["b"]}:{lineno} 改的是模块级可执行语句，'
+                    f"{SCOPE_MESSAGE}：" + line.strip()[:80]
+                )
     return cannots
 
 
@@ -1173,7 +1123,7 @@ BANNED_TEST_MODULES = {
     "os", "subprocess", "importlib", "builtins", "sitecustomize", "usercustomize",
     "inspect", "linecache", "shutil", "io", "codecs", "mmap", "runpy", "pkgutil",
     "operator", "ctypes", "pickle", "marshal", "pathlib", "tempfile", "glob",
-    "socket", "atexit", "sysconfig", "resource", "fcntl", "signal",
+    "socket", "atexit", "sysconfig", "resource", "fcntl", "signal", "mock",
 }
 BANNED_TEST_NAMES = {
     "open", "exec", "eval", "__import__", "__builtins__",
@@ -1182,7 +1132,7 @@ BANNED_TEST_NAMES = {
 }
 BANNED_TEST_ATTRS = {
     "open", "read_text", "read_bytes", "write_text", "write_bytes",
-    "readlines", "readline", "getsource", "environ", "modules",
+    "readlines", "readline", "getsource", "environ", "modules", "mock", "patch",
     "__dict__", "__globals__", "__code__", "__closure__", "__subclasses__",
     "__bases__", "__mro__", "__class__", "__getattribute__", "__setattr__",
     "__delattr__", "__builtins__", "__loader__", "__spec__", "__reduce__",
@@ -1190,6 +1140,56 @@ BANNED_TEST_ATTRS = {
 }
 # sys 只允许这两种用法（把仓根加入模块搜索路径），其余一律视为越界。
 SYS_ALLOWED_METHODS = {"insert", "append"}
+# 断言方法：这些调用本身允许出现在复现测试里。
+ASSERTION_METHOD_NAMES = {
+    "assertEqual", "assertNotEqual", "assertTrue", "assertFalse",
+    "assertIs", "assertIsNot", "assertIsNone", "assertIsNotNone",
+    "assertIn", "assertNotIn", "assertIsInstance", "assertNotIsInstance",
+    "assertRaises", "assertRaisesRegex", "assertWarns", "assertWarnsRegex",
+    "assertRegex", "assertNotRegex", "assertAlmostEqual",
+    "assertNotAlmostEqual", "assertGreater", "assertGreaterEqual",
+    "assertLess", "assertLessEqual", "assertCountEqual",
+    "assertMultiLineEqual", "assertListEqual", "assertTupleEqual",
+    "assertDictEqual", "assertSetEqual", "assertLogs", "assertNoLogs",
+    "fail", "subTest",
+}
+# 这些断言方法的参数里必须至少有一个字面量期望值。
+EXPECTED_LITERAL_METHODS = {
+    "assertEqual", "assertNotEqual", "assertAlmostEqual",
+    "assertNotAlmostEqual", "assertIn", "assertNotIn", "assertIs",
+    "assertIsNot", "assertGreater", "assertGreaterEqual", "assertLess",
+    "assertLessEqual", "assertRegex", "assertNotRegex", "assertCountEqual",
+    "assertMultiLineEqual", "assertListEqual", "assertTupleEqual",
+    "assertDictEqual", "assertSetEqual",
+}
+# 断言里允许出现的非入口调用：类型谓词，不构造期望值。
+ASSERTION_PURE_CALLS = {"isinstance", "issubclass", "callable"}
+LITERAL_BINOPS = (
+    ast.Add, ast.Sub, ast.Mult, ast.Div, ast.FloorDiv, ast.Mod, ast.Pow,
+    ast.LShift, ast.RShift, ast.BitOr, ast.BitAnd, ast.BitXor,
+)
+LITERAL_UNARYOPS = (ast.UAdd, ast.USub, ast.Invert)
+
+
+def _literal_expr(node: ast.AST | None) -> bool:
+    """期望值是否是字面量（含负号与字面量算术、字面量容器）。"""
+    if isinstance(node, ast.Constant):
+        return True
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, LITERAL_UNARYOPS):
+        return _literal_expr(node.operand)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, LITERAL_BINOPS):
+        return _literal_expr(node.left) and _literal_expr(node.right)
+    if isinstance(node, (ast.Tuple, ast.List, ast.Set)):
+        return all(_literal_expr(e) for e in node.elts)
+    if isinstance(node, ast.Dict):
+        return all(k is not None and _literal_expr(k) for k in node.keys) and all(
+            _literal_expr(v) for v in node.values
+        )
+    if isinstance(node, ast.JoinedStr):
+        return all(_literal_expr(v) for v in node.values)
+    if isinstance(node, ast.FormattedValue):
+        return _literal_expr(node.value)
+    return False
 
 
 def parse_under_test(raw) -> tuple[dict[str, set[str]] | None, str | None]:
@@ -1210,6 +1210,67 @@ def parse_under_test(raw) -> tuple[dict[str, set[str]] | None, str | None]:
     return mapping, None
 
 
+def _module_candidates(repo: Path, parts: list[str]) -> tuple[Path | None, list[str]]:
+    """找 `a.b.c` 里最长的模块前缀，返回（源文件, 剩余属性路径）。"""
+    for cut in range(len(parts) - 1, 0, -1):
+        rel = Path(*parts[:cut])
+        for cand in (
+            repo / rel.with_suffix(".py"),
+            repo / rel / "__init__.py",
+            repo / "src" / rel.with_suffix(".py"),
+            repo / "src" / rel / "__init__.py",
+        ):
+            if cand.is_file():
+                return cand, parts[cut:]
+    return None, []
+
+
+def _find_callable(body: list[ast.stmt], rest: list[str]) -> ast.AST | None:
+    current = body
+    for i, name in enumerate(rest):
+        stmt = next(
+            (
+                s for s in current
+                if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef))
+                and s.name == name
+            ),
+            None,
+        )
+        if stmt is None:
+            return None
+        if i == len(rest) - 1:
+            return stmt
+        if not isinstance(stmt, ast.ClassDef):
+            return None
+        current = stmt.body
+    return None
+
+
+def under_test_entry_problems(
+    repo: Path, mapping: dict[str, set[str]]
+) -> tuple[list[str], list[str]]:
+    """`under_test` 只允许函数／类入口；常量与模块名在 V01 就拒。"""
+    problems: list[str] = []
+    unresolved: list[str] = []
+    for mod, syms in mapping.items():
+        for sym in sorted(syms):
+            source, rest = _module_candidates(repo, f"{mod}.{sym}".split("."))
+            label = f"{mod}.{sym}"
+            if source is None:
+                unresolved.append(label)
+                continue
+            try:
+                tree = ast.parse(source.read_text(encoding="utf-8", errors="replace"))
+            except (OSError, SyntaxError) as exc:
+                unresolved.append(f"{label}（源码无法解析：{exc}）")
+                continue
+            if _find_callable(tree.body, rest) is None:
+                problems.append(
+                    f"under_test 项 {label} 不是模块级可调用入口（只允许函数或类）"
+                )
+    return problems, unresolved
+
+
 def _assignment_targets(node: ast.AST) -> list[ast.AST]:
     if isinstance(node, ast.Assign):
         return list(node.targets)
@@ -1222,13 +1283,25 @@ def _assignment_targets(node: ast.AST) -> list[ast.AST]:
     return []
 
 
+def _resolves_to_local(repo: Path | None, name: str) -> bool:
+    """`name` 的首段是否能在仓内解析成模块或包（用于识别本地夹具）。"""
+    if repo is None or not name:
+        return False
+    base = repo / name.split(".")[0]
+    return base.with_suffix(".py").is_file() or base.is_dir()
+
+
 def test_code_violations(
-    path: Path, under_test: dict[str, set[str]] | None = None
+    path: Path,
+    under_test: dict[str, set[str]] | None = None,
+    repo: Path | None = None,
 ) -> list[str]:
     """复现测试只能是「调用声明的被测入口并断言」。
 
     禁止：读文件、碰环境、起子进程、动态取名、猴补丁外部对象、`sys` 除
-    `path.insert/append` 外的任何用法；也不得读取被测模块入口之外的属性。
+    `path.insert/append` 外的任何用法；不得读取被测模块入口之外的属性；
+    不得导入 `unittest.mock` 或与 `under_test` 无关的本地夹具模块；断言里
+    的期望值必须是字面量，不得用调用表达式构造。
     """
     try:
         source = path.read_text(encoding="utf-8", errors="replace")
@@ -1242,6 +1315,12 @@ def test_code_violations(
     entry_symbols: dict[str, set[str]] = dict(under_test or {})
     direct_entries: set[str] = set()
 
+    def _entry_module(name: str) -> bool:
+        return any(
+            mod == name or name.startswith(mod + ".") or mod.startswith(name + ".")
+            for mod in entry_symbols
+        )
+
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
@@ -1250,6 +1329,12 @@ def test_code_violations(
                 imported[bind] = alias.name
                 if top in BANNED_TEST_MODULES:
                     hits.add(f"不得导入 {alias.name}")
+                if top == "tests":
+                    hits.add("不得导入本地夹具模块（tests.*）")
+                elif _resolves_to_local(repo, alias.name) and not _entry_module(alias.name):
+                    hits.add(
+                        f"不得导入与 under_test 无关的仓内模块 {alias.name}（本地夹具）"
+                    )
                 if alias.name == "sys":
                     sys_aliases.add(bind)
                 if alias.name in entry_symbols:
@@ -1260,8 +1345,20 @@ def test_code_violations(
             for alias in node.names:
                 if alias.name != "*":
                     imported[alias.asname or alias.name] = f"{mod}.{alias.name}"
+            if node.level > 0:
+                hits.add("不得使用相对导入（本地夹具）")
             if top in BANNED_TEST_MODULES:
                 hits.add(f"不得从 {mod} 导入")
+            if mod == "unittest.mock" or mod.startswith("unittest.mock."):
+                hits.add("不得导入 unittest.mock")
+            elif mod == "unittest" and any(a.name == "mock" for a in node.names):
+                hits.add("不得导入 unittest.mock")
+            if top == "tests":
+                hits.add("不得导入本地夹具模块（tests.*）")
+            elif _resolves_to_local(repo, mod) and not _entry_module(mod):
+                hits.add(
+                    f"不得导入与 under_test 无关的仓内模块 {mod}（本地夹具）"
+                )
             if mod == "sys":
                 hits.add(
                     "不得从 sys 导入（只允许 import sys 后 sys.path.insert／append）"
@@ -1338,6 +1435,58 @@ def test_code_violations(
                     root = _root_name(sub)
                     if root in imported:
                         hits.add(f"不得给 {root} 的属性赋值（猴补丁）")
+
+    # 期望值独立性：断言里的期望值必须是字面量。调用只允许被测入口、
+    # 断言方法本身与类型谓词；`int("-1")`、`calc.make_expected()` 一律拒绝。
+    def _call_allowed(call: ast.Call) -> bool:
+        func = call.func
+        if isinstance(func, ast.Name):
+            return func.id in direct_entries or func.id in ASSERTION_PURE_CALLS
+        if isinstance(func, ast.Attribute):
+            root = _root_name(func)
+            if (
+                root in entry_alias_module
+                and func.attr in entry_symbols[entry_alias_module[root]]
+            ):
+                return True
+            if func.attr in ASSERTION_METHOD_NAMES:
+                return True
+        return False
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Assert):
+            compares = [
+                n for n in ast.walk(node.test) if isinstance(n, ast.Compare)
+            ]
+            if compares and not any(
+                _literal_expr(x)
+                for cmp_node in compares
+                for x in [cmp_node.left, *cmp_node.comparators]
+            ):
+                hits.add(
+                    "断言里的期望值必须是字面量（不得取自被测代码或运行时计算）"
+                )
+            for sub in ast.walk(node.test):
+                if isinstance(sub, ast.Call) and not _call_allowed(sub):
+                    hits.add(
+                        "断言中只允许调用被测入口或断言方法；"
+                        "期望值必须是字面量（不得用 int(\"-1\") 这类调用构造）"
+                    )
+        elif (
+            isinstance(node, ast.Call)
+            and isinstance(node.func, ast.Attribute)
+            and node.func.attr in EXPECTED_LITERAL_METHODS
+        ):
+            if not any(_literal_expr(a) for a in node.args):
+                hits.add(
+                    f"{node.func.attr} 的期望值必须是字面量"
+                    "（不得取自被测代码或运行时计算）"
+                )
+            for sub in ast.walk(node):
+                if isinstance(sub, ast.Call) and not _call_allowed(sub):
+                    hits.add(
+                        "断言中只允许调用被测入口或断言方法；期望值必须是字面量"
+                    )
     return sorted(hits)
 
 
@@ -1521,6 +1670,8 @@ def _mutant_outcome(repo: Path, cmd: str, timeout: int) -> tuple[str, str]:
     _clear_pycache(repo)
     try:
         code, text, error = run_command_classified(cmd, repo, timeout)
+    except IntegrityViolation:
+        raise
     except subprocess.TimeoutExpired:
         return "timeout", "变异后测试超时"
     except RuntimeError as exc:
@@ -1677,12 +1828,21 @@ def v01(ctx: Ctx) -> Result:
             problems.append("fingerprint.run1 ≠ run2")
     if not _isoish(data.get("first_observed")):
         problems.append("first_observed 缺失或不是 ISO-8601")
-    _u, uerr = parse_under_test(data.get("under_test"))
+    mapping, uerr = parse_under_test(data.get("under_test"))
     if uerr:
         problems.append(uerr)
     if problems:
         return bad("V01", *problems)
-    return ok("V01", "repro.md 九字段齐全且类型正确")
+    entry_problems, unresolved = under_test_entry_problems(ctx.repo, mapping or {})
+    if entry_problems:
+        return bad("V01", *entry_problems)
+    if unresolved:
+        return cannot(
+            "V01",
+            "无法定位 under_test 的源文件，不能确认是可调用入口："
+            + "；".join(unresolved),
+        )
+    return ok("V01", "repro.md 九字段齐全且类型正确；under_test 均为可调用入口")
 
 
 def v02(ctx: Ctx) -> Result:
@@ -1714,6 +1874,8 @@ def v02(ctx: Ctx) -> Result:
     for i in range(runs):
         try:
             code, out = run_command(cmd, ctx.repo, timeout)
+        except IntegrityViolation as exc:
+            return cannot("V02", f"第 {i + 1} 次运行：{exc}")
         except subprocess.TimeoutExpired:
             return cannot("V02", f"第 {i + 1} 次运行超时，无法判定")
         except RuntimeError as exc:
@@ -1769,7 +1931,7 @@ def v03(ctx: Ctx) -> Result:
                 "失败测试文件没有可判定的非恒真断言"
                 "（只有 assertTrue(True) 这类常量断言也算不合格）"
             )
-        wl = test_code_violations(test_real, under_test)
+        wl = test_code_violations(test_real, under_test, ctx.repo)
         if wl:
             problems.append("复现测试不在白名单内：" + "；".join(wl[:5]))
     if not nonempty_str(meta.get("test_id")):
@@ -1810,6 +1972,8 @@ def v03(ctx: Ctx) -> Result:
     timeout = ctx.get("repro_timeout_seconds")
     try:
         code, out = run_command(meta["single_run_command"], ctx.repo, timeout)
+    except IntegrityViolation as exc:
+        return cannot("V03", str(exc))
     except subprocess.TimeoutExpired:
         return cannot("V03", "失败用例单独运行超时，无法判定")
     except RuntimeError as exc:
@@ -1960,6 +2124,8 @@ def v07(ctx: Ctx) -> Result:
     timeout = ctx.get("repro_timeout_seconds")
     try:
         code, out = run_command(cmd, ctx.repo, timeout)
+    except IntegrityViolation as exc:
+        return cannot("V07", str(exc))
     except subprocess.TimeoutExpired:
         return cannot("V07", "既有测试运行超时，无法判定")
     except RuntimeError as exc:
@@ -1996,7 +2162,7 @@ def v08(ctx: Ctx) -> Result:
         under_test, uerr = parse_under_test(repro.get("under_test"))
         if uerr:
             return bad("V08", uerr)
-        wl = test_code_violations(_rs, under_test)
+        wl = test_code_violations(_rs, under_test, ctx.repo)
         if wl:
             return bad("V08", "复现测试不在白名单内：" + "；".join(wl[:5]))
     _ts, tp = parse_isolated_command(test_cmd, ctx.repo)
@@ -2109,6 +2275,8 @@ def v08(ctx: Ctx) -> Result:
     def rerun_traced(label: str, command: str):
         try:
             return run_traced_command(command, ctx.repo, timeout)
+        except IntegrityViolation:
+            raise
         except subprocess.TimeoutExpired:
             raise RuntimeError(f"{label}重跑超时，无法判定")
         except RuntimeError as exc:
@@ -2117,6 +2285,8 @@ def v08(ctx: Ctx) -> Result:
     def rerun_plain(label: str, command: str) -> int:
         try:
             code, _out = run_command(command, ctx.repo, timeout)
+        except IntegrityViolation:
+            raise
         except subprocess.TimeoutExpired:
             raise RuntimeError(f"{label}重跑超时，无法判定")
         except RuntimeError as exc:

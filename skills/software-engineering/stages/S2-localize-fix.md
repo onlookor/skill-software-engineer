@@ -21,7 +21,7 @@ gate:
   - "既有测试全绿（命令与 S1 相同）"
   - "fix.patch 只触及 localization.md 列出的文件"
   - "tests/ 路径下已有文件不被改写、不被改名、不被移出 tests/（改名按 diff 的 a 侧旧路径判定）；只允许新增 tests/repro_* 测试文件"
-  - "fix.patch 的改动行必须在可判定的执行时机内：普通函数／方法体放行；模块级声明式改动（import、模块常量、类属性／dataclass 默认值、模块级 try/except 内赋值、docstring、声明式装饰器、def／class 头）放行；改到模块级可执行语句或导入期会执行的函数体（元类钩子、__init_subclass__、__set_name__、模块级 __getattr__、模块级调用链）判 cannot_evaluate，并写明「该缺陷需要改模块级声明，超出本技能适用面」。V06 只是保守近似，不是「导入期不可达」的完整判据"
+  - "fix.patch 的改动行只允许落在普通函数／方法体或模块级声明式改动（import、模块常量、类属性／dataclass 默认值、模块级 try/except 内赋值、docstring、声明式装饰器、def／class 头）；改到模块级可执行语句判 cannot_evaluate，并写明「该缺陷需要改模块级声明，超出本技能适用面」。导入期是否发生伪造不靠语法可达性推断：受控执行引导在导入仓内代码前对断言设施、内置执行入口、trace 与采集入口、sys.modules 基线留可信原件，执行后比对，被改写即 cannot_evaluate"
   - "localization.md 的成因结论必须带 evidence_kind 标注（direct│indirect│hypothesis）"
 on_fail:
   - "补丁不转绿 → 回滚补丁、保留定位记录，回 S1 复核复现，或判 blocked"
