@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import re
@@ -19,14 +20,35 @@ import shlex
 import subprocess
 import sys
 import tempfile
+import tokenize
 from datetime import date, datetime
 from pathlib import Path
 
 try:
     import yaml
 except ImportError:  # pragma: no cover
-    sys.stderr.write("cannot_evaluate: 缺少 PyYAML\n")
-    sys.exit(3)
+    # 本文件自己要求受控隔离，自己的负向套件也会在 `python3 -I` 下被调用：
+    # `-I` 只是忽略 PYTHONPATH／用户 site，并不禁用系统 site-packages。
+    # 这里显式补回站点目录（含用户 site，PyYAML 可能装在那里），导入成功后再移除，
+    # 不让这些目录继续影响本进程后续的模块解析。
+    _added: list[str] = []
+    try:
+        import site
+
+        for _d in list(site.getsitepackages()) + [site.getusersitepackages()]:
+            if _d and os.path.isdir(_d) and _d not in sys.path:
+                sys.path.append(_d)
+                _added.append(_d)
+    except Exception:
+        pass
+    try:
+        import yaml
+    except ImportError:
+        sys.stderr.write("cannot_evaluate: 缺少 PyYAML\n")
+        sys.exit(3)
+    for _d in _added:
+        while _d in sys.path:
+            sys.path.remove(_d)
 
 PASS, FAIL, CANNOT = 0, 1, 3
 
@@ -238,12 +260,18 @@ def fingerprint(text: str, repo: Path) -> str:
 # - `-S`：跳过 site 初始化，从而不执行 sitecustomize；
 # - 引导内只恢复系统 site-packages（不执行 sitecustomize/usercustomize），
 #   把仓库根放到 sys.path[0]，工作目录钉在仓库根；
-# - trace 模式下用标准库 trace 采集覆盖行，JSON 写回给校验器。
+# - trace 模式下用标准库 trace 采集覆盖行：当前线程、测试自己新建的线程
+#   （threading.settrace），以及测试自己拉起的子进程（子进程由 SITECUSTOMIZE
+#   采集并写独立文件，引导结束时合并）。
+# - 覆盖率结果经继承的文件描述符写回（fd 号走环境变量，路径不经 argv），
+#   避免测试从 /proc/self/cmdline 读到输出通道。
 # 覆盖率工具用标准库实现，不引入新依赖，也不属于新的挂载期能力声明。
 BOOTSTRAP = r'''
-import json, os, runpy, sys, trace
+import json, os, runpy, sys, threading, trace
 
-repo, script, mode, out = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
+repo, script, mode = sys.argv[1], sys.argv[2], sys.argv[3]
+out_fd = int(os.environ.get("SE_COV_FD", "3"))
+boot = sys.argv[0]
 os.chdir(repo)
 sys.path.insert(0, repo)
 # 测试脚本里常见 `unittest.main()`：它按 sys.argv 解析用例名，这里必须去掉引导参数。
@@ -270,39 +298,106 @@ def main():
             return 0
         return code if isinstance(code, int) else 1
     except BaseException:
+        # 未捕获异常必须留下输出，否则 V02 无法区分「静默失败」与「真的失败」。
+        # 引导自身路径每次都在新的临时目录里，写进输出会让指纹不稳定。
+        import traceback
+        sys.stderr.write(traceback.format_exc().replace(boot, "<bootstrap>"))
         return 1
 
 
-if mode == "plain":
-    sys.exit(main())
-
-tracer = trace.Trace(count=True, trace=False,
-                     ignoredirs=[sys.prefix, sys.exec_prefix])
-code = 0
-try:
-    tracer.runfunc(lambda: sys.exit(main()))
-except SystemExit as exc:
-    val = exc.code
-    code = 0 if val is None else (val if isinstance(val, int) else 1)
-except BaseException:
-    code = 1
-covered = {}
-for (fn, lineno), _count in tracer.results().counts.items():
+def _rel(fn):
     try:
         rel = os.path.relpath(os.path.realpath(fn), repo)
     except ValueError:
-        continue
+        return None
     if rel.startswith(".."):
-        continue
-    covered.setdefault(rel.replace(os.sep, "/"), []).append(lineno)
-with open(out, "w", encoding="utf-8") as fh:
-    json.dump({"exit": code,
-               "covered": {k: sorted(set(v)) for k, v in covered.items()}},
-              fh)
+        return None
+    return rel.replace(os.sep, "/")
+
+
+def _dump(exit_code, tracer=None):
+    covered = {}
+    if tracer is not None:
+        for (fn, lineno), _count in tracer.results().counts.items():
+            rel = _rel(fn)
+            if rel is not None:
+                covered.setdefault(rel, []).append(lineno)
+    # 合并子进程覆盖率：由 SITECUSTOMIZE 写在 SE_COV_DIR/cov-<pid>.json。
+    child_dir = os.environ.get("SE_COV_DIR")
+    if child_dir and os.path.isdir(child_dir):
+        for name in sorted(os.listdir(child_dir)):
+            if not (name.startswith("cov-") and name.endswith(".json")):
+                continue
+            try:
+                with open(os.path.join(child_dir, name), encoding="utf-8") as fh:
+                    doc = json.load(fh)
+            except (OSError, ValueError):
+                continue
+            for path, lines in (doc.get("covered") or {}).items():
+                if isinstance(path, str) and isinstance(lines, list):
+                    covered.setdefault(path, []).extend(
+                        x for x in lines if isinstance(x, int)
+                    )
+    payload = {"exit": exit_code,
+               "covered": {k: sorted(set(v)) for k, v in covered.items()}}
+    with os.fdopen(out_fd, "w", encoding="utf-8") as fh:
+        json.dump(payload, fh)
+
+
+if mode == "plain":
+    _dump(main())
+    sys.exit(0)
+
+tracer = trace.Trace(count=True, trace=False,
+                     ignoredirs=[sys.prefix, sys.exec_prefix])
+# 当前线程之外，测试自己新建的线程也要采（threading.settrace 只对之后创建的线程生效）。
+threading.settrace(tracer.globaltrace)
+code = 0
+try:
+    code = tracer.runfunc(main)
+except BaseException:
+    code = 1
+_dump(code, tracer)
 sys.exit(0)
 '''
 
-_INTERPRETER_RE = re.compile(r"^python(?:3(?:\.\d+)?)?$")
+# 子进程覆盖率注入点：测试自己拉起的子进程若不是 `-I`／`-S`，启动时会经
+# PYTHONPATH 导入本文件。它只写覆盖率，不改变被测行为。
+SITECUSTOMIZE = r'''
+import atexit, json, os, sys, threading, trace
+
+_repo = os.environ.get("SE_COV_REPO", "")
+_out_dir = os.environ.get("SE_COV_DIR", "")
+if _repo and _out_dir and not os.environ.get("SE_COV_ACTIVE"):
+    os.environ["SE_COV_ACTIVE"] = "1"
+    _tracer = trace.Trace(count=True, trace=False,
+                          ignoredirs=[sys.prefix, sys.exec_prefix])
+
+    def _dump():
+        sys.settrace(None)
+        threading.settrace(None)
+        covered = {}
+        for (fn, lineno), _count in _tracer.results().counts.items():
+            try:
+                rel = os.path.relpath(os.path.realpath(fn), _repo)
+            except ValueError:
+                continue
+            if rel.startswith(".."):
+                continue
+            covered.setdefault(rel.replace(os.sep, "/"), []).append(lineno)
+        path = os.path.join(_out_dir, "cov-%d.json" % os.getpid())
+        try:
+            with open(path, "w", encoding="utf-8") as fh:
+                json.dump({"pid": os.getpid(),
+                           "covered": {k: sorted(set(v))
+                                       for k, v in covered.items()}}, fh)
+        except OSError:
+            pass
+
+    atexit.register(_dump)
+    threading.settrace(_tracer.globaltrace)
+    sys.settrace(_tracer.globaltrace)
+'''
 
 
 def parse_isolated_command(cmd, repo: Path) -> tuple[Path | None, str | None]:
@@ -320,8 +415,8 @@ def parse_isolated_command(cmd, repo: Path) -> tuple[Path | None, str | None]:
             "只允许 `python3 -I <仓内相对路径>`（恰好三个词；"
             "不接参数、不接 -m/-c、不使用 bash/env/赋值前缀）"
         )
-    if not _INTERPRETER_RE.fullmatch(Path(tokens[0]).name):
-        return None, "解释器只允许 python3（隔离模式）"
+    if tokens[0] != "python3":
+        return None, "解释器只允许字面量 `python3`（不接 ./、版本后缀或其它别名）"
     if tokens[1] != "-I":
         return None, "解释器必须带 -I（隔离模式）"
     raw = tokens[2]
@@ -348,40 +443,55 @@ def _clean_env() -> dict:
 
 
 def _exec_isolated(repo: Path, script: Path, timeout: int, trace_mode: bool):
-    """在隔离引导下执行脚本；返回 (退出码, 输出, 覆盖行或 None)。"""
+    """在隔离引导下执行脚本；返回 (退出码, 输出, 覆盖行或 None)。
+
+    覆盖率结果经继承的 fd 写回，输出路径不进 argv；子进程覆盖率目录走
+    SE_COV_DIR（只含 sitecustomize.py 的临时目录同时作为 PYTHONPATH）。
+    """
     with tempfile.TemporaryDirectory(prefix="validate-iso-") as tmpdir:
+        # 源码 mtime 的秒级精度不足以让 Python 失效旧 pyc；补丁前后文件大小相同
+        # 时尤其会读到 baseline 的字节码。执行前统一清掉缓存，保证跑的是当前源码。
+        _clear_pycache(repo)
         tmp = Path(tmpdir)
         boot = tmp / "bootstrap.py"
         boot.write_text(BOOTSTRAP, encoding="utf-8")
         out = tmp / "coverage.json"
-        argv = [sys.executable or "python3", "-I", "-S", "-B", str(boot),
-                str(repo), str(script), "trace" if trace_mode else "plain", str(out)]
-        try:
-            proc = subprocess.run(
-                argv, cwd=str(repo), env=_clean_env(),
-                capture_output=True, text=True, timeout=timeout,
-            )
-        except subprocess.TimeoutExpired:
-            raise
-        except OSError as exc:
-            raise RuntimeError(str(exc))
-        text = (proc.stdout or "") + (proc.stderr or "")
-        covered = None
+        env = _clean_env()
+        env["SE_COV_REPO"] = str(repo)
         if trace_mode:
-            if proc.returncode != 0 or not out.exists():
-                raise RuntimeError(
-                    "覆盖率采集无法执行（受控引导退出码="
-                    f"{proc.returncode}）：" + text.strip()[-500:]
-                )
+            child_cov = tmp / "child-cov"
+            child_cov.mkdir()
+            (tmp / "sitecustomize.py").write_text(SITECUSTOMIZE, encoding="utf-8")
+            env["PYTHONPATH"] = str(tmp)
+            env["SE_COV_DIR"] = str(child_cov)
+        argv = [sys.executable or "python3", "-I", "-S", "-B", str(boot),
+                str(repo), str(script), "trace" if trace_mode else "plain"]
+        with out.open("w", encoding="utf-8") as out_fh:
+            env["SE_COV_FD"] = str(out_fh.fileno())
             try:
-                covered = json.loads(out.read_text(encoding="utf-8"))
-            except (OSError, json.JSONDecodeError) as exc:
-                raise RuntimeError(f"覆盖率结果不可读：{exc}")
-            code = covered.get("exit")
-            if not isinstance(code, int):
-                raise RuntimeError("覆盖率结果缺退出码")
-            return code, text, covered
-        return proc.returncode, text, None
+                proc = subprocess.run(
+                    argv, cwd=str(repo), env=env,
+                    pass_fds=(out_fh.fileno(),),
+                    capture_output=True, text=True, timeout=timeout,
+                )
+            except subprocess.TimeoutExpired:
+                raise
+            except OSError as exc:
+                raise RuntimeError(str(exc))
+        text = (proc.stdout or "") + (proc.stderr or "")
+        if proc.returncode != 0 or not out.exists():
+            raise RuntimeError(
+                "受控执行引导异常退出（退出码="
+                f"{proc.returncode}）：" + text.strip()[-500:]
+            )
+        try:
+            covered = json.loads(out.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as exc:
+            raise RuntimeError(f"受控执行结果不可读：{exc}")
+        code = covered.get("exit")
+        if not isinstance(code, int):
+            raise RuntimeError("受控执行结果缺退出码")
+        return code, text, (covered if trace_mode else None)
 
 
 def run_command(cmd: str, cwd: Path, timeout: int) -> tuple[int, str]:
@@ -471,10 +581,29 @@ TRIVIAL_ASSERTIONS = (
 )
 
 
+def code_only_lines(source: str) -> list[str]:
+    """去掉注释与字符串字面量后的代码行。
+
+    `# assert ...` 与 `"assert ..."` 都不是断言；只保留 NAME／OP 记号，
+    这样文本匹配不会被注释或字符串骗过。tokenize 失败时退化为逐行去 # 注释。
+    """
+    spans: dict[int, list[tuple[int, str]]] = {}
+    try:
+        for tok in tokenize.generate_tokens(io.StringIO(source).readline):
+            if tok.type in (tokenize.NAME, tokenize.OP, tokenize.NUMBER):
+                spans.setdefault(tok.start[0], []).append((tok.start[1], tok.string))
+    except (tokenize.TokenError, IndentationError, SyntaxError):
+        return [line.split("#", 1)[0] for line in source.splitlines()]
+    out = []
+    for i in range(1, len(source.splitlines()) + 1):
+        out.append(" ".join(s for _, s in sorted(spans.get(i, []))))
+    return out
+
+
 def has_nontrivial_assertion(body: str) -> bool:
-    """测试文件里至少有一行不是可识别的恒真／常量断言。"""
+    """测试文件里至少有一行代码（不含注释与字符串）不是可识别的恒真断言。"""
     candidates = [
-        line for line in body.splitlines()
+        line for line in code_only_lines(body)
         if ASSERT_RE.search(line) or re.search(r"\bassert\b", line)
     ]
     if not candidates:
@@ -590,8 +719,211 @@ def is_test_path(path: str) -> bool:
     ))
 
 
+# ---------------------------------------------------------------- 变异检验
+
+MUTATION_OP_SWAPS = {
+    "==": "!=", "!=": "==", "<=": "<", ">=": ">", "<": "<=", ">": ">=",
+    "+": "-", "-": "+", "*": "/", "/": "*",
+}
+MUTATION_NAME_SWAPS = {"and": "or", "or": "and", "True": "False", "False": "True"}
+
+
+def mutation_candidates(line: str) -> list[str]:
+    """对一行代码造文本变异：翻转比较符、换运算符、常量 ±1、布尔取反。
+
+    只替换 NAME／OP／NUMBER 记号，注释与字符串天然不参与（不产生变异）。
+    一行无法 tokenize（如续行）时返回空，由调用方按「该行不可敏化」处理。
+    """
+    try:
+        toks = list(tokenize.generate_tokens(io.StringIO(line + "\n").readline))
+    except (tokenize.TokenError, IndentationError, SyntaxError):
+        return []
+    out: list[str] = []
+    for tok in toks:
+        replacement = None
+        if tok.type == tokenize.OP and tok.string in MUTATION_OP_SWAPS:
+            replacement = MUTATION_OP_SWAPS[tok.string]
+        elif tok.type == tokenize.NAME and tok.string in MUTATION_NAME_SWAPS:
+            replacement = MUTATION_NAME_SWAPS[tok.string]
+        elif tok.type == tokenize.NUMBER and re.fullmatch(r"\d+", tok.string):
+            replacement = str(int(tok.string) + 1)
+        if replacement is None or tok.end[0] != 1:
+            continue
+        out.append(line[:tok.start[1]] + replacement + line[tok.end[1]:])
+    # 去重并保序；同一行不需要无限多个变异。
+    seen, uniq = set(), []
+    for cand in out:
+        if cand not in seen:
+            seen.add(cand)
+            uniq.append(cand)
+    return uniq[:8]
+
+
+def patch_mutation_targets(text: str) -> list[dict]:
+    """补丁触及的生产代码行：新增行逐行变异，改动块整块回退作删除行变异。"""
+    targets: list[dict] = []
+    for entry in patch_entries(text):
+        a_path, b_path = entry["a"], entry["b"]
+        if is_test_path(a_path) or is_test_path(b_path):
+            continue
+        a_cur = b_cur = None
+        added: list[tuple[int, str]] = []
+        blocks: list[dict] = []
+        cur: dict | None = None
+        for line in entry["lines"]:
+            m = re.match(r"^@@ -(\d+)(?:,\d+)? \+(\d+)(?:,\d+)? @@", line)
+            if m:
+                a_cur, b_cur = int(m.group(1)), int(m.group(2))
+                cur = {"insert": None, "deleted": [], "added": []}
+                blocks.append(cur)
+                continue
+            if a_cur is None:
+                continue
+            if line.startswith("+"):
+                added.append((b_cur, line[1:]))
+                if cur is not None:
+                    if cur["insert"] is None:
+                        cur["insert"] = b_cur - 1
+                    cur["added"].append(line[1:])
+                b_cur += 1
+            elif line.startswith("-"):
+                if cur is not None and cur["insert"] is None:
+                    cur["insert"] = b_cur - 1
+                if cur is not None:
+                    cur["deleted"].append(line[1:])
+                a_cur += 1
+            elif line.startswith(" ") or line == "":
+                a_cur += 1
+                b_cur += 1
+        revert = [
+            (b["insert"], b["deleted"], b["added"])
+            for b in blocks
+            if b["insert"] is not None and (b["deleted"] or b["added"])
+        ]
+        if added or revert:
+            targets.append({"path": b_path, "added": added, "revert": revert})
+    return targets
+
+
+def _clear_pycache(repo: Path) -> None:
+    for cache in repo.rglob("__pycache__"):
+        if ".git" in cache.parts:
+            continue
+        for child in cache.iterdir():
+            try:
+                child.unlink()
+            except OSError:
+                pass
+        try:
+            cache.rmdir()
+        except OSError:
+            pass
+
+
+def _compiles(source: str, path: Path) -> bool:
+    if path.suffix != ".py":
+        return True
+    try:
+        compile(source, str(path), "exec")
+    except (SyntaxError, ValueError):
+        return False
+    return True
+
+
+def _replaced_line(lines: list[str], index: int, replacement: str) -> list[str]:
+    old = lines[index]
+    ending = old[len(old.rstrip("\r\n")):]
+    return lines[:index] + [replacement + ending] + lines[index + 1:]
+
+
+def _reverted_block(lines: list[str], insert: int, deleted: list[str],
+                    added: list[str]) -> list[str] | None:
+    if insert is None:
+        return None
+    if insert < 0 or insert > len(lines):
+        return None
+    end = insert + len(added)
+    current = [line.rstrip("\r\n") for line in lines[insert:end]]
+    if current != added:
+        return None
+    restored = [d + "\n" for d in deleted]
+    return lines[:insert] + restored + lines[end:]
+
+
+def _mutant_killed(repo: Path, cmd: str, timeout: int) -> bool:
+    _clear_pycache(repo)
+    try:
+        code, _out = run_command(cmd, repo, timeout)
+    except (subprocess.TimeoutExpired, RuntimeError):
+        return False
+    return code != 0
+
+
+def run_mutation_checks(repo: Path, cmd: str, timeout: int, patch_text: str) -> list[str]:
+    """在 patched 态逐行造变异并重跑复现测试；测试必须变红。
+
+    返回失败理由列表；空列表表示补丁触及的生产代码行都被测试敏感覆盖。
+    纯新增补丁没有 base 侧删除行，但每个新增行仍要过这一关。
+    """
+    targets = patch_mutation_targets(patch_text)
+    if not targets:
+        return ["补丁未在生产代码上触碰任何行，无法造出变异"]
+    failures: list[str] = []
+    for target in targets:
+        path = repo / target["path"]
+        if not path.is_file():
+            failures.append(f'{target["path"]}：补丁应用后文件不存在，无法造变异')
+            continue
+        original = path.read_text(encoding="utf-8", errors="surrogateescape")
+        lines = original.splitlines(keepends=True)
+        try:
+            for lineno, text in target["added"]:
+                if not 1 <= lineno <= len(lines):
+                    failures.append(f'{target["path"]}:{lineno} 越界，无法造变异')
+                    continue
+                candidates = mutation_candidates(text)
+                if not candidates:
+                    continue
+                killed = False
+                for candidate in candidates:
+                    mutated = _replaced_line(lines, lineno - 1, candidate)
+                    source = "".join(mutated)
+                    if not _compiles(source, path):
+                        continue
+                    path.write_text(source, encoding="utf-8")
+                    if _mutant_killed(repo, cmd, timeout):
+                        killed = True
+                        break
+                path.write_text(original, encoding="utf-8")
+                if not killed:
+                    failures.append(
+                        f'{target["path"]}:{lineno} 的变异均未使复现测试变红'
+                        "（补丁行未被测试敏感覆盖）"
+                    )
+            for insert, deleted, added in target["revert"]:
+                mutated = _reverted_block(lines, insert, deleted, added)
+                if mutated is None:
+                    failures.append(f'{target["path"]} 无法定位删除块，不能造回退变异')
+                    continue
+                source = "".join(mutated)
+                if not _compiles(source, path):
+                    failures.append(
+                        f'{target["path"]} 的回退变异不可编译，无法判定删除行敏感性'
+                    )
+                    continue
+                path.write_text(source, encoding="utf-8")
+                if not _mutant_killed(repo, cmd, timeout):
+                    failures.append(
+                        f'{target["path"]} 的删除行被回退后复现测试仍通过'
+                        "（补丁行未被测试敏感覆盖）"
+                    )
+        finally:
+            path.write_text(original, encoding="utf-8")
+    return failures
+
+
 ASSERT_RE = re.compile(
-    r"\b(assert|expect|should|require|assertEqual|assertRaises|pytest\.raises|"
+    r"\b(assert(?:ionerror)?|expect|should|require|assertEqual|assertRaises|pytest\.raises|"
     r"t\.(Fatal|Fatalf|Error|Errorf))\b",
     re.IGNORECASE,
 )
@@ -645,7 +977,7 @@ def v01(ctx: Ctx) -> Result:
             problems.append("fingerprint.run1／run2 缺失或为空")
         elif fp.get("run1") != fp.get("run2"):
             problems.append("fingerprint.run1 ≠ run2")
-    if not parse_iso(data.get("first_observed")):
+    if not _isoish(data.get("first_observed")):
         problems.append("first_observed 缺失或不是 ISO-8601")
     if problems:
         return bad("V01", *problems)
@@ -1136,6 +1468,21 @@ def v08(ctx: Ctx) -> Result:
             return bad("V08", f"第②段重跑测试命令退出码={c2_tests}（期望 0）")
         if phases[1]["exit_code"] != 0:
             return bad("V08", "verify.log 第②段记录的退出码不是 0")
+
+        # 变异检验：补丁触及的每一行生产代码都要能造出让测试变红的变异。
+        # 纯新增补丁的 base 侧为空，但新增行同样要过这一关，不再有「只查 patched」的缺口。
+        try:
+            mutation_failures = run_mutation_checks(
+                ctx.repo, repro_cmd, ctx.timeout, patch_text
+            )
+        except (OSError, RuntimeError) as exc:
+            return cannot("V08", f"变异检验无法执行：{exc}")
+        if mutation_failures:
+            return bad(
+                "V08",
+                "变异检验未通过：补丁行未被测试敏感覆盖",
+                *mutation_failures[:5],
+            )
     finally:
         try:
             reverted = git(
@@ -1161,7 +1508,7 @@ def v08(ctx: Ctx) -> Result:
             f"日志={phases[2]['exit_code']}",
         )
 
-    # 未复核根因不得写成 fixed：status=fixed 必须有 V09 签字
+    # V09 必须人工执行：自动检查不采信任何字段自证「已复核」。
     report, rerr = load_frontmatter(ctx.repo / "fix-report.md")
     if rerr:
         return bad("V08", "缺 fix-report.md 或格式不合法：" + rerr)
@@ -1169,22 +1516,18 @@ def v08(ctx: Ctx) -> Result:
     if status not in ("fixed", "fixed_unverified_root_cause", "not_fixed"):
         return bad("V08", f"fix-report.md.status 非法：{status!r}")
     if status == "fixed":
-        sign = report.get("v09_signoff")
-        if (
-            not isinstance(sign, dict)
-            or not nonempty_str(sign.get("reviewer"))
-            or not _isoish(sign.get("date"))
-        ):
-            return bad(
-                "V08",
-                "fix-report.md.status=fixed 但缺 V09 签字（v09_signoff.reviewer／date）；"
-                "无人复核时不得写 fixed",
-            )
+        return bad(
+            "V08",
+            "status=fixed 不在自动判定范围：V09 必须由人执行，"
+            "v09_signoff 等仓内字段可由执行方书写，不能作为复核成立的证据；"
+            "自动检查阶段请保持 fixed_unverified_root_cause",
+        )
 
     return ok(
         "V08",
-        "三段已实际重跑（非0／0／非0）；commit 与 HEAD 一致；"
-        "工作区无已跟踪改动；sha 与补丁一致",
+        "三段已实际重跑（非0／0／非0）；覆盖交集非空；变异检验通过；"
+        "commit 与 HEAD 一致；工作区无已跟踪改动；sha 与补丁一致；"
+        "V09 未自动判定（必须人工执行）",
     )
 
 

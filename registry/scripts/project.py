@@ -3023,7 +3023,6 @@ def _adr_count() -> int:
 SKILL_DIR = SE_DIR / 'skills' / 'software-engineering'
 DIST_DIR = SE_DIR / 'dist'
 PILOT_DIR = SE_DIR / 'pilot' / 'vertical-slice-20261112'
-REVIEW_PROC = SE_DIR / '独立复核规程.md'
 RELEASE_TAG_RE = re.compile(r'^(?:release-|v\d+\.\d+\.\d+$)')
 MIN_REGISTRIES = ('profiles.yaml', 'method_registry.yaml', 'guard_registry.yaml',
                   'fvr_registry.yaml', 'projection_registry.yaml')
@@ -3066,7 +3065,11 @@ def _grounding_summary() -> tuple[int, int] | None:
 
 
 def _artifact_shape() -> tuple[int, int, int] | None:
-    """M2 的独立出口：编译序号、卡片数、重编译次数，不依赖标签字符串。"""
+    """M2 的独立出口：序号、卡片数、重编译次数，并绑到本轮真实编译产物。
+
+    仅校验 label 与现有 artifact.yaml 的序号／最新重编译记录／母本哈希／
+    重编译日期一致；手改数字会与其中至少一项对不上。
+    """
     path = PILOT_DIR / 'artifact.yaml'
     if not path.is_file():
         return None
@@ -3075,45 +3078,62 @@ def _artifact_shape() -> tuple[int, int, int] | None:
     except yaml.YAMLError:
         return None
     ca = doc.get('compilation_artifact') or {}
-    seq = (ca.get('version') or {}).get('artifact_seq')
+    version = ca.get('version') or {}
+    seq = version.get('artifact_seq')
+    label = version.get('label')
     cards = ca.get('cards')
     remap = ca.get('recompile_map')
-    if isinstance(seq, int) and isinstance(cards, list) and isinstance(remap, list):
-        return seq, len(cards), len(remap)
-    return None
+    if not (isinstance(seq, int) and isinstance(label, str)
+            and isinstance(cards, list) and isinstance(remap, list) and remap):
+        return None
+    # 标签末段必须就是本次编译序号（如 pilot-20261112.14 ↔ 14）。
+    if label.rsplit('.', 1)[-1] != str(seq):
+        return None
+    # 最新一条重编译记录必须指向当前标签，且母本哈希与当前成文法一致。
+    latest = remap[0] if isinstance(remap[0], dict) else {}
+    if latest.get('to_version') != label:
+        return None
+    if not LAW_PATH.is_file():
+        return None
+    digest = 'sha256:' + hashlib.sha256(LAW_PATH.read_bytes()).hexdigest()
+    if version.get('framework_version') != digest:
+        return None
+    # 重编译日期不得早于母本最后一次提交日期（证明不是拿历史产物顶替）。
+    recompiled = latest.get('recompiled_at')
+    if isinstance(recompiled, str):
+        try:
+            recompiled = datetime.date.fromisoformat(recompiled.strip())
+        except ValueError:
+            return None
+    elif isinstance(recompiled, datetime.datetime):
+        recompiled = recompiled.date()
+    if not isinstance(recompiled, datetime.date):
+        return None
+    try:
+        last_commit = subprocess.run(
+            ['git', 'log', '-1', '--format=%cs', '--', str(LAW_PATH)],
+            cwd=str(SE_DIR.parent), capture_output=True, text=True, timeout=10,
+        )
+    except (OSError, subprocess.SubprocessError):
+        last_commit = None
+    if last_commit is not None and last_commit.returncode == 0:
+        raw = last_commit.stdout.strip()
+        try:
+            law_date = datetime.date.fromisoformat(raw)
+        except ValueError:
+            law_date = None
+        if law_date is not None and recompiled < law_date:
+            return None
+    return seq, len(cards), len(remap)
 
 
 def _approval_record() -> tuple[bool, str]:
-    """M6 的独立出口：review/approval.md 必须绑定当前复核规程的内容哈希。
+    """M6：仓内文件由执行方可写，不能当人类批准门。
 
-    文件校验只能证明「存在一份与当前规程对应的批准记录」，不能证明
-    记录确由人类书写；后者仍是流程约束，不由代码冒充。
+    机器不读任何仓内文件来判定「人类已批准」；外部批准不在可校验范围内，
+    因此固定显示未提供外部批准。
     """
-    path = SE_DIR / 'review' / 'approval.md'
-    if not path.is_file():
-        return False, '未批准（缺 review/approval.md）'
-    if not REVIEW_PROC.is_file():
-        return False, '无法判定（缺独立复核规程.md）'
-    text = path.read_text(encoding='utf-8')
-    lines = text.splitlines()
-    if not lines or lines[0].strip() != '---':
-        return False, '未批准（approval.md 缺 frontmatter）'
-    try:
-        end = lines.index('---', 1)
-        meta = yaml.safe_load('\n'.join(lines[1:end])) or {}
-    except (ValueError, yaml.YAMLError):
-        return False, '未批准（approval.md 不可解析）'
-    if meta.get('decision') != 'approved':
-        return False, '未批准（decision 不是 approved）'
-    by = meta.get('approved_by')
-    if not isinstance(by, str) or not by.strip():
-        return False, '未批准（缺 approved_by）'
-    if not isinstance(meta.get('approved_at'), (str, datetime.date)):
-        return False, '未批准（缺 approved_at）'
-    expected = hashlib.sha256(REVIEW_PROC.read_bytes()).hexdigest()
-    if meta.get('procedure_sha256') != expected:
-        return False, '未批准（批准记录与当前复核规程不一致）'
-    return True, f'已批准（{by.strip()}）'
+    return False, '未提供外部批准'
 
 
 def _annotated_release_at_head(tags: list[str] | None) -> str | None:

@@ -15,6 +15,7 @@ import re
 import shutil
 import sys
 import tarfile
+import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -41,8 +42,14 @@ VERSION_LITERAL_ALLOWED = {"SKILL.md", "PACKAGE-MANIFEST.txt"}
 
 
 def normalize_name(part: str) -> str:
-    """大小写不敏感、忽略前导点：Tests／.tests 与 tests 等价。"""
-    return part.lower().lstrip(".")
+    """NFKC、去空白、大小写不敏感、忽略前导点：`Tests `／`.tests` 与 `tests` 等价。
+
+    同形字目录（如 Cyrillic `tеsts`）不做字符映射，而是在 iter_files 里
+    直接拒绝含非 ASCII 字符的路径分量。
+    """
+    part = unicodedata.normalize("NFKC", part)
+    part = "".join(ch for ch in part if not ch.isspace())
+    return part.casefold().lstrip(".")
 
 
 FORBIDDEN_NORMALIZED = {normalize_name(x) for x in FORBIDDEN_ANYWHERE}
@@ -52,9 +59,57 @@ EXCLUDE_NORMALIZED = {normalize_name(x) for x in EXCLUDE_DIR_NAMES}
 def fold_literals(text: str) -> str:
     """折叠字符串常量：去掉空白、引号、反斜杠与拼接号。
 
-    `"0.5." + "0"`、`"0.5.""0"`、`("0.5." "0")` 折叠后都会露出完整版本号。
+    `"0.7." + "0"`、`"0.7.""0"`、`("0.7." "0")` 折叠后都会露出完整版本号。
     """
     return re.sub(r'[\s"\'+\\]', "", text)
+
+
+def unescape_literals(text: str) -> str:
+    """把 \\xNN、\\uNNNN、\\NNN 转义还原成字符，堵住 `\\x30.7.0` 这类写法。"""
+
+    def _one(match: re.Match) -> str:
+        try:
+            return chr(int(match.group(1), 16))
+        except ValueError:
+            return match.group(0)
+
+    text = re.sub(r"\\x([0-9a-fA-F]{2})", _one, text)
+    text = re.sub(r"\\u([0-9a-fA-F]{4})", _one, text)
+    text = re.sub(r"\\([0-7]{3})", _one, text)
+    return text
+
+
+def version_views(raw: bytes, text: str) -> list[str]:
+    """同一文件的多种读法：原文、转义还原、常量折叠、去花括号、UTF-16。"""
+    views = [text, unescape_literals(text)]
+    for base in list(views):
+        folded = fold_literals(base)
+        views.append(folded)
+        views.append(folded.replace("{", "").replace("}", ""))
+    try:
+        views.append(raw.decode("utf-16"))
+    except (UnicodeError, LookupError):
+        pass
+    return views
+
+
+def contains_version(raw: bytes, text: str, version: str) -> bool:
+    """版本号是否以内嵌/拼接/转义/UTF-16 形式出现。
+
+    f-string 与 `format(...)` 可能把主次版本号拆开：只要文件里存在 `0.7`
+    这类片段且同时出现构造语法，就视为重复，不试图求值。
+    """
+    major_minor = version.rsplit(".", 1)[0]
+    construct = bool(
+        re.search(r"\bformat\s*\(", text)
+        or re.search(r"[rRbB]?f[\"']", text)
+    )
+    for view in version_views(raw, text):
+        if version in view:
+            return True
+        if construct and major_minor in view:
+            return True
+    return False
 
 
 class PackageError(Exception):
@@ -96,6 +151,23 @@ def iter_files() -> list[Path]:
                 continue
             if p.suffix in EXCLUDE_SUFFIXES:
                 continue
+            # 同形字／尾随空格：路径分量必须是 ASCII，且归一化后等于原分量
+            # （只允许大小写与 NFKC 等价差异，不允许靠不可见字符伪装）。
+            for part in rel.parts:
+                if any(ord(ch) > 127 for ch in part):
+                    raise PackageError(
+                        f"{rel.as_posix()} 含非 ASCII 路径分量：{part!r}"
+                    )
+                if normalize_name(part) != part.casefold().lstrip("."):
+                    raise PackageError(
+                        f"{rel.as_posix()} 路径分量含空白或不可见字符：{part!r}"
+                    )
+            # 硬链接：内容可能来自仓库内部资产，且打包后无法从路径判定来源。
+            if p.stat().st_nlink > 1:
+                raise PackageError(
+                    f"{rel.as_posix()} 是硬链接（nlink={p.stat().st_nlink}），"
+                    "不能证明内容不是内部资产"
+                )
             # 软链与普通文件一律按解析后的真实路径判定：指向包源之外的
             # 内容不随包分发；指向内部资产的软链等同直接放入内部资产。
             real = p.resolve()
@@ -178,14 +250,16 @@ def build() -> int:
         return fail("归档含禁用项：" + ", ".join(hits), staging)
 
     # 版本号单一来源：除 SKILL.md 与 PACKAGE-MANIFEST.txt 外，包内任何文件
-    # 出现当前版本字面量都判失败。匹配前先做字符串常量折叠，避免
-    # `"0.6." + "0"` 这类邻接拼接绕过。
+    # 出现当前版本字面量都判失败。匹配前做常量折叠、转义还原、花括号剥离与
+    # UTF-16 解码，避免邻接拼接／f-string／format／`\x30`／UTF-16 绕过。
     dup_version = sorted(
         rel.as_posix()
         for rel in packaged
         if rel.as_posix() not in VERSION_LITERAL_ALLOWED
-        and version in fold_literals(
-            (staging / rel).read_text(encoding="utf-8", errors="replace")
+        and contains_version(
+            (staging / rel).read_bytes(),
+            (staging / rel).read_text(encoding="utf-8", errors="replace"),
+            version,
         )
     )
     if dup_version:

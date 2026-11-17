@@ -56,20 +56,17 @@ Markdown 前的 YAML 头（V06／V09 读取）：
 
 ```yaml
 ---
-status: fixed | fixed_unverified_root_cause | not_fixed
+status: fixed_unverified_root_cause | not_fixed
 patch_sha256: <64 位小写十六进制>
 touched_files:
   - <path>
 evidence_kind: direct | indirect | hypothesis
-v09_signoff:            # 仅当 status: fixed 时必填
-  reviewer: <非空身份>
-  date: <ISO-8601>
 ---
 ```
 
 - `evidence_kind: hypothesis` 时 `status` 不得写 `fixed`。
-- 无人复核 V09 时 `status` 只能是 `fixed_unverified_root_cause`；写 `fixed` 必须带 `v09_signoff`（复核者身份＋日期），否则 **V08 判 fail**。
-- **V09 签字的边界**：V08 只能检查 `v09_signoff.reviewer` 非空、`date` 是 ISO-8601，**不能证明签字人真的做过复核、也不能证明其身份**。字段填谁都一样通过。`fixed` 是否成立最终由人负责，V08 只挡住「写 `fixed` 却连签字字段都没有」这一种情况。
+- 自动检查阶段 `status` 只能是 `fixed_unverified_root_cause` 或 `not_fixed`。**写 `fixed` 会被 V08 直接判 fail**：V09 必须人工执行，`v09_signoff` 等仓内字段可由执行方书写，不能作为复核成立的证据。
+- 人工复核（V09）在自动检查之外进行，其结论不通过修改仓内字段来「自动成立」；详见 [validators/README.md 的「已知边界」](../validators/README.md#已知边界天花板)。
 - 任一段验证不成立时 `status` 写 `not_fixed`。
 
 ## 通过条件（全部由自动检查判定）
@@ -80,10 +77,14 @@ v09_signoff:            # 仅当 status: fixed 时必填
 
 判定者：V08。V08 不只读日志：它核对 `commit` 与 HEAD、识别已跟踪文件的脏改动，并实际重跑三段；第②段把**复现命令与测试命令分开单独重跑**，各自必须为 0（整条命令为 0 不能代替复现转绿），结束后撤销补丁。第③段（撤销后再次失败）是防「碰巧通过」的最低成本替代。
 
-**执行证据**：第①段（base）与第②段的复现命令都在受控执行下采集覆盖行。补丁在生产代码上删除的行必须在 base 态被复现测试执行到，新增的行必须在 patched 态被执行到；任一交集为空即 fail（理由：补丁行未被复现测试覆盖，无法证明该测试与修复相关）。该证据只证明「测试执行过补丁行」，不证明「该行就是根因」，后者仍属 V09 人工判断。
+**执行证据**：第①段（base）与第②段的复现命令都在受控执行下采集覆盖行（含测试自己新建的线程与其拉起的子进程）。补丁在生产代码上删除的行必须在 base 态被复现测试执行到，新增的行必须在 patched 态被执行到；任一交集为空即 fail（理由：补丁行未被复现测试覆盖，无法证明该测试与修复相关）。
+
+**变异检验**：V08 还会对补丁触及的每一行生产代码造变异（翻转比较符、换运算符、常量 ±1、布尔取反），删除行做整块回退，在 patched 态重跑复现测试；测试必须变红。造不出可编译变异或所有变异都存活 → fail（理由：补丁行未被测试敏感覆盖）。纯新增补丁没有 base 侧删除行，但新增行同样要过这一关。
+
+上述证据只证明「测试执行过补丁行，且对补丁行的正常变异敏感」，不证明「该行就是根因」，也不证明「测试没有伪造证据」；后者属 V09 人工判断与已知边界。
 
 ## 失败处理
 
 - **任一段不成立 → fail，`fix-report` 写「未修复」，禁止降级为 pass。**
 - 不得把「第二段绿」单独当成功；不得跳过第①或第③段。
-- `evidence_kind` 为 `hypothesis` 时，`fix-report.md` 的状态只能是 `fixed_unverified_root_cause`，不得写 `fixed`；无人复核 V09 时状态保持该值，不得升格（写 `fixed` 而无 `v09_signoff` 会被 V08 判 fail）。
+- `evidence_kind` 为 `hypothesis` 时，`fix-report.md` 的状态只能是 `fixed_unverified_root_cause`；自动检查阶段一律保持该值，不得写 `fixed`（写 `fixed` 会被 V08 直接判 fail）。

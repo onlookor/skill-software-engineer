@@ -475,6 +475,10 @@ def write_repro_and_meta(repo: Path, sha: str, repro_cmd: str, meta_file: str) -
     (repo / "repro.md").write_text(
         "---\nrepo:\n  url: local\n  commit: %s\n"
         f"command: {repro_cmd}\n"
+        "env:\n"
+        "  os: linux\n"
+        "  runtime: python3\n"
+        "  dependencies: {}\n"
         "expected: add(1, 2) 返回 3\nactual: AssertionError\n"
         "exit_code: 1\n"
         f"fingerprint:\n  run1: {fp}\n  run2: {fp}\n"
@@ -782,6 +786,214 @@ def case_test_rename_out(tmp: Path) -> str:
     return "V06 拦住把测试改名移出 tests/"
 
 
+def case_mutation_insensitive_added(tmp: Path) -> str:
+    """补丁新增一行被覆盖、但不影响行为的标记：变异全存活，V08 必须拦住。"""
+    repo = tmp / "mutation"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
+    (repo / "tests" / "repro_bug.py").write_text(
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n"
+        "assert add(1, 2) == 3, 'add broken'\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    (repo / "fix.patch").write_text(
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -1,2 +1,3 @@\n"
+        " def add(a, b):\n"
+        "-    return a - b\n"
+        "+    return a + b\n"
+        "+EXTRA = 1\n",
+        encoding="utf-8",
+    )
+    repro_cmd = "python3 -I tests/repro_bug.py"
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py")
+    write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg = tmp / "mutation-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V08"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
+    assert "变异检验未通过" in out and "calc.py:3" in out, out
+    return "V08 拦住被覆盖但对测试不敏感的补丁行"
+
+
+def case_comment_assertion(tmp: Path) -> str:
+    """断言只存在于注释里：V03 不得把它当断言。"""
+    repo = tmp / "comment-assert"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "repro_comment.py").write_text(
+        "# assert add(1, 2) == 3\n"
+        "import sys\nsys.exit(1)\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    (repo / "repro.md").write_text(
+        "---\nrepo:\n  url: local\n  commit: %s\n"
+        "command: python3 -I tests/repro_comment.py\nexpected: fail\n"
+        "actual: pass\nexit_code: 1\n---\n" % sha,
+        encoding="utf-8",
+    )
+    (repo / "tests" / "repro_comment.meta.yaml").write_text(
+        "\n".join([
+            "file: tests/repro_comment.py",
+            "test_id: repro_comment",
+            "single_run_command: python3 -I tests/repro_comment.py",
+            f"base_commit: {sha}",
+            "expected_failure: should fail",
+        ]) + "\n",
+        encoding="utf-8",
+    )
+    cfg = tmp / "comment-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V03"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
+    assert "非恒真断言" in out, out
+    return "V03 不把注释里的 assert 当断言"
+
+
+def case_string_assertion(tmp: Path) -> str:
+    """断言只存在于字符串里：V03 不得把它当断言。"""
+    repo = tmp / "string-assert"
+    init_repo(repo)
+    (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "repro_string.py").write_text(
+        "print('assert add(1, 2) == 3')\n"
+        "import sys\nsys.exit(1)\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    (repo / "repro.md").write_text(
+        "---\nrepo:\n  url: local\n  commit: %s\n"
+        "command: python3 -I tests/repro_string.py\nexpected: fail\n"
+        "actual: pass\nexit_code: 1\n---\n" % sha,
+        encoding="utf-8",
+    )
+    (repo / "tests" / "repro_string.meta.yaml").write_text(
+        "\n".join([
+            "file: tests/repro_string.py",
+            "test_id: repro_string",
+            "single_run_command: python3 -I tests/repro_string.py",
+            f"base_commit: {sha}",
+            "expected_failure: should fail",
+        ]) + "\n",
+        encoding="utf-8",
+    )
+    cfg = tmp / "string-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V03"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
+    assert "非恒真断言" in out, out
+    return "V03 不把字符串里的 assert 当断言"
+
+
+def _read_version(src: Path) -> str:
+    return re.search(
+        r'^version:\s*"?([0-9]+\.[0-9]+\.[0-9]+)"?\s*$',
+        (src / "SKILL.md").read_text(encoding="utf-8"),
+        re.MULTILINE,
+    ).group(1)
+
+
+def case_homoglyph_dir(tmp: Path) -> str:
+    """Cyrillic 同形字目录 `tеsts`：打包脚本必须拒绝非 ASCII 路径分量。"""
+    src = _copy_pkg(tmp, "pkg-src-homoglyph")
+    nested = src / "examples" / "defect-repro-fix" / "t\u0435sts"
+    nested.mkdir(parents=True)
+    (nested / "leak.md").write_text("internal\n", encoding="utf-8")
+    code, err = _build_variant(src, tmp / "dist-homoglyph", "build_package_neg_homoglyph")
+    assert code == 1, f"应被拒却退出 {code}\n{err}"
+    assert "非 ASCII" in err, err
+    return "打包脚本拒绝同形字目录"
+
+
+def case_trailing_space_dir(tmp: Path) -> str:
+    """目录名带尾随空格 `tests `：打包脚本必须拒绝不可见字符。"""
+    src = _copy_pkg(tmp, "pkg-src-space")
+    nested = src / "validators" / "tests "
+    nested.mkdir(parents=True)
+    (nested / "leak.md").write_text("internal\n", encoding="utf-8")
+    code, err = _build_variant(src, tmp / "dist-space", "build_package_neg_space")
+    assert code == 1, f"应被拒却退出 {code}\n{err}"
+    assert "空白" in err or "禁用项" in err, err
+    return "打包脚本拒绝尾随空格的目录名"
+
+
+def case_hardlink_asset(tmp: Path) -> str:
+    """硬链接：内容来源无法从路径判定，打包脚本必须拒绝。"""
+    src = _copy_pkg(tmp, "pkg-src-hardlink")
+    seed = src / "examples" / "defect-repro-fix" / "seed.md"
+    seed.write_text("asset content\n", encoding="utf-8")
+    link = src / "examples" / "defect-repro-fix" / "leak.md"
+    link.hardlink_to(seed)
+    code, err = _build_variant(src, tmp / "dist-hardlink", "build_package_neg_hardlink")
+    assert code == 1, f"应被拒却退出 {code}\n{err}"
+    assert "硬链接" in err, err
+    return "打包脚本拒绝硬链接"
+
+
+def _version_dup_case(tmp: Path, name: str, snippet: str, expect: str) -> str:
+    src = _copy_pkg(tmp, f"pkg-src-{name}")
+    readme = src / "README.md"
+    readme.write_text(
+        readme.read_text(encoding="utf-8") + "\n" + snippet + "\n", encoding="utf-8"
+    )
+    code, err = _build_variant(src, tmp / f"dist-{name}", f"build_package_neg_{name}")
+    assert code == 1, f"应被拒却退出 {code}\n{err}"
+    assert expect in err, err
+    return f"打包脚本拒绝{name}形式的版本号"
+
+
+def case_version_fstring(tmp: Path) -> str:
+    head, tail = _read_version(PKG).rsplit(".", 1)
+    return _version_dup_case(
+        tmp, "fstring", f'> 版本 f"{{{head!r}}}.{{{tail!r}}}"', "版本字面量"
+    )
+
+
+def case_version_format(tmp: Path) -> str:
+    head, tail = _read_version(PKG).rsplit(".", 1)
+    return _version_dup_case(
+        tmp, "format", f'> 版本 "{head}.{{}}".format("{tail}")', "版本字面量"
+    )
+
+
+def case_version_hex_escape(tmp: Path) -> str:
+    src = _copy_pkg(tmp, "pkg-src-hex-escape")
+    version = _read_version(src)
+    escaped = "\\x%02x" % ord(version[0]) + version[1:]
+    readme = src / "README.md"
+    readme.write_text(
+        readme.read_text(encoding="utf-8") + f"\n> 版本 {escaped}\n",
+        encoding="utf-8",
+    )
+    code, err = _build_variant(src, tmp / "dist-hex-escape", "build_package_neg_hex")
+    assert code == 1, f"应被拒却退出 {code}\n{err}"
+    assert "版本字面量" in err, err
+    return "打包脚本还原转义后拒绝十六进制版本号"
+
+
+def case_version_utf16(tmp: Path) -> str:
+    src = _copy_pkg(tmp, "pkg-src-utf16")
+    version = _read_version(src)
+    payload = ("\ufeff> 版本 " + version + "\n").encode("utf-16-le")
+    (src / "validators" / "hidden.md").write_bytes(payload)
+    code, err = _build_variant(src, tmp / "dist-utf16", "build_package_neg_utf16")
+    assert code == 1, f"应被拒却退出 {code}\n{err}"
+    assert "版本字面量" in err, err
+    return "打包脚本拒绝 UTF-16 内嵌的版本号"
+
+
 CASES = [
     case_empty_test_and_patch,
     case_silent_failure,
@@ -796,12 +1008,22 @@ CASES = [
     case_symlink_to_internal,
     case_version_literal_dup,
     case_version_concat,
+    case_homoglyph_dir,
+    case_trailing_space_dir,
+    case_hardlink_asset,
+    case_version_fstring,
+    case_version_format,
+    case_version_hex_escape,
+    case_version_utf16,
     case_c1_runner_fake,
     case_c2_pythonpath_shadow,
     case_c4_dead_code,
     case_c6_sitecustomize,
     case_c7_fixture_outside_tests,
     case_test_rename_out,
+    case_mutation_insensitive_added,
+    case_comment_assertion,
+    case_string_assertion,
 ]
 
 

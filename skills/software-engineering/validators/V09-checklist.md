@@ -1,7 +1,7 @@
 # V09 人工清单：根因陈述
 
 > 唯一人工项。自动检查判不了的只有一件事：`localization.md` 的根因陈述与 `evidence_kind` 是否**成立**。
-> 复核人逐项签字并附证据；未签字时交付物状态保持 `fixed_unverified_root_cause`，写 `fixed` 会被 V08 判 fail（V08 要求 `v09_signoff.reviewer` 与 `v09_signoff.date`）。
+> 复核人按本清单人工执行并另留记录；仓内字段不构成复核证据，`status: fixed` 会被 V08 直接拒绝。自动检查阶段状态保持 `fixed_unverified_root_cause`。
 
 ## 复核对象
 
@@ -24,7 +24,7 @@
 ## 结论
 
 - [ ] 全部通过 → `localization.md` 的根因陈述成立，`fix-report.md` 可按其 `evidence_kind` 记状态。
-- [ ] 任一项不通过 → 状态只能 `fixed_unverified_root_cause`；写明不通过项与原因，且不得写入 `v09_signoff`。
+- [ ] 任一项不通过 → 状态只能 `fixed_unverified_root_cause`；写明不通过项与原因。不要用 `v09_signoff` 等仓内字段代替人工记录。
 
 复核人：____________　日期：____________　配置快照摘要：____________
 

@@ -43,3 +43,21 @@
   5. **调度层假门**：M2 改用 `artifact_seq`／卡片数／重编译次数作为独立出口，与 M1 的标签判据不同源；M6 改为要求 `review/approval.md`（`decision/approved_by/approved_at`＋与当前复核规程内容哈希一致），删除「文档里出现某个词」判据；M7 要求 annotated tag 且指向当前 HEAD，轻量 tag 不算；根 `README.md` 的阶段释义收敛为指向 `ROADMAP.md` 的单份语义。
 - **关联 ADR**：无
 - **备注**：本批次只提交，不推送、不打标签；未做自评，不写「已验证」。五个复核变体（C1／C2／C4／C6／C7）已自测，结果见第二份阶段报告，不以本条目替代报告。
+
+## 批次 0003 — 2026-11-17
+
+- **批次号**：0003
+- **日期**：2026-11-17
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（变异检验、线程／子进程覆盖、V03 注释与字符串排除、V09 出口、受控执行 fd）
+  - 打包：`skills/software-engineering/scripts/build_package.py`（同形字／空白路径、硬链接、版本号多种内嵌形式）
+  - 用例：`skills/software-engineering/tests/negative/run_negative.py`、`skills/software-engineering/tests/positive/run_positive.py`（新增）
+  - 调度：`registry/scripts/project.py`（M2 绑定本轮编译、M6 不再读仓内批准）、`ROADMAP.md`、`STATE.md`、`todo.md`
+  - 文档：`skills/software-engineering/SKILL.md`、`validators/README.md`、`stages/S2-localize-fix.md`、`stages/S3-verify.md`、`schemas/repro.md`
+- **变更摘要**：
+  1. **变异检验**：V08 对补丁触及的每一行生产代码造变异（比较符翻转、运算符替换、常量 ±1、布尔取反），删除行做整块回退，在 patched 态重跑复现测试，必须变红；全部存活或造不出可编译变异即 fail。纯新增补丁的 base 侧仍为空，但新增行同样要过变异检验。
+  2. **修误杀**：覆盖率引导增加 `threading.settrace` 并合并子进程覆盖率（`sitecustomize` 注入，父引导汇总）；新增正向套件证明子线程断言、子进程断言与纯新增补丁都不会被 V08 误杀。
+  3. **承认天花板**：`validators/README.md` 新增「已知边界」；明确 `V01–V08` 全 pass 不等于修复成立。V09 不再有自动出口（`status: fixed` 直接 fail），M6 固定显示「未提供外部批准」。
+  4. **第四轮余账**：覆盖率输出改经继承 fd，不再把输出路径放进 argv；V03 按 tokenize 去掉注释与字符串后匹配断言；M2 绑定 `label`／最新重编译记录／母本哈希与提交日期；打包拒绝同形字与含空白路径、硬链接，并对 f-string／`format`／转义／UTF-16 内嵌版本号做反向断言；`first_observed` 口径统一为接受 `str`／`date`／`datetime`；解释器收紧为字面量 `python3`；`validate.py` 在 `python3 -I` 下可自行补回站点目录导入 PyYAML；修正 S2／README 关于夹具覆盖范围与 ROADMAP M6 的不实表述。
+- **关联 ADR**：无
+- **备注**：本批次只提交，不推送、不打标签；未做自评，不写「已验证」。
