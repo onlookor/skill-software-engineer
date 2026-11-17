@@ -213,7 +213,8 @@ def case_phase2_or_true(tmp: Path) -> str:
     patch_sha = hashlib.sha256(patch_text.encode("utf-8")).hexdigest()
     (repo / "repro.md").write_text(
         "---\nrepo:\n  url: local\n  commit: %s\n"
-        "command: python3 -I tests/repro_bug.py\nexpected: fail\nactual: pass\nexit_code: 1\n---\n"
+        "command: python3 -I tests/repro_bug.py\nunder_test: calc.add\n"
+        "expected: fail\nactual: pass\nexit_code: 1\n---\n"
         % sha,
         encoding="utf-8",
     )
@@ -468,11 +469,21 @@ def case_version_literal_dup(tmp: Path) -> str:
     return "打包脚本拒绝 README 里重复的版本号"
 
 
-def write_repro_and_meta(repo: Path, sha: str, repro_cmd: str, meta_file: str) -> None:
+def write_repro_and_meta(
+    repo: Path,
+    sha: str,
+    repro_cmd: str,
+    meta_file: str,
+    under_test: str | list[str] = "calc.add",
+) -> None:
     """写 repro.md 与 meta；fingerprint 用真实受控执行计算，避免恒等伪造。"""
     v = load_module("validate_for_fixture", VALIDATE)
     _code, out = v.run_command(repro_cmd, repo.resolve(), 30)
     fp = v.fingerprint(out, repo.resolve())
+    if isinstance(under_test, str):
+        under_line = f"under_test: {under_test}\n"
+    else:
+        under_line = "under_test:\n" + "".join(f"  - {u}\n" for u in under_test)
     (repo / "repro.md").write_text(
         "---\nrepo:\n  url: local\n  commit: %s\n"
         f"command: {repro_cmd}\n"
@@ -480,6 +491,7 @@ def write_repro_and_meta(repo: Path, sha: str, repro_cmd: str, meta_file: str) -
         "  os: linux\n"
         "  runtime: python3\n"
         "  dependencies: {}\n"
+        f"{under_line}"
         "expected: add(1, 2) 返回 3\nactual: AssertionError\n"
         "exit_code: 1\n"
         f"fingerprint:\n  run1: {fp}\n  run2: {fp}\n"
@@ -660,10 +672,9 @@ def case_c4_dead_code(tmp: Path) -> str:
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
     assert (
         "补丁行未被复现测试覆盖" in out
-        or "不是函数／方法体内的改动" in out
         or ("白名单" in out and "不得使用 open" in out)
     ), out
-    return "C4 被拦住：读源码的死代码假修复（覆盖／结构／白名单）"
+    return "C4 被拦住：读源码的死代码假修复（覆盖／白名单）"
 
 
 def case_c6_sitecustomize(tmp: Path) -> str:
@@ -859,7 +870,7 @@ def case_mutation_crash_not_kill(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_bug.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py")
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py", "calc.pick")
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
     cfg = tmp / "mutation-crash-config.yaml"
     write_config(repo, cfg)
@@ -872,39 +883,73 @@ def case_mutation_crash_not_kill(tmp: Path) -> str:
 
 
 def case_mutation_immutable_only(tmp: Path) -> str:
-    """补丁只新增一行注释：造不出任何变异，run_mutation_checks 必须 fail。"""
+    """只改 docstring／注释／模块级字符串：造不出任何变异，必须 fail。"""
     repo = tmp / "mutation-immutable"
     init_repo(repo)
-    (repo / "calc.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
+    (repo / "calc.py").write_text(
+        '"""old module docstring."""\n'
+        "def add(a, b):\n    return a + b\n",
+        encoding="utf-8",
+    )
     (repo / "tests").mkdir()
     (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
     commit_all(repo)
-    patch_text = (
-        "diff --git a/calc.py b/calc.py\n"
-        "--- a/calc.py\n"
-        "+++ b/calc.py\n"
-        "@@ -1,2 +1,3 @@\n"
-        " def add(a, b):\n"
-        "     return a + b\n"
-        "+    # behavior marker\n"
-    )
+    variants = {
+        "只新增注释": (
+            "diff --git a/calc.py b/calc.py\n"
+            "--- a/calc.py\n"
+            "+++ b/calc.py\n"
+            "@@ -2,2 +2,3 @@\n"
+            " def add(a, b):\n"
+            "     return a + b\n"
+            "+    # behavior marker\n"
+        ),
+        "只改模块 docstring": (
+            "diff --git a/calc.py b/calc.py\n"
+            "--- a/calc.py\n"
+            "+++ b/calc.py\n"
+            "@@ -1,1 +1,1 @@\n"
+            '-"""old module docstring."""\n'
+            '+"""new module docstring."""\n'
+        ),
+        "只加模块级字符串 marker": (
+            "diff --git a/calc.py b/calc.py\n"
+            "--- a/calc.py\n"
+            "+++ b/calc.py\n"
+            "@@ -3,1 +3,2 @@\n"
+            "     return a + b\n"
+            '+MARKER = "fixed"\n'
+        ),
+    }
     v = load_module("validate_for_immutable", VALIDATE)
-    failures = v.run_mutation_checks(
-        repo.resolve(), "python3 -I tests/run_all.py", 30, patch_text
-    )
-    assert failures, "只改注释的补丁不应通过变异检验"
-    assert any("造不出可编译变异" in f for f in failures), failures
-    return "变异检验对只改注释的补丁不 vacuous pass"
+    for name, patch_text in variants.items():
+        failures = v.run_mutation_checks(
+            repo.resolve(), "python3 -I tests/run_all.py", 30, patch_text
+        )
+        assert failures, f"{name} 不应通过变异检验"
+        assert any("造不出可编译变异" in f for f in failures), (name, failures)
+    return f"变异检验对 {len(variants)} 种不可变异改动不 vacuous pass"
 
 
 def case_import_time_fake_fixes(tmp: Path) -> str:
-    """B1/B2/B4/A1/A3：改动全在导入期，V06 的结构规则必须逐一拦住。"""
+    """N2/N3/B1/A3：导入期执行（含「写在函数体里」的钩子）V06 必须判 cannot。"""
     repo = tmp / "import-time"
     init_repo(repo)
     (repo / "calc.py").write_text(
         '"""old module docstring."""\n'
         "import unittest\n"
         "EXPECTED = 3\n"
+        "\n"
+        "class Meta(type):\n"
+        "    def __init__(cls, name, bases, ns):\n"
+        "        super().__init__(name, bases, ns)\n"
+        "\n"
+        "class Base(metaclass=Meta):\n"
+        "    def __init_subclass__(cls, **kwargs):\n"
+        "        super().__init_subclass__(**kwargs)\n"
+        "\n"
+        "class Calc(Base):\n"
+        "    pass\n"
         "\n"
         "def add(a, b):\n"
         "    return a - b\n",
@@ -913,47 +958,44 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
     commit_all(repo)
     variants = {
         "B1 模块级写 fd 并 os._exit": (
-            "@@ -5,2 +5,5 @@\n"
+            "@@ -16,2 +16,5 @@\n"
             " def add(a, b):\n"
             "     return a - b\n"
             "+import os\n"
             "+os.write(1, b\"\")\n"
             "+os._exit(0)\n",
             3,
-        ),
-        "B2 模块 docstring": (
-            "@@ -1,1 +1,1 @@\n"
-            '-"""old module docstring."""\n'
-            '+"""new module docstring."""\n',
-            2,
-        ),
-        "B4 模块级字符串 marker": (
-            "@@ -5,2 +5,3 @@\n"
-            " def add(a, b):\n"
-            "     return a - b\n"
-            '+MARKER = "fixed"\n',
-            1,
-        ),
-        "A1 顶层常量": (
-            "@@ -1,3 +1,3 @@\n"
-            ' """old module docstring."""\n'
-            " import unittest\n"
-            "-EXPECTED = 3\n"
-            "+EXPECTED = 4\n",
-            2,
+            "模块级可执行语句",
         ),
         "A3 导入期类属性猴补丁": (
-            "@@ -5,2 +5,3 @@\n"
+            "@@ -16,2 +16,3 @@\n"
             " def add(a, b):\n"
             "     return a - b\n"
             "+unittest.TestCase.assertEqual = lambda *a, **k: None\n",
             1,
+            "模块级可执行语句",
+        ),
+        "N2 元类 __init__ 内猴补丁": (
+            "@@ -6,2 +6,3 @@\n"
+            "     def __init__(cls, name, bases, ns):\n"
+            "         super().__init__(name, bases, ns)\n"
+            "+        unittest.TestCase.assertEqual = lambda *a, **k: None\n",
+            3,
+            "导入期会执行的函数体",
+        ),
+        "N3 __init_subclass__ 内猴补丁": (
+            "@@ -10,2 +10,3 @@\n"
+            "     def __init_subclass__(cls, **kwargs):\n"
+            "         super().__init_subclass__(**kwargs)\n"
+            "+        unittest.TestCase.assertEqual = lambda *a, **k: None\n",
+            3,
+            "导入期会执行的函数体",
         ),
     }
     cfg = tmp / "import-time-config.yaml"
     write_config(repo, cfg)
     blocked = []
-    for name, (hunk, diff_lines) in variants.items():
+    for name, (hunk, diff_lines, expect) in variants.items():
         (repo / "fix.patch").write_text(
             "diff --git a/calc.py b/calc.py\n"
             "--- a/calc.py\n"
@@ -968,10 +1010,10 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
         )
         res = run_validator(repo, cfg, ["V06"])
         out = res.stdout + res.stderr
-        assert res.returncode == 1, f"{name} 未被拦住：退出 {res.returncode}\n{out}"
-        assert "不是函数／方法体内的改动" in out, f"{name}\n{out}"
+        assert res.returncode == 3, f"{name} 应判 cannot，实际退出 {res.returncode}\n{out}"
+        assert expect in out and "超出本技能适用面" in out, f"{name}\n{out}"
         blocked.append(name)
-    return f"V06 拦住 {len(blocked)} 种导入期假修复"
+    return f"V06 对 {len(blocked)} 种导入期执行路径判 cannot_evaluate"
 
 
 def case_test_whitelist_violation(tmp: Path) -> str:
@@ -999,6 +1041,52 @@ def case_test_whitelist_violation(tmp: Path) -> str:
         "exec": (
             "exec('x = 1')\n"
             "assert x == 1\n"
+        ),
+        "sys.modules 绕过": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "mod = sys.modules['os']\n"
+            "assert mod is not None\n"
+        ),
+        "import io": (
+            "import io\n"
+            "assert io.StringIO().getvalue() == ''\n"
+        ),
+        "sys.path 绝对路径": (
+            "import sys\nsys.path.insert(0, '/tmp')\n"
+            "assert True\n"
+        ),
+        "A1 读顶层常量": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "import calc\n"
+            "assert calc.EXPECTED == 3\n"
+        ),
+        "A1 hasattr 探测": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "import calc\n"
+            "assert hasattr(calc, 'EXPECTED')\n"
+        ),
+        "A1 from 非入口导入": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "from calc import EXPECTED\n"
+            "assert EXPECTED == 3\n"
+        ),
+        "入口函数私有属性": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "from calc import add\n"
+            "assert add._se_fixed is None\n"
+        ),
+        "type.__subclasses__": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "assert type.__subclasses__()\n"
+        ),
+        "给导入对象属性赋值": (
+            "import sys\nsys.path.insert(0, '.')\n"
+            "import unittest\n"
+            "unittest.TestCase.assertEqual = lambda *a, **k: None\n"
+        ),
+        "from import 后猴补丁": (
+            "from unittest import TestCase\n"
+            "TestCase.assertEqual = lambda *a, **k: None\n"
         ),
     }
     cfg = tmp / "test-whitelist-config.yaml"
@@ -1038,7 +1126,14 @@ def case_package_special_bits_and_symlinks(tmp: Path) -> str:
     code, err = _build_variant(src, tmp / "dist-dir-link", "build_package_neg_dirlink")
     assert code == 1, f"目录软链未被拒：退出 {code}\n{err}"
     assert "目录的软链" in err and "未入包" in err, err
-    return "打包显式拒收 setuid 源文件、断链与目录软链"
+
+    # 4) FIFO：必须拒收并写明「未入包」，不得被 is_file() 静默跳过
+    src = _copy_pkg(tmp, "pkg-src-fifo")
+    os.mkfifo(src / "examples" / "defect-repro-fix" / "pipe.fifo")
+    code, err = _build_variant(src, tmp / "dist-fifo", "build_package_neg_fifo")
+    assert code == 1, f"FIFO 未被拒：退出 {code}\n{err}"
+    assert "特殊文件" in err and "未入包" in err, err
+    return "打包显式拒收 setuid 源文件、断链、目录软链与 FIFO"
 
 
 def case_comment_assertion(tmp: Path) -> str:

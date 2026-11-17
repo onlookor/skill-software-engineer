@@ -195,7 +195,7 @@ def case_pure_addition(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_div.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_div.py")
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_div.py", "calc.safe_div")
     write_localization(repo, 2)
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
     cfg = tmp / "pure-add-config.yaml"
@@ -246,7 +246,9 @@ def case_two_change_points(tmp: Path) -> str:
         "+    return a * b\n",
         encoding="utf-8",
     )
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_both.py")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_both.py", ["calc.add", "calc.mul"]
+    )
     write_localization(repo, 4)
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
     cfg = tmp / "two-points-config.yaml"
@@ -258,12 +260,133 @@ def case_two_change_points(tmp: Path) -> str:
     return "同一 hunk 内两个改动块分别回退，变异检验通过"
 
 
+def _unified(path: str, before: str, after: str) -> str:
+    import difflib
+
+    diff = list(
+        difflib.unified_diff(
+            before.splitlines(),
+            after.splitlines(),
+            fromfile=f"a/{path}",
+            tofile=f"b/{path}",
+            lineterm="",
+        )
+    )
+    return f"diff --git a/{path} b/{path}\n" + "\n".join(diff) + "\n"
+
+
+def _new_file(path: str, body: str) -> str:
+    lines = body.splitlines()
+    hunk = f"@@ -0,0 +1,{len(lines)} @@\n" + "".join("+" + l + "\n" for l in lines)
+    return (
+        f"diff --git a/{path} b/{path}\n"
+        "new file mode 100644\n"
+        "--- /dev/null\n"
+        f"+++ b/{path}\n" + hunk
+    )
+
+
+def _changed_lines(patch: str) -> int:
+    return sum(
+        1
+        for line in patch.splitlines()
+        if line[:1] in ("+", "-") and not line.startswith(("+++", "---"))
+    )
+
+
+def case_declarative_shapes(tmp: Path) -> str:
+    """V06 不得罚正确修复：模块常量、纯 import、类／dataclass 默认值、
+    模块级 try/except 内赋值、新建生产模块都必须放行。"""
+    repo = tmp / "declarative"
+    init_repo(repo)
+    before = (
+        "import dataclasses\n"
+        "import logging\n"
+        "\n"
+        "THRESHOLD = 9\n"
+        'LOG = logging.getLogger("x")\n'
+        "\n"
+        "@dataclasses.dataclass\n"
+        "class Config:\n"
+        "    limit: int = 1\n"
+        "\n"
+        "class Box:\n"
+        "    width = 1\n"
+        "\n"
+        "try:\n"
+        "    import math\n"
+        "except ImportError:\n"
+        "    math = None\n"
+        "\n"
+        "def add(a, b):\n"
+        "    return a - b\n"
+    )
+    after = (
+        "import dataclasses\n"
+        "import logging\n"
+        "import math\n"
+        "\n"
+        "THRESHOLD = 2\n"
+        'LOG = logging.getLogger("y")\n'
+        "\n"
+        "@dataclasses.dataclass\n"
+        "class Config:\n"
+        "    limit: int = 2\n"
+        "\n"
+        "class Box:\n"
+        "    width = 2\n"
+        "\n"
+        "try:\n"
+        "    import math\n"
+        "except ImportError:\n"
+        "    math = 0\n"
+        "\n"
+        "def add(a, b):\n"
+        "    return math.floor(a + b)\n"
+    )
+    extra = (
+        '"""extra helpers."""\n'
+        "import dataclasses\n"
+        "\n"
+        "TAU = 6\n"
+        "\n"
+        "@dataclasses.dataclass\n"
+        "class Point:\n"
+        "    x: int = 0\n"
+        "    y: int = 0\n"
+        "\n"
+        "class Holder:\n"
+        "    value = 1\n"
+        "\n"
+        "def double(n):\n"
+        "    return n * 2\n"
+    )
+    (repo / "calc.py").write_text(before, encoding="utf-8")
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
+    (repo / "localization.md").write_text(
+        "---\nevidence_kind: direct\nfiles:\n  - calc.py\n  - extra.py\n"
+        f"estimated_touched_files: 2\nestimated_diff_lines: {_changed_lines(_unified('calc.py', before, after) + _new_file('extra.py', extra))}\n---\n"
+        "机制：声明式改动。\n",
+        encoding="utf-8",
+    )
+    patch = _unified("calc.py", before, after) + _new_file("extra.py", extra)
+    (repo / "fix.patch").write_text(patch, encoding="utf-8")
+    cfg = tmp / "declarative-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V06"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 0, f"声明式正确修复被 V06 误杀：退出 {res.returncode}\n{out}"
+    return "V06 放行模块常量、纯 import、类属性、dataclass 默认值、try 内赋值与新模块"
+
+
 CASES = [
     case_thread_assertion,
     case_subprocess_assertion,
     case_import_forms,
     case_pure_addition,
     case_two_change_points,
+    case_declarative_shapes,
 ]
 
 

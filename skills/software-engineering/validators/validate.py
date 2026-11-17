@@ -826,15 +826,268 @@ def function_body_lines(source: str) -> set[int]:
     return body
 
 
-def patch_structural_violations(
-    repo: Path, text: str
-) -> tuple[list[str], list[str]]:
-    """补丁改动行必须全部落在函数／方法体内；返回 (违规, 无法判定)。
+# ------------------------------------------------------------ 导入期可达性
 
-    导入期可执行语句（模块级赋值、模块 docstring、导入期调用、类属性猴补丁）
-    都不在函数体内，一律判违规。测试路径不在本规则范围（V06 另行处理）。
+# 在类创建／模块导入时会被解释器调用的钩子。它们写在函数体里，却在导入期执行，
+# 所以「改动行在函数体内」不足以保证「改动只在调用时生效」。
+IMPORT_TIME_HOOK_NAMES = {
+    "__init__", "__new__", "__prepare__", "__call__", "__getattr__",
+    "__getattribute__", "__setattr__", "__set_name__", "__init_subclass__",
+    "__mro_entries__", "__class_getitem__",
+}
+# 不论所在类是不是元类，这两个都会在「定义子类／创建类」时执行。
+IMPORT_TIME_ALWAYS = {"__init_subclass__", "__set_name__"}
+# 只允许这些装饰器出现在声明式改动里；其它装饰器是导入期任意调用。
+DECLARATIVE_DECORATORS = {
+    "dataclass", "field", "property", "staticmethod", "classmethod",
+    "abstractmethod", "abstractproperty", "cached_property", "total_ordering",
+    "override", "final", "runtime_checkable", "no_type_check",
+    "dataclass_transform", "lru_cache", "singledispatch",
+    "singledispatchmethod", "contextmanager", "asynccontextmanager", "wraps",
+    "deprecated",
+}
+# 模块级赋值里出现这些接收者时按「导入期可执行」处理，不当作声明式常量。
+MODULE_LEVEL_DANGEROUS = {
+    "os", "sys", "subprocess", "unittest", "builtins", "shutil", "importlib",
+    "io", "codecs", "mmap", "runpy", "pkgutil", "ctypes", "pickle", "marshal",
+    "operator", "tempfile", "pathlib", "glob", "socket", "sitecustomize",
+    "usercustomize", "inspect", "linecache",
+}
+DANGEROUS_CALL_NAMES = {
+    "open", "exec", "eval", "__import__", "getattr", "setattr", "delattr",
+    "compile", "globals", "locals", "vars", "breakpoint", "input",
+}
+
+
+def _parents(tree: ast.AST) -> dict[ast.AST, ast.AST]:
+    out: dict[ast.AST, ast.AST] = {}
+    for node in ast.walk(tree):
+        for child in ast.iter_child_nodes(node):
+            out[child] = node
+    return out
+
+
+def _collect_import_level_nodes(stmts: list[ast.stmt], out: list[ast.AST]) -> None:
+    """收集模块体／类体在导入期求值的节点；不进入普通函数体。"""
+    for s in stmts:
+        if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            for d in s.decorator_list:
+                out.extend(ast.walk(d))
+            for e in s.args.defaults:
+                out.extend(ast.walk(e))
+            for e in s.args.kw_defaults:
+                if e is not None:
+                    out.extend(ast.walk(e))
+            continue
+        if isinstance(s, ast.ClassDef):
+            for d in s.decorator_list:
+                out.extend(ast.walk(d))
+            for b in s.bases:
+                out.extend(ast.walk(b))
+            for kw in s.keywords:
+                out.extend(ast.walk(kw.value))
+            _collect_import_level_nodes(s.body, out)
+            continue
+        # 普通语句整棵子树在导入期求值；若其中嵌套 def/class，其函数体会被
+        # 一并收进来，属保守放大（宁可多判 cannot，不放过导入期执行）。
+        out.extend(ast.walk(s))
+
+
+def _import_time_function_ids(tree: ast.Module) -> set[int]:
+    """保守估算「其函数体可能在导入期执行」的函数集合（按 id 记录）。
+
+    覆盖：元类钩子、`__init_subclass__`／`__set_name__`、模块级 `__getattr__`、
+    模块／类体在导入期引用到的函数（含传递闭包）。这不是「导入期不可达」的
+    完整判据：动态取属性、`getattr`、字符串拼接等仍可绕开，见 README 边界。
     """
-    violations: list[str] = []
+    parents = _parents(tree)
+    functions = [
+        n for n in ast.walk(tree)
+        if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef))
+    ]
+    metaclasses: set[str] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.ClassDef):
+            continue
+        if any(isinstance(b, ast.Name) and b.id == "type" for b in node.bases):
+            metaclasses.add(node.name)
+        for kw in node.keywords:
+            if kw.arg == "metaclass" and isinstance(kw.value, ast.Name):
+                metaclasses.add(kw.value.id)
+    marked: set[int] = set()
+    for fn in functions:
+        parent = parents.get(fn)
+        if fn.name in IMPORT_TIME_ALWAYS:
+            marked.add(id(fn))
+        elif (
+            isinstance(parent, ast.ClassDef)
+            and parent.name in metaclasses
+            and fn.name in IMPORT_TIME_HOOK_NAMES
+        ):
+            marked.add(id(fn))
+        elif fn.name == "__getattr__" and not isinstance(parent, ast.ClassDef):
+            marked.add(id(fn))
+    refs: list[ast.AST] = []
+    _collect_import_level_nodes(tree.body, refs)
+    by_name: dict[str, list[ast.AST]] = {}
+    for fn in functions:
+        by_name.setdefault(fn.name, []).append(fn)
+    queue: list[ast.AST] = []
+    for node in refs:
+        if isinstance(node, ast.Name):
+            queue.extend(by_name.get(node.id, []))
+    while queue:
+        fn = queue.pop(0)
+        if id(fn) in marked:
+            continue
+        marked.add(id(fn))
+        for node in ast.walk(fn):
+            if isinstance(node, ast.Name):
+                queue.extend(by_name.get(node.id, []))
+    return marked
+
+
+def _structure_maps(source: str) -> tuple[set[int], set[int], ast.Module]:
+    """返回 (全部函数体行, 导入期可达函数体行, AST)。"""
+    tree = ast.parse(source)
+    body: set[int] = set()
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
+            body.update(range(node.body[0].lineno, (node.end_lineno or node.lineno) + 1))
+    hot_ids = _import_time_function_ids(tree)
+    hot: set[int] = set()
+    for node in ast.walk(tree):
+        if id(node) in hot_ids and getattr(node, "body", None):
+            hot.update(range(node.body[0].lineno, (node.end_lineno or node.lineno) + 1))
+    return body, hot, tree
+
+
+def _root_name(node: ast.AST) -> str | None:
+    while isinstance(node, ast.Attribute):
+        node = node.value
+    return node.id if isinstance(node, ast.Name) else None
+
+
+def _pure_value(node: ast.AST | None) -> bool:
+    """模块级赋值右侧是否只含声明式内容（不调用危险接收者）。"""
+    if node is None:
+        return True
+    if isinstance(node, (ast.Constant, ast.Name, ast.expr_context)):
+        return True
+    if isinstance(node, ast.Attribute):
+        return _pure_value(node.value)
+    if isinstance(node, ast.Call):
+        root = _root_name(node.func)
+        name = (
+            node.func.attr if isinstance(node.func, ast.Attribute)
+            else getattr(node.func, "id", "")
+        )
+        if root in MODULE_LEVEL_DANGEROUS or name in DANGEROUS_CALL_NAMES:
+            return False
+        return (
+            _pure_value(node.func)
+            and all(_pure_value(a) for a in node.args)
+            and all(_pure_value(k.value) for k in node.keywords)
+        )
+    if isinstance(node, (ast.Tuple, ast.List, ast.Set, ast.Dict, ast.Subscript,
+                         ast.Slice, ast.Starred, ast.JoinedStr, ast.FormattedValue,
+                         ast.BinOp, ast.UnaryOp, ast.BoolOp, ast.Compare, ast.IfExp,
+                         ast.Lambda, ast.ListComp, ast.SetComp, ast.DictComp,
+                         ast.GeneratorExp, ast.comprehension)):
+        return all(_pure_value(c) for c in ast.iter_child_nodes(node))
+    return False
+
+
+def _declarative_decorator(stmt: ast.AST) -> bool:
+    for d in getattr(stmt, "decorator_list", []):
+        node = d.func if isinstance(d, ast.Call) else d
+        name = node.attr if isinstance(node, ast.Attribute) else getattr(node, "id", "")
+        if name not in DECLARATIVE_DECORATORS:
+            return False
+    return True
+
+
+def _innermost_stmt(
+    stmts: list[ast.stmt], lineno: int
+) -> tuple[str | None, ast.stmt | None]:
+    """找到 lineno 所属的模块／类体语句（不进入函数体）。"""
+    for s in stmts:
+        end = getattr(s, "end_lineno", None) or s.lineno
+        decos = getattr(s, "decorator_list", [])
+        start = min([s.lineno] + [d.lineno for d in decos]) if decos else s.lineno
+        if not (start <= lineno <= end):
+            continue
+        if decos and any(
+            d.lineno <= lineno <= (d.end_lineno or d.lineno) for d in decos
+        ):
+            return "decorator", s
+        if isinstance(s, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            return ("def", s) if lineno < s.body[0].lineno else (None, s)
+        if isinstance(s, ast.ClassDef):
+            if lineno < s.body[0].lineno:
+                return "class", s
+            return _innermost_stmt(s.body, lineno)
+        bodies: list[ast.stmt] = []
+        for field in ("body", "orelse", "finalbody"):
+            bodies.extend(getattr(s, field, []) or [])
+        if isinstance(s, ast.Try):
+            for h in s.handlers:
+                bodies.extend(h.body)
+        if not bodies:
+            return "stmt", s
+        found, node = _innermost_stmt(bodies, lineno)
+        if found is not None:
+            return found, node
+        return "executable", s
+    return None, None
+
+
+def _classify_line(tree: ast.Module, lineno: int) -> tuple[str, str]:
+    """非函数体行：('ok'|'cannot', 原因)。"""
+    kind, stmt = _innermost_stmt(tree.body, lineno)
+    if kind is None or stmt is None:
+        return "cannot", "module"
+    if kind in ("def", "class"):
+        return "ok", ""
+    if kind == "decorator":
+        return ("ok", "") if _declarative_decorator(stmt) else ("cannot", "import")
+    if kind == "executable":
+        return "cannot", "module"
+    if isinstance(stmt, (ast.Import, ast.ImportFrom)):
+        return "ok", ""
+    if isinstance(stmt, ast.Assign):
+        ok = all(isinstance(t, ast.Name) for t in stmt.targets) and _pure_value(stmt.value)
+        return ("ok", "") if ok else ("cannot", "module")
+    if isinstance(stmt, ast.AnnAssign):
+        ok = isinstance(stmt.target, ast.Name) and _pure_value(stmt.value)
+        return ("ok", "") if ok else ("cannot", "module")
+    if isinstance(stmt, ast.AugAssign):
+        ok = isinstance(stmt.target, ast.Name) and _pure_value(stmt.value)
+        return ("ok", "") if ok else ("cannot", "module")
+    if isinstance(stmt, ast.Expr):
+        if isinstance(stmt.value, ast.Constant) and isinstance(stmt.value.value, str):
+            return "ok", ""
+        return "cannot", "module"
+    if isinstance(stmt, (ast.Pass, ast.Global, ast.Nonlocal)):
+        return "ok", ""
+    return "cannot", "module"
+
+
+SCOPE_MESSAGE = "该缺陷需要改模块级声明，超出本技能适用面"
+
+
+def patch_structural_violations(repo: Path, text: str) -> list[str]:
+    """检查补丁改动行的执行时机；返回无法判定（cannot_evaluate）的原因。
+
+    规则（不再用「行在不在函数体」当代理）：
+      · 普通函数／方法体内的改动：放行；
+      · 元类钩子、`__init_subclass__`／`__set_name__`、模块级 `__getattr__`、
+        模块级调用链等「导入期会执行」的函数体内改动：cannot_evaluate；
+      · 模块级可执行语句（Expr 调用、猴补丁、控制流头等）：cannot_evaluate；
+      · 声明式改动（import、模块常量、类属性／dataclass 默认值、docstring、
+        声明式装饰器、def/class 头）：放行。
+    测试路径不在本规则范围（V06 另行处理）。
+    """
     cannots: list[str] = []
     for entry in patch_file_edits(text):
         paths = [p for p in (entry["a"], entry["b"]) if p and p != "/dev/null"]
@@ -842,23 +1095,26 @@ def patch_structural_violations(
             continue
         if not any(p.endswith(".py") for p in paths):
             continue
-        base_body: set[int] = set()
         base_text = ""
+        base_body: set[int] = set()
+        base_hot: set[int] = set()
+        base_tree: ast.Module | None = None
         if not entry["new"]:
             base_path = repo / entry["a"]
             if not base_path.is_file():
                 cannots.append(
-                    f'{entry["a"]}：补丁的 base 侧文件不存在，'
-                    "无法判断改动行是否在函数体内"
+                    f'{entry["a"]}：补丁的 base 侧文件不存在，无法判断执行时机'
                 )
                 continue
             base_text = base_path.read_text(encoding="utf-8", errors="replace")
             try:
-                base_body = function_body_lines(base_text)
+                base_body, base_hot, base_tree = _structure_maps(base_text)
             except SyntaxError as exc:
                 cannots.append(f'{entry["a"]}：base 源码无法解析（{exc}）')
                 continue
         patched_body: set[int] = set()
+        patched_hot: set[int] = set()
+        patched_tree: ast.Module | None = None
         if entry["added"]:
             if entry["new"]:
                 patched_text = "".join(t + "\n" for _n, t in entry["added"])
@@ -868,64 +1124,220 @@ def patch_structural_violations(
                 cannots.append(f'{entry["b"]}：补丁无法应用到 base 源码，无法判断结构')
                 continue
             try:
-                patched_body = function_body_lines(patched_text)
+                patched_body, patched_hot, patched_tree = _structure_maps(patched_text)
             except SyntaxError as exc:
                 cannots.append(f'{entry["b"]}：补丁后源码无法解析（{exc}）')
                 continue
         for lineno, line in entry["deleted"]:
-            if lineno not in base_body:
-                violations.append(
-                    f'{entry["a"]}:{lineno} 不是函数／方法体内的改动：'
+            if not line.strip():
+                continue
+            if lineno in base_hot:
+                cannots.append(
+                    f'{entry["a"]}:{lineno} 改的是导入期会执行的函数体'
+                    f"（元类钩子／类创建钩子／模块级调用链），{SCOPE_MESSAGE}："
                     + line.strip()[:80]
                 )
+            elif lineno in base_body:
+                continue
+            else:
+                kind, _reason = _classify_line(base_tree, lineno) if base_tree else ("cannot", "module")
+                if kind != "ok":
+                    cannots.append(
+                        f'{entry["a"]}:{lineno} 改的是模块级可执行语句，'
+                        f"{SCOPE_MESSAGE}：" + line.strip()[:80]
+                    )
         for lineno, line in entry["added"]:
-            if lineno not in patched_body:
-                violations.append(
-                    f'{entry["b"]}:{lineno} 不是函数／方法体内的改动：'
+            if not line.strip():
+                continue
+            if lineno in patched_hot:
+                cannots.append(
+                    f'{entry["b"]}:{lineno} 改的是导入期会执行的函数体'
+                    f"（元类钩子／类创建钩子／模块级调用链），{SCOPE_MESSAGE}："
                     + line.strip()[:80]
                 )
-    return violations, cannots
+            elif lineno in patched_body:
+                continue
+            else:
+                kind, _reason = _classify_line(patched_tree, lineno) if patched_tree else ("cannot", "module")
+                if kind != "ok":
+                    cannots.append(
+                        f'{entry["b"]}:{lineno} 改的是模块级可执行语句，'
+                        f"{SCOPE_MESSAGE}：" + line.strip()[:80]
+                    )
+    return cannots
 
 
 # ---------------------------------------------------------------- 复现测试白名单
 
 BANNED_TEST_MODULES = {
     "os", "subprocess", "importlib", "builtins", "sitecustomize", "usercustomize",
-    "inspect", "linecache", "shutil",
+    "inspect", "linecache", "shutil", "io", "codecs", "mmap", "runpy", "pkgutil",
+    "operator", "ctypes", "pickle", "marshal", "pathlib", "tempfile", "glob",
+    "socket", "atexit", "sysconfig", "resource", "fcntl", "signal",
 }
 BANNED_TEST_NAMES = {
     "open", "exec", "eval", "__import__", "__builtins__",
-    "getattr", "setattr", "delattr", "globals", "locals", "vars",
-    "__dict__",
+    "getattr", "setattr", "delattr", "hasattr", "globals", "locals", "vars",
+    "__dict__", "compile", "breakpoint",
 }
 BANNED_TEST_ATTRS = {
     "open", "read_text", "read_bytes", "write_text", "write_bytes",
-    "readlines", "readline", "getsource", "environ",
+    "readlines", "readline", "getsource", "environ", "modules",
+    "__dict__", "__globals__", "__code__", "__closure__", "__subclasses__",
+    "__bases__", "__mro__", "__class__", "__getattribute__", "__setattr__",
+    "__delattr__", "__builtins__", "__loader__", "__spec__", "__reduce__",
+    "__reduce_ex__", "mro",
 }
+# sys 只允许这两种用法（把仓根加入模块搜索路径），其余一律视为越界。
+SYS_ALLOWED_METHODS = {"insert", "append"}
 
 
-def test_code_violations(path: Path) -> list[str]:
-    """复现测试只能是「调用被测接口并断言」：不读文件、不碰环境、不起子进程。"""
+def parse_under_test(raw) -> tuple[dict[str, set[str]] | None, str | None]:
+    """解析 repro.md 的 under_test（`calc.add` 或 `[calc.add, calc.mul]`）。"""
+    if raw is None:
+        return None, "repro.md 未声明 under_test（被测入口）"
+    items = raw if isinstance(raw, list) else [raw]
+    if not items:
+        return None, "repro.md 的 under_test 为空"
+    mapping: dict[str, set[str]] = {}
+    for item in items:
+        if not nonempty_str(item) or "." not in str(item):
+            return None, f"repro.md 的 under_test 项非法：{item!r}（应形如 calc.add）"
+        mod, sym = str(item).rsplit(".", 1)
+        if not mod or not sym or sym == "*":
+            return None, f"repro.md 的 under_test 项非法：{item!r}（应形如 calc.add）"
+        mapping.setdefault(mod, set()).add(sym)
+    return mapping, None
+
+
+def _assignment_targets(node: ast.AST) -> list[ast.AST]:
+    if isinstance(node, ast.Assign):
+        return list(node.targets)
+    if isinstance(node, (ast.AnnAssign, ast.AugAssign, ast.For, ast.AsyncFor)):
+        return [node.target]
+    if isinstance(node, ast.Delete):
+        return list(node.targets)
+    if isinstance(node, ast.NamedExpr):
+        return [node.target]
+    return []
+
+
+def test_code_violations(
+    path: Path, under_test: dict[str, set[str]] | None = None
+) -> list[str]:
+    """复现测试只能是「调用声明的被测入口并断言」。
+
+    禁止：读文件、碰环境、起子进程、动态取名、猴补丁外部对象、`sys` 除
+    `path.insert/append` 外的任何用法；也不得读取被测模块入口之外的属性。
+    """
     try:
         source = path.read_text(encoding="utf-8", errors="replace")
         tree = ast.parse(source)
     except (OSError, SyntaxError) as exc:
         return [f"复现测试无法解析：{exc}"]
     hits: set[str] = set()
+    imported: dict[str, str] = {}
+    sys_aliases: set[str] = set()
+    entry_alias_module: dict[str, str] = {}
+    entry_symbols: dict[str, set[str]] = dict(under_test or {})
+    direct_entries: set[str] = set()
+
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
                 top = alias.name.split(".")[0]
+                bind = alias.asname or top
+                imported[bind] = alias.name
                 if top in BANNED_TEST_MODULES:
                     hits.add(f"不得导入 {alias.name}")
+                if alias.name == "sys":
+                    sys_aliases.add(bind)
+                if alias.name in entry_symbols:
+                    entry_alias_module[bind] = alias.name
         elif isinstance(node, ast.ImportFrom):
-            module = (node.module or "").split(".")[0]
-            if module in BANNED_TEST_MODULES:
-                hits.add(f"不得从 {node.module} 导入")
-        elif isinstance(node, ast.Name) and node.id in BANNED_TEST_NAMES:
-            hits.add(f"不得使用 {node.id}")
-        elif isinstance(node, ast.Attribute) and node.attr in BANNED_TEST_ATTRS:
-            hits.add(f"不得使用 .{node.attr}")
+            mod = node.module or ""
+            top = mod.split(".")[0]
+            for alias in node.names:
+                if alias.name != "*":
+                    imported[alias.asname or alias.name] = f"{mod}.{alias.name}"
+            if top in BANNED_TEST_MODULES:
+                hits.add(f"不得从 {mod} 导入")
+            if mod == "sys":
+                hits.add(
+                    "不得从 sys 导入（只允许 import sys 后 sys.path.insert／append）"
+                )
+            if mod in entry_symbols:
+                allowed = entry_symbols[mod]
+                for alias in node.names:
+                    if alias.name == "*":
+                        hits.add(f"不得从 {mod} 导入 *")
+                    elif alias.name not in allowed:
+                        hits.add(
+                            "只能使用声明的被测入口 "
+                            f"{mod}.{'／'.join(sorted(allowed))}，不得读取 {alias.name}"
+                        )
+                    else:
+                        direct_entries.add(alias.asname or alias.name)
+
+    # 只放行 sys.path.insert/append(索引, ".")；绝对路径、`..`、其它参数都拒绝。
+    sys_allowed: set[int] = set()
+    for node in ast.walk(tree):
+        if not isinstance(node, ast.Call) or not isinstance(node.func, ast.Attribute):
+            continue
+        if node.func.attr not in SYS_ALLOWED_METHODS:
+            continue
+        path_attr = node.func.value
+        if not (
+            isinstance(path_attr, ast.Attribute)
+            and path_attr.attr == "path"
+            and isinstance(path_attr.value, ast.Name)
+            and path_attr.value.id in sys_aliases
+        ):
+            continue
+        args_ok = all(
+            isinstance(a, ast.Constant) and isinstance(a.value, (int, str))
+            for a in node.args
+        )
+        strs = [
+            a.value for a in node.args
+            if isinstance(a, ast.Constant) and isinstance(a.value, str)
+        ]
+        if args_ok and strs and all(v in (".", "./") for v in strs):
+            for sub in ast.walk(node.func):
+                sys_allowed.add(id(sub))
+
+    for node in ast.walk(tree):
+        if isinstance(node, ast.Name):
+            if node.id in BANNED_TEST_NAMES:
+                hits.add(f"不得使用 {node.id}")
+            if node.id in sys_aliases and id(node) not in sys_allowed:
+                hits.add(
+                    "sys 只允许 sys.path.insert／append 把仓根加入路径，"
+                    "不得读取 sys 的其它属性"
+                )
+        elif isinstance(node, ast.Attribute):
+            if node.attr in BANNED_TEST_ATTRS:
+                hits.add(f"不得使用 .{node.attr}")
+            root = _root_name(node)
+            if root in entry_alias_module:
+                allowed = entry_symbols[entry_alias_module[root]]
+                if node.attr not in allowed:
+                    hits.add(
+                        "只能使用声明的被测入口 "
+                        f"{entry_alias_module[root]}.{'／'.join(sorted(allowed))}，"
+                        f"不得读取 .{node.attr}"
+                    )
+            if root in direct_entries:
+                hits.add(f"不得读取被测入口 {root} 的其它属性（.{node.attr}）")
+
+    # 猴补丁：给任何已导入对象的属性赋值／删除（unittest.TestX.y = …）。
+    for node in ast.walk(tree):
+        for target in _assignment_targets(node):
+            for sub in ast.walk(target):
+                if isinstance(sub, ast.Attribute):
+                    root = _root_name(sub)
+                    if root in imported:
+                        hits.add(f"不得给 {root} 的属性赋值（猴补丁）")
     return sorted(hits)
 
 
@@ -1265,9 +1677,12 @@ def v01(ctx: Ctx) -> Result:
             problems.append("fingerprint.run1 ≠ run2")
     if not _isoish(data.get("first_observed")):
         problems.append("first_observed 缺失或不是 ISO-8601")
+    _u, uerr = parse_under_test(data.get("under_test"))
+    if uerr:
+        problems.append(uerr)
     if problems:
         return bad("V01", *problems)
-    return ok("V01", "repro.md 八字段齐全且类型正确")
+    return ok("V01", "repro.md 九字段齐全且类型正确")
 
 
 def v02(ctx: Ctx) -> Result:
@@ -1334,6 +1749,14 @@ def v03(ctx: Ctx) -> Result:
     if merr:
         return cannot("V03", merr)
     problems: list[str] = []
+    under_test: dict[str, set[str]] | None = None
+    repro, rerr = load_frontmatter(ctx.repo / "repro.md")
+    if rerr:
+        problems.append(f"repro.md 无法解析：{rerr}")
+    else:
+        under_test, uerr = parse_under_test(repro.get("under_test"))
+        if uerr:
+            problems.append(uerr)
     test_real, ferr = repo_relative_test_path(meta.get("file"), ctx.repo)
     if ferr:
         problems.append(ferr)
@@ -1346,7 +1769,7 @@ def v03(ctx: Ctx) -> Result:
                 "失败测试文件没有可判定的非恒真断言"
                 "（只有 assertTrue(True) 这类常量断言也算不合格）"
             )
-        wl = test_code_violations(test_real)
+        wl = test_code_violations(test_real, under_test)
         if wl:
             problems.append("复现测试不在白名单内：" + "；".join(wl[:5]))
     if not nonempty_str(meta.get("test_id")):
@@ -1503,15 +1926,9 @@ def v06(ctx: Ctx) -> Result:
             violations.append(f"{old} -> {new}: 测试路径文件被移出 tests 区域")
     if violations:
         problems.append("测试路径改动违规：" + " | ".join(violations[:5]))
-    struct, struct_cannot = patch_structural_violations(ctx.repo, text)
+    struct_cannot = patch_structural_violations(ctx.repo, text)
     if struct_cannot:
         return cannot("V06", *struct_cannot[:5])
-    if struct:
-        problems.append(
-            "补丁改动行必须全部落在函数／方法体内"
-            "（不得新增或修改导入期可执行语句）："
-            + " | ".join(struct[:5])
-        )
     banned = ("根因已确认", "彻底修复", "问题已解决")
     if kind == "hypothesis":
         hits = []
@@ -1576,7 +1993,10 @@ def v08(ctx: Ctx) -> Result:
     if rp:
         return bad("V08", "repro.md.command 非法：" + rp)
     if _rs is not None:
-        wl = test_code_violations(_rs)
+        under_test, uerr = parse_under_test(repro.get("under_test"))
+        if uerr:
+            return bad("V08", uerr)
+        wl = test_code_violations(_rs, under_test)
         if wl:
             return bad("V08", "复现测试不在白名单内：" + "；".join(wl[:5]))
     _ts, tp = parse_isolated_command(test_cmd, ctx.repo)

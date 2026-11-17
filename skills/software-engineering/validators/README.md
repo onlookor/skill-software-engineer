@@ -12,7 +12,7 @@ python3 validate.py --config <使用前配置快照.yaml> --only V01 V02
 - 配置快照七项（`repo_path`／`test_command`／`build_command`／`repro_runs`／`repro_timeout_seconds`／`allowed_scope`／`cache_cleanup_policy`）只从 `--config` 指向的文件读取，与 `SKILL.md` 的 `mount_declarations` 一一对应。**本目录不含任何项的值、默认值、示例值、推荐值。**
 - 快照可另带元数据 `agreed_at`（ISO-8601）与 `agreed_by`（恰好两项非空身份）。它们不属于七项、不参与缺项判定；给出时校验格式，其它未声明键判非法。
 - 缺任一项 → 退出码 3，不静默通过。前六项由自动检查直接使用或核对；`build_command` 只校验类型与单行，**V01–V08 不执行构建**（交付物不依赖构建，执行构建只引入副作用与超时），因此不设 `build_not_configured` 状态。`cache_cleanup_policy` 只判存在、类型与非空，策略是否足以排除缓存与构建产物复用只能由人判断。
-- 复现命令与测试命令只接受字面量 `python3 -I <仓内相对路径>`（恰好三个词；`python3.14`、`./python3`、`python` 别名一律拒绝）：不接受 `bash x.sh`、`env VAR=1 …`、赋值前缀、`-m`／`-c`、参数与复合命令。执行时清空全部 `PYTHON*` 环境变量、以隔离模式运行并按解析后的真实路径判定仓内，工作目录钉在仓根；`sitecustomize`／`usercustomize` 显式屏蔽。
+- 复现命令与测试命令只接受字面量 `python3 -I <仓内相对路径>`（恰好三个词；`python3.14`、`./python3`、`python` 别名一律拒绝）：不接受 `bash x.sh`、`env VAR=1 …`、赋值前缀、`-m`／`-c`、参数与复合命令。执行时清空全部 `PYTHON*` 环境变量、以隔离模式运行并按解析后的真实路径判定仓内，工作目录钉在仓根。`sitecustomize`／`usercustomize` 的屏蔽只作用于**被校验的父进程**；测试自己拉起的子进程另走覆盖率注入（S3 要求采集），两者不是同一条命令，也不矛盾。
 - 交付物位置：`repro.md`、`localization.md`、`fix.patch`、`verify.log`、`fix-report.md` 在仓根；失败测试与元数据在 `tests/`。
 
 ## 退出码
@@ -23,14 +23,14 @@ python3 validate.py --config <使用前配置快照.yaml> --only V01 V02
 
 | ID | 类型 | 判什么 | 判不了什么 |
 |---|---|---|---|
-| V01 | schema | `repro.md` 八字段齐全、类型正确、`fingerprint.run1 == run2`；`first_observed` 按 ISO-8601 校验，并接受 YAML 解析出的 `date`／`datetime` | 内容是否真实；`expected`／`actual` 是否忠于用户所述 |
+| V01 | schema | `repro.md` 九字段齐全、类型正确、`fingerprint.run1 == run2`；`under_test` 是 `module.entry` 形式（可多个）；`first_observed` 按 ISO-8601 校验，并接受 YAML 解析出的 `date`／`datetime` | 内容是否真实；`expected`／`actual` 是否忠于用户所述；声明的入口是否就是用户报障的入口 |
 | V02 | 可执行命令 | 元数据 `file` 是仓内 `tests/` 相对路径且真实存在；复现命令是 `python3 -I <仓内相对路径>`、实际执行的脚本与 `file` 同一文件；命令退出码 ≠ 0；输出非空；连跑 `repro_runs` 次摘要一致；声明摘要与实跑一致 | 该失败是否就是用户报的那个问题；摘要归一化是否覆盖全部噪声；失败是否由被测行为引起只能由 V08 的逐行覆盖证据判断（V08 只复跑同一命令，不是额外兜底） |
-| V03 | 可执行命令 | 测试文件是仓内 `tests/` 相对路径（绝对路径、仓外路径、软链出仓均不合格）、存在、非空、含非恒真断言（按 tokenize 去掉注释与字符串后再匹配，`# assert` 与 `"assert"` 不算）；`single_run_command` 同样是白名单形式并真执行该测试；单独运行即失败；HEAD 与 `base_commit` 一致；**复现测试白名单**：只允许调用被测接口并断言，禁止 `open`／读源码文本／`os`／`subprocess`／`exec`／`eval`／`__import__`／读写环境变量／改写 `sitecustomize` 或任何外部文件（`import` 与 `from ... import` 正常放行） | 覆盖率；命令语义上是否真的只跑了该用例；用变量伪装的恒真断言判不了 |
+| V03 | 可执行命令 | 测试文件是仓内 `tests/` 相对路径（绝对路径、仓外路径、软链出仓均不合格）、存在、非空、含非恒真断言（按 tokenize 去掉注释与字符串后再匹配，`# assert` 与 `"assert"` 不算）；`single_run_command` 同样是白名单形式并真执行该测试；单独运行失败；HEAD 与 `base_commit` 一致；**复现测试白名单**：只允许 `import`／`from ... import` 进入 `under_test` 声明的入口；`sys` 仅允许 `sys.path.insert`／`append` 且路径只能是 `"."`；禁止 `open`、读源码文本、`os`／`subprocess`／`importlib`／`io`／`codecs`／`pkgutil`／`runpy`／`operator` 等模块，`exec`／`eval`／`__import__`／`getattr`／`hasattr`／`vars`／`globals`，读写环境变量，给已导入对象的属性赋值（猴补丁），`sys.modules`，`__dict__`／`__globals__`／`__subclasses__` 等；也不得读取被测入口之外的属性（`calc.EXPECTED`、`add._se_fixed`） | 覆盖率；命令语义上是否真的只跑了该用例；用变量伪装的恒真断言判不了；动态拼接属性名等极端绕法判不了（见「已知边界」） |
 | V04 | 可执行命令 | `git apply --check` 通过 | 补丁语义是否正确；补丁是否最小 |
 | V05 | 黑名单 | `touched_files ⊆ localization.md.files`，且 ⊆ `allowed_scope` | 声明范围本身是否完整（漏文件判不了） |
-| V06 | 黑名单与最小性 | `tests/` 路径的已有文件被改写、被改名、被移出 `tests/` 都会拦（改名按 diff 的 a 侧旧路径判定）；`tests/` 内新增文件必须是 `repro_*`；**补丁结构**：`.py` 生产代码的每个增行／删行都必须落在函数／方法体内，模块级赋值、模块 docstring、导入期调用、类属性猴补丁、装饰器与顶层 `def` 行一律拦（a 侧按 base 源码、b 侧按补丁后源码用 AST 判定）；`evidence_kind` 取值合法；`estimated_touched_files`／`estimated_diff_lines` 与实际补丁一致；`hypothesis` 下禁止「根因已确认／彻底修复／问题已解决」且 `status` 不得为 `fixed` | 只保护 `tests/` 路径名，不保护行为：`tests/` 之外的数据文件或夹具被改动不在本项覆盖范围；`.py` 夹具若被复现测试 import 会作为执行代码出现在覆盖里，但这只是被记录，不构成对「夹具本身未被篡改」的证明；新增 repro 测试内部是否语义恒真（只识别固定写法）；预估数字是否诚实地反映设计意图（只判与实际是否一致）；结构规则只覆盖 `.py` 生产文件，非 Python 文件不在其内 |
+| V06 | 黑名单与最小性 | `tests/` 路径的已有文件被改写、被改名、被移出 `tests/` 都会拦（改名按 diff 的 a 侧旧路径判定）；`tests/` 内新增文件必须是 `repro_*`；**补丁执行时机**（AST，a 侧按 base、b 侧按补丁后源码）：普通函数／方法体内的改动放行；模块级声明式改动（`import`、模块常量、类属性／dataclass 默认值、模块级 `try/except` 内赋值、docstring、声明式装饰器、`def`／`class` 头）放行；改到模块级可执行语句（Expr 调用、属性目标猴补丁、控制流头）或导入期会执行的函数体（元类 `__init__`／`__new__`／`__prepare__`、`__init_subclass__`、`__set_name__`、模块级 `__getattr__`、模块级调用链）判 `cannot_evaluate`，并写明「该缺陷需要改模块级声明，超出本技能适用面」；`evidence_kind` 取值合法；`estimated_touched_files`／`estimated_diff_lines` 与实际补丁一致；`hypothesis` 下禁止「根因已确认／彻底修复／问题已解决」且 `status` 不得为 `fixed` | 只保护 `tests/` 路径名，不保护行为：`tests/` 之外的数据文件或夹具被改动不在本项覆盖范围；`.py` 夹具若被复现测试 import 会作为执行代码出现在覆盖里，但这只是被记录，不构成对「夹具本身未被篡改」的证明；新增 repro 测试内部是否语义恒真（只识别固定写法）；预估数字是否诚实地反映设计意图（只判与实际是否一致）；结构规则只覆盖 `.py` 生产文件；导入期可达性只是保守近似，动态取属性、字符串拼接后再调用等路径仍可能绕开（见「已知边界」） |
 | V07 | 可执行命令 | 使用前 `test_command` 全绿 | 测试集本身是否足够；绿是否由本次补丁引起 |
-| V08 | 可执行命令 | 三段顺序与退出码（非0／0／非0）；`patch_sha256` 与 `fix.patch` 一致；`test_command_used` 与使用前快照逐字一致；`commit` 与当前 HEAD 一致；已跟踪文件无未提交改动；**实际重跑三段**并与日志退出码逐段比对；两态都在受控执行下采集覆盖行（含测试新建线程与其拉起的子进程），补丁在生产代码上删除/新增的行必须分别被 base／patched 的复现测试执行到，交集为空即 fail；**变异检验**：对补丁触及的生产代码新增行逐行造变异、对删除行做整块回退，重跑复现测试必须**以断言失败变红**（`AssertionError`、unittest `failures>0`、pytest `failed>0`）；崩溃、超时、`SystemExit`／`os._exit` 等提前退出都不算杀死变异；全部存活或整份补丁造不出可编译变异即 fail；`fix-report.md.status=fixed` 直接 fail（V09 必须人工执行） | 缓存与构建产物是否真的被清理（重跑沿用同一环境，不能替代清理策略）；绿是否由本次补丁引起（靠第③段、覆盖交集与变异检验逼近，不绝对）；测试是否只跑了声明的那一个用例（只看该测试进程实际执行到的行）；测试自己伪造证据（见「已知边界」） |
+| V08 | 可执行命令 | 三段顺序与退出码（非0／0／非0）；`patch_sha256` 与 `fix.patch` 一致；`test_command_used` 与使用前快照逐字一致；`commit` 与当前 HEAD 一致；已跟踪文件无未提交改动；**实际重跑三段**并与日志退出码逐段比对；复现测试同样过白名单与 `under_test` 入口限制；两态都在受控执行下采集覆盖行（含测试新建线程与其拉起的子进程），补丁在生产代码上删除/新增的行必须分别被 base／patched 的复现测试执行到，交集为空即 fail；**变异检验**：对补丁触及的生产代码新增行逐行造变异、对删除行做整块回退，重跑复现测试必须**以断言失败变红**（`AssertionError`、unittest `failures>0`、pytest `failed>0`）；崩溃、超时、`SystemExit`／`os._exit` 等提前退出都不算杀死变异；全部存活或整份补丁造不出可编译变异即 fail；`fix-report.md.status=fixed` 直接 fail（V09 必须人工执行） | 缓存与构建产物是否真的被清理（重跑沿用同一环境，不能替代清理策略）；绿是否由本次补丁引起（靠第③段、覆盖交集与变异检验逼近，不绝对）；测试是否只跑了声明的那一个用例（只看该测试进程实际执行到的行）；测试自己伪造证据（见「已知边界」） |
 | V09 | 人工清单 | 根因陈述与 `evidence_kind` 是否成立 | **只能人工执行**：没有任何字段能让它自动成立；`v09_signoff` 等仓内字段可由执行方书写，机器不采信为复核证据；见 [V09-checklist.md](V09-checklist.md) |
 
 ## 运行时机（状态相关，不是随便复跑）
@@ -64,9 +64,10 @@ python3 validate.py --config <使用前配置快照.yaml> --only V01 V02
 
 以下不是待修 bug，而是同进程证据的固有上限；文档与报告不得越过这些上限下结论。
 
-- **同进程证据可以被被测代码或生产补丁伪造。** 复现测试、生产补丁与覆盖率采集在同一进程树里运行。输出通道的 fd 号走环境变量 `SE_COV_FD`（不再放进 argv，测试也读不到 `/proc/self/cmdline` 里的路径），但进程仍能从 `/proc/self/environ` 读到 `SE_COV_FD`／`SE_COV_DIR`／`SE_COV_REPO`，往该 fd 写伪造的覆盖率 JSON，或用 `os._exit(0)` 跳过退出钩子。伪造不限于测试代码：生产补丁的函数体在运行时同样能主动写 fd、改环境或提前退出（导入期伪造已被 V06 的结构规则拦住，运行时伪造没有机械出口）。
+- **同进程证据可以被被测代码或生产补丁伪造。** 复现测试、生产补丁与覆盖率采集在同一进程树里运行。输出通道的 fd 号走环境变量 `SE_COV_FD`（不再放进 argv，测试也读不到 `/proc/self/cmdline` 里的路径），但进程仍能从 `/proc/self/environ` 读到 `SE_COV_FD`／`SE_COV_DIR`／`SE_COV_REPO`，往该 fd 写伪造的覆盖率 JSON，或用 `os._exit(0)` 跳过退出钩子。伪造不限于测试代码：生产补丁在导入期或运行时都能主动写 fd、改环境或提前退出；V06 只能机械识别一部分导入期构造（见下一条），**没有完整的机械出口**。
+- **「导入期不可达」不是可判定的性质，V06 只做保守近似。** V06 识别元类钩子（`__init__`／`__new__`／`__prepare__` 等）、`__init_subclass__`、`__set_name__`、模块级 `__getattr__`、模块级调用链与装饰器，并把落在其中的改动判 `cannot_evaluate`；但经 `getattr`、字符串拼接属性名、动态导入、`type(...)` 取类后再调用等路径仍可让「看似普通的函数体」在导入期执行。因此 README 与 S2 不再承诺「导入期伪造已被拦住」；真实结论只能由人工 V09 复核补丁的意图。
 - **子进程覆盖不是全覆盖。** 只有继承环境、且未用 `-I`／`-S` 启动的子进程才会加载覆盖率注入点；测试显式清空环境或换解释器后拉起的子进程不会被采集。
-- **变异检验只证明「测试对补丁行敏感」，不证明「断言是对的」。** 复现测试白名单已禁止 `open`／读源码文本／`os`／`subprocess`／`exec` 等直接伪造手段，但如果**预言本身取自被测代码**——例如测试用被测函数自己算期望值、或断言补丁新加的标记／常量——变异仍可能被「杀死」，而 bug 原样未修。任何机械检查都判不出这种同源预言，只能由人工 V09 复核断言与被测接口是否独立。
+- **变异检验只证明「测试对补丁行敏感」，不证明「断言是对的」。** 复现测试白名单已禁止 `open`／读源码文本／`os`／`subprocess`／`exec`／`sys.modules`／`getattr` 等直接伪造手段，但如果**预言本身取自被测代码**——例如测试用被测函数自己算期望值、或断言补丁新加的标记／常量——变异仍可能被「杀死」，而 bug 原样未修。任何机械检查都判不出这种同源预言，只能由人工 V09 复核断言与被测接口是否独立。
 - **`V01–V08` 全 pass 不等于修复成立。** 自动检查只说明交付物形状与受控执行证据自洽；根因是否真的成立、修复是否真的解决问题，必须由人按 V09 清单复核。V09 没有自动出口：`v09_signoff` 等仓内字段由执行方书写，不能作为复核成立的证据；`status: fixed` 会被 V08 直接拒绝。
 - **M6 不由仓内文件判定。** `review/approval.md` 等仓内文件可由执行方书写，不能当人类批准门；机器只显示「未提供外部批准」。
 

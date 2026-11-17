@@ -82,3 +82,24 @@
   6. **文档边界**：天花板段落改为输出通道走环境变量 `SE_COV_FD`，并承认生产补丁同样能伪造；新增「预言取自被测代码本身时任何机械检查都判不出来」的边界，落入 V09 第 8 项，明确不得写成「已解决」。
 - **关联 ADR**：无
 - **备注**：版本 0.7.0 → 0.8.0；负向 34/34、正向 5/5；本批次只提交，不推送、不打标签；未做自评，不写「已验证」。
+
+## 批次 0005 — 2026-11-17
+
+- **批次号**：0005
+- **日期**：2026-11-17
+- **更正（引用批次 0004）**：批次 0004 第 5 条称「FIFO／设备文件显式拒收」，实际当时 `iter_files()` 仍以 `elif not p.is_file(): continue` 静默跳过 FIFO；该缺口在 0005 第 5 条修复，以本条为准。
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（导入期可达性、声明式放行、白名单收紧、`under_test`）
+  - 打包：`skills/software-engineering/scripts/build_package.py`（FIFO／设备显式拒收）
+  - 用例：`skills/software-engineering/tests/negative/run_negative.py`、`skills/software-engineering/tests/positive/run_positive.py`
+  - 示例与 schema：`skills/software-engineering/examples/defect-repro-fix/run.py`、`skills/software-engineering/schemas/repro.md`
+  - 文档：`skills/software-engineering/SKILL.md`、`validators/README.md`、`validators/V09-checklist.md`、`stages/S1-repro.md`、`stages/S2-localize-fix.md`、`stages/S3-verify.md`
+- **变更摘要**：
+  1. **不再用「行在函数体」当导入期代理**：V06 新增 AST 导入期可达性分析（元类钩子、`__init_subclass__`、`__set_name__`、模块级 `__getattr__`、装饰器、模块级调用链），落入其中的改动判 `cannot_evaluate`；README 第 67 行「导入期伪造已被拦住」的承诺撤回，改为「保守近似 + 已知边界」，并新增「导入期不可达不是可判定性质」条目。
+  2. **V06 不再罚正确修复**：模块常量、纯 `import`、类属性默认值、dataclass field 默认值、模块级 `try/except` 内赋值、docstring、声明式装饰器、`def`／`class` 头都放行；新建生产模块可过。真正改到模块级可执行语句（Expr 调用、属性目标猴补丁、控制流头）判 `cannot_evaluate` 并写明「该缺陷需要改模块级声明，超出本技能适用面」。
+  3. **白名单补洞**：`sys.modules`、`hasattr`、`getattr`、`vars`／`globals`、`sys.__dict__`、`type.__subclasses__`、`io`／`codecs`／`mmap`／`runpy`／`pkgutil`／`operator`／`pathlib` 等一律拦；`sys` 只允许 `sys.path.insert/append(…, ".")`；禁止给已导入对象属性赋值（猴补丁）。
+  4. **预言独立性**：`repro.md` 新增必填字段 `under_test: module.entry`（可列表）。V01 校验形式，V03／V08 要求复现测试只能使用声明的入口，`calc.EXPECTED`、`add._se_fixed`、`from calc import EXPECTED`、`hasattr(calc, …)` 都被拦；A1 不再只靠 V06。
+  5. **打包**：`iter_files()` 对 FIFO／设备／套接字显式报「特殊文件（FIFO／设备／套接字），未入包」并退出 1，不再静默跳过；目录仍正常跳过。
+  6. **文档口径**：`sitecustomize`／`usercustomize` 屏蔽只对父进程成立，子进程覆盖率注入是另一条路径；V03 条目按实际白名单重写；V09 第 8 项补充「只能使用 `under_test` 入口」。
+- **关联 ADR**：无
+- **备注**：版本号待适用面收窄的裁定后再定，本批次不改 `SKILL.md` 的 `version`、不重打包；负向 34/34、正向 6/6、示例 `run.py` 退出 0；只提交，不推送、不打标签；未做自评，不写「已验证」。

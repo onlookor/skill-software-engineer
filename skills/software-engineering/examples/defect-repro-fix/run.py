@@ -93,6 +93,7 @@ def main() -> int:
         "repo": {"url": WORK.as_uri(), "commit": head},
         "env": {"os": "linux", "runtime": "python3", "dependencies": {"unittest": "stdlib"}},
         "command": repro_cmd,
+        "under_test": "calc.add",
         "expected": "add(2, 3) 返回 5",
         "actual": "AssertionError: -1 != 5",
         "exit_code": codes[0],

@@ -6,13 +6,14 @@
 
 Markdown，正文前必须有一段 YAML frontmatter（首行 `---`，闭合 `---`）。正文写复现说明，不参与自动判定。
 
-## 必填字段（八项）
+## 必填字段（九项）
 
 | 字段 | 类型 | 约束 | 可自动判定 | 只能由人判断 |
 |---|---|---|---|---|
 | `repo` | map | 含 `url`（非空字符串）、`commit`（7–40 位十六进制） | 齐全且类型正确 | — |
 | `env` | map | 含 `os`（字符串）、`runtime`（字符串）、`dependencies`（map<string,string>） | 齐全且类型正确 | 版本是否与用户环境同构 |
 | `command` | string | 非空、单行，且只能是 `python3 -I <仓内相对路径>`；脚本必须与元数据记录的测试文件是同一文件 | 形式与脚本绑定（V02 判）；实际运行（V02 在受控执行下跑） | 是否是用户实际使用的入口 |
+| `under_test` | string 或 list | 非空，形如 `calc.add`；可列多个 | 测试只能使用这些入口及其调用结果（V03／V08 判） | 声明的入口是否就是用户报障的入口 |
 | `expected` | string | 非空 | 存在且非空 | 期望值是否来自用户而非 agent 自拟 |
 | `actual` | string | 非空 | 存在且非空 | `actual` 与用户所述失败是否同一件事 |
 | `exit_code` | integer | ≠ 0 | 否（V02 以实跑为准） | — |
@@ -45,6 +46,7 @@ env:
   dependencies:
     <name>: <version>
 command: python3 -I <仓内相对路径>
+under_test: <module.entry>（或列表）
 expected: <string>
 actual: <string>
 exit_code: <非零整数>

@@ -159,8 +159,12 @@ def iter_files() -> list[Path]:
                     raise PackageError(
                         f"{rel.as_posix()} 是特殊文件（非普通文件），未入包"
                     )
-            elif not p.is_file():
+            elif p.is_dir():
                 continue
+            elif not p.is_file():
+                raise PackageError(
+                    f"{rel.as_posix()} 是特殊文件（FIFO／设备／套接字），未入包"
+                )
             if any(normalize_name(part) in EXCLUDE_NORMALIZED for part in rel.parts):
                 continue
             if p.suffix in EXCLUDE_SUFFIXES:
