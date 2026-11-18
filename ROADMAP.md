@@ -56,3 +56,5 @@
 ## 五、谓词化推进计划
 
 阶段 C 层次二（设计过程谓词化，10.2.3bis）从定义做起，按“定义期 → 最小档 → 标准档 → 完整档”推进；定义对象、落层、待批项、验收证据与技术债衔接见 [plans/predicate-ization-execution-plan.md](plans/predicate-ization-execution-plan.md)。本文件只登记指针，不重复计划内容；计划内标「待批」的《编译规范》或母本改动，批准前不生效。
+
+2026-11-18 外部审计（PM 项目对软工的谓词化审计）的摘取、三类归位、设计文档判断与计划修订点见 [plans/audit-intake-20261118.md](plans/audit-intake-20261118.md)；该审计把本项登记为 `TD-SE-PRED-001`（见 `TECH-DEBT.md` 第 10 条）。该文件只登记，不改变上述计划的效力。
