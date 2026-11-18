@@ -241,7 +241,7 @@
 - **日期**：2026-11-18
 - **事项**：谓词引擎技术路径选型（待裁定）与设计文档触发口径变更。
 - **涉及文件**：
-  - `plans/predicate-engine-selection.md`（新增）：五条轴（载体与语法／求值语义／求值器形态／接线范围／判定链接缝）各自路径的收益、代价、失效模式与不可逆点；与 PM `ADR-0022` 的分歧处理；推荐组合 A2+B2+C1+D2+E1 约 45–65 人日（三空间另 15–25 人日可延后）；三套备选。
+  - `plans/predicate-engine-selection.md`（新增）：五条轴（载体与语法／求值语义／求值器形态／接线范围／判定链接缝）各自路径的收益、代价、失效模式与不可逆点；与 PM `ADR-0022` 的分歧处理；推荐组合 A2+B2+C1+D2+E1，输出 token 56k–91k、生成侧墙钟 0.7–3.8 h（三空间另 14k–22k token、11–54 min，可延后）；三套备选。
   - `plans/predicate-ization-execution-plan.md`：§2.1 新增设计文档同步与冻结口径；§5 加选型文档指针。
   - `plans/audit-intake-20261118.md`：顶部状态、§2.3、§2.4、§3、§3.4、§4 由“触发后写设计文档”改为“随 P0 同步成稿、每标一批黄金样本回改一次定义、P0 通过时冻结、冻结后才允许写 AST 与求值器实现”。
   - `ROADMAP.md`：§五加选型文档指针并标注“待裁定”。
@@ -251,4 +251,24 @@
   3. **与 PM `ADR-0022` 的分歧**：明确 PM 的“不造引擎”应读作“不造通用／整层引擎”，其决定 5 把受限 DSL＋求值器列为唯一合理中期扩展；软工不照抄“schema + Python”，因 220 名跨设计事实且 T1–T5 要求谓词增量。
 - **未改动**：母本、《编译规范》正文、`SKILL.md` 判据、14 张卡片正文、`skills/software-engineering/validators/`、`dist/`；未写解析器／求值器代码，未新建 ADR，未新建设计文档。
 - **关联 ADR**：`project-management/adr/0022-predication-scope-and-authority.md`（仅作对照，不改其内容）；本仓 ADR 待路径圈定后再落。
+- **备注**：版本保持 0.9.0；dist 不重打包；只提交，不推送、不打标签，不自评。
+
+## 批次 0015 — 2026-11-18
+
+- **批次号**：0015
+- **日期**：2026-11-18
+- **事项**：谓词引擎选型获批准后的三件落盘——估算口径统一、三空间 `applicability` 入技术债、ADR 落定。
+- **涉及文件**：
+  - `adr/ADR-PRED-ENG-01-approved-20261118-谓词引擎选型与A2B2C1D2E1落地.md`（新增）：造谓词引擎、A2+B2+C1+D2+E1、各轴否决理由、不可逆点、与 PM `ADR-0022` 分歧处理、P0 顺序（`style` 为第一垂直切片）。
+  - `adr/INDEX.md`：登记 `ADR-PRED-ENG-01`；统计更新为 38 份；注明 `ADR-GUARD-ACT-01`／`ADR-GUARD-02` 两份既有 ADR 尚未逐条登记。
+  - `TECH-DEBT.md`：新增第 11 条 `TD-SE-PRED-002`（三空间 `applicability` 语义求值缺失）；文件头补范围说明；第 10 条“本轮不改计划”改为批次 0014 已落设计文档口径。
+  - `plans/predicate-engine-selection.md`：工作量全部改为 token 预算／生成侧墙钟／闸门数；新增 §1.5 估算口径与缺口说明；状态由“待裁定”改为“分析记录（已裁定）”。
+  - `plans/audit-intake-20261118.md`：C-03 与设计文档代价对照中的工时单位表述改为 token／墙钟口径。
+  - `ROADMAP.md`：§五选型指针由“待裁定”改为已裁定并指向 ADR；补 `TD-SE-PRED-002` 指针。
+- **变更摘要**：
+  1. **估算口径统一**：采用 PM `spec/ESTIMATION_METHOD.md` 与 `adr/0023` 的 token／墙钟／闸门三件并列数；本仓无 D6 式吞吐锚、无 agent usage 记账、无历史行数—墙钟对照，全部数值标 `estimate`，并声明输入可能高于 3–6× 上界。`plans/`、`ROADMAP.md`、`CHANGELOG.md` 中本轮引入的工时单位表述已清除；批次 0014 对应表述按本批口径更正，旧数字不再有效。
+  2. **三空间 `applicability` 入债**：登记 `TD-SE-PRED-002`，写明做什么、为什么现在不做、不做期间的判定面空白、启动条件与关闭判据；与 `TD-SE-PRED-001` 分立，第 10 条必须先于第 11 条。
+  3. **ADR 落定**：`ADR-PRED-ENG-01` 记录“造谓词引擎”与五轴选型；`validate.py` V01–V09 不调用引擎；设计文档冻结前不开工 AST／求值器。
+- **未改动**：母本、《编译规范》正文、`SKILL.md` 判据、14 张卡片正文、`skills/software-engineering/validators/`、`dist/`；未写解析器／求值器代码，未新建 `predicate_engine` 模块。
+- **关联 ADR**：`ADR-PRED-ENG-01`（本批落定）；`project-management/adr/0022-predication-scope-and-authority.md`（对照，不改其内容）。
 - **备注**：版本保持 0.9.0；dist 不重打包；只提交，不推送、不打标签，不自评。

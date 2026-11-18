@@ -110,7 +110,7 @@
 ## 5. 形式、边界与指针
 
 - 本计划文件：`plans/predicate-ization-execution-plan.md`。
-- 技术路径选型（待裁定）：`plans/predicate-engine-selection.md`；裁定后再以 ADR 落定，本计划不预先采纳其中任何组合。
+- 技术路径选型（已裁定 2026-11-18）：`plans/predicate-engine-selection.md` 摊开五条轴与代价；裁定记录见 `adr/ADR-PRED-ENG-01-approved-20261118-谓词引擎选型与A2B2C1D2E1落地.md`。本计划只承载定义、分期与验收，不复制 ADR 的决定表。
 - 登记指针：`ROADMAP.md` §五（“谓词化推进计划”）。
 - 本计划不写检查器、不加校验规则、不改母本、不改《编译规范》正文、不动卡片。
 - 所有《编译规范》正文改动、以及任何母本改动，均标「待批」；批准前只作为提案存在。

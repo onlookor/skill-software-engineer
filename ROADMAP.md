@@ -59,4 +59,4 @@
 
 2026-11-18 外部审计（PM 项目对软工的谓词化审计）的摘取、三类归位、设计文档判断与计划修订点见 [plans/audit-intake-20261118.md](plans/audit-intake-20261118.md)；该审计把本项登记为 `TD-SE-PRED-001`（见 `TECH-DEBT.md` 第 10 条）。该文件只登记，不改变上述计划的效力。
 
-技术路径选型（受限 DSL／三值语义／求值器形态／接线范围／判定链接缝）见 [plans/predicate-engine-selection.md](plans/predicate-engine-selection.md)。该文件为**待裁定**状态，不是 ADR，也不改变上述计划的效力；路径经人类圈定后再落 ADR。
+技术路径选型（受限 DSL／三值语义／求值器形态／接线范围／判定链接缝）见 [plans/predicate-engine-selection.md](plans/predicate-engine-selection.md)。人类已于 2026-11-18 裁定 A2+B2+C1+D2+E1，裁定记录见 [adr/ADR-PRED-ENG-01](adr/ADR-PRED-ENG-01-approved-20261118-谓词引擎选型与A2B2C1D2E1落地.md)；三空间 `applicability` 延后项登记为 `TD-SE-PRED-002`。
