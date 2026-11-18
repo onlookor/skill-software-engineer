@@ -2,10 +2,11 @@
 """正向用例：证明「真修复不会被误杀」。
 
 覆盖：
-  - 断言写在 threading.Thread 里（异常由测试自己收集后抛出）；
-  - 纯新增补丁（只加行、base 侧为空），新增守卫行仍要过变异检验；
+  - 点号方法入口（`calc.Calc.add`）的真修复能通过全部检查；
+  - 纯新增补丁（只加行、base 侧为空），新增行仍要过变异检验；
   - 正常使用 `import` 与 `from ... import` 的测试放行；
-  - 合法的函数体内修复（改 return 行、加守卫行）不被结构规则误杀。
+  - 合法的函数体内修复（改 return 行、加守卫行）不被结构规则误杀；
+  - 越界的 subprocess 复现测试仍被白名单拒绝。
 
 用法（仓库根目录）：
     python3 skills/software-engineering/tests/positive/run_positive.py
@@ -65,38 +66,53 @@ def base_fixture(repo: Path) -> None:
     )
 
 
-def case_thread_assertion(tmp: Path) -> str:
-    """断言在子线程里：真修复必须能通过 V01–V08。"""
-    repo = tmp / "thread"
-    base_fixture(repo)
-    (repo / "tests" / "repro_thread.py").write_text(
-        "import sys, threading\n"
+def case_method_entry(tmp: Path) -> str:
+    """点号方法入口的真修复必须能通过 V01–V08（含变异检验）。"""
+    repo = tmp / "method"
+    init_repo(repo)
+    (repo / "calc.py").write_text(
+        "class Calc:\n"
+        "    def add(self, a, b):\n"
+        "        return a - b\n",
+        encoding="utf-8",
+    )
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text(
+        "import sys\nsys.exit(0)\n", encoding="utf-8"
+    )
+    (repo / "tests" / "repro_method.py").write_text(
+        "import sys\n"
         "sys.path.insert(0, '.')\n"
-        "from calc import add\n"
-        "errors = []\n"
-        "def work():\n"
-        "    try:\n"
-        "        assert add(1, 2) == 3, 'add broken'\n"
-        "    except BaseException as exc:\n"
-        "        errors.append(exc)\n"
-        "thread = threading.Thread(target=work)\n"
-        "thread.start()\n"
-        "thread.join()\n"
-        "if errors:\n"
-        "    raise errors[0]\n",
+        "from calc import Calc\n\n"
+        "def observe():\n"
+        "    return {'sum': Calc().add(1, 2)}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
-    repro_cmd = write_fix(repo, "repro_thread.py")
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_thread.py")
+    (repo / "fix.patch").write_text(
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -1,3 +1,3 @@\n"
+        " class Calc:\n"
+        "     def add(self, a, b):\n"
+        "-        return a - b\n"
+        "+        return a + b\n",
+        encoding="utf-8",
+    )
+    repro_cmd = "python3 -I tests/repro_method.py"
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_method.py",
+        "calc.Calc.add", observations={"sum": 3},
+    )
     write_localization(repo, 2)
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
-    cfg = tmp / "thread-config.yaml"
+    cfg = tmp / "method-config.yaml"
     write_config(repo, cfg)
     res = run_validator(repo, cfg, ALL)
     out = res.stdout + res.stderr
-    assert res.returncode == 0, f"真修复被误杀：退出 {res.returncode}\n{out}"
-    return "子线程断言的真修复通过 V01–V08"
+    assert res.returncode == 0, f"方法入口的真修复被误杀：退出 {res.returncode}\n{out}"
+    return "点号方法入口的真修复通过 V01–V08"
 
 
 def case_subprocess_assertion(tmp: Path) -> str:
@@ -139,14 +155,17 @@ def case_import_forms(tmp: Path) -> str:
         "import sys\n"
         "sys.path.insert(0, '.')\n"
         "import calc\n"
-        "from calc import add\n"
-        "assert add(1, 2) == 3, 'add broken'\n"
-        "assert calc.add(2, 3) == 5, 'calc.add broken'\n",
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2), 'total': calc.add(2, 3)}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
     repro_cmd = write_fix(repo, "repro_imports.py")
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_imports.py")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_imports.py",
+        observations={"sum": 3, "total": 5},
+    )
     write_localization(repo, 2)
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
     cfg = tmp / "import-forms-config.yaml"
@@ -162,24 +181,18 @@ def case_pure_addition(tmp: Path) -> str:
     repo = tmp / "pure-add"
     init_repo(repo)
     (repo / "calc.py").write_text(
-        "def safe_div(a, b):\n    return a / b\n", encoding="utf-8"
+        "def status(code):\n    return 0\n", encoding="utf-8"
     )
     (repo / "tests").mkdir()
     (repo / "tests" / "run_all.py").write_text(
         "import sys\nsys.exit(0)\n", encoding="utf-8"
     )
-    (repo / "tests" / "repro_div.py").write_text(
+    (repo / "tests" / "repro_status.py").write_text(
         "import sys\n"
         "sys.path.insert(0, '.')\n"
-        "from calc import safe_div\n"
-        "try:\n"
-        "    safe_div(1, 0)\n"
-        "except ValueError:\n"
-        "    pass\n"
-        "except BaseException as exc:\n"
-        "    raise AssertionError('unexpected %s' % type(exc).__name__) from exc\n"
-        "else:\n"
-        "    raise AssertionError('expected ValueError')\n",
+        "from calc import status\n\n"
+        "def observe():\n"
+        "    return {'status': status(404)}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -188,14 +201,17 @@ def case_pure_addition(tmp: Path) -> str:
         "--- a/calc.py\n"
         "+++ b/calc.py\n"
         "@@ -1,2 +1,4 @@\n"
-        " def safe_div(a, b):\n"
-        "+    if b == 0:\n"
-        "+        raise ValueError('b must not be zero')\n"
-        "     return a / b\n",
+        " def status(code):\n"
+        "+    if code == 404:\n"
+        "+        return -1\n"
+        "     return 0\n",
         encoding="utf-8",
     )
-    repro_cmd = "python3 -I tests/repro_div.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_div.py", "calc.safe_div")
+    repro_cmd = "python3 -I tests/repro_status.py"
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_status.py",
+        "calc.status", observations={"status": -1},
+    )
     write_localization(repo, 2)
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
     cfg = tmp / "pure-add-config.yaml"
@@ -225,9 +241,9 @@ def case_two_change_points(tmp: Path) -> str:
     )
     (repo / "tests" / "repro_both.py").write_text(
         "import sys\nsys.path.insert(0, '.')\n"
-        "from calc import add, mul\n"
-        "assert add(1, 2) == 3, 'add broken'\n"
-        "assert mul(2, 3) == 6, 'mul broken'\n",
+        "from calc import add, mul\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2), 'product': mul(2, 3)}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -247,7 +263,8 @@ def case_two_change_points(tmp: Path) -> str:
         encoding="utf-8",
     )
     write_repro_and_meta(
-        repo, sha, repro_cmd, "tests/repro_both.py", ["calc.add", "calc.mul"]
+        repo, sha, repro_cmd, "tests/repro_both.py", ["calc.add", "calc.mul"],
+        observations={"sum": 3, "product": 6},
     )
     write_localization(repo, 4)
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
@@ -381,7 +398,7 @@ def case_declarative_shapes(tmp: Path) -> str:
 
 
 CASES = [
-    case_thread_assertion,
+    case_method_entry,
     case_subprocess_assertion,
     case_import_forms,
     case_pure_addition,

@@ -123,3 +123,23 @@
   6. **技术债单独立项**：新增 `TECH-DEBT.md`，逐条记录导入期可达性漏判的 10 类钩子、新建模块与 `allowed_scope` 矛盾、`_pure_value` 误判、`under_test` 允许常量、`mock`／本地夹具、同进程伪造、以及「用句法特征代理语义性质」的共同缺陷；写明将来改版方向需要调用图／动态追踪＋沙箱，不是继续加 AST 规则。
 - **关联 ADR**：无
 - **备注**：版本号仍待「适用面收窄算 minor 还是 major」的人类裁定，本批次不改 `SKILL.md` 的 `version`、不重打包；负向 36/36、正向 6/6、示例 `run.py` 退出 0；只提交，不推送、不打标签；未做自评，不写「已验证」。
+
+## 批次 0007 — 2026-11-18
+
+- **批次号**：0007
+- **日期**：2026-11-18
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（观测值契约、`load_observations`、`observe()` 静态形状、`under_test` 收紧到点号函数／方法、采集入口快照、变异判据改口径）
+  - 用例：`skills/software-engineering/tests/negative/run_negative.py`、`skills/software-engineering/tests/positive/run_positive.py`
+  - 示例与 schema：`skills/software-engineering/examples/defect-repro-fix/run.py`、`skills/software-engineering/examples/defect-repro-fix/artifacts/repro_add.py`、`skills/software-engineering/schemas/repro.md`、`skills/software-engineering/schemas/failing-test.md`
+  - 文档：`skills/software-engineering/SKILL.md`、`validators/README.md`、`validators/V09-checklist.md`、`stages/S1-repro.md`、`stages/S2-localize-fix.md`、`stages/S3-verify.md`
+  - 技术债：仓根 `TECH-DEBT.md`（重写，仍不随包分发）
+- **变更摘要**：
+  1. **断言 API 整体移出判定链**：复现测试不再 `import unittest`、不再 `assert`、不再 `self.assertEqual`；只定义一个无参 `observe()`，返回 `observation_id → 观测值` 的 dict。期望值写在 `repro.md.observations`（只允许字面量），由受控执行引导（`python3 -I -S -B`）自己调用、自己比较、自己产出 pass／fail。引导不再导入 `unittest`，因此也不再有「插路径后导入 `unittest` 被仓根影子顶替」的依赖。
+  2. **返回值静态约束**：每个观测值必须直接是 `under_test` 声明入口的调用（`f(...)`／`mod.f(...)`／`Cls(...).m(...)`／`mod.Cls(...).m(...)`／`Cls.m(...)`）；硬编码常量、先算别的再返回常量、返回值加壳（`add(...) + 0`）、`observe()` 缺参／带参／返回非 dict、id 与 `repro.md` 不一一对应都在 V03 拦住。
+  3. **`under_test` 收紧**：只接受点号函数或方法；类、常量、模块名在 V01 直接拒（`calc.EXPECTED`、`calc.Calc` 均被拒），类入口脱钩不再成立。
+  4. **采集入口完整性降级**：运行时快照只覆盖 `trace`／`threading`/`sys.settrace`／`runpy.run_path`／`builtins` 执行入口／`sys.modules` 基线，只发现「替换后不复原」；自恢复与 `os._exit` 提前退出如实写明发现不了，且不再承担断言语义。
+  5. **变异判据改口径**：只认「观测值与期望值不一致」（引导报告 `ObservationMismatch`）；崩溃、超时、`SystemExit`／`os._exit` 不算杀死变异。
+  6. **文档失真逐条修正**：撤回「任一断言设施被替换／删除即判 cannot」「元类、新建模块一视同仁」与「导入期伪造由运行时完整性覆盖」等表述；`V09-checklist.md` 第 8 项改为「观测值与期望值独立」，并写明运行时完整性不再是可采信证据；`SCHEMA` 的「测试只能使用这些可调用入口及其调用结果」改为新契约；`TECH-DEBT.md` 纠正第 1／2／6 条措辞，补记第八轮新证实的五类缺口（自恢复假断言、`__code__`／`_baseAssertEqual`、换 `TestCase` 绑定、新建模块导入期安装、类入口脱钩）及其在新契约下的状态；`validators/README.md` 的 `../../../TECH-DEBT.md` 断链改为「仓根 TECH-DEBT.md（不随包分发）」文字说明。
+- **关联 ADR**：无
+- **备注**：版本号仍待「适用面收窄算 minor 还是 major」的人类裁定，本批次不改 `SKILL.md` 的 `version`、不重打包；负向 37/37、正向 6/6、示例 `run.py` 退出 0；只提交，不推送、不打标签；未做自评，不写「已验证」。

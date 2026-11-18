@@ -14,6 +14,7 @@ import contextlib
 import hashlib
 import importlib.util
 import io
+import json
 import os
 import re
 import shutil
@@ -77,37 +78,23 @@ def write_config(
 
 
 def case_empty_test_and_patch(tmp: Path) -> str:
-    """无 bug ＋ 空测试 ＋ 空补丁：V02/V03 必须拦住。"""
+    """无 bug ＋ 空测试 ＋ 空补丁：V03 必须拦住。"""
     repo = tmp / "empty"
     init_repo(repo)
     (repo / "calc.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
     (repo / "tests").mkdir()
     (repo / "tests" / "repro_empty.py").write_text("", encoding="utf-8")
     sha = commit_all(repo)
-    (repo / "tests" / "repro_empty.meta.yaml").write_text(
-        "\n".join([
-            "file: tests/repro_empty.py",
-            "test_id: repro_empty",
-            "single_run_command: python3 -I tests/repro_empty.py",
-            f"base_commit: {sha}",
-            "expected_failure: should fail",
-        ]) + "\n",
-        encoding="utf-8",
-    )
-    (repo / "repro.md").write_text(
-        "---\nrepo:\n  url: local\n  commit: %s\n"
-        "command: python3 -I tests/repro_empty.py\nexpected: fail\nactual: pass\nexit_code: 1\n---\n"
-        % sha,
-        encoding="utf-8",
-    )
+    repro_cmd = "python3 -I tests/repro_empty.py"
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_empty.py")
     (repo / "fix.patch").write_text("", encoding="utf-8")
     cfg = tmp / "empty-config.yaml"
     write_config(repo, cfg)
     res = run_validator(repo, cfg, ["V02", "V03"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "V02" in out and "V03" in out, out
-    return "V02/V03 拦住空测试与恒真失败命令"
+    assert "V03 fail" in out and "失败测试文件为空" in out, out
+    return "V03 拦住空复现测试"
 
 
 def case_silent_failure(tmp: Path) -> str:
@@ -120,22 +107,8 @@ def case_silent_failure(tmp: Path) -> str:
         "import sys\nsys.exit(1)\n", encoding="utf-8"
     )
     sha = commit_all(repo)
-    (repo / "tests" / "repro_silent.meta.yaml").write_text(
-        "\n".join([
-            "file: tests/repro_silent.py",
-            "test_id: repro_silent",
-            "single_run_command: python3 -I tests/repro_silent.py",
-            f"base_commit: {sha}",
-            "expected_failure: should fail",
-        ]) + "\n",
-        encoding="utf-8",
-    )
-    (repo / "repro.md").write_text(
-        "---\nrepo:\n  url: local\n  commit: %s\n"
-        "command: python3 -I tests/repro_silent.py\nexpected: fail\nactual: pass\nexit_code: 1\n---\n"
-        % sha,
-        encoding="utf-8",
-    )
+    repro_cmd = "python3 -I tests/repro_silent.py"
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_silent.py")
     cfg = tmp / "silent-config.yaml"
     write_config(repo, cfg)
     res = run_validator(repo, cfg, ["V02"])
@@ -146,7 +119,7 @@ def case_silent_failure(tmp: Path) -> str:
 
 
 def case_composite_command(tmp: Path) -> str:
-    """复合命令＋恒真断言：V02/V03 必须拦住。"""
+    """复合命令＋断言测试：V02/V03 必须拦住。"""
     repo = tmp / "composite"
     init_repo(repo)
     (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
@@ -172,6 +145,7 @@ def case_composite_command(tmp: Path) -> str:
     (repo / "repro.md").write_text(
         "---\nrepo:\n  url: local\n  commit: %s\n"
         "command: python3 -I tests/repro_fake.py; true\nexpected: fail\n"
+        "observations:\n  sum: 3\n"
         "actual: pass\nexit_code: 1\n---\n" % sha,
         encoding="utf-8",
     )
@@ -180,8 +154,8 @@ def case_composite_command(tmp: Path) -> str:
     res = run_validator(repo, cfg, ["V02", "V03"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "只允许" in out and "非恒真断言" in out, out
-    return "V02/V03 拦住复合命令与 assertTrue(True)"
+    assert "只允许" in out and "不得导入 unittest" in out, out
+    return "V02/V03 拦住复合命令与 unittest 断言测试"
 
 
 def case_phase2_or_true(tmp: Path) -> str:
@@ -192,8 +166,9 @@ def case_phase2_or_true(tmp: Path) -> str:
     (repo / "tests").mkdir()
     (repo / "tests" / "repro_bug.py").write_text(
         "import sys\nsys.path.insert(0, '.')\n"
-        "from calc import add\n"
-        "assert add(1, 2) == 3, 'add broken'\n",
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2)}\n",
         encoding="utf-8",
     )
     (repo / "tests" / "run_all.py").write_text(
@@ -211,13 +186,8 @@ def case_phase2_or_true(tmp: Path) -> str:
     )
     (repo / "fix.patch").write_text(patch_text, encoding="utf-8")
     patch_sha = hashlib.sha256(patch_text.encode("utf-8")).hexdigest()
-    (repo / "repro.md").write_text(
-        "---\nrepo:\n  url: local\n  commit: %s\n"
-        "command: python3 -I tests/repro_bug.py\nunder_test: calc.add\n"
-        "expected: fail\nactual: pass\nexit_code: 1\n---\n"
-        % sha,
-        encoding="utf-8",
-    )
+    repro_cmd = "python3 -I tests/repro_bug.py"
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py")
     test_cmd = "python3 -I tests/run_all.py"
     (repo / "verify.log").write_text(
         f"run_id: fake\ncommit: {sha}\npatch_sha256: {patch_sha}\n"
@@ -248,16 +218,16 @@ def case_phase2_or_true(tmp: Path) -> str:
 
 
 def case_test_constant_patch(tmp: Path) -> str:
-    """改测试常量凑绿而 bug 未修：V06 必须拦住。"""
+    """改测试里的观测值凑绿而 bug 未修：V06 必须拦住。"""
     repo = tmp / "patch-test"
     init_repo(repo)
     (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
     (repo / "tests").mkdir()
     (repo / "tests" / "repro_bug.py").write_text(
         "import sys\nsys.path.insert(0, '.')\n"
-        "from calc import add\n"
-        "assert add(1, 2) == 3, 'add broken'\n"
-        'print("ok")\n',
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2)}\n",
         encoding="utf-8",
     )
     commit_all(repo)
@@ -265,13 +235,14 @@ def case_test_constant_patch(tmp: Path) -> str:
         "diff --git a/tests/repro_bug.py b/tests/repro_bug.py\n"
         "--- a/tests/repro_bug.py\n"
         "+++ b/tests/repro_bug.py\n"
-        "@@ -1,5 +1,5 @@\n"
+        "@@ -1,6 +1,6 @@\n"
         " import sys\n"
         " sys.path.insert(0, '.')\n"
         " from calc import add\n"
-        "-assert add(1, 2) == 3, 'add broken'\n"
-        "+assert add(1, 2) == -1, 'add broken'\n"
-        ' print("ok")\n',
+        " \n"
+        " def observe():\n"
+        "-    return {'sum': add(1, 2)}\n"
+        "+    return {'sum': add(1, 2), 'other': -1}\n",
         encoding="utf-8",
     )
     (repo / "localization.md").write_text(
@@ -476,20 +447,28 @@ def write_repro_and_meta(
     repro_cmd: str,
     meta_file: str,
     under_test: str | list[str] = "calc.add",
+    observations: dict | None = None,
 ) -> None:
-    """写 repro.md 与 meta；fingerprint 用真实受控执行计算，避免恒等伪造。"""
+    """写 repro.md 与 meta；fingerprint 用带期望值的真实受控执行计算。"""
+    if observations is None:
+        observations = {"sum": 3}
     v = load_module("validate_for_fixture", VALIDATE)
     try:
-        _code, out = v.run_command(repro_cmd, repo.resolve(), 30)
+        _code, out = v.run_command(
+            repro_cmd, repo.resolve(), 30, expected=observations
+        )
         fp = v.fingerprint(out, repo.resolve())
     except v.IntegrityViolation:
-        # 被测代码在导入期改写了断言设施：后续校验会据此判 cannot，
-        # 这里只需一个非空且自洽的指纹占位。
+        # 采集入口被替换且未复原：后续校验会据此判 cannot，这里只需占位。
         fp = "integrity-violation"
     if isinstance(under_test, str):
         under_line = f"under_test: {under_test}\n"
     else:
         under_line = "under_test:\n" + "".join(f"  - {u}\n" for u in under_test)
+    obs_lines = "".join(
+        f"  {key}: {json.dumps(value, ensure_ascii=False)}\n"
+        for key, value in observations.items()
+    )
     (repo / "repro.md").write_text(
         "---\nrepo:\n  url: local\n  commit: %s\n"
         f"command: {repro_cmd}\n"
@@ -498,7 +477,10 @@ def write_repro_and_meta(
         "  runtime: python3\n"
         "  dependencies: {}\n"
         f"{under_line}"
-        "expected: add(1, 2) 返回 3\nactual: AssertionError\n"
+        "observations:\n"
+        f"{obs_lines}"
+        "expected: 观测值与期望值一致\n"
+        "actual: observation mismatch\n"
         "exit_code: 1\n"
         f"fingerprint:\n  run1: {fp}\n  run2: {fp}\n"
         "first_observed: 2026-11-16T00:00:00\n---\n" % sha,
@@ -507,10 +489,10 @@ def write_repro_and_meta(
     (repo / "tests" / "repro_case.meta.yaml").write_text(
         "\n".join([
             f"file: {meta_file}",
-            "test_id: T.test_x",
+            "test_id: observe",
             f"single_run_command: {repro_cmd}",
             f"base_commit: {sha}",
-            "expected_failure: AssertionError",
+            "expected_failure: ObservationMismatch",
         ]) + "\n",
         encoding="utf-8",
     )
@@ -548,13 +530,12 @@ def case_c1_runner_fake(tmp: Path) -> str:
     (repo / "tests").mkdir()
     (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
     (repo / "tests" / "repro_marker.py").write_text(
-        "import unittest\n\n"
-        "class T(unittest.TestCase):\n"
-        "    def test_x(self):\n"
-        "        with open('marker.py', encoding='utf-8') as fh:\n"
-        "            body = fh.read()\n"
-        "        self.assertEqual('FLAG = 1' in body, True)\n\n"
-        "if __name__ == '__main__':\n    unittest.main()\n",
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    with open('marker.py', encoding='utf-8') as fh:\n"
+        "        body = fh.read()\n"
+        "    return {'flag': add(1, 2) if 'FLAG = 1' in body else 0}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -568,7 +549,9 @@ def case_c1_runner_fake(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_marker.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_marker.py")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_marker.py", observations={"flag": 3}
+    )
     (repo / "localization.md").write_text(
         "---\nevidence_kind: direct\nfiles:\n  - marker.py\n"
         "estimated_touched_files: 1\nestimated_diff_lines: 2\n---\n"
@@ -598,10 +581,10 @@ def case_c2_pythonpath_shadow(tmp: Path) -> str:
         "def add(a, b):\n    return a + b\n", encoding="utf-8"
     )
     (repo / "tests" / "repro_bug.py").write_text(
-        "import unittest\nfrom calc import add\n\n"
-        "class T(unittest.TestCase):\n"
-        "    def test_x(self):\n        self.assertEqual(add(1, 2), 3)\n\n"
-        "if __name__ == '__main__':\n    unittest.main()\n",
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2)}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -609,16 +592,18 @@ def case_c2_pythonpath_shadow(tmp: Path) -> str:
     (repo / "repro.md").write_text(
         "---\nrepo:\n  url: local\n  commit: %s\n"
         f"command: {cmd}\n"
+        "under_test: calc.add\n"
+        "observations:\n  sum: 3\n"
         "expected: fail\nactual: pass\nexit_code: 1\n---\n" % sha,
         encoding="utf-8",
     )
     (repo / "tests" / "repro_case.meta.yaml").write_text(
         "\n".join([
             "file: tests/repro_bug.py",
-            "test_id: T.test_x",
+            "test_id: observe",
             f"single_run_command: {cmd}",
             f"base_commit: {sha}",
-            "expected_failure: AssertionError",
+            "expected_failure: ObservationMismatch",
         ]) + "\n",
         encoding="utf-8",
     )
@@ -639,13 +624,12 @@ def case_c4_dead_code(tmp: Path) -> str:
     (repo / "tests").mkdir()
     (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
     (repo / "tests" / "repro_dead.py").write_text(
-        "import unittest\n\n"
-        "class T(unittest.TestCase):\n"
-        "    def test_x(self):\n"
-        "        with open('calc.py', encoding='utf-8') as fh:\n"
-        "            body = fh.read()\n"
-        "        self.assertEqual('def unused_fix' in body, True)\n\n"
-        "if __name__ == '__main__':\n    unittest.main()\n",
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    with open('calc.py', encoding='utf-8') as fh:\n"
+        "        body = fh.read()\n"
+        "    return {'sum': add(1, 2) if 'unused_fix' in body else 0}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -663,7 +647,9 @@ def case_c4_dead_code(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_dead.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_dead.py")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_dead.py", observations={"sum": 3}
+    )
     (repo / "localization.md").write_text(
         "---\nevidence_kind: direct\nfiles:\n  - calc.py\n"
         "estimated_touched_files: 1\nestimated_diff_lines: 4\n---\n"
@@ -691,15 +677,14 @@ def case_c6_sitecustomize(tmp: Path) -> str:
     (repo / "tests").mkdir()
     (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
     (repo / "tests" / "repro_bug.py").write_text(
-        "import unittest\nfrom calc import add\n\n"
-        "class T(unittest.TestCase):\n"
-        "    def test_x(self):\n        self.assertEqual(add(1, 2), 3)\n\n"
-        "if __name__ == '__main__':\n    unittest.main()\n",
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2)}\n",
         encoding="utf-8",
     )
     (repo / "tests" / "sitecustomize.py").write_text(
-        "import unittest\n"
-        "unittest.TestCase.assertEqual = lambda self, *a, **k: None\n",
+        "import sys\nsys.exit(0)\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -714,7 +699,9 @@ def case_c6_sitecustomize(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_bug.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_bug.py", observations={"sum": 3}
+    )
     (repo / "localization.md").write_text(
         "---\nevidence_kind: direct\nfiles:\n  - calc.py\n"
         "estimated_touched_files: 1\nestimated_diff_lines: 1\n---\n"
@@ -742,13 +729,12 @@ def case_c7_fixture_outside_tests(tmp: Path) -> str:
     (repo / "fixtures").mkdir()
     (repo / "fixtures" / "expected.txt").write_text("5\n", encoding="utf-8")
     (repo / "tests" / "repro_fixture.py").write_text(
-        "import unittest\n\n"
-        "class T(unittest.TestCase):\n"
-        "    def test_x(self):\n"
-        "        with open('fixtures/expected.txt', encoding='utf-8') as fh:\n"
-        "            expected = fh.read().strip()\n"
-        "        self.assertEqual(expected, '3')\n\n"
-        "if __name__ == '__main__':\n    unittest.main()\n",
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    with open('fixtures/expected.txt', encoding='utf-8') as fh:\n"
+        "        expected = int(fh.read().strip())\n"
+        "    return {'sum': expected}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -762,7 +748,9 @@ def case_c7_fixture_outside_tests(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_fixture.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_fixture.py")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_fixture.py", observations={"sum": 3}
+    )
     (repo / "localization.md").write_text(
         "---\nevidence_kind: direct\nfiles:\n  - fixtures/expected.txt\n"
         "estimated_touched_files: 1\nestimated_diff_lines: 2\n---\n"
@@ -823,8 +811,9 @@ def case_mutation_insensitive_added(tmp: Path) -> str:
     (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
     (repo / "tests" / "repro_bug.py").write_text(
         "import sys\nsys.path.insert(0, '.')\n"
-        "from calc import add\n"
-        "assert add(1, 2) == 3, 'add broken'\n",
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2)}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -840,7 +829,9 @@ def case_mutation_insensitive_added(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_bug.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_bug.py", observations={"sum": 3}
+    )
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
     cfg = tmp / "mutation-config.yaml"
     write_config(repo, cfg)
@@ -852,7 +843,7 @@ def case_mutation_insensitive_added(tmp: Path) -> str:
 
 
 def case_mutation_crash_not_kill(tmp: Path) -> str:
-    """B3：测试在断言前崩溃。变异只让测试崩溃（IndexError），V08 不得算作杀死变异。"""
+    """变异只让测试崩溃（IndexError）：V08 不得算作观测值不一致。"""
     repo = tmp / "mutation-crash"
     init_repo(repo)
     (repo / "calc.py").write_text("def pick(data):\n    return data[1]\n", encoding="utf-8")
@@ -860,8 +851,9 @@ def case_mutation_crash_not_kill(tmp: Path) -> str:
     (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
     (repo / "tests" / "repro_bug.py").write_text(
         "import sys\nsys.path.insert(0, '.')\n"
-        "from calc import pick\n"
-        "assert pick([1]) == 1, 'pick wrong'\n",
+        "from calc import pick\n\n"
+        "def observe():\n"
+        "    return {'first': pick([1])}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
@@ -876,7 +868,10 @@ def case_mutation_crash_not_kill(tmp: Path) -> str:
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_bug.py"
-    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py", "calc.pick")
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_bug.py", "calc.pick",
+        observations={"first": 1},
+    )
     write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
     cfg = tmp / "mutation-crash-config.yaml"
     write_config(repo, cfg)
@@ -884,8 +879,8 @@ def case_mutation_crash_not_kill(tmp: Path) -> str:
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
     assert "变异检验未通过" in out, out
-    assert "不算断言失败" in out or "未以断言失败告终" in out, out
-    return "V08 不把测试崩溃当作杀死变异"
+    assert "未走到观测值比对" in out or "未使观测值与期望值不一致" in out, out
+    return "V08 不把测试崩溃当作观测值不一致"
 
 
 def case_mutation_immutable_only(tmp: Path) -> str:
@@ -930,7 +925,8 @@ def case_mutation_immutable_only(tmp: Path) -> str:
     v = load_module("validate_for_immutable", VALIDATE)
     for name, patch_text in variants.items():
         failures = v.run_mutation_checks(
-            repo.resolve(), "python3 -I tests/run_all.py", 30, patch_text
+            repo.resolve(), "python3 -I tests/run_all.py", 30, patch_text,
+            expected={"sum": 3},
         )
         assert failures, f"{name} 不应通过变异检验"
         assert any("造不出可编译变异" in f for f in failures), (name, failures)
@@ -984,8 +980,8 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
             3,
             "模块级可执行语句",
         ),
-        # N2/N3：改动在函数体内，V06 不再按语法位置判 cannot；它们最终要改
-        # 断言设施才能生效，由运行时完整性校验兜住（见下面 V08 用例）。
+        # N2/N3：改动在函数体内，V06 不再按语法位置判 cannot；改断言 API
+        # 在新契约下不影响判定，见 case_unittest_tamper_ineffective。
         "N2 元类 __init__ 内猴补丁": (
             "@@ -6,2 +6,3 @@\n"
             "     def __init__(cls, name, bases, ns):\n"
@@ -1026,11 +1022,17 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
         if expect:
             assert expect in out and "超出本技能适用面" in out, f"{name}\n{out}"
 
-    # 运行时完整性：补丁把猴补丁写进元类 __init__，V06 放行；V08 在 patched
-    # 态重跑复现测试时比对断言设施，判 cannot_evaluate。
-    fake = tmp / "hook-runtime"
-    init_repo(fake)
-    (fake / "calc.py").write_text(
+    # 第八轮结论：N2/N3 这类「函数体内的导入期猴补丁」在 V06 放行是已知边界。
+    # 新契约不再经过断言设施，因此改断言 API 不再影响判定；生产侧这类篡改
+    # 能否骗过观测值，由 case_unittest_tamper_ineffective 演示。
+    return "V06 拦模块级执行；函数体内导入期改动不再按语法位置判 cannot"
+
+
+def case_unittest_tamper_ineffective(tmp: Path) -> str:
+    """补丁在导入期替换 unittest.TestCase：断言面已移出判定链，骗不过 V08。"""
+    repo = tmp / "unittest-tamper"
+    init_repo(repo)
+    (repo / "calc.py").write_text(
         "import unittest\n"
         "\n"
         "class Meta(type):\n"
@@ -1044,25 +1046,21 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
         "    return a - b\n",
         encoding="utf-8",
     )
-    (fake / "tests").mkdir()
-    (fake / "tests" / "run_all.py").write_text(
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text(
         "import sys\nsys.exit(0)\n", encoding="utf-8"
     )
-    (fake / "tests" / "repro_bug.py").write_text(
-        "import sys, unittest\n"
+    (repo / "tests" / "repro_bug.py").write_text(
+        "import sys\n"
         "sys.path.insert(0, '.')\n"
         "from calc import add\n"
         "\n"
-        "class T(unittest.TestCase):\n"
-        "    def test_add(self):\n"
-        "        self.assertEqual(add(1, 2), 3)\n"
-        "\n"
-        "if __name__ == '__main__':\n"
-        "    unittest.main()\n",
+        "def observe():\n"
+        "    return {'sum': add(1, 2)}\n",
         encoding="utf-8",
     )
-    sha = commit_all(fake)
-    (fake / "fix.patch").write_text(
+    sha = commit_all(repo)
+    (repo / "fix.patch").write_text(
         "diff --git a/calc.py b/calc.py\n"
         "--- a/calc.py\n"
         "+++ b/calc.py\n"
@@ -1070,118 +1068,177 @@ def case_import_time_fake_fixes(tmp: Path) -> str:
         " class Meta(type):\n"
         "     def __init__(cls, name, bases, ns):\n"
         "         super().__init__(name, bases, ns)\n"
-        "+        unittest.TestCase.assertEqual = lambda *a, **k: None\n"
+        "+        unittest.TestCase = type('T', (), {'assertEqual': lambda *a, **k: None})\n"
         " \n"
         " class Base(metaclass=Meta):\n"
         "     pass\n",
         encoding="utf-8",
     )
     repro_cmd = "python3 -I tests/repro_bug.py"
-    write_repro_and_meta(fake, sha, repro_cmd, "tests/repro_bug.py")
-    write_verify(fake, sha, repro_cmd, "python3 -I tests/run_all.py")
-    cfg2 = tmp / "hook-runtime-config.yaml"
-    write_config(fake, cfg2)
-    res = run_validator(fake, cfg2, ["V08"])
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_bug.py")
+    write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg = tmp / "unittest-tamper-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V08"])
     out = res.stdout + res.stderr
-    assert res.returncode == 3, f"N2 运行时未判 cannot：退出 {res.returncode}\n{out}"
-    assert "断言设施在导入期被改写" in out, out
-    return "V06 拦模块级执行；函数体内导入期猴补丁由运行时完整性判 cannot"
+    assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
+    assert "第②段单独重跑复现命令" in out, out
+    return "替换 TestCase 的补丁不能把未修复的复现变绿"
 
 
 def case_test_whitelist_violation(tmp: Path) -> str:
-    """复现测试读文件／碰环境／起子进程／exec：V03 白名单必须拦住。"""
+    """复现测试越界：V03 白名单必须拦住（含新契约的 observe 形状）。"""
     repo = tmp / "test-whitelist"
     init_repo(repo)
     (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
     (repo / "tests").mkdir()
     (repo / "tests" / "run_all.py").write_text("import sys\nsys.exit(0)\n", encoding="utf-8")
+    head = "import sys\nsys.path.insert(0, '.')\nfrom calc import add\n\n"
     bodies = {
-        "open 读源码": (
-            "import sys\nsys.path.insert(0, '.')\n"
-            "src = open('calc.py').read()\n"
-            "assert 'return a - b' in src\n"
+        "open 读源码": head + (
+            "def observe():\n"
+            "    with open('calc.py', encoding='utf-8') as fh:\n"
+            "        fh.read()\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
         "os 环境变量": (
-            "import os\n"
-            "assert os.environ.get('HOME'), 'home'\n"
+            "import os\nimport sys\nsys.path.insert(0, '.')\n"
+            "from calc import add\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
         "subprocess": (
-            "import subprocess\n"
-            "result = subprocess.run(['true'])\n"
-            "assert result.returncode == 0, 'failed'\n"
+            "import subprocess\nimport sys\nsys.path.insert(0, '.')\n"
+            "from calc import add\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
-        "exec": (
-            "exec('x = 1')\n"
-            "assert x == 1\n"
+        "exec": head + (
+            "def observe():\n"
+            "    exec('x = 1')\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
-        "sys.modules 绕过": (
-            "import sys\nsys.path.insert(0, '.')\n"
-            "mod = sys.modules['os']\n"
-            "assert mod is not None\n"
+        "sys.modules 绕过": head + (
+            "def observe():\n"
+            "    mod = sys.modules\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
         "import io": (
-            "import io\n"
-            "assert io.StringIO().getvalue() == ''\n"
+            "import io\nimport sys\nsys.path.insert(0, '.')\n"
+            "from calc import add\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
         "sys.path 绝对路径": (
             "import sys\nsys.path.insert(0, '/tmp')\n"
-            "assert True\n"
+            "from calc import add\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
         "A1 读顶层常量": (
             "import sys\nsys.path.insert(0, '.')\n"
-            "import calc\n"
-            "assert calc.EXPECTED == 3\n"
+            "import calc\n\n"
+            "def observe():\n"
+            "    return {'sum': calc.EXPECTED}\n"
         ),
         "A1 hasattr 探测": (
             "import sys\nsys.path.insert(0, '.')\n"
-            "import calc\n"
-            "assert hasattr(calc, 'EXPECTED')\n"
+            "import calc\nfrom calc import add\n\n"
+            "def observe():\n"
+            "    hasattr(calc, 'EXPECTED')\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
         "A1 from 非入口导入": (
             "import sys\nsys.path.insert(0, '.')\n"
-            "from calc import EXPECTED\n"
-            "assert EXPECTED == 3\n"
+            "from calc import EXPECTED, add\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
-        "入口函数私有属性": (
-            "import sys\nsys.path.insert(0, '.')\n"
-            "from calc import add\n"
-            "assert add._se_fixed is None\n"
+        "入口函数私有属性": head + (
+            "def observe():\n"
+            "    add._se_fixed\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
-        "type.__subclasses__": (
-            "import sys\nsys.path.insert(0, '.')\n"
-            "assert type.__subclasses__()\n"
+        "type.__subclasses__": head + (
+            "def observe():\n"
+            "    type.__subclasses__()\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
-        "给导入对象属性赋值": (
-            "import sys\nsys.path.insert(0, '.')\n"
-            "import unittest\n"
-            "unittest.TestCase.assertEqual = lambda *a, **k: None\n"
+        "import unittest": head + (
+            "import unittest\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
-        "from import 后猴补丁": (
+        "from unittest import TestCase": (
             "from unittest import TestCase\n"
-            "TestCase.assertEqual = lambda *a, **k: None\n"
-        ),
-        "unittest.mock": (
             "import sys\nsys.path.insert(0, '.')\n"
-            "from unittest import mock\n"
-            "from calc import add\n"
-            "with mock.patch.object(add, '__doc__', None):\n"
-            "    assert add(1, 2) == 3\n"
+            "from calc import add\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
+        ),
+        "unittest.mock": head + (
+            "from unittest import mock\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
+        ),
+        "8.1 自恢复假断言": head + (
+            "import unittest\n\n"
+            "class T(unittest.TestCase):\n"
+            "    def test_x(self):\n"
+            "        old = T.assertEqual\n"
+            "        T.assertEqual = lambda *a, **k: None\n"
+            "        self.assertEqual(add(1, 2), 3)\n"
+            "        T.assertEqual = old\n"
+        ),
+        "8.2 改 __code__": head + (
+            "import unittest\n\n"
+            "def observe():\n"
+            "    unittest.TestCase.assertEqual.__code__ = (\n"
+            "        lambda self, a, b, msg=None: None\n"
+            "    ).__code__\n"
+            "    return {'sum': add(1, 2)}\n"
+        ),
+        "8.3 换 TestCase 绑定": head + (
+            "import unittest\n\n"
+            "unittest.TestCase = type('T', (), {\n"
+            "    'assertEqual': staticmethod(lambda *a, **k: None)\n"
+            "})\n\n"
+            "def observe():\n"
+            "    return {'sum': add(1, 2)}\n"
         ),
         "本地夹具 import": (
             "import sys\nsys.path.insert(0, '.')\n"
-            "from tests.helpers import answer\n"
-            "from calc import add\n"
-            "assert add(1, 2) == answer()\n"
+            "from tests.helpers import answer\n\n"
+            "def observe():\n"
+            "    return {'sum': answer()}\n"
         ),
-        "int 构造期望值": (
-            "import sys\nsys.path.insert(0, '.')\n"
-            "from calc import add\n"
-            "assert add(1, 2) == int('3')\n"
+        "硬编码常量返回": head + (
+            "def observe():\n"
+            "    return {'sum': 3}\n"
         ),
-        "期望值取自入口调用": (
+        "先算别的再返回常量": head + (
+            "def observe():\n"
+            "    value = add(1, 2)\n"
+            "    return {'sum': 3}\n"
+        ),
+        "返回值加壳": head + (
+            "def observe():\n"
+            "    return {'sum': add(1, 2) + 0}\n"
+        ),
+        "缺 observe": (
             "import sys\nsys.path.insert(0, '.')\n"
-            "from calc import add\n"
-            "assert add(1, 2) == add(1, 2)\n"
+        ),
+        "observe 带参数": head + (
+            "def observe(extra):\n"
+            "    return {'sum': add(1, 2)}\n"
+        ),
+        "返回非 dict": head + (
+            "def observe():\n"
+            "    return add(1, 2)\n"
+        ),
+        "多余 observation_id": head + (
+            "def observe():\n"
+            "    return {'sum': add(1, 2), 'extra': add(0, 0)}\n"
         ),
     }
     cfg = tmp / "test-whitelist-config.yaml"
@@ -1199,31 +1256,39 @@ def case_test_whitelist_violation(tmp: Path) -> str:
 
 
 def case_under_test_not_callable(tmp: Path) -> str:
-    """under_test 只允许可调用入口：声明成常量时 V01 必须拒。"""
+    """under_test 只接受点号函数／方法：常量和类入口 V01 都必须拒。"""
     repo = tmp / "under-test"
     init_repo(repo)
     (repo / "calc.py").write_text(
-        "EXPECTED = 3\n\ndef add(a, b):\n    return a - b\n", encoding="utf-8"
+        "EXPECTED = 3\n\n"
+        "class Calc:\n"
+        "    def add(self, a, b):\n"
+        "        return a - b\n"
+        "\n"
+        "def add(a, b):\n    return a - b\n",
+        encoding="utf-8",
     )
     (repo / "tests").mkdir()
     (repo / "tests" / "repro_bug.py").write_text(
         "import sys\nsys.path.insert(0, '.')\n"
-        "from calc import add\n"
-        "assert add(1, 2) == 3\n",
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(1, 2)}\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
     repro_cmd = "python3 -I tests/repro_bug.py"
-    write_repro_and_meta(
-        repo, sha, repro_cmd, "tests/repro_bug.py", "calc.EXPECTED"
-    )
     cfg = tmp / "under-test-config.yaml"
     write_config(repo, cfg)
-    res = run_validator(repo, cfg, ["V01"])
-    out = res.stdout + res.stderr
-    assert res.returncode == 1, f"常量入口未被 V01 拒：退出 {res.returncode}\n{out}"
-    assert "不是模块级可调用入口" in out, out
-    return "V01 拒绝把常量声明为 under_test 入口"
+    for entry in ("calc.EXPECTED", "calc.Calc"):
+        write_repro_and_meta(
+            repo, sha, repro_cmd, "tests/repro_bug.py", entry
+        )
+        res = run_validator(repo, cfg, ["V01"])
+        out = res.stdout + res.stderr
+        assert res.returncode == 1, f"{entry} 未被 V01 拒：退出 {res.returncode}\n{out}"
+        assert "不是函数或方法入口" in out, f"{entry}\n{out}"
+    return "V01 拒绝把常量或类声明为 under_test 入口"
 
 
 def case_package_skipped_count(tmp: Path) -> str:
@@ -1272,77 +1337,50 @@ def case_package_special_bits_and_symlinks(tmp: Path) -> str:
 
 
 def case_comment_assertion(tmp: Path) -> str:
-    """断言只存在于注释里：V03 不得把它当断言。"""
+    """observe 只出现在注释里：V03 不得把它当入口。"""
     repo = tmp / "comment-assert"
     init_repo(repo)
     (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
     (repo / "tests").mkdir()
     (repo / "tests" / "repro_comment.py").write_text(
-        "# assert add(1, 2) == 3\n"
+        "# def observe():\n"
+        "#     return {'sum': add(1, 2)}\n"
         "import sys\nsys.exit(1)\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
-    (repo / "repro.md").write_text(
-        "---\nrepo:\n  url: local\n  commit: %s\n"
-        "command: python3 -I tests/repro_comment.py\nexpected: fail\n"
-        "actual: pass\nexit_code: 1\n---\n" % sha,
-        encoding="utf-8",
-    )
-    (repo / "tests" / "repro_comment.meta.yaml").write_text(
-        "\n".join([
-            "file: tests/repro_comment.py",
-            "test_id: repro_comment",
-            "single_run_command: python3 -I tests/repro_comment.py",
-            f"base_commit: {sha}",
-            "expected_failure: should fail",
-        ]) + "\n",
-        encoding="utf-8",
-    )
+    repro_cmd = "python3 -I tests/repro_comment.py"
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_comment.py")
     cfg = tmp / "comment-config.yaml"
     write_config(repo, cfg)
     res = run_validator(repo, cfg, ["V03"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "非恒真断言" in out, out
-    return "V03 不把注释里的 assert 当断言"
+    assert "必须定义模块级无参函数 observe()" in out, out
+    return "V03 不把注释里的 observe 当入口"
 
 
 def case_string_assertion(tmp: Path) -> str:
-    """断言只存在于字符串里：V03 不得把它当断言。"""
+    """observe 只出现在字符串里：V03 不得把它当入口。"""
     repo = tmp / "string-assert"
     init_repo(repo)
     (repo / "calc.py").write_text("def add(a, b):\n    return a - b\n", encoding="utf-8")
     (repo / "tests").mkdir()
     (repo / "tests" / "repro_string.py").write_text(
-        "print('assert add(1, 2) == 3')\n"
+        "print(\"def observe(): return {'sum': add(1, 2)}\")\n"
         "import sys\nsys.exit(1)\n",
         encoding="utf-8",
     )
     sha = commit_all(repo)
-    (repo / "repro.md").write_text(
-        "---\nrepo:\n  url: local\n  commit: %s\n"
-        "command: python3 -I tests/repro_string.py\nexpected: fail\n"
-        "actual: pass\nexit_code: 1\n---\n" % sha,
-        encoding="utf-8",
-    )
-    (repo / "tests" / "repro_string.meta.yaml").write_text(
-        "\n".join([
-            "file: tests/repro_string.py",
-            "test_id: repro_string",
-            "single_run_command: python3 -I tests/repro_string.py",
-            f"base_commit: {sha}",
-            "expected_failure: should fail",
-        ]) + "\n",
-        encoding="utf-8",
-    )
+    repro_cmd = "python3 -I tests/repro_string.py"
+    write_repro_and_meta(repo, sha, repro_cmd, "tests/repro_string.py")
     cfg = tmp / "string-config.yaml"
     write_config(repo, cfg)
     res = run_validator(repo, cfg, ["V03"])
     out = res.stdout + res.stderr
     assert res.returncode == 1, f"应被拦却退出 {res.returncode}\n{out}"
-    assert "非恒真断言" in out, out
-    return "V03 不把字符串里的 assert 当断言"
+    assert "白名单" in out, out
+    return "V03 不把字符串里的 observe 当入口"
 
 
 def _read_version(src: Path) -> str:
@@ -1473,6 +1511,7 @@ CASES = [
     case_mutation_crash_not_kill,
     case_mutation_immutable_only,
     case_import_time_fake_fixes,
+    case_unittest_tamper_ineffective,
     case_test_whitelist_violation,
     case_under_test_not_callable,
     case_package_skipped_count,

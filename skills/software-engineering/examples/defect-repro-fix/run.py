@@ -83,19 +83,21 @@ def main() -> int:
     shutil.copy(HERE / "artifacts" / "fix.patch", WORK / "fix.patch")
     shutil.copy(HERE / "artifacts" / "localization.md", WORK / "localization.md")
 
-    # S1：连跑两次取失败摘要
+    # S1：连跑两次取失败摘要（期望值由 repro.md 声明，引导自行比对）
+    observations = {"sum": 5}
     fingerprints, codes = [], []
     for _ in range(cfg["repro_runs"]):
-        code, out = _v.run_command(repro_cmd, WORK, timeout)
+        code, out = _v.run_command(repro_cmd, WORK, timeout, expected=observations)
         codes.append(code)
         fingerprints.append(_v.fingerprint(out, WORK))
     repro = {
         "repo": {"url": WORK.as_uri(), "commit": head},
-        "env": {"os": "linux", "runtime": "python3", "dependencies": {"unittest": "stdlib"}},
+        "env": {"os": "linux", "runtime": "python3", "dependencies": {}},
         "command": repro_cmd,
         "under_test": "calc.add",
+        "observations": observations,
         "expected": "add(2, 3) 返回 5",
-        "actual": "AssertionError: -1 != 5",
+        "actual": "observation mismatch: sum expected=5 observed=-1",
         "exit_code": codes[0],
         "fingerprint": {"run1": fingerprints[0], "run2": fingerprints[1]},
         "first_observed": datetime.datetime.now().astimezone().isoformat(timespec="seconds"),
@@ -107,10 +109,10 @@ def main() -> int:
     )
     meta = {
         "file": "tests/repro_add.py",
-        "test_id": "tests.repro_add.ReproAdd.test_add",
+        "test_id": "tests.repro_add.observe",
         "single_run_command": repro_cmd,
         "base_commit": head,
-        "expected_failure": "AssertionError: -1 != 5",
+        "expected_failure": "observation mismatch: sum expected=5 observed=-1",
     }
     (WORK / "tests" / "repro_add.meta.yaml").write_text(
         yaml.safe_dump(meta, sort_keys=False, allow_unicode=True), encoding="utf-8"
@@ -129,14 +131,14 @@ def main() -> int:
 
     print("\n== S3 三段验证")
 
-    def timed(cmd: str, label: str | None = None) -> dict:
+    def timed(cmd: str, label: str | None = None, expected: dict | None = None) -> dict:
         started = datetime.datetime.now().astimezone()
         if label is None:
-            code, _out = _v.run_command(cmd, WORK, timeout)
+            code, _out = _v.run_command(cmd, WORK, timeout, expected=expected)
         else:
             # 第②段在日志里记复合命令，但执行时两条命令分开跑：
             # 复合命令不能作为复现命令单独执行，也不允许拼接。
-            first, _o1 = _v.run_command(repro_cmd, WORK, timeout)
+            first, _o1 = _v.run_command(repro_cmd, WORK, timeout, expected=expected)
             second, _o2 = _v.run_command(test_cmd, WORK, timeout)
             code = 0 if first == 0 and second == 0 else 1
         ended = datetime.datetime.now().astimezone()
@@ -148,18 +150,18 @@ def main() -> int:
         }
 
     clear_caches()
-    p1 = timed(repro_cmd)
+    p1 = timed(repro_cmd, expected=observations)
     print(f"  第①段 base 复现失败：exit={p1['exit_code']}")
     sh("git apply fix.patch")
     clear_caches()
     print("  补丁已应用")
     if run_validator("V07") != 0:
         failed.append("V07")
-    p2 = timed(repro_cmd, label=f"{repro_cmd} && {test_cmd}")
+    p2 = timed(repro_cmd, label=f"{repro_cmd} && {test_cmd}", expected=observations)
     print(f"  第②段 复现转绿且全量测试绿：exit={p2['exit_code']}")
     sh("git apply -R fix.patch")
     clear_caches()
-    p3 = timed(repro_cmd)
+    p3 = timed(repro_cmd, expected=observations)
     print(f"  第③段 撤补丁复败：exit={p3['exit_code']}")
 
     patch_sha = hashlib.sha256((WORK / "fix.patch").read_bytes()).hexdigest()
