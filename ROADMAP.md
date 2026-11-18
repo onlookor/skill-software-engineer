@@ -52,3 +52,7 @@
 - 里程碑增删与顺序变更追加 `CHANGELOG.md` 后生效；里程碑内部的进度更新不记 `CHANGELOG.md`。
 - 不得静默删除里程碑；取消的里程碑标 `dropped` 并写明理由。
 - 本文件不承载版本号；发布点以 annotated tag 为准。
+
+## 五、谓词化推进计划
+
+阶段 C 层次二（设计过程谓词化，10.2.3bis）从定义做起，按“定义期 → 最小档 → 标准档 → 完整档”推进；定义对象、落层、待批项、验收证据与技术债衔接见 [plans/predicate-ization-execution-plan.md](plans/predicate-ization-execution-plan.md)。本文件只登记指针，不重复计划内容；计划内标「待批」的《编译规范》或母本改动，批准前不生效。
