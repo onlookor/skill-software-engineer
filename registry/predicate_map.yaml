@@ -1,0 +1,35 @@
+# 卡片谓词覆盖与豁免台账（TD-SE-PRED-001 关闭判据 5）
+#
+# 权威方向：卡片 outputs.predicate_writes / predicate_expr 是表达式与写入面的
+# 权威源；本表只登记覆盖与豁免，不复制表达式正文，不改卡片。
+#
+# 漂移判定：卡片表达式或名字集合与台账的 expr_sha256 / name 不一致即漂移。
+# 漂移检测：计划由 registry/checks/ 下的 D2 覆盖检查执行并汇总进
+# project.py --check；检查器落地前 --check 不读本表，本表只作人工核对依据，
+# 不宣称机检已消费（见 DATA-SPEC.md D3.18）。
+#
+# 状态：schema 已登记，entries 为空。填充属 D2（33 名 / 14 卡）阶段，
+# 不在 2026-11-18 批次。
+
+schema_version: 1
+kind: predicate_coverage_map
+status: declared
+
+authority:
+  expression: card.outputs.predicate_expr   # 表达式权威源
+  ledger: coverage_and_exemption            # 本表角色
+
+exemption_cap:
+  count: 3
+  basis: human_approved_absolute            # 人类核定绝对值，不由比例推导
+
+entry_fields:
+  - name                                    # 谓词名，须在 predicate_vocabulary.yaml 在册
+  - card_ids                                # 写入该名字的卡片 ID 列表
+  - expr_refs                               # [{card_id, step_id, expr_sha256}]
+  - status                                  # mapped | exempt
+  - owner                                   # exempt 必填
+  - due                                     # exempt 必填
+  - approved_by                             # exempt 必填
+
+entries: []

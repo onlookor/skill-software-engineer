@@ -21,6 +21,7 @@
 |---|---|---|
 | `profiles.yaml` | 18 个 kind 的字段剖面（元注册条目）＋剖面级缺口台账 | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影 | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；每条带 clause 指针，须可反查母本 |
+| `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：schema＋空表 | **台账非权威**：表达式权威在卡片 `predicate_expr`；本表只登记覆盖／豁免；schema 见 D3.18；**当前为空表，检查器未消费** |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威；schema 逐字采用 0.17.2 |
 | `schedules.yaml` | 调度项注册表（C-1）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
 | `canary_gates.yaml` | 放量判据注册表（C-4）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
@@ -134,6 +135,8 @@
   - **不构成同一性约束**：`fact_id` 仅为检索锚，不构成同一性约束，不代表归一已完成；同一 `dimension` 下的不同 `fact_id` 仍是各自独立的事实句。
   - **复核口径**：定位以 `statement` 逐字为准，不存行号——行号随编辑漂移，不作复核依据。
   - **不新增义务／不改判定**：不进任何检测式、不加检查项、不改 `registered` 求值、不动 `ENUM_STATUS` 与《编译规范》2.3(a)；`--check` 不消费 `fact_index`。〔新立：2026-11-08，用户放行；承接 ADR-GS-FACT-01 立项〕
+
+- **D3.18 卡片谓词映射台账 `predicate_map.yaml`（2026-11-18）**：`TD-SE-PRED-001` 关闭判据 5 的登记载体。**权威方向**：卡片 `outputs.predicate_writes`／`predicate_expr` 仍是表达式与写入面的权威源；本表是**覆盖与豁免台账**，只登记 `name → {card_ids, expr_refs, status}`，不复制表达式正文、不改卡片。`expr_refs` 每项记 `{card_id, step_id, expr_sha256}`。**漂移判定**：卡片表达式或名字集合与台账的 `expr_sha256`／`name` 不一致即漂移。**漂移检测**：计划由 `registry/checks/` 下的 D2 覆盖检查执行并汇总进 `project.py --check`；检查器落地前**不宣称机检已消费**，`--check` 当前不读本表，只作人工核对依据。**豁免**：`status: exempt` 须逐名记 `owner`／`due`／`approved_by`，上限 3 名由人类核定（非比例推导）；豁免不免除判据 1——所在 S6 卡的 `predicate_expr` 仍须可解析、名字／arity／类型通过。**当前状态**：schema 已登记、`entries` 为空；填充属 D2（33 名／14 卡）阶段，不在 2026-11-18 批次。〔新立：`ADR-PRED-ENG-01`／`TD-SE-PRED-001` 判据 5〕
 
 ## D4 编号与批次先例（数据面）
 

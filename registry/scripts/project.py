@@ -3144,7 +3144,8 @@ def render_todo_status(f: dict) -> str:
     tags = '、'.join(f['tags']) if f['tags'] else ('（git 不可用）' if f['tags'] is None else '（无）')
     n_tag = len(f['tags']) if f['tags'] is not None else 0
     return (f'当前状态：条目 {f["entries"]}｜母本 {f["law_lines"]} 行 / {f["law_bytes"]} 字节｜'
-            f'ADR {f["adr"]} 份｜tag {n_tag} 个：{tags}｜阶段 {f["stage"]}｜--check 硬失败 {f["hard"]}')
+            f'ADR {f["adr"]} 份｜tag {n_tag} 个：{tags}｜阶段 {f["stage"]}｜'
+            f'--check 硬失败 {f["hard"]}（以含 dist/ 的工作区为条件；干净 clone 会因 M5 红）')
 
 
 def _todo_lines() -> list[str]:

@@ -12,6 +12,7 @@
 | `CHECK-SPEC.md` | 《注册表自检与台账规范》：检查矩阵、级别、量词、执行顺序、台账登记、批次先例、变更纪律 | 本文档自身 |
 | `profiles.yaml` | 18 个 kind 的字段剖面（元注册条目）＋剖面级缺口台账 | [DATA-SPEC](DATA-SPEC.md) D1.3、D2 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影（非权威） | [DATA-SPEC](DATA-SPEC.md) D1.3、D3 |
+| `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：schema＋空表 | [DATA-SPEC](DATA-SPEC.md) D3.18 |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | [DATA-SPEC](DATA-SPEC.md) D2；[CHECK-SPEC](CHECK-SPEC.md) C4 |
 | `schedules.yaml` | 调度项注册表（C-1）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
 | `canary_gates.yaml` | 放量判据注册表（C-4）：schema＋空表，本仓无实例 | [DATA-SPEC](DATA-SPEC.md) D1.3；附录 C.1 |
