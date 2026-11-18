@@ -356,7 +356,7 @@ if _raw_expect is not None:
         _EXPECT_ERROR = "观测值期望不可读：%s" % (exc,)
 
 
-failure = {"error": None, "observation": None}
+failure = {"error": None, "observation": None, "stage": None}
 
 
 def _canon(value):
@@ -413,6 +413,9 @@ def _observe(namespace):
             bad = True
     failure["observation"] = lines
     if bad:
+        # 分类只看这个由引导自己写入的 stage，不看异常类名：
+        # 生产代码或测试侧自定义同名异常不得伪造「观测值不一致」。
+        failure["stage"] = "mismatch"
         failure["error"] = "ObservationMismatch"
         sys.stdout.write("\n".join(lines) + "\n")
         sys.stdout.flush()
@@ -448,7 +451,7 @@ def main():
     except BaseException as exc:
         # 未捕获异常必须留下输出，否则 V02 无法区分「静默失败」与「真的失败」。
         # 引导自身路径每次都在新的临时目录里，写进输出会让指纹不稳定。
-        # 变异检验需要区分「观测值不一致」与「崩溃」，这里只记异常类型名。
+        # 这里只记异常类型名供排查；stage 保持 None，分类不得据此认成观测不一致。
         failure["error"] = type(exc).__name__
         import traceback
         sys.stderr.write(traceback.format_exc().replace(boot, "<bootstrap>"))
@@ -492,6 +495,7 @@ def _dump(exit_code, tracer=None):
                         x for x in lines if isinstance(x, int)
                     )
     payload = {"exit": exit_code, "error": failure["error"],
+               "stage": failure["stage"],
                "observation": failure["observation"],
                "covered": {k: sorted(set(v)) for k, v in covered.items()},
                "integrity": _integrity_violations(
@@ -665,25 +669,34 @@ def _exec_isolated(repo: Path, script: Path, timeout: int, trace_mode: bool,
         error = covered.get("error")
         if not isinstance(error, str) or not error:
             error = None
-        return code, text, (covered if trace_mode else None), error
+        stage = covered.get("stage")
+        if not isinstance(stage, str) or not stage:
+            stage = None
+        return code, text, (covered if trace_mode else None), error, stage
 
 
 def run_command_classified(cmd: str, cwd: Path, timeout: int,
-                           expected: dict | None = None) -> tuple[int, str, str | None]:
-    """受控执行并返回（退出码, 输出, 失败类型）；供变异判据区分崩溃与观测不一致。"""
+                           expected: dict | None = None
+                           ) -> tuple[int, str, str | None, str | None]:
+    """受控执行并返回（退出码, 输出, 异常类型, 引导 stage）；供变异判据分类。
+
+    分类只允许用 stage（引导自己写入的 "mismatch"），异常类型仅作诊断信息。
+    """
     script, problem = parse_isolated_command(cmd, cwd)
     if problem:
         raise RuntimeError(problem)
-    code, text, _covered, error = _exec_isolated(
+    code, text, _covered, error, stage = _exec_isolated(
         cwd, script, timeout, trace_mode=False, expected=expected
     )
-    return code, text, error
+    return code, text, error, stage
 
 
 def run_command(cmd: str, cwd: Path, timeout: int,
                 expected: dict | None = None) -> tuple[int, str]:
     """按白名单形式解释并受控执行命令（非 trace 模式）。"""
-    code, text, _error = run_command_classified(cmd, cwd, timeout, expected=expected)
+    code, text, _error, _stage = run_command_classified(
+        cmd, cwd, timeout, expected=expected
+    )
     return code, text
 
 
@@ -693,7 +706,7 @@ def run_traced_command(cmd: str, repo: Path, timeout: int,
     script, problem = parse_isolated_command(cmd, repo)
     if problem:
         raise RuntimeError(problem)
-    code, text, covered, _error = _exec_isolated(
+    code, text, covered, _error, _stage = _exec_isolated(
         repo, script, timeout, trace_mode=True, expected=expected
     )
     return code, text, covered
@@ -1222,7 +1235,7 @@ BANNED_TEST_MODULES = {
 BANNED_TEST_NAMES = {
     "open", "exec", "eval", "__import__", "__builtins__",
     "getattr", "setattr", "delattr", "hasattr", "globals", "locals", "vars",
-    "__dict__", "compile", "breakpoint",
+    "__dict__", "compile", "breakpoint", "type",
 }
 BANNED_TEST_ATTRS = {
     "open", "read_text", "read_bytes", "write_text", "write_bytes",
@@ -1550,6 +1563,13 @@ def test_code_violations(
         if fn.decorator_list or a.posonlyargs or a.args or a.vararg \
                 or a.kwonlyargs or a.kwarg:
             hits.add("observe() 必须是无参数、无装饰器的模块级函数")
+        # 函数体只允许单条 return：禁赋值、分支、try/except、raise、循环、
+        # 局部函数定义与局部重绑定（add = lambda … 这类遮蔽同样拒绝）。
+        if len(fn.body) != 1 or not isinstance(fn.body[0], ast.Return):
+            hits.add(
+                "observe() 的函数体只允许单条 return："
+                "不得赋值、分支、try/except、raise、循环或定义局部函数"
+            )
         returns = [n for n in ast.walk(fn) if isinstance(n, ast.Return)]
         if not returns:
             hits.add("observe() 必须 return 观测值映射")
@@ -1760,16 +1780,18 @@ def _reverted_block(lines: list[str], insert: int, deleted: list[str],
     return lines[:insert] + restored + lines[end:]
 
 
-def classify_test_outcome(code: int, text: str, error_type: str | None) -> str:
+def classify_test_outcome(code: int, text: str, error_type: str | None,
+                          stage: str | None = None) -> str:
     """把一次受控执行归类为 passed／assertion／crash。
 
-    只有 assertion（引导比对出「观测值与期望值不一致」）能作为「变异被杀死」
-    的证据；崩溃、提前退出（含 `os._exit`／`SystemExit`）、超时都不算——
-    它们没走到比对，不能说明测试对改动敏感。
+    只有阶段标记 `stage == "mismatch"`（由引导在完成自身比对后写入）才算
+    「观测值与期望值不一致」。异常类型名只作诊断，不参与分类：生产代码或
+    测试侧定义同名异常都不能把崩溃伪装成观测不一致。崩溃、提前退出
+    （含 `os._exit`／`SystemExit`）、超时都不算——它们没走到比对。
     """
     if code == 0:
         return "passed"
-    if error_type == "ObservationMismatch":
+    if stage == "mismatch":
         return "assertion"
     return "crash"
 
@@ -1780,7 +1802,7 @@ def _mutant_outcome(
     """运行一次变异体，返回（passed／assertion／crash／timeout，说明）。"""
     _clear_pycache(repo)
     try:
-        code, text, error = run_command_classified(
+        code, text, error, stage = run_command_classified(
             cmd, repo, timeout, expected=expected
         )
     except IntegrityViolation:
@@ -1789,7 +1811,7 @@ def _mutant_outcome(
         return "timeout", "变异后测试超时"
     except RuntimeError as exc:
         return "crash", f"变异后无法受控执行：{exc}"
-    kind = classify_test_outcome(code, text, error)
+    kind = classify_test_outcome(code, text, error, stage)
     if kind == "crash":
         return kind, f"退出码={code}，未捕获异常={error or '非观测值不一致或提前退出'}"
     return kind, ""

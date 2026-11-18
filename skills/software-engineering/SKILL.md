@@ -5,7 +5,7 @@ description: >-
   复现证据、失败测试、最小补丁与三段验证日志。Reproduce-fix-verify a defect in an
   existing repository; produce repro evidence, a failing test, a minimal patch, and a
   three-phase verification log.
-version: "0.8.0"
+version: "0.9.0"
 entry: "stages/S1-repro.md"
 stages: ["stages/S1-repro.md", "stages/S2-localize-fix.md", "stages/S3-verify.md"]
 validators: ["V01", "V02", "V03", "V04", "V05", "V06", "V07", "V08", "V09"]

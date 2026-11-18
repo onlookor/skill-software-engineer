@@ -934,8 +934,8 @@ def case_mutation_immutable_only(tmp: Path) -> str:
 
 
 def case_import_time_fake_fixes(tmp: Path) -> str:
-    """导入期伪造：模块级执行仍由 V06 判 cannot；函数体内的钩子改由
-    运行时完整性校验抓住（V08 判 cannot），不再靠语法位置推断。"""
+    """导入期伪造：模块级可执行语句由 V06 判 cannot；函数体内的钩子
+    V06 放行是已知边界（断言载荷已在新契约下移出判定链）。"""
     repo = tmp / "import-time"
     init_repo(repo)
     (repo / "calc.py").write_text(
@@ -1086,6 +1086,126 @@ def case_unittest_tamper_ineffective(tmp: Path) -> str:
     return "替换 TestCase 的补丁不能把未修复的复现变绿"
 
 
+def case_classification_ignores_exception_name(tmp: Path) -> str:
+    """分类只认引导写的 stage，不认异常类名（P0-1 的单元级证据）。"""
+    v = load_module("validate_for_classify", VALIDATE)
+    assert v.classify_test_outcome(1, "", "ObservationMismatch") == "crash"
+    assert v.classify_test_outcome(1, "", "ValueError") == "crash"
+    assert v.classify_test_outcome(1, "", "ObservationMismatch", "mismatch") == "assertion"
+    assert v.classify_test_outcome(0, "", None) == "passed"
+    return "同名异常无法伪造观测值不一致（E1j／E1c 的单元级证据）"
+
+
+def case_production_mismatch_exception(tmp: Path) -> str:
+    """E1j：生产侧同名异常＋硬编码返回值，V08 不得全绿。"""
+    repo = tmp / "e1j"
+    init_repo(repo)
+    (repo / "calc.py").write_text(
+        "class ObservationMismatch(Exception):\n"
+        "    pass\n"
+        "\n"
+        "def add(a, b):\n"
+        "    raise ObservationMismatch('bug')\n",
+        encoding="utf-8",
+    )
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text(
+        "import sys\nsys.exit(0)\n", encoding="utf-8"
+    )
+    (repo / "tests" / "repro_bug.py").write_text(
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(2, 3)}\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    (repo / "fix.patch").write_text(
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -4,2 +4,2 @@\n"
+        " def add(a, b):\n"
+        "-    raise ObservationMismatch('bug')\n"
+        "+    return 5\n",
+        encoding="utf-8",
+    )
+    repro_cmd = "python3 -I tests/repro_bug.py"
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_bug.py", observations={"sum": 5}
+    )
+    (repo / "localization.md").write_text(
+        "---\nevidence_kind: direct\nfiles:\n  - calc.py\n"
+        "estimated_touched_files: 1\nestimated_diff_lines: 2\n---\n"
+        "机制：占位修复。\n",
+        encoding="utf-8",
+    )
+    write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg = tmp / "e1j-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V08"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"E1j 应被拦却退出 {res.returncode}\n{out}"
+    return "E1j 同名异常＋硬编码被 V08 拦住"
+
+
+def case_mutant_mismatch_exception(tmp: Path) -> str:
+    """E1c：变异后抛同名异常，必须归入 crash，不能算杀死变异。"""
+    repo = tmp / "e1c"
+    init_repo(repo)
+    (repo / "calc.py").write_text(
+        "class ObservationMismatch(Exception):\n"
+        "    pass\n"
+        "\n"
+        "def _raise():\n"
+        "    raise ObservationMismatch('mutant')\n"
+        "\n"
+        "def add(a, b):\n"
+        "    return a - b + 1\n",
+        encoding="utf-8",
+    )
+    (repo / "tests").mkdir()
+    (repo / "tests" / "run_all.py").write_text(
+        "import sys\nsys.exit(0)\n", encoding="utf-8"
+    )
+    (repo / "tests" / "repro_bug.py").write_text(
+        "import sys\nsys.path.insert(0, '.')\n"
+        "from calc import add\n\n"
+        "def observe():\n"
+        "    return {'sum': add(2, 0)}\n",
+        encoding="utf-8",
+    )
+    sha = commit_all(repo)
+    (repo / "fix.patch").write_text(
+        "diff --git a/calc.py b/calc.py\n"
+        "--- a/calc.py\n"
+        "+++ b/calc.py\n"
+        "@@ -7,2 +7,2 @@\n"
+        " def add(a, b):\n"
+        "-    return a - b + 1\n"
+        "+    return a + b if a != 1 else _raise()\n",
+        encoding="utf-8",
+    )
+    repro_cmd = "python3 -I tests/repro_bug.py"
+    write_repro_and_meta(
+        repo, sha, repro_cmd, "tests/repro_bug.py", observations={"sum": 2}
+    )
+    (repo / "localization.md").write_text(
+        "---\nevidence_kind: direct\nfiles:\n  - calc.py\n"
+        "estimated_touched_files: 1\nestimated_diff_lines: 2\n---\n"
+        "机制：返回值偏移 1。\n",
+        encoding="utf-8",
+    )
+    write_verify(repo, sha, repro_cmd, "python3 -I tests/run_all.py")
+    cfg = tmp / "e1c-config.yaml"
+    write_config(repo, cfg)
+    res = run_validator(repo, cfg, ["V08"])
+    out = res.stdout + res.stderr
+    assert res.returncode == 1, f"E1c 应被拦却退出 {res.returncode}\n{out}"
+    assert "未使观测值与期望值不一致" in out or "未走到观测值比对" in out, out
+    return "E1c 变异抛同名异常被归入 crash"
+
+
 def case_test_whitelist_violation(tmp: Path) -> str:
     """复现测试越界：V03 白名单必须拦住（含新契约的 observe 形状）。"""
     repo = tmp / "test-whitelist"
@@ -1205,6 +1325,16 @@ def case_test_whitelist_violation(tmp: Path) -> str:
             "})\n\n"
             "def observe():\n"
             "    return {'sum': add(1, 2)}\n"
+        ),
+        "E1f observe 体内自比较": head + (
+            "def observe():\n"
+            "    try:\n"
+            "        v = add(2, 3)\n"
+            "    except BaseException:\n"
+            "        raise type('ObservationMismatch', (Exception,), {})()\n"
+            "    if v != 5:\n"
+            "        raise type('ObservationMismatch', (Exception,), {})()\n"
+            "    return {'sum': add(2, 3)}\n"
         ),
         "本地夹具 import": (
             "import sys\nsys.path.insert(0, '.')\n"
@@ -1512,6 +1642,9 @@ CASES = [
     case_mutation_immutable_only,
     case_import_time_fake_fixes,
     case_unittest_tamper_ineffective,
+    case_classification_ignores_exception_name,
+    case_production_mismatch_exception,
+    case_mutant_mismatch_exception,
     case_test_whitelist_violation,
     case_under_test_not_callable,
     case_package_skipped_count,

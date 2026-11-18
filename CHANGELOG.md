@@ -143,3 +143,22 @@
   6. **文档失真逐条修正**：撤回「任一断言设施被替换／删除即判 cannot」「元类、新建模块一视同仁」与「导入期伪造由运行时完整性覆盖」等表述；`V09-checklist.md` 第 8 项改为「观测值与期望值独立」，并写明运行时完整性不再是可采信证据；`SCHEMA` 的「测试只能使用这些可调用入口及其调用结果」改为新契约；`TECH-DEBT.md` 纠正第 1／2／6 条措辞，补记第八轮新证实的五类缺口（自恢复假断言、`__code__`／`_baseAssertEqual`、换 `TestCase` 绑定、新建模块导入期安装、类入口脱钩）及其在新契约下的状态；`validators/README.md` 的 `../../../TECH-DEBT.md` 断链改为「仓根 TECH-DEBT.md（不随包分发）」文字说明。
 - **关联 ADR**：无
 - **备注**：版本号仍待「适用面收窄算 minor 还是 major」的人类裁定，本批次不改 `SKILL.md` 的 `version`、不重打包；负向 37/37、正向 6/6、示例 `run.py` 退出 0；只提交，不推送、不打标签；未做自评，不写「已验证」。
+
+## 批次 0008 — 2026-11-18
+
+- **批次号**：0008
+- **日期**：2026-11-18
+- **版本**：0.8.0 → 0.9.0（按 BACKFLOW 属 minor：改了测试契约与 V01／V03／V08 判定）
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（分类改认 `stage=mismatch`；`observe()` 体只允许单条 `return`；`type` 入黑名单）
+  - 用例：`skills/software-engineering/tests/negative/run_negative.py`（新增 E1j／E1c／E1f 与分类单元用例）
+  - 文档：`skills/software-engineering/validators/README.md`、`skills/software-engineering/stages/S1-repro.md`、`skills/software-engineering/SKILL.md`（版本号）
+  - 技术债：仓根 `TECH-DEBT.md`（新增第 9 条；8.1–8.3 措辞收紧）
+  - 分发：`dist/software-engineering-0.9.0/`、`.tar.gz`、`.sha256`（重打包）
+- **变更摘要**：
+  1. **P0-1 分类信号移出异常名**：引导在完成自身比对后把 `stage="mismatch"` 写进结构化 failure；`classify_test_outcome` 只认该标记，不再看 `type(exc).__name__`。生产代码或测试侧自定义同名异常一律归入 crash，不能伪造「观测值不一致」。
+  2. **P0-2 约束 `observe()` 函数体**：V03 要求函数体只有单条 `return`，禁 `Assign`／`AugAssign`／`If`／`Try`／`Raise`／`With`／`For`／`While`／局部函数定义／局部重绑定；`type` 加入黑名单。E1f 被 V03 拦住。
+  3. **文档与债务**：README V02 行改为「退出码非 0（可能是观测不一致，也可能是崩溃；V02 不消费分类标记）」；V03／V08 行同步新口径；`TECH-DEBT.md` 新增「判定标签可被同名异常伪造」条目并记录 E1j／E1c／E1f 与修法状态；8.1–8.3 的「根除」改为「该载荷根除；测试仍可在 `observe()` 体内自行比较并伪造标签」；N2/N3 用例 docstring 与断言口径对齐；`S1-repro.md` 注明「测试里不出现期望值」由 V03 的函数体约束承接。
+  4. **版本与 dist**：`SKILL.md` 升 0.9.0，重打包，重跑负向 40/40、正向 6/6、示例退出 0、`project.py --check` 硬失败 0。
+- **关联 ADR**：无
+- **备注**：「适用面收窄走 minor 还是 major」仍待人类裁定，本批次未自行决定；本批次只提交，不推送、不打标签，不自评。
