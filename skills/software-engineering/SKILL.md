@@ -44,6 +44,7 @@ mount_declarations:            # 使用前必须约定的七项；缺一即 cann
 - 要测试策略、覆盖率提升、性能/安全专项 → 不在本技能；— test strategy, coverage, performance, security audits: out of scope.
 - 要部署、发布、运维、数据迁移 → 不在本技能；— deploy, release, ops, data migration: out of scope.
 - 失败**无法复现** → 停在 S1 报 `escalate`（上报：无法复现），**不进入 S2**；— cannot reproduce: stop at S1 with `escalate`; never enter S2.
+- 缺陷只能通过子进程断言、或需要目录／文件级夹具才能复现 → 本技能不适用：停在 S1／前置判据并 `escalate`，不得改写成单进程观测来强行套用。— a defect reproducible only via subprocess assertions, or requiring directory/file-level fixtures: not applicable; stop at S1/preconditions and escalate; never rewrite it as a single-process observation to force-fit.
 - 七项使用前约定任一未约定 → 报 `cannot_evaluate`，先做使用前约定。— any of the seven mandatory pre-use declarations unset: `cannot_evaluate`; agree them first.
 
 ## 路由表（状态 → 意图信号 → 加载哪份阶段说明）
