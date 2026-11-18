@@ -1336,6 +1336,10 @@ def case_test_whitelist_violation(tmp: Path) -> str:
             "        raise type('ObservationMismatch', (Exception,), {})()\n"
             "    return {'sum': add(2, 3)}\n"
         ),
+        "实参海象赋值 NamedExpr": head + (
+            "def observe():\n"
+            "    return {'sum': add((x := 2), 3)}\n"
+        ),
         "本地夹具 import": (
             "import sys\nsys.path.insert(0, '.')\n"
             "from tests.helpers import answer\n\n"

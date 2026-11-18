@@ -1607,6 +1607,8 @@ def test_code_violations(
             hits.add(
                 "复现测试不得使用 assert 语句：只返回观测值，不调用任何断言 API"
             )
+        elif isinstance(node, ast.NamedExpr):
+            hits.add("observe() 实参不得使用海象赋值（NamedExpr，如 (x := 2)）")
         elif isinstance(node, ast.Name):
             if node.id in BANNED_TEST_NAMES:
                 hits.add(f"不得使用 {node.id}")

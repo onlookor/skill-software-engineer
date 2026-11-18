@@ -162,3 +162,22 @@
   4. **版本与 dist**：`SKILL.md` 升 0.9.0，重打包，重跑负向 40/40、正向 6/6、示例退出 0、`project.py --check` 硬失败 0。
 - **关联 ADR**：无
 - **备注**：「适用面收窄走 minor 还是 major」仍待人类裁定，本批次未自行决定；本批次只提交，不推送、不打标签，不自评。
+
+## 批次 0009 — 2026-11-18
+
+- **批次号**：0009
+- **日期**：2026-11-18
+- **更正（引用批次 0008）**：批次 0008 变更摘要第 3 条「测试仍可在 `observe()` 体内自行比较并伪造标签」已过时——0008 自身的「`observe()` 函数体只允许单条 `return`」已关闭该路径，现状以 `TECH-DEBT.md` 8.1–8.3 与 `validators/README.md` 为准。**程序记录**：批次 0008 实际按 BACKFLOW 以 minor 从 0.8.0 升到 0.9.0；「适用面收窄算 minor 还是 major」的裁定仍待补，不得把升版事实当作裁定已完成。
+- **涉及文件**：
+  - 检查器：`skills/software-engineering/validators/validate.py`（`observe()` 实参拦 `NamedExpr`）
+  - 用例：`skills/software-engineering/tests/negative/run_negative.py`（白名单新增海象赋值变体）
+  - 文档：`skills/software-engineering/validators/README.md`、`skills/software-engineering/stages/S1-repro.md`、`skills/software-engineering/schemas/repro.md`
+  - 技术债：仓根 `TECH-DEBT.md`
+  - 分发：`dist/software-engineering-0.9.0/`、`dist/software-engineering-0.9.0.tar.gz`、`dist/software-engineering-0.9.0.tar.gz.sha256`（重打包）
+- **变更摘要**：
+  1. **README 口径改准**：`__code__`／`_baseAssertEqual` 绕法的「根除」限定为测试侧断言设施，生产侧导入期改写 `add.__code__` 仍不会被判定链发现；删除「选用让 base 与 patched 产生同一观测的输入……使变异被杀死」的矛盾说法，改为 V08 只要求 base 在该 observation 上失败、不校验该失败与用户所述缺陷同源（交 V09）；V08 的提前退出例外加「未伪造 `SE_COV_FD` 输出通道」前提，并写明 `stage`／`exit`／覆盖率同走一 fd、无签名、可被生产代码伪造；新增「全绿证明什么」限定段落。
+  2. **技术债对齐现状**：8.1–8.3 改为「测试侧体内自比较已由 0008 单条 `return` 关闭」；8.4 补「既有休眠 shim ＋ 一行 `import`、只对观测输入硬编码」同样漏（实测全绿）。
+  3. **方法入口适用面**：`S1-repro.md` 与 `schemas/repro.md` 写明只能用单表达式构造实例，多步构造（先赋局部变量再调用）不可表达。
+  4. **小漏网**：`observe()` 实参中的 `NamedExpr`（`add((x := 2), 3)`）与「禁局部重绑定」矛盾，V03 一并拦；不扩展其他表达式。
+- **关联 ADR**：无
+- **备注**：版本保持 0.9.0（口径修正不改判定，不升版）；负向 40/40（白名单变体 28 种）、正向 6/6、示例 `run.py` 退出 0、`project.py --check` 硬失败 0；本批次只提交，不推送、不打标签，不自评。
