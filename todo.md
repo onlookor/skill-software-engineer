@@ -191,3 +191,17 @@
 > 1. **E7 的部署前人类复核**：档 III 的三级批准链"角色位互不兼任"在 rev2 中不可表达（参与者是不透明标识）。形式层只保证存在三个独立的 `produces approval_record` 角色位，不保证由三个不同的人填充。落地路径＝`registry/approval_registry` 条目 + 部署前检查单，须随 3.5 真实项目试点一并验证。
 > 2. **`SEED_PRODUCE_OVERLAP(re_baseline)` 的部署裁决**：SE 单独部署保留 `seeds re_baseline`；RE+SE 同时部署时须撤除 SE 侧 seed 权威（基线改由 RE 验证链生产）。当前两份文件都保留现状，裁决点在部署实例化时，须记入裁剪 ADR（8.2.7）。
 > 3. **在 distrobox 容器 `pact-dev` 内复跑校验**：本次因执行环境 `distrobox` 不可达，改用宿主机 `~/projects/pact/target/debug/pact` 只读离线校验；按 PACT 仓库 AGENTS.md 规约，接地验收时须在容器内复跑 `pact analyze` × 3 与 `pact compose` × 3 并留痕。
+
+### 3.11 M5 发布清单可加固项（第四轮复核候选，不阻塞推送）
+
+来源：2026-11-19 第四轮复核。本条只登记候选，本轮不实施；完整表述见 `TECH-DEBT.md` 第 12 条「后续可加固项」，均不阻塞推送。
+
+1. 清单根节点的 `schema_version`／`kind` 未被校验（删掉也判绿）。
+2. `build_time: ""` 与 `bytes: true` 能通过字段校验。
+3. 重复版本条目按首条生效；条目多余字段被静默忽略。
+4. `archive` 未约束在 `dist/` 下；指向不存在路径时被静默当作「无归档」判绿。
+5. `ROADMAP.md` M5「出口条件（可核对）」中的「解包示例退出 0」非机器可核项。
+6. 同一出口中的「随清单留存」非机器可核项。
+7. 「发布记录随清单留存」在 `release_manifest.yaml` 中没有对应字段承载。
+8. 判据 5.1／`DATA-SPEC` D3.18 的 `name → {...}` 形态与实际 `entries: []` 列表形态不一致，D2 填充前须统一。
+9. `CHANGELOG.md` 0017 中「状态块带条件」的生成器描述属历史残留。

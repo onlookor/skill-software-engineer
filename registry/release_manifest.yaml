@@ -1,8 +1,8 @@
 # 发布清单（M5）
 #
 # 只记录已产出归档的真实指纹；仓库不放二进制。schema 见 DATA-SPEC.md D7.1，
-# 校验见 CHECK-SPEC.md C5.23（M5R）。build_time 无法从现存产物推出时写「未记录」，
-# 不推测。
+# 校验见 CHECK-SPEC.md C5.23（M5R）。build_time 优先取归档 gzip 头 MTIME
+# （字节 4–8，little-endian uint32）；读不出时写「未记录」，不推测。
 #
 # 权威方向：归档本身不入库，本清单是 M5 的机器可读事实源；工作区存在 archive 时
 # project.py --check 会重算 sha256 与字节并比对，不一致判硬红。干净 clone 无归档
@@ -17,5 +17,5 @@ releases:
     sha256: d5c51ff8247daac57f82e7905a5f4ccf81045c791c4a2840b5b2a13ee9a68809
     bytes: 68371
     source_commit: a1999810b1278a65dc41d7c26729619c26369c60
-    build_time: 未记录
-    note: 指纹与字节取自现存归档；源提交由包内 SKILL.md／README.md／PACKAGING.md／BACKFLOW.md 的 sha256 与 a199981 逐文件比对确定。
+    build_time: 2026-11-18T19:39:58+08:00
+    note: 指纹与字节取自现存归档；源提交由包内 SKILL.md／README.md／PACKAGING.md／BACKFLOW.md 的 sha256 与 a199981 逐文件比对，内容与 a199981 树一致。build_time 取 gzip 头 MTIME（字节 4–8，little-endian uint32，值 1795001998）；该时刻（UTC 11:39:58）早于 a199981 的提交时间 19:40:03，说明归档由提交前的工作树构建。
