@@ -22,6 +22,7 @@
 | `profiles.yaml` | 18 个 kind 的字段剖面（元注册条目）＋剖面级缺口台账 | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影 | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；每条带 clause 指针，须可反查母本 |
 | `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：schema＋空表 | **台账非权威**：表达式权威在卡片 `predicate_expr`；本表只登记覆盖／豁免；schema 见 D3.18；**当前为空表，检查器未消费** |
+| `release_manifest.yaml` | M5 发布清单：版本、归档路径、`sha256`、字节、源提交、构建时间 | **清单非归档**：不复制二进制；工作区有归档时由 `project.py --check` 的 M5R 比对；schema 见 D7；干净 clone 只能验清单，不能验内容 |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威；schema 逐字采用 0.17.2 |
 | `schedules.yaml` | 调度项注册表（C-1）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
 | `canary_gates.yaml` | 放量判据注册表（C-4）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
@@ -163,6 +164,10 @@
 - **D6.5** 表格与条目冲突时**以条目为准**，冲突登记为成文法缺陷（FM-12 通道，0.17.1）。〔母本派生〕
 - **D6.6 `note` 纠错口径**：`predicate_vocabulary.yaml` 的 `note` 为说明性字段，签名／值域／出处注记的纠错走简记（changelog 续条＋提交说明）；参与判定或校验的字段（`name`／`arity`／`kind`／`source`／`anchor`／`block`／组别）变更才走完整 ADR（D6.1）。〔新立：2026-11-07 用户裁决⑥〕
 - **D6.7 模式版本递增口径**（2026-11-13 用户裁定；同日更正）：`pattern_version` 的语义、递增义务与现行值声明同在母本 0.7；其对象是**白板谓词集**＝各节「**机器层谓词**」块之并（脚本自动发现，数量不写死；当前 14 块／134 行）。`pattern_version_baseline.yaml` 存「版本 → 块清单＋规范化指纹」，用于发现「块改了、版本没升」以及「块增删、节归属变化」。规范化算法＝去 `//` 注释、去全部空白、去空行后逐行 sha256（实现见 `scripts/check_pattern_version.py`）。合法顺序：先递增 0.7 声明值 → 再 `--freeze` 登记新基线；顺序颠倒或只 `--freeze` 不升版均判 fail。〔新立：本轮裁定；语义非本规范新立〕
+
+## D7 发布清单（M5）
+
+- **D7.1 `release_manifest.yaml`（2026-11-19）**：M5 的机器可读事实源。根节点 `schema_version`／`kind: release_manifest`／`releases[]`；每个版本条目须有 `version`、`archive`（相对仓库根的路径）、`sha256`（64 位小写十六进制）、`bytes`（正整数）、`source_commit`（7–40 位小写十六进制）、`build_time`（推不出时写「未记录」，不推测）。**权威方向**：清单只记录归档指纹，归档本身不入库。**校验**：`project.py --check` 的 `M5R`（CHECK-SPEC C5.23）校验字段；工作区存在 `archive` 时重算 sha256 与字节，不一致判 hard 并给出期望／实际值；干净 clone 无归档时只验清单存在与字段合法。**验证强度**：从「有物」降为「有记录＋工作区可对物」；干净 clone 不能验归档内容，下列空洞不掩饰——工作区无 `dist/` 时清单无法与实际归档比对。该降级由人类 2026-11-19 批准并接受，见 `ROADMAP.md` M5。〔新立，人类裁定 2026-11-19〕
 
 ## 附录 A：本规范承接的迁移条目（20 条）
 

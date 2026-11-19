@@ -3021,9 +3021,11 @@ def _adr_count() -> int:
 # ── 阶段字段：A–D（接地编译）＋ M4 技能层 / M5 分发件 / M6 复核制度 / M7 发布 ──
 # 定义与出口条件见 ROADMAP.md；本处只从事实计算状态，不读任何手写状态副本。
 SKILL_DIR = SE_DIR / 'skills' / 'software-engineering'
-DIST_DIR = SE_DIR / 'dist'
+MANIFEST_PATH = REG_DIR / 'release_manifest.yaml'
 PILOT_DIR = SE_DIR / 'pilot' / 'vertical-slice-20261112'
 RELEASE_TAG_RE = re.compile(r'^(?:release-|v\d+\.\d+\.\d+$)')
+SHA256_RE = re.compile(r'^[0-9a-f]{64}$')
+COMMIT_RE = re.compile(r'^[0-9a-f]{7,40}$')
 MIN_REGISTRIES = ('profiles.yaml', 'method_registry.yaml', 'guard_registry.yaml',
                   'fvr_registry.yaml', 'projection_registry.yaml')
 
@@ -3097,6 +3099,95 @@ def _annotated_release_at_head(tags: list[str] | None) -> str | None:
     return None
 
 
+def _release_manifest() -> tuple[dict | None, str]:
+    """读 registry/release_manifest.yaml；M5 只认清单，不把 dist/ 是否在库当出口。"""
+    if not MANIFEST_PATH.is_file():
+        return None, '缺少 registry/release_manifest.yaml'
+    try:
+        doc = yaml.safe_load(MANIFEST_PATH.read_text(encoding='utf-8')) or {}
+    except yaml.YAMLError as exc:
+        return None, f'清单不是合法 YAML：{exc}'
+    if not isinstance(doc, dict):
+        return None, '清单根节点不是映射'
+    return doc, ''
+
+
+def _release_entry(doc: dict, version: str) -> dict | None:
+    for rel in doc.get('releases') or []:
+        if isinstance(rel, dict) and str(rel.get('version')) == version:
+            return rel
+    return None
+
+
+def _release_entry_errors(rel: dict) -> list[str]:
+    errs = []
+    if not isinstance(rel.get('archive'), str) or not rel['archive'].strip():
+        errs.append('缺 archive')
+    if not isinstance(rel.get('sha256'), str) or not SHA256_RE.match(rel['sha256']):
+        errs.append('sha256 须为 64 位小写十六进制')
+    if not isinstance(rel.get('bytes'), int) or rel['bytes'] <= 0:
+        errs.append('bytes 须为正整数')
+    if not isinstance(rel.get('source_commit'), str) or not COMMIT_RE.match(rel['source_commit']):
+        errs.append('source_commit 须为 7–40 位小写十六进制')
+    if 'build_time' not in rel:
+        errs.append('缺 build_time（不可推出时写「未记录」）')
+    return errs
+
+
+def _release_stage_fact(version: str | None) -> str:
+    """M5 状态串：只看清单，跨工作区（含干净 clone）取值一致。"""
+    if version is None:
+        return '未产出'
+    doc, err = _release_manifest()
+    if doc is None:
+        return f'清单异常（{err}）'
+    rel = _release_entry(doc, version)
+    if rel is None:
+        return f'v{version} 清单缺失'
+    errs = _release_entry_errors(rel)
+    return f'v{version} 清单在案' if not errs else '清单字段不合法'
+
+
+def check_release_manifest(rep: Report, version: str | None) -> None:
+    """M5R（hard）：发布清单字段合法；工作区有归档时与清单指纹比对。
+
+    干净 clone 无 dist/，只能验清单存在与字段合法；这一残余空洞在
+    ROADMAP M5 与 DATA-SPEC D7.1 中如实登记，不表述为「等价于归档存在」。
+    """
+    if version is None:
+        rep.fail('M5R', '发布清单', 'SKILL.md 读不出当前版本，M5 清单无法核对')
+        return
+    doc, err = _release_manifest()
+    if doc is None:
+        rep.fail('M5R', 'registry/release_manifest.yaml', f'M5 发布清单不可用：{err}')
+        return
+    rel = _release_entry(doc, version)
+    if rel is None:
+        rep.fail('M5R', 'registry/release_manifest.yaml',
+                 f'M5 发布清单缺当前版本 v{version} 的条目')
+        return
+    errs = _release_entry_errors(rel)
+    if errs:
+        rep.fail('M5R', f'v{version}', 'M5 发布清单字段不合法：' + '；'.join(errs))
+        return
+    archive = SE_DIR / rel['archive']
+    if not archive.is_file():
+        rep.ok('M5R', f'v{version}', 'hard',
+               f'清单在案（{rel["archive"]}，sha256 {rel["sha256"][:12]}…，'
+               f'{rel["bytes"]} 字节，源提交 {rel["source_commit"][:7]}）；'
+               '工作区无归档，无法比对实际指纹（干净 clone 的已知残余）')
+        return
+    actual_sha = hashlib.sha256(archive.read_bytes()).hexdigest()
+    actual_bytes = archive.stat().st_size
+    if actual_sha != rel['sha256'] or actual_bytes != rel['bytes']:
+        rep.fail('M5R', rel['archive'],
+                 f'M5 发布清单与归档不一致：sha256 期望 {rel["sha256"][:12]}… '
+                 f'实际 {actual_sha[:12]}…；字节 期望 {rel["bytes"]} 实际 {actual_bytes}')
+        return
+    rep.ok('M5R', f'v{version}', 'hard',
+           f'清单与实际归档一致（{rel["bytes"]} 字节，sha256 {actual_sha[:12]}…）')
+
+
 def stage_facts(tags: list[str] | None) -> str:
     regs_ok = all((REG_DIR / name).is_file() for name in MIN_REGISTRIES)
     pacts = list((SE_DIR / 'pact').glob('se_tier*_*.pact'))
@@ -3106,9 +3197,6 @@ def stage_facts(tags: list[str] | None) -> str:
     review = _approval_record()[1]
     release = _annotated_release_at_head(tags)
     skill_ok = version is not None and (SKILL_DIR / 'validators' / 'validate.py').is_file()
-    dist_ok = version is not None and all(
-        (DIST_DIR / f'software-engineering-{version}.tar.gz{suffix}').is_file()
-        for suffix in ('', '.sha256'))
     parts = [
         'A ' + ('已越' if regs_ok and len(pacts) >= 3 else '未完成'),
         'B ' + ('已越 LRM' if label else '未越 LRM'),
@@ -3118,7 +3206,7 @@ def stage_facts(tags: list[str] | None) -> str:
         'C 未判定（M2 无自动出口）',
         'D ' + (f'{grounding[0]}/6' if grounding else '无法判定'),
         'M4 技能层 ' + (f'v{version}' if skill_ok else '未落地'),
-        'M5 分发件 ' + (f'v{version} 已产出' if dist_ok else '未产出'),
+        'M5 分发件 ' + _release_stage_fact(version),
         'M6 复核制度 ' + review,
         'M7 发布 ' + (release if release else '未开始（无 annotated tag 指向 HEAD）'),
     ]
@@ -3145,7 +3233,7 @@ def render_todo_status(f: dict) -> str:
     n_tag = len(f['tags']) if f['tags'] is not None else 0
     return (f'当前状态：条目 {f["entries"]}｜母本 {f["law_lines"]} 行 / {f["law_bytes"]} 字节｜'
             f'ADR {f["adr"]} 份｜tag {n_tag} 个：{tags}｜阶段 {f["stage"]}｜'
-            f'--check 硬失败 {f["hard"]}（以含 dist/ 的工作区为条件；干净 clone 会因 M5 红）')
+            f'--check 硬失败 {f["hard"]}')
 
 
 def _todo_lines() -> list[str]:
@@ -3281,6 +3369,7 @@ def run_checks(sync_todo: bool = False):
     }
     check_todo_layout(rep)
     check_todo_progress(rep)
+    check_release_manifest(rep, _skill_version())
     # 状态块报告的是「除 TODO-STATUS 自身以外的硬失败数」，避免自指；
     # TODO-STATUS 通过时，全量硬失败数与块内数值相等。
     hard_before = len(rep.failures('hard'))
