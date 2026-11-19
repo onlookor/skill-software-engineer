@@ -21,7 +21,8 @@
 |---|---|---|
 | `profiles.yaml` | 18 个 kind 的字段剖面（元注册条目）＋剖面级缺口台账 | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影 | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；每条带 clause 指针，须可反查母本 |
-| `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：schema＋空表 | **台账非权威**：表达式权威在卡片 `predicate_expr`；本表只登记覆盖／豁免；schema 见 D3.18；**当前为空表，检查器未消费** |
+| `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：schema＋33 名（30 mapped／3 exempt） | **台账非权威**：表达式权威在卡片 `predicate_expr`；本表只登记覆盖／豁免；schema 见 D3.18；**检查器未消费，只作人工核对** |
+| `predicate_aspects.yaml` | 卡片谓词→设计方面映射（P0-D3）：33 名，向量键 {4,5,9} | **映射非词汇**：不改 159 条词汇条目；并集＝向量键集合；规则见 D9 |
 | `../pilot/schemas/narrative-step.schema.yaml` | 叙事推理步记录 schema（P0-D1）：字段、规则、原子规范化 | **记录形态**：不实现校验器；判定口径见编译规范 T1.1／T1.2；schema 见 D8 |
 | `release_manifest.yaml` | M5 发布清单：版本、归档路径、`sha256`、字节、源提交、构建时间 | **清单非归档**：不复制二进制；工作区有归档时由 `project.py --check` 的 M5R 比对；schema 见 D7；干净 clone 只能验清单，不能验内容 |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威；schema 逐字采用 0.17.2 |
@@ -138,7 +139,7 @@
   - **复核口径**：定位以 `statement` 逐字为准，不存行号——行号随编辑漂移，不作复核依据。
   - **不新增义务／不改判定**：不进任何检测式、不加检查项、不改 `registered` 求值、不动 `ENUM_STATUS` 与《编译规范》2.3(a)；`--check` 不消费 `fact_index`。〔新立：2026-11-08，用户放行；承接 ADR-GS-FACT-01 立项〕
 
-- **D3.18 卡片谓词映射台账 `predicate_map.yaml`（2026-11-18）**：`TD-SE-PRED-001` 关闭判据 5 的登记载体。**权威方向**：卡片 `outputs.predicate_writes`／`predicate_expr` 仍是表达式与写入面的权威源；本表是**覆盖与豁免台账**，只登记 `name → {card_ids, expr_refs, status}`，不复制表达式正文、不改卡片。`expr_refs` 每项记 `{card_id, step_id, expr_sha256}`。**漂移判定**：卡片表达式或名字集合与台账的 `expr_sha256`／`name` 不一致即漂移。**漂移检测**：计划由 `registry/checks/` 下的 D2 覆盖检查执行并汇总进 `project.py --check`；检查器落地前**不宣称机检已消费**，`--check` 当前不读本表，只作人工核对依据。**豁免**：`status: exempt` 须逐名记 `owner`／`due`／`approved_by`，上限 3 名由人类核定（非比例推导）；豁免不免除判据 1——所在 S6 卡的 `predicate_expr` 仍须可解析、名字／arity／类型通过。**当前状态**：schema 已登记、`entries` 为空；填充属 D2（33 名／14 卡）阶段，不在 2026-11-18 批次。〔新立：`ADR-PRED-ENG-01`／`TD-SE-PRED-001` 判据 5〕
+- **D3.18 卡片谓词映射台账 `predicate_map.yaml`（2026-11-18；2026-11-19 填充）**：`TD-SE-PRED-001` 关闭判据 5 的登记载体。**权威方向**：卡片 `outputs.predicate_writes`／`predicate_expr` 仍是表达式与写入面的权威源；本表是**覆盖与豁免台账**，只登记 `name → {card_ids, expr_refs, status, owner, due, approved_by, reason, generated_by_pact}`，不复制表达式正文、不改卡片。`expr_refs` 每项记 `{card_id, step_id, expr_sha256}`；`predicate_writes` 位于卡片 `outputs` 层，故 `step_id` 统一写 `outputs`。**漂移判定**：卡片表达式或名字集合与台账的 `expr_sha256`／`name` 不一致即漂移。**漂移检测**：计划由 `registry/checks/` 下的 D2 覆盖检查执行并汇总进 `project.py --check`；检查器落地前**不宣称机检已消费**，`--check` 当前不读本表，只作人工核对依据。**豁免**：`status: exempt` 须逐名记 `owner`／`due`／`approved_by`／`reason`，且 `generated_by_pact` 必须为 `false`（生成型 pact 不得豁免）；上限 3 名由人类核定（非比例推导）；豁免不免除判据 1——所在 S6 卡的 `predicate_expr` 仍须可解析、名字／arity／类型通过。**当前状态**：已填充 33 名，`mapped` 30 名、`exempt` 3 名（`step_log`／`selection_procedure`／`verdict_table`）；豁免项另待人类复核名单独列。〔新立：`ADR-PRED-ENG-01`／`TD-SE-PRED-001` 判据 5；D4 填充 2026-11-19〕
 
 ## D4 编号与批次先例（数据面）
 
@@ -177,6 +178,14 @@
 - **D8.3 判定规则**：以 schema 的 `rules` R1–R8 为准，与编译规范 T1.1／T1.2／T2.1 逐条对应；两处冲突时以编译规范为准，schema 随 P0 回改。R8（一步一条）的边界判定无法机械化时，按「拆成多条」处理，理由记 `notes`；此为**明示的不可判定处**，不得据 `notes` 自证合规。
 - **D8.4 原子与快照**：`predicate_increments[].atom` 必须符合 `atom_grammar.normalization`；同一性只由 `atom_key = sha256(utf8(atom))` 判定。`snapshot_before`／`snapshot_after` 只记定位符与 `sha256`，不复制白板；`predicate_write` 步必填，其余可不填。
 - **D8.5 非目标**：不定义叙事质量、不判断推理是否成立、不替代 T3 引用资格与 T5 批准路由；`unqualified` 步按 T3 不取得引用资格，`decision` 须写明处置。
+
+## D9 卡片谓词 → 设计方面映射（P0-D3）
+
+- **D9.1 载体与理由**：新建 `registry/predicate_aspects.yaml`，不改 `predicate_vocabulary.yaml`。理由：词汇条目职责是「名与元数注册」，方面是版本向量的计数归属，两者变更节奏不同；本批只需覆盖卡片出现的 33 名，直接改词表会制造 126 条与卡片无关的方面声明；独立成表可让「映射并集＝向量键集合」直接机械求和。
+- **D9.2 字段**：`schema_version`／`kind: predicate_aspects`／`status`／`vector_keys`／`vector_keys_basis`／`rules`／`entries`。每条 `{name, aspects, source, disposition, reason?}`；`disposition ∈ {mapped, process_record}`。
+- **D9.3 判定规则**：A1 覆盖卡片 `outputs.predicate_writes` 去重后的全部名字且恰好一次；A2 `mapped` 的 `aspects` 非空、取值 1–10、不重复；A3 `process_record` 的 `aspects` 为空并写 `reason`；A4 `vector_keys` 等于全部 `mapped` 条目 aspects 的并集；A5 多方面谓词对每个方面各 +1，不合并、不加权。
+- **D9.4 当前取值**：33 名全部在案；`mapped` 28 名（方面 4／5／9），`process_record` 5 名（`exclusion_record`／`selection_context`／`selection_procedure`／`step_log`／`verdict_table`，来源 0.18.6，不推进向量）；`vector_keys = [4, 5, 9]`。方面 1／2／3／6／7／8／10 本试点无映射，不建计数器；这不是「这些方面不存在」的断言。
+- **D9.5 与 D4 的分工**：D9 只回答「推进哪个方面」；D4 的 `predicate_map.yaml` 回答「是否纳入覆盖／豁免」。两者独立登记，不得互替；`process_record` 不等于 `exempt`（本批 `exclusion_record`／`selection_context` 为 mapped，`step_log`／`selection_procedure`／`verdict_table` 为 exempt）。
 
 ## 附录 A：本规范承接的迁移条目（20 条）
 

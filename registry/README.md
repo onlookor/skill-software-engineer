@@ -12,7 +12,8 @@
 | `CHECK-SPEC.md` | 《注册表自检与台账规范》：检查矩阵、级别、量词、执行顺序、台账登记、批次先例、变更纪律 | 本文档自身 |
 | `profiles.yaml` | 18 个 kind 的字段剖面（元注册条目）＋剖面级缺口台账 | [DATA-SPEC](DATA-SPEC.md) D1.3、D2 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影（非权威） | [DATA-SPEC](DATA-SPEC.md) D1.3、D3 |
-| `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：schema＋空表 | [DATA-SPEC](DATA-SPEC.md) D3.18 |
+| `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：33 名（30 mapped／3 exempt） | [DATA-SPEC](DATA-SPEC.md) D3.18 |
+| `predicate_aspects.yaml` | 卡片谓词→设计方面映射（P0-D3）：33 名，向量键 {4,5,9} | [DATA-SPEC](DATA-SPEC.md) D9 |
 | `../pilot/schemas/narrative-step.schema.yaml` | 叙事推理步记录 schema（P0-D1，draft）；不在本目录，登记于此 | [DATA-SPEC](DATA-SPEC.md) D1.3、D8；编译规范 T1.1／T1.2 |
 | `release_manifest.yaml` | M5 发布清单：版本、归档路径、`sha256`、字节、源提交；仓库不放二进制 | [DATA-SPEC](DATA-SPEC.md) D1.3、D7.1；[CHECK-SPEC](CHECK-SPEC.md) C5.23 |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | [DATA-SPEC](DATA-SPEC.md) D2；[CHECK-SPEC](CHECK-SPEC.md) C4 |

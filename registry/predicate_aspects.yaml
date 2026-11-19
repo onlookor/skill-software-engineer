@@ -1,0 +1,73 @@
+# 卡片谓词 → 设计方面映射（P0-D3）
+# 权威出处：编译规范 T1.1（词表按方面分块）；plans/predicate-ization-execution-plan.md D3。
+# 载体选择：新建本文件，不改 predicate_vocabulary.yaml 的 159 条词汇条目。
+# 理由：1) 词汇条目的职责是「名与元数注册」，方面是版本向量的计数归属，两者变更节奏不同；
+#       2) 本批只需覆盖卡片出现的 33 名，直接改词表会制造 126 条与卡片无关的方面声明；
+#       3) 独立成表可被逐条核对，且映射并集＝向量键集合这一约束可直接由本文件机械求和。
+# 状态：draft（P0 定义期）。不实现检查器；人工按字面核对。
+
+schema_version: 1
+kind: predicate_aspects
+status: draft
+
+vector_keys:
+  - 4
+  - 5
+  - 9
+
+vector_keys_basis: >
+  向量键集合取本表 mapped 条目 aspects 的并集，当前为 {4, 5, 9}。
+  方面 1／2／3／6／7／8／10 在本试点无卡片谓词映射，故不建计数器；
+  这只表示本批 33 名不推进这些方面，不表示这些方面在框架中不存在。
+  方面 4／5／7 的「允许稀疏」按允许而非要求理解：7 本批为空，4／5 非空。
+
+rules:
+  - id: A1
+    text: 本表必须逐名覆盖卡片 outputs.predicate_writes 去重后的全部名字，且每个名字恰好出现一次。
+  - id: A2
+    text: disposition = mapped 的条目 aspects 不得为空，取值 ∈ {1,...,10}，不得重复。
+  - id: A3
+    text: disposition = process_record 的条目 aspects 必须为空数组，并写明 reason；该类条目不推进任何方面向量。
+  - id: A4
+    text: vector_keys 必须等于全部 mapped 条目 aspects 的并集（去重、升序）；不得出现无谓词支撑的键，也不得漏掉已被映射的方面。
+  - id: A5
+    text: 一个谓词映射到多个方面时，每个方面各计一次推进（各 +1），不合并、不加权；当前 33 名均单方面，本规则待首条多方面谓词出现时生效。
+
+entries:
+  # ── 方面 4（4.5 数据）──
+  - {name: access_path, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: consistency_level, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: consistency_rationale, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: data_flow, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: data_lineage, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: dataset, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: invariant, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: owner, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: sensitivity, aspects: [4], source: '4.5', disposition: mapped}
+  - {name: shared_write_exception, aspects: [4], source: '4.5', disposition: mapped}
+  # ── 方面 5（5.5 交互/协调）──
+  - {name: cleanup_filed, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: compensation, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: delivery_semantics, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: expiry_of, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: flag, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: idempotency, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: idempotent, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: interaction_flow, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: orchestrator, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: quality_impact_card, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: saga, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: step_class, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: time_semantics, aspects: [5], source: '5.5', disposition: mapped}
+  - {name: timeout_budget, aspects: [5], source: '5.5', disposition: mapped}
+  # ── 方面 9（9.5 演化）──
+  - {name: canary_gate, aspects: [9], source: '9.5', disposition: mapped}
+  - {name: deploy_strategy, aspects: [9], source: '9.5', disposition: mapped}
+  - {name: evolution_path, aspects: [9], source: '9.5', disposition: mapped}
+  - {name: strangler_sequence, aspects: [9], source: '9.5', disposition: mapped}
+  # ── 过程记录（0.18.6；不是设计事实，不推进方面向量）──
+  - {name: exclusion_record, aspects: [], source: '0.18.6', disposition: process_record, reason: 选择过程的排除记录，记录「为何未选」；不是设计事实写入，不推进任何方面。}
+  - {name: selection_context, aspects: [], source: '0.18.6', disposition: process_record, reason: 选择上下文快照，记录决策输入；不是方面事实，不推进向量。}
+  - {name: selection_procedure, aspects: [], source: '0.18.6', disposition: process_record, reason: S0–S6 过程记录，覆盖全部方面；归到任一单一方面都会重复计数，故不推进向量。}
+  - {name: step_log, aspects: [], source: '0.18.6', disposition: process_record, reason: 步骤日志（七槽过程记录），不承载方面事实；不推进向量。}
+  - {name: verdict_table, aspects: [], source: '0.18.6', disposition: process_record, reason: 判定表，记录选择结果而非设计事实；不推进向量。}

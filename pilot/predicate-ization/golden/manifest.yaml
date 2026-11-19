@@ -1,0 +1,66 @@
+# 黄金样本集清单（P0 骨架）
+schema_version: 1
+kind: golden_manifest
+status: skeleton
+frozen_at: null
+
+batch_policy:
+  cases_per_batch: 12
+  design_revision_per_batch: true      # 每批回改 plans/predicate-ization-design.md 一次
+  annotator_reviewer_separate: true
+
+quotas:
+  target_total: 36
+  by_aspect:
+    '4': 10
+    '5': 10
+    '9': 10
+  process_record: 6
+  no_op_min: 6
+  unqualified_min: 4
+  min_distinct_names: 20
+
+counts:
+  total: 0
+  new: 0
+  no_op: 0
+  unqualified: 0
+  by_aspect: {'4': 0, '5': 0, '9': 0, 'process_record': 0}
+
+cases: []
+
+# 尚未在样本中出现的卡片谓词名（33 名，当前全部未覆盖）
+uncovered:
+  - access_path
+  - canary_gate
+  - cleanup_filed
+  - compensation
+  - consistency_level
+  - consistency_rationale
+  - data_flow
+  - data_lineage
+  - dataset
+  - delivery_semantics
+  - deploy_strategy
+  - evolution_path
+  - exclusion_record
+  - expiry_of
+  - flag
+  - idempotency
+  - idempotent
+  - interaction_flow
+  - invariant
+  - orchestrator
+  - owner
+  - quality_impact_card
+  - saga
+  - selection_context
+  - selection_procedure
+  - sensitivity
+  - shared_write_exception
+  - step_class
+  - step_log
+  - strangler_sequence
+  - time_semantics
+  - timeout_budget
+  - verdict_table

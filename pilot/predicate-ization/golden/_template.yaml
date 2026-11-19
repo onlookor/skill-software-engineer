@@ -1,0 +1,44 @@
+# 黄金样本单条模板（不是样本；复制到 cases/ 后填写）
+schema_version: 1
+kind: golden_case
+status: template
+
+case_id: GC-0000                 # GC-<四位序号>；全局唯一
+aspect: 0                        # 4 | 5 | 9；过程记录写 0
+source_card: G-TRUNK-XXX         # 取自 pilot/vertical-slice-20261112/
+source_clause: '0.0'             # 谓词来源条款，须能在 predicate_vocabulary.yaml 反查
+
+# 判断本身（D1）
+narrative_step:
+  step_id: NS-<run_id>-0001
+  run_id: <run_id>
+  seq: 1
+  executor: <人类责任方或已授权 Agent>
+  participants: [<具名方>]
+  reasoning_mode: discussion     # discussion|sketch|intuition|verbal_consensus|cross_aspect
+  narrative: <该步的自然语言判断>
+  trace: <推理轨迹>
+  decision: <该步决定>
+  outcome_kind: predicate_write  # predicate_write|artifact_preservation|unqualified
+  recorded_at: <RFC3339 带时区>
+
+# 期望值（手算，不引用实现）
+snapshot_before:
+  ref: <定位符>
+  predicates: []                 # 最小基线列表；change 只据此与 atom_key 判定
+expected_increments:
+  - atom: <name(args...)>
+    atom_key: <sha256(utf8(atom))>
+    change: new                  # new|no_op
+    aspects: []                  # 取自 predicate_aspects.yaml；process_record 为空
+expected:
+  aspects_touched: []
+  vector_keys_after: []          # 期望存在的方面键
+  disposition: mapped            # mapped|process_record|exempt
+  why: <一句话说明为何是该 disposition>
+
+# 元数据
+split_reason: null               # 若由一条拆出，写原因
+undecidable: false
+undecidable_reason: null
+disagreement: null               # 标注者与复核者的分歧记录
