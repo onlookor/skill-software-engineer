@@ -320,7 +320,7 @@
   - `registry/CHECK-SPEC.md`：新增 C5.23（M5R 判据、归档比对、不做项、编号审计）。
   - `registry/README.md`：目录导览补 `release_manifest.yaml` 行。
   - `TECH-DEBT.md`：第 12 条改写为已关闭，保留原现象、裁定、落地内容、关闭判据与证据、残余空洞；文件头说明同步。
-  - `todo.md` 与 `registry/projections/*`：状态块由 `--project` 重生成；`todo.md` 3.11 为人工登记的候选，非生成器产物。
+  - `todo.md` 与 `registry/projections/*`：由 `registry/scripts/project.py --project` 重新生成。
 - **变更摘要**：
   1. **人类裁定（2026-11-19）**：入库清单，`project.py` 改验清单而非归档文件；仓库不放二进制。批准时明确接受验证强度从「有物」降到「有记录」，不得表述为「已解决」或「等价于归档存在」。
   2. **第 12 条关闭证据**：提交 `7da640e` 后于干净 clone（无 `dist/`）实测 `--check` 硬失败 0、软警告 20、退出码 0；工作区实测 `M5R ✓ 清单与实际归档一致（68371 字节，sha256 d5c51ff8247d…）`；临时副本中把清单 `sha256` 改为合法但不符的值，实测 `M5R` 硬红并给出期望／实际值、退出码 1。第四轮复核后，有归档与无归档两种情形重新复验，均为退出码 0、硬失败 0、软警告 20。
@@ -337,24 +337,25 @@
 - **日期**：2026-11-19
 - **事项**：人类批准开工 P0 定义期（谓词化，10.2.3bis 层次二），落 D1–D4 的定义与登记载体；顺带上批遗留两处记账。不写解析器／求值器／引擎。
 - **涉及文件**：
-  - `pilot/schemas/narrative-step.schema.yaml`（新增）：P0-D1 叙事步记录 schema，draft；18 字段、R1–R8 规则、`atom_grammar` 规范化与同一性示例。
-  - `编译规范.md`：T1 增 T1.1（叙事步记录，D1）与 T1.2（原子与同一性，D2）；T2 增 T2.1（`no_op` 与向量推进，D2）。仅动 T1／T2 的谓词化相关段落，未重排格式。
-  - `registry/predicate_aspects.yaml`（新增）：P0-D3 方面映射，33 名；`mapped` 28 名（方面 4／5／9），`process_record` 5 名（0.18.6，不推进向量）；`vector_keys = [4,5,9]`。
-  - `registry/predicate_map.yaml`：D4 填充 33 名，`mapped` 30／`exempt` 3（`step_log`／`selection_procedure`／`verdict_table`）；豁免条目带 owner／due／approved_by／reason 且 `generated_by_pact: false`；`entry_fields` 增 `reason`／`generated_by_pact`。
-  - `plans/predicate-ization-design.md`（新增）：P0 设计稿；第 2／4／5／6／11 章成稿到可引用，第 3／7／8／9／10 章明写未成稿。
-  - `pilot/predicate-ization/golden/`（新增）：骨架与标注口径，0 条样本；`README.md`、`manifest.yaml`、`_template.yaml`、`cases/.gitkeep`。
-  - `registry/DATA-SPEC.md`：D1.3 补两行；D3.18 同步台账字段与当前状态；D7.1 补 `build_time` 取 gzip 头 MTIME；新增 D8（叙事步 schema）与 D9（方面映射）。
+  - `pilot/schemas/narrative-step.schema.yaml`（新增）：P0-D1 叙事步记录 schema，draft；18 字段、R1–R10 规则、`atom_grammar` 规范化与同一性示例；快照携带 `atoms`（`atom_key`＋原子原文），`ref`／`sha256` 为摘要。
+  - `编译规范.md`：T1 增 T1.1（叙事步记录，D1）与 T1.2（原子与同一性，D2），T2 增 T2.1（`no_op` 与向量推进，D2）；T1.2 补引号、转义、换行、全角空格与 NBSP 的规范化边界，T1.1 第 7 条改快照须带原子列表。仅动 T1／T2 的谓词化相关段落，未重排格式。
+  - `registry/predicate_aspects.yaml`（新增）：P0-D3 方面映射，33 名；`aspect_mapped` 28 名（方面 4／5／9），`process_record` 5 名（0.18.6，不推进向量）；`vector_keys = [4,5,9]`。D3 的 `mapped` 全改 `aspect_mapped`，与 D4 覆盖口径 `mapped` 区分。
+  - `registry/predicate_map.yaml`：D4 填充 33 名，`mapped` 30／`exempt` 3（`step_log`／`selection_procedure`／`verdict_table`）；豁免条目带 owner／due／approved_by／reason 且 `generated_by_pact: false`；`entry_fields` 增 `reason`／`generated_by_pact`；`expr_refs` 键 `step_id` 全部改 `layer`（值 `outputs`），头注与字段说明写明 `expr_sha256` 是卡片 `predicate_writes` 原文的 sha256、不是 `atom_key`。
+  - `plans/predicate-ization-design.md`（新增）：P0 设计稿；第 2／4／5／6／11 章成稿到可引用，第 3／7／8／9 章明写未成稿，第 10 章为完整非目标清单；快照口径改为携带 `atoms`、摘要降级。
+  - `pilot/predicate-ization/golden/`（新增）：骨架与标注口径，0 条样本；`README.md`、`manifest.yaml`、`_template.yaml`、`cases/.gitkeep`；S2 按 `snapshot_before.atoms` 对齐，S4 说明空 `aspects` 仅限 `process_record`，模板补齐 schema 必填项与前后快照。
+  - `registry/DATA-SPEC.md`：D1.3 补两行；D3.18 把 `step_id` 改 `layer` 并写明 `expr_sha256` 口径；D7.1 补 `build_time` 取 gzip 头 MTIME；新增 D8（叙事步 schema，规则 R1–R10、快照带 `atoms`）与 D9（方面映射）。
   - `registry/CHECK-SPEC.md`：C5.23 补 `build_time` 取 gzip 头 MTIME 口径。
   - `registry/README.md`：目录导览补叙事步 schema 与 `predicate_aspects.yaml` 两行。
   - `ROADMAP.md`：M5 出口补构建时间取法。
-  - `CHANGELOG.md`：0018 中 `todo.md` 一句按上批记账改为「状态块由 `--project` 重生成；3.11 为人工登记」。
+  - `CHANGELOG.md`：本条追加两条更正记录——`todo.md` 状态块由 `--project` 重生成、3.11 为人工登记；第 10 章为完整非目标清单、未成稿标记在 3／7／8／9 章。0018 原文不改。
 - **变更摘要**：
   1. **D1**：叙事步记录形态落 schema，T1.1 给出 7 条字面判据；`predicate_write` 要求前后快照，`artifact_preservation` 与 `unqualified` 分道。
   2. **D2**：规范化原子 `name(args...)`、`atom_key = sha256(utf8(atom))`；同名同参＝`no_op`，不推进向量；`new` 才推进并在多方面各 +1；判定规则写入 T2.1。
   3. **D3**：选独立文件而非改词表，理由与 A1–A5 写在 D9；映射并集＝`vector_keys` 已机械核对。
   4. **D4**：33 名逐名登记；豁免用满 3 名上限，生成型 pact 不得豁免；名单独列待人类复核。
-  5. **设计文档**：按「随 P0 同步成稿、每标一批黄金样本回改一次、P0 通过时冻结」写；未成稿章节不冒充已定义。
+  5. **设计文档**：按「随 P0 同步成稿、每标一批黄金样本回改一次、P0 通过时冻结」写；第 3／7／8／9 章明写未成稿，第 10 章为完整非目标清单。
   6. **黄金样本**：只建骨架与标注口径（S1–S7、批次 12 条、P0 目标 36 条），0 条样本。
-- **未改动**：母本、`SKILL.md` 判据、18 张卡正文、`validators/`、`dist/`、`.gitignore` 未动；未重打包、未写解析器／求值器／引擎；0014／0015／0016／0017／0018 未动（0018 仅按上批记账改 `todo.md` 一句）。
+  7. **第六轮复核整改**（全部文档与 schema 级）：① 0018 恢复 `5e2e13f` 原文，两处更正改为本条追加，0014–0017 逐字未动；② 已推送批次不得就地改写，本条只追加；③ T1.2 与 `atom_grammar` 补齐引号内不切分、CR／LF、U+3000／NBSP、转义括号与零长度实参规则，并写明不具备唯一结果即判不合格；④ 快照改为必须携带 `atoms`（`atom_key`＋原子原文），`ref`／`sha256` 降为摘要，S2 按此对齐不削弱；⑤ 模板补齐 `predicate_increments`、`aspects_touched`、前后快照，删去非 schema 字段 `snapshot_before.predicates`；schema 的空 `aspects` 仅限 `process_record`，S4 同步；⑥ `predicate_map.yaml` 头注与 `entry_fields` 写明 `expr_sha256` 是卡片 `predicate_writes` 原文的 sha256、不是 `atom_key`；⑦ `step_id` 改 `layer`，值 `outputs`；⑧ D3 的 `mapped` 全改 `aspect_mapped`，与 D4 的 `mapped` 分开。
+- **未改动**：母本、`SKILL.md` 判据、18 张卡正文、`validators/`、`dist/`、`.gitignore` 未动；未重打包、未写解析器／求值器／引擎；0014／0015／0016／0017／0018 逐字未动。
 - **关联 ADR**：`ADR-PRED-ENG-01`（P0 冻结口径；本批在冻结前落地）。
 - **备注**：只提交，不推送、不打标签。

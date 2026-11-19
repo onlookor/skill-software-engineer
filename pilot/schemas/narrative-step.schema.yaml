@@ -10,7 +10,8 @@ status: draft
 frozen_at: null
 
 authority_direction: >
-  本 schema 定义叙事推理步的记录形态，不复制白板状态；谓词增量只引用规范化原子。
+  本 schema 定义叙事推理步的记录形态；快照只携带原子列表（atom_key＋原子原文）用于
+  同一性判定，不复制白板状态的其他内容；谓词增量只引用规范化原子。
   卡片 outputs.predicate_writes 与 predicate_expr 仍是表达式与写入面的权威源。
 
 required:
@@ -78,8 +79,8 @@ fields:
       fields:
         atom:
           type: string
-          pattern: '^[A-Za-z_][A-Za-z0-9_]*\(.*\)$'
-          note: 按 T1.2 规范化后的原子；只写一个调用，不写联接词。
+          pattern: '^[A-Za-z_][A-Za-z0-9_]*\([\s\S]*\)$'
+          note: 按 T1.2 规范化后的原子；只写一个调用，不写联接词。实参内部的 CR／LF 是内容，故规范化原子可能跨行。
         atom_key:
           type: string
           pattern: '^[0-9a-f]{64}$'
@@ -92,8 +93,7 @@ fields:
           type: array
           items: integer
           enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-          min_items: 1
-          note: 该原子映射的方面；多方面原子逐个列出，不做合并或加权。
+          note: 该原子映射的方面；多方面原子逐个列出，不做合并或加权。为空数组当且仅当该原子名在 registry/predicate_aspects.yaml 的 disposition 为 process_record；其余情形至少 1 项（R9）。
   artifact_evidence:
     type: array
     items:
@@ -107,21 +107,53 @@ fields:
     type: array
     items: integer
     enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    note: 本步 predicate_increments[].aspects 的并集，去重后按升序书写；不得包含未在增量中出现的方面。
+    note: 全部 change = new 且 aspects 非空的增量的 aspects 并集，去重后按升序书写；全部 no_op 或全部 new 均为 process_record 时为空数组。不得包含未在增量中出现的方面。
   snapshot_before:
     type: object
-    required: [ref, sha256]
+    required: [atoms]
     fields:
-      ref: {type: string, min_length: 1, note: 白板谓词集快照的定位符}
-      sha256: {type: string, pattern: '^[0-9a-f]{64}$'}
+      ref:
+        type: string
+        min_length: 1
+        note: 白板谓词集快照的定位符；摘要字段，不展开内容。
+      sha256:
+        type: string
+        pattern: '^[0-9a-f]{64}$'
+        note: 摘要字段；若填写，须等于 atoms 各 atom_key 按列表顺序以 "\n" 连接后的 UTF-8 字节 sha256。判定同一性不读此字段。
+      atoms:
+        type: array
+        items:
+          type: object
+          required: [atom_key, atom]
+          fields:
+            atom_key: {type: string, pattern: '^[0-9a-f]{64}$'}
+            atom: {type: string, pattern: '^[A-Za-z_][A-Za-z0-9_]*\([\s\S]*\)$'}
+        min_items: 0
+        note: 快照的权威内容；逐项列出全部原子（可为最小基线），按 atom_key 升序、不得重复。change 的判定只读本列表。
     note: outcome_kind = predicate_write 时必填；用于判定 new／no_op 的基线。
   snapshot_after:
     type: object
-    required: [ref, sha256]
+    required: [atoms]
     fields:
-      ref: {type: string, min_length: 1}
-      sha256: {type: string, pattern: '^[0-9a-f]{64}$'}
-    note: outcome_kind = predicate_write 时必填；等于 snapshot_before 当且仅当本步全部增量为 no_op。
+      ref:
+        type: string
+        min_length: 1
+        note: 摘要字段。
+      sha256:
+        type: string
+        pattern: '^[0-9a-f]{64}$'
+        note: 摘要字段；口径同 snapshot_before。
+      atoms:
+        type: array
+        items:
+          type: object
+          required: [atom_key, atom]
+          fields:
+            atom_key: {type: string, pattern: '^[0-9a-f]{64}$'}
+            atom: {type: string, pattern: '^[A-Za-z_][A-Za-z0-9_]*\([\s\S]*\)$'}
+        min_items: 0
+        note: 快照的权威内容；与 snapshot_before.atoms 逐项相同当且仅当本步全部增量为 no_op。
+    note: outcome_kind = predicate_write 时必填。
   recorded_at:
     type: string
     format: RFC3339
@@ -144,29 +176,45 @@ rules:
   - id: R4
     text: 每个 predicate_increments[].atom 必须与 T1.2 的规范化形式逐字一致；atom_key 必须等于 sha256(utf8(atom))。
   - id: R5
-    text: change 的判定只比较 atom_key：snapshot_before 中已存在同 atom_key → no_op，否则 new；不得按名字或方面判定。
+    text: change 的判定只比较 atom_key：snapshot_before.atoms 中已存在同 atom_key → no_op，否则 new；不得按名字、方面或摘要字段判定。
   - id: R6
-    text: aspects_touched 必须逐项等于 predicate_increments[].aspects 的并集（去重、升序）；predicate_increments 为空时 aspects_touched 必须为空数组。
+    text: aspects_touched 必须逐项等于全部 change = new 且 aspects 非空的 predicate_increments[].aspects 的并集（去重、升序）；全部增量为 no_op 或全部 new 均为 process_record 时 aspects_touched 为空数组。
   - id: R7
     text: 同一 run_id 内 step_id 与 seq 各自唯一；seq 不要求连续，但必须递增。
   - id: R8
     text: 一条记录只能表达一个推理步；把多个判断合并写入同一条即违规（「一步」的边界由 narrative／trace／decision 三元组是否只含一个判断来判，无法判定时须拆成多条，理由记 notes）。
+  - id: R9
+    text: predicate_increments[].aspects 为空数组当且仅当该原子名在 registry/predicate_aspects.yaml 的 disposition 为 process_record；其余情形至少 1 项，且取值必须等于该条目的 aspects（多值逐项列出）。
+  - id: R10
+    text: snapshot_before／snapshot_after 必须携带 atoms（每项 atom_key 与规范化原子原文），按 atom_key 升序、不得重复；ref 与 sha256 只是摘要。sha256 若填写，必须等于 atoms 各 atom_key 按列表顺序以 "\n" 连接后的 sha256；判定同一性只读 atoms。
 
 atom_grammar:
   canonical_form: 'name(arg1,arg2,...)'
   name_pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
   arg_separator: ','
+  structural_whitespace: ['U+0020', 'U+0009', 'U+000D', 'U+000A']
+  non_structural_whitespace: ['U+3000', 'U+00A0']
   normalization:
-    - 去掉 name 与 '(' 之间、'(' 与首个 arg 之间、arg 与 ',' 之间、',' 与下一个 arg 之间、末个 arg 与 ')' 之间的 ASCII 空格与制表符。
-    - 实参内部空白原样保留；不折叠实参内部的连续空白。
-    - 实参顺序不得重排；不得去重；不得改大小写。
-    - 显式占位符 `·` 是一个独立实参，保留。
-    - 嵌套括号按深度配对切分实参，不把内层逗号当作分隔符。
-    - 空实参列表写作 `name()`；不得写成 `name( )`。
+    - 边界：去掉原子字面首尾的 ASCII 空格、制表符、CR、LF。
+    - 结构空白只有 ASCII 空格（U+0020）、制表符（U+0009）、CR（U+000D）、LF（U+000A）；只在五个位置去掉：name 与 '(' 之间、'(' 与首个实参之间、实参与 ',' 之间、',' 与下一个实参之间、末个实参与 ')' 之间。'name( )' 规范化为 'name()'。
+    - 结构位置之外的空白是实参内容，原样保留；不折叠连续空白。
+    - 全角空格（U+3000）与 NBSP（U+00A0）不是结构空白：按内容原样保留并计入 atom_key；不得替换为 ASCII 空格，也不得在比对时忽略。name 与 '(' 之间出现它们即判不合格。
+    - CR／LF 只在结构位置去掉；实参内部的 CR／LF 是内容，逐字保留（CRLF 为两个字符）。实参内部的换行若为排版误写，须改写原子字面后重算，不得由规范化删除或拼接两侧字符。
+    - 实参可用单引号或双引号包裹；引号内的空格、制表符、CR／LF、逗号、括号、U+3000／U+00A0 全是内容，不参与实参切分与括号配对；引号本身保留，不做剥离。引号未闭合判不合格。
+    - 转义：反斜杠后接反斜杠、左括号、右括号、逗号、单引号或双引号之一时，表示该字符的字面形式；转义序列原样保留（不做反转义），被转义字符不参与切分与括号配对。反斜杠后接其它字符、或位于字面末尾，判不合格。
+    - 实参顺序不得重排、不得去重、不得改大小写；显式占位符 `·` 是一个独立实参并保留；未加引号的嵌套括号按深度配对切分，内层逗号不作分隔。
+    - 右括号 `)` 之后不得再有非结构空白或其它内容；空实参列表写作 `name()`，`,,`、首逗号、尾逗号产生的零长度实参判不合格。
+    - 无法按上述规则得到唯一结果时判不合格，不得猜测、补全或改写为看起来合理的形式。
   identity:
     rule: 两个原子当且仅当 atom_key 相等时是同一原子；atom_key = sha256(utf8(canonical_form))。
     examples:
       - {left: 'data_flow(D,svc)', right: 'data_flow( D , svc )', same: true}
+      - {left: 'data_flow(D,svc)', right: "data_flow(\nD,\nsvc\n)", same: true, reason: 结构位置的换行与空格去掉}
       - {left: 'data_flow(D,svc)', right: 'data_flow(svc,D)', same: false, reason: 实参顺序不同}
       - {left: 'style(S)', right: 'Style(S)', same: false, reason: 名字大小写不同，且别名不合法}
       - {left: 'dsm(system,·)', right: 'dsm(system)', same: false, reason: 少写槽位不是同一原子；缺参按 D3.7 处理}
+      - {left: 'tag(a\,b)', right: 'tag(a,b)', same: false, reason: 转义逗号不切分，实参个数不同}
+      - {left: 'note("a,b")', right: 'note(a,b)', same: false, reason: 引号内逗号不切分，实参个数不同}
+      - {left: "note(a\u3000b)", right: 'note(a b)', same: false, reason: 全角空格是内容，不等同于 ASCII 空格}
+      - {left: "note(a\u00A0b)", right: 'note(a b)', same: false, reason: NBSP 是内容，不等同于 ASCII 空格}
+      - {left: 'p(a\(b)', right: 'p(a\(b)', same: true, reason: 转义左括号是内容，不参与括号配对}

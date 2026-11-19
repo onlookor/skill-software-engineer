@@ -1,4 +1,5 @@
 # 黄金样本单条模板（不是样本；复制到 cases/ 后填写）
+# 与 pilot/schemas/narrative-step.schema.yaml 对齐；标注口径见 README.md S1–S7。
 schema_version: 1
 kind: golden_case
 status: template
@@ -8,7 +9,7 @@ aspect: 0                        # 4 | 5 | 9；过程记录写 0
 source_card: G-TRUNK-XXX         # 取自 pilot/vertical-slice-20261112/
 source_clause: '0.0'             # 谓词来源条款，须能在 predicate_vocabulary.yaml 反查
 
-# 判断本身（D1）
+# 判断本身（D1）；字段与 schema 必填项一致
 narrative_step:
   step_id: NS-<run_id>-0001
   run_id: <run_id>
@@ -20,24 +21,33 @@ narrative_step:
   trace: <推理轨迹>
   decision: <该步决定>
   outcome_kind: predicate_write  # predicate_write|artifact_preservation|unqualified
+  predicate_increments:
+    - atom: <name(args...)>      # 按 T1.2 规范化后的原子
+      atom_key: <sha256(utf8(atom))>
+      change: new                # new|no_op；只按 snapshot_before.atoms 的 atom_key 判定
+      aspects: [4]               # 仅当该名字在 predicate_aspects.yaml 为 process_record 时可写 []
+  aspects_touched: [4]           # 全部 new 且 aspects 非空的并集，去重升序
+  snapshot_before:               # predicate_write 时必填；atoms 是权威内容
+    ref: <定位符>
+    sha256: <摘要>                # 可选；= sha256(各 atom_key 按列表顺序以 \n 连接)
+    atoms:
+      - {atom_key: <64 hex>, atom: <规范化原子>}
+  snapshot_after:                # predicate_write 时必填；口径同 snapshot_before
+    ref: <定位符>
+    sha256: <摘要>
+    atoms:
+      - {atom_key: <64 hex>, atom: <规范化原子>}
   recorded_at: <RFC3339 带时区>
 
 # 期望值（手算，不引用实现）
-snapshot_before:
-  ref: <定位符>
-  predicates: []                 # 最小基线列表；change 只据此与 atom_key 判定
-expected_increments:
-  - atom: <name(args...)>
-    atom_key: <sha256(utf8(atom))>
-    change: new                  # new|no_op
-    aspects: []                  # 取自 predicate_aspects.yaml；process_record 为空
 expected:
-  aspects_touched: []
-  vector_keys_after: []          # 期望存在的方面键
-  disposition: mapped            # mapped|process_record|exempt
+  vector_keys_after: [4]         # 期望存在的方面键
+  d3_disposition: aspect_mapped  # aspect_mapped|process_record（D3；process_record 才允许空 aspects）
+  d4_status: mapped              # mapped|exempt（D4）
   why: <一句话说明为何是该 disposition>
 
 # 元数据
+# outcome_kind 非 predicate_write 时，按 schema R2／R3 清空对应字段（含快照）。
 split_reason: null               # 若由一条拆出，写原因
 undecidable: false
 undecidable_reason: null

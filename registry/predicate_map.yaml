@@ -10,7 +10,11 @@
 #
 # D4（2026-11-19）填充 33 名：mapped 30 名，exempt 3 名（豁免上限 3 由人类核定）。
 # 生成型 pact 不得进入 exempt；exempt 必须带 owner／due／approved_by／reason。
-# predicate_writes 位于卡片 outputs 层，故 expr_refs 的 step_id 统一写 outputs。
+# predicate_writes 位于卡片 outputs 层，故 expr_refs 的 layer 统一写 outputs；
+# layer 表示该名字位于卡片的哪一层，不是叙事步的 step_id，漂移检查不得按 step_id 读。
+# expr_sha256 = sha256(utf8(卡片 outputs.predicate_writes 中该名字对应条目的逐字原文))，
+# 含实参、空格与大小写，不含 YAML 缩进与列表前缀，末尾不加换行；它不是 atom_key，
+# 也不是规范化原子——按 atom_key 口径复算会得到满屏假漂移。
 
 schema_version: 1
 kind: predicate_coverage_map
@@ -27,8 +31,8 @@ exemption_cap:
 entry_fields:
   - name                                    # 谓词名，须在 predicate_vocabulary.yaml 在册
   - card_ids                                # 写入该名字的卡片 ID 列表
-  - expr_refs                               # [{card_id, step_id, expr_sha256}]
-  - status                                  # mapped | exempt
+  - expr_refs                               # [{card_id, layer, expr_sha256}]；layer=outputs，是卡片层而非叙事步 step_id；expr_sha256 = sha256(卡片 outputs.predicate_writes 中该名字条目的逐字原文)，不是 atom_key
+  - status                                  # mapped | exempt（D4 覆盖状态；D3 的 aspect_mapped 不写在这里）
   - owner                                   # exempt 必填
   - due                                     # exempt 必填
   - approved_by                             # exempt 必填
@@ -39,166 +43,166 @@ entries:
   - name: access_path
     card_ids: [G-TRUNK-OWN]
     expr_refs:
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: b8ffefae9ad5be5c8245c3f2260f18f6376c6b2e714308b57e0d206f2b27dc72}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: b8ffefae9ad5be5c8245c3f2260f18f6376c6b2e714308b57e0d206f2b27dc72}
     status: mapped
   - name: canary_gate
     card_ids: [G-TRUNK-DPS]
     expr_refs:
-      - {card_id: G-TRUNK-DPS, step_id: outputs, expr_sha256: a7fc83894ec8d9f63924177cc1b2c1f34a867f24fbfd36cecf0b0e5774363cf5}
+      - {card_id: G-TRUNK-DPS, layer: outputs, expr_sha256: a7fc83894ec8d9f63924177cc1b2c1f34a867f24fbfd36cecf0b0e5774363cf5}
     status: mapped
   - name: cleanup_filed
     card_ids: [G-TRUNK-RLP]
     expr_refs:
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: 2b9530801680993ff124842cb9a55953aff09834d0ffea26e16cfbecd04d380b}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: 2b9530801680993ff124842cb9a55953aff09834d0ffea26e16cfbecd04d380b}
     status: mapped
   - name: compensation
     card_ids: [G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: b66ecab57861b72241993ac05791f4c1a2db4c1b282cf0589a5a38ad3614ad04}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: b66ecab57861b72241993ac05791f4c1a2db4c1b282cf0589a5a38ad3614ad04}
     status: mapped
   - name: consistency_level
     card_ids: [G-TRUNK-CSL]
     expr_refs:
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: 4031590387eba52fa366aeb59e8689db41a5a6d6ccdcf40a5bd6a50cacfd30d5}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: 4031590387eba52fa366aeb59e8689db41a5a6d6ccdcf40a5bd6a50cacfd30d5}
     status: mapped
   - name: consistency_rationale
     card_ids: [G-TRUNK-CSL]
     expr_refs:
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: a0af68629782951baba5a4994d725fbd887d2b87f5d836b1d65aca2bf2935978}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: a0af68629782951baba5a4994d725fbd887d2b87f5d836b1d65aca2bf2935978}
     status: mapped
   - name: data_flow
     card_ids: [G-TRUNK-DFL]
     expr_refs:
-      - {card_id: G-TRUNK-DFL, step_id: outputs, expr_sha256: 66b48c046848a3e8da40788e44a9b1c37bebe746a9838ca5933d4f2288258bae}
+      - {card_id: G-TRUNK-DFL, layer: outputs, expr_sha256: 66b48c046848a3e8da40788e44a9b1c37bebe746a9838ca5933d4f2288258bae}
     status: mapped
   - name: data_lineage
     card_ids: [G-TRUNK-DFL]
     expr_refs:
-      - {card_id: G-TRUNK-DFL, step_id: outputs, expr_sha256: 74e7b0db495e69aee21df206fce6f4df11a49f414dcc9f1f04b9533133f5281c}
+      - {card_id: G-TRUNK-DFL, layer: outputs, expr_sha256: 74e7b0db495e69aee21df206fce6f4df11a49f414dcc9f1f04b9533133f5281c}
     status: mapped
   - name: dataset
     card_ids: [G-TRUNK-OWN]
     expr_refs:
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: b277fd623676a525c29b9eb155afc8c9010681814ceafb2d7627f47b9a232576}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: b277fd623676a525c29b9eb155afc8c9010681814ceafb2d7627f47b9a232576}
     status: mapped
   - name: delivery_semantics
     card_ids: [G-TRUNK-RLP]
     expr_refs:
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: cce8059f9bb21f42d99158cbc47237c9cd10832ac16c657e187d77dc7cfc880e}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: cce8059f9bb21f42d99158cbc47237c9cd10832ac16c657e187d77dc7cfc880e}
     status: mapped
   - name: deploy_strategy
     card_ids: [G-TRUNK-DPS]
     expr_refs:
-      - {card_id: G-TRUNK-DPS, step_id: outputs, expr_sha256: b3658390edad9c4f016bf3694e92bb79b04cefa7129686f367a15ef7aec8d849}
+      - {card_id: G-TRUNK-DPS, layer: outputs, expr_sha256: b3658390edad9c4f016bf3694e92bb79b04cefa7129686f367a15ef7aec8d849}
     status: mapped
   - name: evolution_path
     card_ids: [G-TRUNK-DPS]
     expr_refs:
-      - {card_id: G-TRUNK-DPS, step_id: outputs, expr_sha256: d81f8d1affb11653b9e7f6139eb3b166552830d3eb98905c6fe73c36fa5052ef}
+      - {card_id: G-TRUNK-DPS, layer: outputs, expr_sha256: d81f8d1affb11653b9e7f6139eb3b166552830d3eb98905c6fe73c36fa5052ef}
     status: mapped
   - name: exclusion_record
     card_ids: [G-CAND-01, G-CAND-02, G-CAND-03, G-CAND-04, G-CAND-05, G-CAND-06, G-CAND-07, G-CAND-08, G-TRUNK-CSL, G-TRUNK-DFL, G-TRUNK-OWN, G-TRUNK-RLP, G-TRUNK-SCH, G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-CAND-01, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-CAND-02, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-CAND-03, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-CAND-04, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-CAND-05, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-CAND-06, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-CAND-07, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-CAND-08, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-TRUNK-DFL, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-TRUNK-SCH, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-01, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-02, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-03, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-04, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-05, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-06, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-07, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-CAND-08, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-TRUNK-DFL, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-TRUNK-SCH, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 0fbade93170c253a97824629f30eabf2a70ebf6ef614ecbb04c0f9c3e07e9487}
     status: mapped
   - name: expiry_of
     card_ids: [G-TRUNK-RLP]
     expr_refs:
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: 14f6c40d3203d32cf84785a89855382c9bddb59f61a6732cdc857ca8a9756d41}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: 14f6c40d3203d32cf84785a89855382c9bddb59f61a6732cdc857ca8a9756d41}
     status: mapped
   - name: flag
     card_ids: [G-TRUNK-RLP]
     expr_refs:
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: 807d0fbcae7c4b20518d4d85664f6820aafdf936104122c5073e7744c46c4b87}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: 807d0fbcae7c4b20518d4d85664f6820aafdf936104122c5073e7744c46c4b87}
     status: mapped
   - name: idempotency
     card_ids: [G-TRUNK-RLP]
     expr_refs:
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: f5d39a07e87f63da289b4c3ff8d5adfc6d1e493ad381b2bb24260dc032f1de06}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: f5d39a07e87f63da289b4c3ff8d5adfc6d1e493ad381b2bb24260dc032f1de06}
     status: mapped
   - name: idempotent
     card_ids: [G-TRUNK-RLP]
     expr_refs:
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: 0c86aca05c3a4730a1129a4b619d7826bd08d86c9fabfba73d8235a6f25c51f8}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: 0c86aca05c3a4730a1129a4b619d7826bd08d86c9fabfba73d8235a6f25c51f8}
     status: mapped
   - name: interaction_flow
     card_ids: [G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 78f363589406270b78367c5dab591fe34836aab6cfe1b0308d8097c2ab4f55e2}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 78f363589406270b78367c5dab591fe34836aab6cfe1b0308d8097c2ab4f55e2}
     status: mapped
   - name: invariant
     card_ids: [G-TRUNK-CSL]
     expr_refs:
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: c94ad2d92135458a0faebbb62b16af3012b6179f1128a2e09a3848172b3ad76b}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: c94ad2d92135458a0faebbb62b16af3012b6179f1128a2e09a3848172b3ad76b}
     status: mapped
   - name: orchestrator
     card_ids: [G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 11376b7e2acf0c93001f16d10c7ef82ecc88f2292851ba9a5fb14767c7d027ec}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 11376b7e2acf0c93001f16d10c7ef82ecc88f2292851ba9a5fb14767c7d027ec}
     status: mapped
   - name: owner
     card_ids: [G-TRUNK-OWN]
     expr_refs:
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: 4c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: 4c1029697ee358715d3a14a2add817c4b01651440de808371f78165ac90dc581}
     status: mapped
   - name: quality_impact_card
     card_ids: [G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 3dea8269b88b1f8c744cf4300a1f41ee9a4bf095c3dbd94538a1861ea901ef6c}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 3dea8269b88b1f8c744cf4300a1f41ee9a4bf095c3dbd94538a1861ea901ef6c}
     status: mapped
   - name: saga
     card_ids: [G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 936fccfc8fe9a540965b08e35f46a4a5cc81dec92ac1b1dedfcb4810d017ffaf}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 936fccfc8fe9a540965b08e35f46a4a5cc81dec92ac1b1dedfcb4810d017ffaf}
     status: mapped
   - name: selection_context
     card_ids: [G-CAND-01, G-CAND-02, G-CAND-03, G-CAND-04, G-CAND-05, G-CAND-06, G-CAND-07, G-CAND-08, G-TRUNK-CSL, G-TRUNK-DFL, G-TRUNK-OWN, G-TRUNK-RLP, G-TRUNK-SCH, G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-CAND-01, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-CAND-02, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-CAND-03, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-CAND-04, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-CAND-05, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-CAND-06, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-CAND-07, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-CAND-08, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-TRUNK-DFL, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-TRUNK-SCH, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-01, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-02, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-03, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-04, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-05, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-06, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-07, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-CAND-08, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-TRUNK-DFL, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-TRUNK-SCH, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: e141e8389a8e5dcb3a6083c7d9ba6cc63e2827e27d3c82042946fbb82daa3150}
     status: mapped
   - name: selection_procedure
     card_ids: [G-CAND-01, G-CAND-02, G-CAND-03, G-CAND-04, G-CAND-05, G-CAND-06, G-CAND-07, G-CAND-08, G-TRUNK-CSL, G-TRUNK-DFL, G-TRUNK-OWN, G-TRUNK-RLP, G-TRUNK-SCH, G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-CAND-01, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-CAND-02, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-CAND-03, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-CAND-04, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-CAND-05, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-CAND-06, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-CAND-07, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-CAND-08, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-TRUNK-DFL, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-TRUNK-SCH, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-01, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-02, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-03, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-04, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-05, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-06, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-07, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-CAND-08, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-TRUNK-DFL, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-TRUNK-SCH, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 394ed71cc975436afb957da109f2e97b13bb9980c79268eba28bfe9a56862145}
     status: exempt
     owner: onlookor（人类责任方）
     due: 首次多写入方部署前
@@ -208,35 +212,35 @@ entries:
   - name: sensitivity
     card_ids: [G-TRUNK-OWN]
     expr_refs:
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: 5c16250fd4bb6980cadb715b9a3b6ce7e677a7852cac5d0ea0c16de1f0a02fb0}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: 5c16250fd4bb6980cadb715b9a3b6ce7e677a7852cac5d0ea0c16de1f0a02fb0}
     status: mapped
   - name: shared_write_exception
     card_ids: [G-TRUNK-OWN]
     expr_refs:
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: 13b2a43b71bda43904e7f516f539dff47c984e462dee0202ac2b40bcec54ab57}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: 13b2a43b71bda43904e7f516f539dff47c984e462dee0202ac2b40bcec54ab57}
     status: mapped
   - name: step_class
     card_ids: [G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: d9f5803267b8fafb71d4e9141baaed6538a0be76c6bbb0d062270700c2deaac8}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: d9f5803267b8fafb71d4e9141baaed6538a0be76c6bbb0d062270700c2deaac8}
     status: mapped
   - name: step_log
     card_ids: [G-CAND-01, G-CAND-02, G-CAND-03, G-CAND-04, G-CAND-05, G-CAND-06, G-CAND-07, G-CAND-08, G-TRUNK-CSL, G-TRUNK-DFL, G-TRUNK-OWN, G-TRUNK-RLP, G-TRUNK-SCH, G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-CAND-01, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-CAND-02, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-CAND-03, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-CAND-04, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-CAND-05, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-CAND-06, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-CAND-07, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-CAND-08, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-TRUNK-DFL, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-TRUNK-SCH, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-01, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-02, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-03, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-04, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-05, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-06, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-07, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-CAND-08, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-TRUNK-DFL, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-TRUNK-SCH, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 72feb3f47af4a58212cce9f53135bda874d9e86a6700d6474bfd46e245f1fae8}
     status: exempt
     owner: onlookor（人类责任方）
     due: 首次多写入方部署前
@@ -246,35 +250,35 @@ entries:
   - name: strangler_sequence
     card_ids: [G-TRUNK-DPS]
     expr_refs:
-      - {card_id: G-TRUNK-DPS, step_id: outputs, expr_sha256: be42c0e8dbf46d49b5203e2027d1e5e94fa1f287bbfc0f7ccf3b86f5c1b8d573}
+      - {card_id: G-TRUNK-DPS, layer: outputs, expr_sha256: be42c0e8dbf46d49b5203e2027d1e5e94fa1f287bbfc0f7ccf3b86f5c1b8d573}
     status: mapped
   - name: time_semantics
     card_ids: [G-TRUNK-SCH]
     expr_refs:
-      - {card_id: G-TRUNK-SCH, step_id: outputs, expr_sha256: f0b5562f0c7e9f3b0195ac8fce8348de8d4e9e24212a94dc63953a9d08abaa68}
+      - {card_id: G-TRUNK-SCH, layer: outputs, expr_sha256: f0b5562f0c7e9f3b0195ac8fce8348de8d4e9e24212a94dc63953a9d08abaa68}
     status: mapped
   - name: timeout_budget
     card_ids: [G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: 400f9c1fcf6e97374a216e098da5fa5d3d516aa5b98dd3d3fd3167114cf24b14}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: 400f9c1fcf6e97374a216e098da5fa5d3d516aa5b98dd3d3fd3167114cf24b14}
     status: mapped
   - name: verdict_table
     card_ids: [G-CAND-01, G-CAND-02, G-CAND-03, G-CAND-04, G-CAND-05, G-CAND-06, G-CAND-07, G-CAND-08, G-TRUNK-CSL, G-TRUNK-DFL, G-TRUNK-OWN, G-TRUNK-RLP, G-TRUNK-SCH, G-TRUNK-STP]
     expr_refs:
-      - {card_id: G-CAND-01, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-CAND-02, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-CAND-03, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-CAND-04, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-CAND-05, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-CAND-06, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-CAND-07, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-CAND-08, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-TRUNK-CSL, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-TRUNK-DFL, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-TRUNK-OWN, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-TRUNK-RLP, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-TRUNK-SCH, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
-      - {card_id: G-TRUNK-STP, step_id: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-01, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-02, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-03, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-04, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-05, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-06, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-07, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-CAND-08, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-TRUNK-CSL, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-TRUNK-DFL, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-TRUNK-OWN, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-TRUNK-RLP, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-TRUNK-SCH, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
+      - {card_id: G-TRUNK-STP, layer: outputs, expr_sha256: b53604495c49362ca9e0ea9e359ed6d2d6b8b448eea0fa8b84189a1300de5080}
     status: exempt
     owner: onlookor（人类责任方）
     due: 首次多写入方部署前
