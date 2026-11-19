@@ -32,10 +32,10 @@ narrative_step:
         atom: dataset(order_db)
   recorded_at: '2026-11-19T10:02:00+08:00'
 expected:
-  vector_keys_after: []
+  advanced_keys: []
   d3_disposition: aspect_mapped
   d4_status: mapped
-  why: dataset 属 aspect_mapped、方面 [4]，D4 为 mapped；基线已有同 atom_key，判 no_op，不推进方面 4。vector_keys_after 按“本步推进的键”解读（该字段语义待裁定，见 manifest.definition_gaps DG-0002）。
+  why: dataset 属 aspect_mapped、方面 [4]，D4 为 mapped；基线已有同 atom_key，判 no_op，不推进方面 4；`advanced_keys` 是“本步 change=new 且 aspects 非空的键的并集”，no_op 必为空数组。
 split_reason: null
 undecidable: false
 undecidable_reason: null

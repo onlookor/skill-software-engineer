@@ -30,10 +30,10 @@ narrative_step:
         atom: step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)
   recorded_at: '2026-11-19T10:10:00+08:00'
 expected:
-  vector_keys_after: []
+  advanced_keys: []
   d3_disposition: process_record
   d4_status: exempt
-  why: step_log 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=exempt；基线无同 atom_key，判 new，但按 S4 不推进任何方面向量。
+  why: step_log 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=exempt；基线无同 atom_key，判 new，但按 S4 不推进任何方面向量，故 `advanced_keys`（new 且 aspects 非空的键的并集）为空数组。
 split_reason: null
 undecidable: false
 undecidable_reason: null

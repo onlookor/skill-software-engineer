@@ -30,7 +30,7 @@ narrative_step:
         atom: strangler_sequence(legacy_order,phase1_dual_write,30d)
   recorded_at: '2026-11-19T10:09:00+08:00'
 expected:
-  vector_keys_after: [9]
+  advanced_keys: [9]
   d3_disposition: aspect_mapped
   d4_status: mapped
   why: strangler_sequence 属 aspect_mapped、方面 [9]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 9。

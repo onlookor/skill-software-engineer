@@ -34,7 +34,7 @@ counts:
   new: 9
   no_op: 2
   unqualified: 1
-  undecidable: 1
+  undecidable: 0
   by_aspect: {'4': 4, '5': 4, '9': 2, 'process_record': 1}
 
 cases:
@@ -49,22 +49,25 @@ cases:
   - {case_id: GC-0009, file: cases/GC-0009.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
   - {case_id: GC-0010, file: cases/GC-0010.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
   - {case_id: GC-0011, file: cases/GC-0011.yaml, aspect: 4, change: new, d3_disposition: process_record, d4_status: exempt, undecidable: false}
-  - {case_id: GC-0012, file: cases/GC-0012.yaml, aspect: 0, change: null, d3_disposition: undecidable, d4_status: undecidable, undecidable: true}
+  - {case_id: GC-0012, file: cases/GC-0012.yaml, aspect: 0, change: null, verdict: unqualified, reject_code: no_predicate_atom, undecidable: false}
 
-# 本批实际撞上的定义缺口（不是样本结论；待人类裁定后回改定义并重标，不得边标边改）
+# 本批撞上的定义缺口（不是样本结论）；三条均已由人类裁定，DG-0001／DG-0002 已回改定义并按新口径重标，DG-0003 登记为技术债（TECH-DEBT 第 14 条）
 definition_gaps:
   - gap_id: DG-0001
     cases: [GC-0012]
     text: outcome_kind=unqualified 的样本没有谓词名，expected.d3_disposition 与 expected.d4_status 在 schema 与 README 中没有取值定义；T3 只规定不取得引用资格。
-    state: 该条按 undecidable 登记，未改定义。
+    state: 已裁定，已改定义并重标
+    resolution: "unqualified 不产生谓词增量，不套映射字段。expected 只写 verdict: unqualified 与 reject_code（本批为 no_predicate_atom）；d3_disposition／d4_status 在该情形不适用，不是「可留空」。已同步 schema R3 与 README S8；GC-0012 已按此重标（undecidable 撤销）。"
   - gap_id: DG-0002
     cases: [GC-0003, GC-0007]
     text: expected.vector_keys_after 的语义未定义——是“本步推进的键”还是“步后向量中的全部键”；后者在快照只携带 atoms、不携带版本向量的情况下，对 no_op 不可判定。
-    state: 本批按“本步推进的键”标注（no_op 记空数组），待裁定。
+    state: 已裁定，已改名并重标
+    resolution: "字段改名 advanced_keys，语义定死为「本步 change=new 且 aspects 非空的键的并集」（去重升序；no_op 必为 []）。不另设「步后全量键」字段——可从前序累积推出，多一个字段就多一个不一致的入口。已同步 schema、设计稿与全部 12 条样本。"
   - gap_id: DG-0003
     cases: []
     text: 卡片的 outputs.predicate_writes 多为裸名（如 data_flow、dataset），没有实参；而 D1/D2 的 atom 必须是 name(args) 形式。卡片裸名到叙事步原子的参数位与取值域未定义。
-    state: 本批样本的原子由叙事步直接给出，不反推卡片裸名；该缺口不阻塞本批，但会阻塞“从卡片自动抽取样本”。
+    state: 已裁定：不修，登记为技术债
+    resolution: "原子只由叙事步给出；卡片 predicate_writes 的裸名只作名字存在性与命名空间校验，不构成原子模板，不得据此反推参数。新增 TECH-DEBT 第 14 条（做什么／为何现在不做／不做期间的空白／启动条件／关闭判据），设计稿「非目标与未决」留指针。"
 
 # 尚未在样本中出现的卡片谓词名（22 名）
 uncovered:

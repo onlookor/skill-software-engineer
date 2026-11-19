@@ -30,7 +30,7 @@ narrative_step:
         atom: consistency_level(DP-4.5,strong)
   recorded_at: '2026-11-19T10:00:00+08:00'
 expected:
-  vector_keys_after: [4]
+  advanced_keys: [4]
   d3_disposition: aspect_mapped
   d4_status: mapped
   why: consistency_level 在 predicate_aspects 中属 aspect_mapped、方面 [4]，在 predicate_map 中 status=mapped；基线无同 atom_key，判 new 并推进方面 4。

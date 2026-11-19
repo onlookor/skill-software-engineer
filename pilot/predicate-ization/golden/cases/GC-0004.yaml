@@ -30,7 +30,7 @@ narrative_step:
         atom: access_path(order_db,reporting_svc,view,contract_C7)
   recorded_at: '2026-11-19T10:03:00+08:00'
 expected:
-  vector_keys_after: [4]
+  advanced_keys: [4]
   d3_disposition: aspect_mapped
   d4_status: mapped
   why: access_path 属 aspect_mapped、方面 [4]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 4。

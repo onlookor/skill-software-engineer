@@ -1,5 +1,5 @@
 # 黄金样本单条模板（不是样本；复制到 cases/ 后填写）
-# 与 pilot/schemas/narrative-step.schema.yaml 对齐；标注口径见 README.md S1–S7。
+# 与 pilot/schemas/narrative-step.schema.yaml 对齐；标注口径见 README.md S1–S9。
 schema_version: 1
 kind: golden_case
 status: template
@@ -22,7 +22,7 @@ narrative_step:
   decision: <该步决定>
   outcome_kind: predicate_write  # predicate_write|artifact_preservation|unqualified
   predicate_increments:
-    - atom: <name(args...)>      # 按 T1.2 规范化后的原子
+    - atom: <name(args...)>      # 按 T1.2 规范化后的原子；只由叙事步给出，卡片裸名不得反推参数
       atom_key: <sha256(utf8(atom))>
       change: new                # new|no_op；只按 snapshot_before.atoms 的 atom_key 判定
       aspects: [4]               # 仅当该名字在 predicate_aspects.yaml 为 process_record 时可写 []
@@ -40,11 +40,18 @@ narrative_step:
   recorded_at: <RFC3339 带时区>
 
 # 期望值（手算，不引用实现）
+# predicate_write：advanced_keys 只写本步 change=new 且 aspects 非空的键的并集，去重升序；no_op 必为 []。
+# unqualified：expected 只写 verdict 与 reject_code；d3_disposition／d4_status 不适用，不得留空充数。
 expected:
-  vector_keys_after: [4]         # 期望存在的方面键
+  advanced_keys: [4]             # 本步推进的键；no_op 为 []
   d3_disposition: aspect_mapped  # aspect_mapped|process_record（D3；process_record 才允许空 aspects）
   d4_status: mapped              # mapped|exempt（D4）
   why: <一句话说明为何是该 disposition>
+
+# unqualified 样本改用下面两块（并删除上面的 expected 块）：
+# expected:
+#   verdict: unqualified
+#   reject_code: no_predicate_atom
 
 # 元数据
 # outcome_kind 非 predicate_write 时，按 schema R2／R3 清空对应字段（含快照）。

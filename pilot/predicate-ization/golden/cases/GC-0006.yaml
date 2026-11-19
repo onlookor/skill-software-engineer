@@ -30,7 +30,7 @@ narrative_step:
         atom: idempotency(order_api,idempotency_key)
   recorded_at: '2026-11-19T10:05:00+08:00'
 expected:
-  vector_keys_after: [5]
+  advanced_keys: [5]
   d3_disposition: aspect_mapped
   d4_status: mapped
   why: idempotency 属 aspect_mapped、方面 [5]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 5。

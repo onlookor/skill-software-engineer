@@ -34,6 +34,8 @@ pilot/predicate-ization/golden/
 - **S5 豁免**：`exempt` 样本只用于 3 个已登记名（`step_log`／`selection_procedure`／`verdict_table`）；其它名字标 `exempt` 即样本无效。
 - **S6 一步一条**：一条样本只含一个判断；出现两个独立判断时拆成两条，拆分理由记 `split_reason`。
 - **S7 不可判定**：确实无法按字面判定时，`expected` 写 `undecidable` 并在 `undecidable_reason` 写明缺哪条定义；不得用「合理」「适当」代替判定。
+- **S8 期望值形态**：`predicate_write` 样本的 `expected` 写 `advanced_keys`（本步 `change=new` 且 `aspects` 非空的键的并集，去重升序；`no_op` 必为 `[]`）、`d3_disposition`、`d4_status`、`why`。`unqualified` 样本的 `expected` 只写 `verdict: unqualified` 与 `reject_code`；`d3_disposition`／`d4_status` 在该情形**不适用**，不是「可留空」——留空与不适用是两回事。本批定义并使用的 `reject_code` 为 `no_predicate_atom`（该判断没有可写入的机器层谓词原子）；新增码须先在本节登记。
+- **S9 原子来源**：原子只由叙事步给出。卡片 `predicate_writes` 的裸名只作名字存在性与命名空间校验，不构成原子模板，不得据此反推参数位或取值域（见 `TECH-DEBT.md` 第 14 条）。
 
 ## 4. 批次与配额（第 1 批已标）
 
@@ -43,6 +45,14 @@ pilot/predicate-ization/golden/
 - 覆盖要求：33 个卡片名中至少 20 名各出现一次；未出现名在 `manifest.yaml` 的 `uncovered` 列出，不得静默。
 - 标注由执行席单人完成；每批由独立复核席抽检 ≥ 20%，不一致时回改定义并重标该条。κ 不可估计，不得作为任何结论依据；抽检记录逐条留档。
 
-## 5. 冻结
+## 5. 定义缺口登记（已裁定）
+
+第 1 批标注中撞上三条定义缺口，均已由人类裁定。裁定内容即现行定义；样本按裁定后口径重标，没有「先这么定、以后再说」的临时写法。
+
+- **DG-0001（`unqualified` 样本的 `expected`）— 已裁定**：`unqualified` 不产生谓词增量，不套映射字段。`expected` 只写 `verdict: unqualified` 与 `reject_code`；`d3_disposition`／`d4_status` 在该情形**不适用**，不是「可留空」——留空与不适用是两回事，后者可判、前者不可判。涉及 `GC-0012`；schema R3 与 S8 已同步，该条已重标（撤销 `undecidable`）。
+- **DG-0002（原 `vector_keys_after` 的语义）— 已裁定**：字段改名为 `advanced_keys`，语义定死为「本步 `change=new` 且 `aspects` 非空的键的并集」（去重升序；`no_op` 必为 `[]`）。不另设「步后全量键」字段——可从前序累积推出，多一个字段就多一个不一致的入口。涉及全部 12 条样本，`GC-0003`／`GC-0007` 已按新语义重标；schema 与设计稿已同步。
+- **DG-0003（卡片裸名到原子的桥）— 已裁定：不修，登记为债**：原子只由叙事步给出；卡片 `predicate_writes` 的裸名只作名字存在性与命名空间校验，不构成原子模板，不得据此反推参数位或取值域（S9）。空白与关闭判据见 `TECH-DEBT.md` 第 14 条；设计稿第 10 章留有指针。
+
+## 6. 冻结
 
 P0 出口达成时，`manifest.yaml` 的 `status` 改为 `frozen` 并写 `frozen_at`；冻结后新增样本只追加，不改写既有样本的期望值。

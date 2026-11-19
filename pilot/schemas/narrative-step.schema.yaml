@@ -107,7 +107,7 @@ fields:
     type: array
     items: integer
     enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-    note: 全部 change = new 且 aspects 非空的增量的 aspects 并集，去重后按升序书写；全部 no_op 或全部 new 均为 process_record 时为空数组。不得包含未在增量中出现的方面。
+    note: 全部 change = new 且 aspects 非空的增量的 aspects 并集，去重后按升序书写；全部 no_op 或全部 new 均为 process_record 时为空数组。不得包含未在增量中出现的方面。黄金样本的 expected.advanced_keys 与该字段同口径：本步 change=new 且 aspects 非空的键的并集；no_op 必为 []。
   snapshot_before:
     type: object
     required: [atoms]
@@ -172,7 +172,7 @@ rules:
   - id: R2
     text: outcome_kind = artifact_preservation 时，artifact_evidence 至少 1 项，predicate_increments 必须为空数组；snapshot_before／snapshot_after 不要求。
   - id: R3
-    text: outcome_kind = unqualified 时，predicate_increments 与 artifact_evidence 均为空数组；该步按 T3 不取得引用资格，`decision` 须写明退回或降为线索的处置。
+    text: outcome_kind = unqualified 时，predicate_increments 与 artifact_evidence 均为空数组；该步按 T3 不取得引用资格，`decision` 须写明退回或降为线索的处置。黄金样本的 expected 只写 `verdict`（取 unqualified）与 `reject_code`（拒收原因码）；`d3_disposition`／`d4_status` 在该情形**不适用**（不产生谓词增量，没有可映射的对象），不是「可留空」——留空与不适用是两回事，后者可判、前者不可判，不得以空值充数。
   - id: R4
     text: 每个 predicate_increments[].atom 必须与 T1.2 的规范化形式逐字一致；atom_key 必须等于 sha256(utf8(atom))。
   - id: R5

@@ -382,3 +382,26 @@
 - **未改动**：母本、`SKILL.md` 判据、18 张卡正文、`validators/`、`dist/`、4 个投影内容未动；未重打包、未写解析器／求值器／引擎；0014–0019 逐字未动。
 - **关联 ADR**：无
 - **备注**：单人标注，独立复核席抽检尚未执行；κ 不可估计。只提交，不推送、不打标签。
+
+## 批次 0021 — 2026-11-19
+
+- **批次号**：0021
+- **日期**：2026-11-19
+- **事项**：批次 0020 登记的三条定义缺口（`DG-0001`–`DG-0003`）经人类裁定后落地：改定义、按新口径重标受影响样本、把不修的一条登记为技术债。不留「先这么定、以后再说」的临时写法。
+- **涉及文件**：
+  - `pilot/predicate-ization/golden/README.md`：新增 S8 期望值形态、S9 原子来源；新增第 5 节「定义缺口登记（已裁定）」，原第 5 节冻结顺延为第 6 节。
+  - `pilot/predicate-ization/golden/_template.yaml`：`vector_keys_after` 改 `advanced_keys`，补 `unqualified` 的 `expected` 形态注释。
+  - `pilot/predicate-ization/golden/manifest.yaml`：`counts.undecidable` 改 0；`GC-0012` 条目改 `verdict`／`reject_code`；三条 `definition_gaps` 改「已裁定」并写裁定内容。
+  - `pilot/predicate-ization/golden/cases/GC-0001.yaml`–`GC-0012.yaml`：字段改名与按新口径重标。
+  - `pilot/schemas/narrative-step.schema.yaml`：R3 补 `unqualified` 样本 `expected` 字段的「不适用」说明；`aspects_touched` 注明与 `expected.advanced_keys` 同口径。
+  - `TECH-DEBT.md`：新增第 14 条（DG-0003，五要素齐全，本仓自铸编号）。
+  - `plans/predicate-ization-design.md`：第 5 章定义 `advanced_keys`；第 10 章加 DG-0003 指针。
+- **变更摘要**：
+  1. **DG-0001（`unqualified` 样本）**：`unqualified` 不产生谓词增量，不套映射字段。`expected` 只保留 `verdict: unqualified` 与 `reject_code`（本批为 `no_predicate_atom`），不含 `d3_disposition`／`d4_status`；schema R3 与 README S8 写明这两个字段在该情形**不适用**（没有可映射对象），不是「可留空」——留空不可判，不适用可判。`GC-0012` 按此重标，撤销 `undecidable`。
+  2. **DG-0002（原 `vector_keys_after` 语义）**：改名 `advanced_keys`，语义定死为「本步 `change=new` 且 `aspects` 非空的键的并集」，去重升序；`no_op` 必为 `[]`。不加「步后全量键」字段——可从前序累积推出，多一个字段就多一个不一致的入口。同步 schema、设计稿与全部 12 条样本；`GC-0003`／`GC-0007` 的 `why` 删去「待裁定」表述。
+  3. **DG-0003（卡片裸名到原子的桥）**：不修，登记为技术债。原子只由叙事步给出；卡片 `predicate_writes` 的裸名只作名字存在性与命名空间校验，不构成原子模板，不得据此反推参数。`TECH-DEBT.md` 第 14 条写全做什么／为何现在不做／不做期间的空白（卡片到原子无机器可核的桥、P3 的 18 张卡投影不能从卡片自动生成、覆盖核对只到名字一级）／启动条件／关闭判据（映射可从卡片推导且与叙事步原子一致，不一致项按定义回改）；设计稿第 10 章留指针。
+  4. **重标与登记**：受影响条目 `GC-0001`–`GC-0012` 全部按新口径复核；`GC-0012`、`GC-0003`、`GC-0007` 按裁定重写 `expected`／`why`；README 第 5 节把 `DG-0001`–`DG-0003` 登记为「已裁定」并写明裁定内容。
+  5. **校验**：用仓外临时脚本（`/tmp`，不入库）按定义复算 12 条——`atom_key = sha256(atom)`、`change` 只按 `snapshot_before.atoms` 判、`advanced_keys` 与 `aspects_touched` 一致、`no_op` 为空数组、`unqualified` 的 `expected` 只含 `verdict`／`reject_code`、manifest 计数与缺口状态一致，全部通过。
+- **未改动**：母本、`SKILL.md` 判据、18 张卡正文、`validators/`、`dist/` 未动；未重打包；未写解析器／求值器／引擎；`编译规范.md` 不含 `expected` 字段，本批无对应改动；0014–0020 逐字未动。
+- **关联 ADR**：无
+- **备注**：抽检由独立复核席执行，执行席未自抽检。只提交，不推送、不打标签。

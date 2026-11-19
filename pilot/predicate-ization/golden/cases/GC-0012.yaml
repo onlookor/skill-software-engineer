@@ -20,11 +20,9 @@ narrative_step:
   aspects_touched: []
   recorded_at: '2026-11-19T10:11:00+08:00'
 expected:
-  vector_keys_after: []
-  d3_disposition: undecidable
-  d4_status: undecidable
-  why: 该步没有原子名，D3/D4 无适用对象；schema 与 README 未定义 unqualified 样本的 expected 取值。
+  verdict: unqualified
+  reject_code: no_predicate_atom
 split_reason: null
-undecidable: true
-undecidable_reason: outcome_kind=unqualified 时没有谓词名可查，expected.d3_disposition/d4_status 在 schema 与 README 中没有取值定义；T3 只规定不取得引用资格，未规定这两个字段怎么填。
+undecidable: false
+undecidable_reason: null
 disagreement: null
