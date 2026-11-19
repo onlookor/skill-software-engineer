@@ -35,7 +35,7 @@ pilot/predicate-ization/golden/
 - **S6 一步一条**：一条样本只含一个判断；出现两个独立判断时拆成两条，拆分理由记 `split_reason`。
 - **S7 不可判定**：确实无法按字面判定时，`expected` 写 `undecidable` 并在 `undecidable_reason` 写明缺哪条定义；不得用「合理」「适当」代替判定。
 - **S8 期望值形态**：`predicate_write` 样本的 `expected` 写 `advanced_keys`（本步 `change=new` 且 `aspects` 非空的键的并集，去重升序；`no_op` 必为 `[]`）、`d3_disposition`、`d4_status`、`why`。`unqualified` 样本的 `expected` 只写 `verdict: unqualified` 与 `reject_code`；`d3_disposition`／`d4_status` 在该情形**不适用**，不是「可留空」——留空与不适用是两回事。本批定义并使用的 `reject_code` 为 `no_predicate_atom`（该判断没有可写入的机器层谓词原子）；新增码须先在本节登记。
-- **S9 原子来源**：原子只由叙事步给出。卡片 `predicate_writes` 的裸名只作名字存在性与命名空间校验，不构成原子模板，不得据此反推参数位或取值域（见 `TECH-DEBT.md` 第 14 条）。
+- **S9 原子来源**：原子只由叙事步给出。卡片 `predicate_writes` 的条目整体——裸名与带签名条目（如 `selection_context(DP, F, C)`）——都只作名字存在性与命名空间校验，都不构成原子模板，都不得据此反推参数位或取值域；签名也只证明字面存在，推不出取值域（见 `TECH-DEBT.md` 第 14 条）。
 
 ## 4. 批次与配额（第 1–2 批已标）
 
@@ -46,15 +46,15 @@ pilot/predicate-ization/golden/
 - 标注由执行席单人完成；每批由独立复核席抽检 ≥ 20%，不一致时回改定义并重标该条。κ 不可估计，不得作为任何结论依据；抽检记录逐条留档。
 - **三层口径（2026-11-19 裁定）**：
   - **桶数 36**＝方面 4／5／9 各 10 ＋ `process_record` 6；这就是 `target_total`（旧名保留，与 `bucket_total` 同义）。
-  - **`unqualified` 单列配额 4**，只数 `aspect = 0` 的 `unqualified`；这些样本**不占桶**。当前已达 1 条（`GC-0012`）。
+  - **`unqualified` 单列配额 4**：任何 `unqualified` 一律 `aspect = 0`、**不占桶**。不存在「带方面语境的 `unqualified`」这一中间态——被判不合格即无方面主张，样本里给它记一个方面，等于把「本来想写哪个方面」混进「实际产出了什么」。当前 3 条（`GC-0012`／`GC-0015`／`GC-0018`）。
   - **预期文件总数 40**＝桶 36 ＋ `unqualified` 4。
-  - `counts.unqualified` 数全部 `outcome_kind=unqualified`（当前 3），与单列配额进度（1）不是同一口径；`GC-0015`／`GC-0018` 有方面语境，按方面 4／5 占桶，同时计入 `counts.unqualified`。
+  - `counts.unqualified` 与配额进度是两个口径：前者数全部 `outcome_kind=unqualified`，后者只数已达配额口径的条目；当前两者都是 3，定义不同，不得互相替代或混用。
 - **进度**：
   - 第 1 批 12 个文件：桶 11（方面 4／5／9 = 4／4／2，`process_record` 1）＋ `aspect: 0` 的 `unqualified` 1（`GC-0012`）。
-  - 第 2 批 12 个文件：桶 12（方面 4／5／9 = 3／3／4，`process_record` 2；含 `unqualified` 2 条——`GC-0015` 记方面 4、`GC-0018` 记方面 5）＋ `no_op` 2 条（`GC-0017`／`GC-0022`）。
-  - 累计 24 个文件＝桶 23（4／5／9 = 7／7／6，`process_record` 3）＋ `aspect: 0` 的 `unqualified` 1；`new` 17、`no_op` 4、`unqualified` 3。
-  - 剩余 16 条：桶 13 条（4:3、5:3、9:4、`process_record`:3）＋ `aspect: 0` 的 `unqualified` 3 条。第 3 批 12 条＝桶 12（4:3、5:3、9:4、`process_record`:2）；第 4 批 4 条＝桶 1（`process_record`:1）＋ `unqualified` 3。共 24＋12＋4＝40 个文件。
-- **`cases[].aspect` 口径（记账 1）**：该字段表示案例所属方面——方面样本取源卡 `_aspect`（4／5／9）；过程记录按模板写 `0`，记入独立的 `process_record` 桶；无方面 `unqualified` 也写 `0`，记入 `'0'` 桶。`counts.by_aspect` 按此从 `cases[]` 重算：4／5／9 直接取该字段，`process_record` 取 `d3_disposition=process_record` 的条数，`'0'` 取 `aspect=0` 且非 `process_record` 的条数。
+  - 第 2 批 12 个文件：桶 10（方面 4／5／9 = 2／2／4，`process_record` 2）＋ `aspect: 0` 的 `unqualified` 2（`GC-0015`／`GC-0018`）；其中 `no_op` 2 条（`GC-0017`／`GC-0022`）。
+  - 累计 24 个文件＝桶 21（4／5／9 = 6／6／6，`process_record` 3）＋ `aspect: 0` 的 `unqualified` 3；`new` 17、`no_op` 4、`unqualified` 3。
+  - 剩余 16 条：桶 15 条（4:4、5:4、9:4、`process_record`:3）＋ `aspect: 0` 的 `unqualified` 1 条。第 3 批 12 条＝桶 12（4:4、5:4、9:4）；第 4 批 4 条＝桶 3（`process_record`:3）＋ `unqualified` 1。共 24＋12＋4＝40 个文件。
+- **`cases[].aspect` 口径（记账 1）**：该字段表示案例所属方面——方面样本取源卡 `_aspect`（4／5／9）；过程记录写 `0`，记入独立的 `process_record` 桶；`unqualified` 一律写 `0`，记入 `'0'` 桶。`counts.by_aspect` 按此从 `cases[]` 重算：4／5／9 直接取该字段，`process_record` 取 `d3_disposition=process_record` 的条数，`'0'` 取 `aspect=0` 且非 `process_record` 的条数。
 - **字段位置（记账 2）**：`target_total` 在 `quotas` 之下、`cases_per_batch` 在 `batch_policy` 之下；外部脚本不得再读顶层同名字段。
 
 ## 5. 定义缺口登记（已裁定）
@@ -63,7 +63,7 @@ pilot/predicate-ization/golden/
 
 - **DG-0001（`unqualified` 样本的 `expected`）— 已裁定**：`unqualified` 不产生谓词增量，不套映射字段。`expected` 只写 `verdict: unqualified` 与 `reject_code`；`d3_disposition`／`d4_status` 在该情形**不适用**，不是「可留空」——留空与不适用是两回事，后者可判、前者不可判。涉及 `GC-0012`；schema R3 与 S8 已同步，该条已重标（撤销 `undecidable`）。
 - **DG-0002（原 `vector_keys_after` 的语义）— 已裁定**：字段改名为 `advanced_keys`，语义定死为「本步 `change=new` 且 `aspects` 非空的键的并集」（去重升序；`no_op` 必为 `[]`）。不另设「步后全量键」字段——可从前序累积推出，多一个字段就多一个不一致的入口。涉及全部 12 条样本，`GC-0003`／`GC-0007` 已按新语义重标；schema 与设计稿已同步。
-- **DG-0003（卡片裸名到原子的桥）— 已裁定：不修，登记为债**：原子只由叙事步给出；卡片 `predicate_writes` 的裸名只作名字存在性与命名空间校验，不构成原子模板，不得据此反推参数位或取值域（S9）。空白与关闭判据见 `TECH-DEBT.md` 第 14 条；设计稿第 10 章留有指针。
+- **DG-0003（卡片条目到原子的桥）— 已裁定：不修，登记为债**：原子只由叙事步给出；卡片 `predicate_writes` 的条目整体（裸名与带签名条目一视同仁）只作名字存在性与命名空间校验，不构成原子模板，均不得据此反推参数位或取值域；带签名也只证明字面存在，推不出取值域（S9）。空白与关闭判据见 `TECH-DEBT.md` 第 14 条；设计稿第 10 章留有指针。
 
 ## 6. 冻结
 

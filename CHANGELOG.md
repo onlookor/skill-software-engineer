@@ -428,3 +428,25 @@
 - **未改动**：母本、`SKILL.md` 判据、18 张卡、`validators/`、`dist/`；未写解析器／求值器／引擎；0020–0021 逐字未动。
 - **关联 ADR**：无
 - **备注**：单人标注，第 2 批抽检尚未执行，`sampling_status` 保持 `pending`，执行席未自抽检。只提交，不推送、不打标签。
+
+## 批次 0023 — 2026-11-19
+
+- **批次号**：0023
+- **日期**：2026-11-19
+- **事项**：两处口径裁定落地——① 任何 `unqualified` 一律 `aspect = 0`、不占桶；② S9 的约束对象扩到卡片 `predicate_writes` 条目整体（含带签名条目）。
+- **涉及文件**：
+  - 修改：`pilot/predicate-ization/golden/cases/GC-0015.yaml`、`pilot/predicate-ization/golden/cases/GC-0018.yaml`（`aspect` 4／5 → 0，原指向方面记入 `notes`，不进统计）
+  - 修改：`pilot/predicate-ization/golden/manifest.yaml`（`quotas.unqualified_note`／`unqualified_progress`／`remaining_gap`、`counts.by_aspect`／`by_aspect_basis`、`cases[]` 两条、DG-0003 的 `text`／`resolution`）
+  - 修改：`pilot/predicate-ization/golden/README.md`（S9、§4 三层口径与进度、`cases[].aspect` 口径、§5 DG-0003 表述）
+  - 修改：`pilot/predicate-ization/golden/_template.yaml`（`aspect` 注释、原子来源注释）
+  - 修改：`TECH-DEBT.md` 第 14 条（裸名 → 条目整体，含带签名条目）
+  - 修改：`plans/predicate-ization-design.md`（第 10 章 DG-0003 指针、第 11 章回改记录）
+- **变更摘要**：
+  1. **`unqualified` 一律 `aspect = 0`**：不存在「带方面语境的 `unqualified`」中间态——被判不合格即无方面主张，给它记方面等于把「本来想写哪个方面」混进「实际产出了什么」。`GC-0015`／`GC-0018` 的 `aspect` 改为 0，原本指向的方面 4／5 写进该条 `narrative_step.notes`，不进任何统计。
+  2. **配额重算**：当前 24 个文件＝桶 21（4／5／9 = 6／6／6、`process_record` 3）＋ `aspect=0` 的 `unqualified` 3；`counts.by_aspect` = `{4:6, 5:6, 9:6, process_record:3, 0:3}`。剩余 16 条＝桶 15（4:4、5:4、9:4、`process_record`:3）＋ `unqualified` 1。批次分配：第 3 批 12 条全走桶（4:4、5:4、9:4）；第 4 批 4 条＝桶 3（`process_record`:3）＋ `unqualified` 1。文件总数 24＋12＋4＝40。
+  3. **两个口径继续单列**：`counts.unqualified` 数全部 `outcome_kind=unqualified`；配额进度只数 `aspect=0` 的条目。此刻两者都是 3，定义不同，不合并、不互相替代。
+  4. **S9 扩到带签名条目**：约束对象改为「卡片 `predicate_writes` 条目整体」，裸名与带签名条目（如 `selection_context(DP, F, C)`）一视同仁——都只作名字存在性与命名空间校验，都不得据以反推参数位或取值域；签名只证明字面存在，推不出取值域。README S9、`manifest.yaml` DG-0003、`_template.yaml` 注释、设计稿第 10 章、`TECH-DEBT.md` 第 14 条同步；技术债里写明这正是 P3 的 18 卡投影不能从卡片自动生成的原因。
+  5. **校验**：仓外临时脚本（`/tmp`，不入库）复算 24 条——0 错误；`by_aspect` 从 `cases[]` 重算与清单相等（`{4:6,5:6,9:6,process_record:3,0:3}`）；桶 21、`aspect=0` 的 `unqualified` 3、剩余 15＋1＝16、`expected_files` 40；`sampling_status` 仍 `pending`。仅保留「distinct names 19 < 20」进行中提示。
+- **未改动**：母本、`SKILL.md` 判据、18 张卡、`validators/`、`dist/`；未写解析器／求值器／引擎、未重打包；0014–0022 逐字未动（`0022` 未推送，按例外规则本可就地合并，选择另开 `0023` 以保持「既往批次不改」；`0022` 中的旧配额数字由本批取代，以本批为准）。
+- **关联 ADR**：无
+- **备注**：单人标注，第 2 批抽检尚未执行，`sampling_status` 保持 `pending`，执行席未自抽检。只提交，不推送、不打标签。

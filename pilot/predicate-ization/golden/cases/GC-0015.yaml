@@ -2,7 +2,7 @@ schema_version: 1
 kind: golden_case
 status: annotated
 case_id: GC-0015
-aspect: 4
+aspect: 0
 source_card: G-TRUNK-OWN
 source_clause: '0.18.2-S6'
 narrative_step:
@@ -18,6 +18,7 @@ narrative_step:
   outcome_kind: unqualified
   predicate_increments: []
   aspects_touched: []
+  notes: 该判断原本指向方面 4（源卡 G-TRUNK-OWN 的归属方面），但判 unqualified 后不产生方面主张；本条 aspect 记 0，该指向不进任何统计。
   recorded_at: '2026-11-19T11:02:00+08:00'
 expected:
   verdict: unqualified

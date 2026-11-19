@@ -5,7 +5,7 @@ kind: golden_case
 status: template
 
 case_id: GC-0000                 # GC-<四位序号>；全局唯一
-aspect: 0                        # 4 | 5 | 9；过程记录写 0
+aspect: 0                        # 4 | 5 | 9；过程记录与 unqualified 一律写 0（unqualified 不占桶）
 source_card: G-TRUNK-XXX         # 取自 pilot/vertical-slice-20261112/
 source_clause: '0.0'             # 谓词来源条款，须能在 predicate_vocabulary.yaml 反查
 
@@ -22,7 +22,7 @@ narrative_step:
   decision: <该步决定>
   outcome_kind: predicate_write  # predicate_write|artifact_preservation|unqualified
   predicate_increments:
-    - atom: <name(args...)>      # 按 T1.2 规范化后的原子；只由叙事步给出，卡片裸名不得反推参数
+    - atom: <name(args...)>      # 按 T1.2 规范化后的原子；只由叙事步给出，卡片条目（裸名或带签名）不得反推参数
       atom_key: <sha256(utf8(atom))>
       change: new                # new|no_op；只按 snapshot_before.atoms 的 atom_key 判定
       aspects: [4]               # 仅当该名字在 predicate_aspects.yaml 为 process_record 时可写 []
