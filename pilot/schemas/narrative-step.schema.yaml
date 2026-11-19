@@ -80,7 +80,7 @@ fields:
         atom:
           type: string
           pattern: '^[A-Za-z_][A-Za-z0-9_]*\([\s\S]*\)$'
-          note: 按 T1.2 规范化后的原子；只写一个调用，不写联接词。实参内部的 CR／LF 是内容，故规范化原子可能跨行。
+          note: 按 T1.2 规范化后的原子；只写一个调用，不写联接词。无引号实参不得含 White_Space；引号内可含，故规范化原子可能跨行。
         atom_key:
           type: string
           pattern: '^[0-9a-f]{64}$'
@@ -192,22 +192,23 @@ atom_grammar:
   canonical_form: 'name(arg1,arg2,...)'
   name_pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
   arg_separator: ','
-  structural_whitespace: ['U+0020', 'U+0009', 'U+000D', 'U+000A']
-  non_structural_whitespace: ['U+3000', 'U+00A0']
+  whitespace_property: 'Unicode White_Space'
+  structural_whitespace: 'Unicode White_Space 属性全集（以属性名为准）'
   normalization:
-    - 边界：去掉原子字面首尾的 ASCII 空格、制表符、CR、LF。
-    - 结构空白只有 ASCII 空格（U+0020）、制表符（U+0009）、CR（U+000D）、LF（U+000A）；只在五个位置去掉：name 与 '(' 之间、'(' 与首个实参之间、实参与 ',' 之间、',' 与下一个实参之间、末个实参与 ')' 之间。'name( )' 规范化为 'name()'。
-    - 结构位置之外的空白是实参内容，原样保留；不折叠连续空白。
-    - 全角空格（U+3000）与 NBSP（U+00A0）不是结构空白：按内容原样保留并计入 atom_key；不得替换为 ASCII 空格，也不得在比对时忽略。name 与 '(' 之间出现它们即判不合格。
-    - CR／LF 只在结构位置去掉；实参内部的 CR／LF 是内容，逐字保留（CRLF 为两个字符）。实参内部的换行若为排版误写，须改写原子字面后重算，不得由规范化删除或拼接两侧字符。
-    - 实参可用单引号或双引号包裹；引号只在实参起始处被识别为引用起点（此前只有结构空白），实参内部的引号是普通内容；引用必须在实参结束（',' 或 ')'）前闭合，闭合后到分隔符之间只允许结构空白，否则判不合格。引号内的空格、制表符、CR／LF、逗号、括号、U+3000／U+00A0 全是内容，不参与实参切分与括号配对；引号本身保留，不做剥离。引号未闭合判不合格。
+    - 边界：去掉原子字面首尾的全部 White_Space 字符。
+    - 结构空白 = Unicode `White_Space` 属性全集（等价枚举：U+0009–U+000D、U+0020、U+0085、U+00A0、U+1680、U+2000–U+200A、U+2028、U+2029、U+202F、U+205F、U+3000；有出入以属性名为准）。只在五个位置去掉：name 与 '(' 之间、'(' 与首个实参之间、实参与 ',' 之间、',' 与下一个实参之间、末个实参与 ')' 之间。'name( )' 规范化为 'name()'。
+    - 无引号实参：去掉结构空白后不得包含任何 White_Space 字符（含 U+3000、NBSP、CR／LF）；含空白必须加引号，未加引号判不合格，不得静默折叠、替换或删除。
+    - 引号内实参：按原文保留，含 U+3000、NBSP、CR／LF，不做任何替换或折叠。
+    - 引号：实参可用单引号或双引号包裹；引号只在实参起始处被识别为引用起点（此前只有结构空白），实参内部的引号是普通内容；引用必须在实参结束（',' 或 ')'）前闭合，闭合后到分隔符之间只允许结构空白，否则判不合格。引号内的空格、制表符、CR／LF、逗号、括号、U+3000／U+00A0 全是内容，不参与实参切分与括号配对；引号本身保留，不做剥离。引号未闭合判不合格。
     - 转义：反斜杠后接反斜杠、左括号、右括号、逗号、单引号或双引号之一时，表示该字符的字面形式；转义序列原样保留（不做反转义），被转义字符不参与切分与括号配对。反斜杠后接其它字符、或位于字面末尾，判不合格。
     - 实参顺序不得重排、不得去重、不得改大小写；显式占位符 `·` 是一个独立实参并保留；未加引号的嵌套括号按深度配对切分，内层逗号不作分隔。
-    - 右括号 `)` 之后不得再有非结构空白或其它内容；空实参列表写作 `name()`，`,,`、首逗号、尾逗号产生的零长度实参判不合格。
+    - 右括号 `)` 之后不得再有非空白内容；尾随 White_Space 由边界规则去掉，出现其它内容即判不合格；空实参列表写作 `name()`，`,,`、首逗号、尾逗号产生的零长度实参判不合格。
     - 无法按上述规则得到唯一结果时判不合格，不得猜测、补全或改写为看起来合理的形式。
   identity:
     rule: 两个原子当且仅当 atom_key 相等时是同一原子；atom_key = sha256(utf8(canonical_form))。
     examples:
+      - {left: 'name (x)', right: "name\t(x)", same: true, reason: 结构位置的空白按 White_Space 去掉}
+      - {left: 'name (x)', right: "name\u3000(x)", same: true, reason: U+3000 属 White_Space，结构位置同样去掉}
       - {left: 'data_flow(D,svc)', right: 'data_flow( D , svc )', same: true}
       - {left: 'data_flow(D,svc)', right: "data_flow(\nD,\nsvc\n)", same: true, reason: 结构位置的换行与空格去掉}
       - {left: 'data_flow(D,svc)', right: 'data_flow(svc,D)', same: false, reason: 实参顺序不同}
@@ -215,6 +216,11 @@ atom_grammar:
       - {left: 'dsm(system,·)', right: 'dsm(system)', same: false, reason: 少写槽位不是同一原子；缺参按 D3.7 处理}
       - {left: 'tag(a\,b)', right: 'tag(a,b)', same: false, reason: 转义逗号不切分，实参个数不同}
       - {left: 'note("a,b")', right: 'note(a,b)', same: false, reason: 引号内逗号不切分，实参个数不同}
-      - {left: "note(a\u3000b)", right: 'note(a b)', same: false, reason: 全角空格是内容，不等同于 ASCII 空格}
-      - {left: "note(a\u00A0b)", right: 'note(a b)', same: false, reason: NBSP 是内容，不等同于 ASCII 空格}
+      - {left: 'note("a b")', right: "note(\"a\u3000b\")", same: false, reason: 引号内空白按原文保留，键不同}
       - {left: 'p(a\(b)', right: 'p(a\(b)', same: true, reason: 转义左括号是内容，不参与括号配对}
+    invalid_examples:
+      - {atom: 'note(a b)', reason: 无引号实参含 U+0020，判不合格}
+      - {atom: "note(a\tb)", reason: 无引号实参含制表符，判不合格}
+      - {atom: "note(a\u3000b)", reason: 无引号实参含 U+3000，判不合格}
+      - {atom: "note(a\u00A0b)", reason: 无引号实参含 NBSP，判不合格}
+      - {atom: "note(a\nb)", reason: 无引号实参含 LF，判不合格}

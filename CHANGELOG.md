@@ -338,7 +338,7 @@
 - **事项**：人类批准开工 P0 定义期（谓词化，10.2.3bis 层次二），落 D1–D4 的定义与登记载体；顺带上批遗留两处记账。不写解析器／求值器／引擎。
 - **涉及文件**：
   - `pilot/schemas/narrative-step.schema.yaml`（新增）：P0-D1 叙事步记录 schema，draft；18 字段、R1–R10 规则、`atom_grammar` 规范化与同一性示例；快照携带 `atoms`（`atom_key`＋原子原文），`ref`／`sha256` 为摘要。
-  - `编译规范.md`：T1 增 T1.1（叙事步记录，D1）与 T1.2（原子与同一性，D2），T2 增 T2.1（`no_op` 与向量推进，D2）；T1.2 补引号、转义、换行、全角空格与 NBSP 的规范化边界，T1.1 第 7 条改快照须带原子列表。仅动 T1／T2 的谓词化相关段落，未重排格式。
+  - `编译规范.md`：T1 增 T1.1（叙事步记录，D1）与 T1.2（原子与同一性，D2），T2 增 T2.1（`no_op` 与向量推进，D2）；T1.2 按 Unicode `White_Space` 补齐结构空白、无引号实参禁空白、引号内原文保留、转义与零长度实参边界，T1.1 第 7 条改快照须带原子列表。仅动 T1／T2 的谓词化相关段落，未重排格式。
   - `registry/predicate_aspects.yaml`（新增）：P0-D3 方面映射，33 名；`aspect_mapped` 28 名（方面 4／5／9），`process_record` 5 名（0.18.6，不推进向量）；`vector_keys = [4,5,9]`。D3 的 `mapped` 全改 `aspect_mapped`，与 D4 覆盖口径 `mapped` 区分。
   - `registry/predicate_map.yaml`：D4 填充 33 名，`mapped` 30／`exempt` 3（`step_log`／`selection_procedure`／`verdict_table`）；豁免条目带 owner／due／approved_by／reason 且 `generated_by_pact: false`；`entry_fields` 增 `reason`／`generated_by_pact`；`expr_refs` 键 `step_id` 全部改 `layer`（值 `outputs`），头注与字段说明写明 `expr_sha256` 是卡片 `predicate_writes` 原文的 sha256、不是 `atom_key`。
   - `plans/predicate-ization-design.md`（新增）：P0 设计稿；第 2／4／5／6／11 章成稿到可引用，第 3／7／8／9 章明写未成稿，第 10 章为完整非目标清单；快照口径改为携带 `atoms`、摘要降级。
@@ -355,7 +355,7 @@
   4. **D4**：33 名逐名登记；豁免用满 3 名上限，生成型 pact 不得豁免；名单独列待人类复核。
   5. **设计文档**：按「随 P0 同步成稿、每标一批黄金样本回改一次、P0 通过时冻结」写；第 3／7／8／9 章明写未成稿，第 10 章为完整非目标清单。
   6. **黄金样本**：只建骨架与标注口径（S1–S7、批次 12 条、P0 目标 36 条），0 条样本。
-  7. **第六轮复核整改**（全部文档与 schema 级）：① 0018 恢复 `5e2e13f` 原文，两处更正改为本条追加，0014–0017 逐字未动；② 已推送批次不得就地改写，本条只追加；③ T1.2 与 `atom_grammar` 补齐引号内不切分、CR／LF、U+3000／NBSP、转义括号与零长度实参规则，并写明不具备唯一结果即判不合格；④ 快照改为必须携带 `atoms`（`atom_key`＋原子原文），`ref`／`sha256` 降为摘要，S2 按此对齐不削弱；⑤ 模板补齐 `predicate_increments`、`aspects_touched`、前后快照，删去非 schema 字段 `snapshot_before.predicates`；schema 的空 `aspects` 仅限 `process_record`，S4 同步；⑥ `predicate_map.yaml` 头注与 `entry_fields` 写明 `expr_sha256` 是卡片 `predicate_writes` 原文的 sha256、不是 `atom_key`；⑦ `step_id` 改 `layer`，值 `outputs`；⑧ D3 的 `mapped` 全改 `aspect_mapped`，与 D4 的 `mapped` 分开。
+  7. **第六轮复核整改**（全部文档与 schema 级）：① 0018 恢复 `5e2e13f` 原文，两处更正改为本条追加，0014–0017 逐字未动；② 已推送批次不得就地改写，本条只追加；③ T1.2 与 `atom_grammar` 按 Unicode `White_Space` 属性全集处理结构位置空白（`name (x)`／`name\t(x)`／`name　(x)` 同键），无引号实参含任何空白即判不合格，引号内空白按原文保留（`name("a b")` 与 `name("a　b")` 不同键），并补转义与零长度实参规则；④ 快照改为必须携带 `atoms`（`atom_key`＋原子原文），`ref`／`sha256` 降为摘要，S2 按此对齐不削弱；⑤ 模板补齐 `predicate_increments`、`aspects_touched`、前后快照，删去非 schema 字段 `snapshot_before.predicates`；schema 的空 `aspects` 仅限 `process_record`，S4 同步；⑥ `predicate_map.yaml` 头注与 `entry_fields` 写明 `expr_sha256` 是卡片 `predicate_writes` 原文的 sha256、不是 `atom_key`；逐条复算 98 条一致（去重 33 名：28 名×1＋5 名×14）；⑦ `step_id` 改 `layer`，值 `outputs`；⑧ D3 的 `mapped` 全改 `aspect_mapped`，与 D4 的 `mapped` 分开。
 - **未改动**：母本、`SKILL.md` 判据、18 张卡正文、`validators/`、`dist/`、`.gitignore` 未动；未重打包、未写解析器／求值器／引擎；0014／0015／0016／0017／0018 逐字未动。
 - **关联 ADR**：`ADR-PRED-ENG-01`（P0 冻结口径；本批在冻结前落地）。
 - **备注**：只提交，不推送、不打标签。
