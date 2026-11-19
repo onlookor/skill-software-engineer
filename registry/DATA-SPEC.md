@@ -22,6 +22,7 @@
 | `profiles.yaml` | 18 个 kind 的字段剖面（元注册条目）＋剖面级缺口台账 | 数据侧权威；剖面变更走 0.13 |
 | `predicate_vocabulary.yaml` | 母本机器层谓词清单的数据侧投影 | **非权威**：权威在母本 x.5／0.17.8／0.18.6／0.20.4／0.21.6／10.5；每条带 clause 指针，须可反查母本 |
 | `predicate_map.yaml` | 卡片谓词覆盖与豁免台账（`TD-SE-PRED-001` 判据 5）：schema＋空表 | **台账非权威**：表达式权威在卡片 `predicate_expr`；本表只登记覆盖／豁免；schema 见 D3.18；**当前为空表，检查器未消费** |
+| `../pilot/schemas/narrative-step.schema.yaml` | 叙事推理步记录 schema（P0-D1）：字段、规则、原子规范化 | **记录形态**：不实现校验器；判定口径见编译规范 T1.1／T1.2；schema 见 D8 |
 | `release_manifest.yaml` | M5 发布清单：版本、归档路径、`sha256`、字节、源提交、构建时间 | **清单非归档**：不复制二进制；工作区有归档时由 `project.py --check` 的 M5R 比对；schema 见 D7；干净 clone 只能验清单，不能验内容 |
 | `method_registry.yaml` | 条目本体＋缺口台账＋状态迁移简记＋Waiver＋人工判断登记 | 数据侧权威；schema 逐字采用 0.17.2 |
 | `schedules.yaml` | 调度项注册表（C-1）：schema＋空表 | 数据侧权威；字段见文件自身 `entry_fields`；建表依据见附录 C.1；**本仓无实例** |
@@ -167,7 +168,15 @@
 
 ## D7 发布清单（M5）
 
-- **D7.1 `release_manifest.yaml`（2026-11-19）**：M5 的机器可读事实源。根节点 `schema_version`／`kind: release_manifest`／`releases[]`；每个版本条目须有 `version`、`archive`（相对仓库根的路径）、`sha256`（64 位小写十六进制）、`bytes`（正整数）、`source_commit`（7–40 位小写十六进制）、`build_time`（推不出时写「未记录」，不推测）。**权威方向**：清单只记录归档指纹，归档本身不入库。**校验**：`project.py --check` 的 `M5R`（CHECK-SPEC C5.23）校验字段；工作区存在 `archive` 时重算 sha256 与字节，不一致判 hard 并给出期望／实际值；干净 clone 无归档时只验清单存在与字段合法。**验证强度**：从「有物」降为「有记录＋工作区可对物」；干净 clone 不能验归档内容，下列空洞不掩饰——工作区无 `dist/` 时清单无法与实际归档比对。该降级由人类 2026-11-19 批准并接受，见 `ROADMAP.md` M5。〔新立，人类裁定 2026-11-19〕
+- **D7.1 `release_manifest.yaml`（2026-11-19）**：M5 的机器可读事实源。根节点 `schema_version`／`kind: release_manifest`／`releases[]`；每个版本条目须有 `version`、`archive`（相对仓库根的路径）、`sha256`（64 位小写十六进制）、`bytes`（正整数）、`source_commit`（7–40 位小写十六进制）、`build_time`（优先取归档 gzip 头 MTIME：字节 4–8，little-endian uint32；读不出时写「未记录」，不推测）。**权威方向**：清单只记录归档指纹，归档本身不入库。**校验**：`project.py --check` 的 `M5R`（CHECK-SPEC C5.23）校验字段；工作区存在 `archive` 时重算 sha256 与字节，不一致判 hard 并给出期望／实际值；干净 clone 无归档时只验清单存在与字段合法。**验证强度**：从「有物」降为「有记录＋工作区可对物」；干净 clone 不能验归档内容，下列空洞不掩饰——工作区无 `dist/` 时清单无法与实际归档比对。该降级由人类 2026-11-19 批准并接受，见 `ROADMAP.md` M5。〔新立，人类裁定 2026-11-19〕
+
+## D8 叙事推理步记录 schema（P0-D1）
+
+- **D8.1 位置与状态**：`pilot/schemas/narrative-step.schema.yaml`。状态 `draft`；P0 出口达成时冻结为 `frozen`，冻结前不写解析器／校验器／求值器（ADR-PRED-ENG-01 冻结口径）。本文件是**记录形态**，不是表达式权威源；卡片 `predicate_expr` 与白板仍为权威。
+- **D8.2 字段面**：必填 `step_id`、`run_id`、`seq`、`executor`、`participants`、`reasoning_mode`、`narrative`、`trace`、`decision`、`outcome_kind`、`predicate_increments`、`aspects_touched`、`recorded_at`；可选 `artifact_evidence`、`snapshot_before`、`snapshot_after`、`related_step_ids`、`notes`。字段类型、模式与枚举逐字见 schema 的 `fields`。
+- **D8.3 判定规则**：以 schema 的 `rules` R1–R8 为准，与编译规范 T1.1／T1.2／T2.1 逐条对应；两处冲突时以编译规范为准，schema 随 P0 回改。R8（一步一条）的边界判定无法机械化时，按「拆成多条」处理，理由记 `notes`；此为**明示的不可判定处**，不得据 `notes` 自证合规。
+- **D8.4 原子与快照**：`predicate_increments[].atom` 必须符合 `atom_grammar.normalization`；同一性只由 `atom_key = sha256(utf8(atom))` 判定。`snapshot_before`／`snapshot_after` 只记定位符与 `sha256`，不复制白板；`predicate_write` 步必填，其余可不填。
+- **D8.5 非目标**：不定义叙事质量、不判断推理是否成立、不替代 T3 引用资格与 T5 批准路由；`unqualified` 步按 T3 不取得引用资格，`decision` 须写明处置。
 
 ## 附录 A：本规范承接的迁移条目（20 条）
 

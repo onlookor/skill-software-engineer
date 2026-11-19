@@ -1,0 +1,172 @@
+# 叙事推理步记录 schema（P0-D1）
+# 权威出处：编译规范.md T1.1；plans/predicate-ization-execution-plan.md D1
+# 状态：draft（P0 定义期）。P0 出口达成时冻结为 frozen，冻结后才允许写解析器／求值器。
+# 本文件只定义记录形态与可判定规则，不实现校验器；人工按字面核对。
+# 登记位置：registry/DATA-SPEC.md D1.3、D8；registry/README.md §1。
+
+schema_version: 1
+kind: narrative_step
+status: draft
+frozen_at: null
+
+authority_direction: >
+  本 schema 定义叙事推理步的记录形态，不复制白板状态；谓词增量只引用规范化原子。
+  卡片 outputs.predicate_writes 与 predicate_expr 仍是表达式与写入面的权威源。
+
+required:
+  - step_id
+  - run_id
+  - seq
+  - executor
+  - participants
+  - reasoning_mode
+  - narrative
+  - trace
+  - decision
+  - outcome_kind
+  - predicate_increments
+  - aspects_touched
+  - recorded_at
+
+fields:
+  step_id:
+    type: string
+    pattern: '^NS-[A-Za-z0-9._-]+-[0-9]{4}$'
+    note: 一次运行内唯一；`NS-<run_id>-<四位序号>`。
+  run_id:
+    type: string
+    min_length: 1
+    note: 同一次白板运行共享同一 run_id；与快照 ref 中的运行标识一致。
+  seq:
+    type: integer
+    minimum: 1
+    note: 运行内单调递增；同一 seq 不得出现两次。
+  executor:
+    type: string
+    min_length: 1
+    note: 人类责任方角色名或已授权 Agent 标识；与编译规范「通道的执行者」一段同口径。
+  participants:
+    type: array
+    items: string
+    min_items: 1
+    note: 参与该步的具名方；不得写「全体」等不可核对集合。
+  reasoning_mode:
+    type: enum
+    values: [discussion, sketch, intuition, verbal_consensus, cross_aspect]
+    note: 对应 T1 列举的讨论／草图／直觉判断／口头共识；跨方面共识单列 cross_aspect。
+  narrative:
+    type: string
+    min_length: 1
+    note: 该步的自然语言判断本身；不是事后总结。
+  trace:
+    type: string
+    min_length: 1
+    note: 推理轨迹；空串或仅空白即字段缺失。
+  decision:
+    type: string
+    min_length: 1
+    note: 该步产生的决定；可以是「维持待定」，但须显式写出。
+  outcome_kind:
+    type: enum
+    values: [predicate_write, artifact_preservation, unqualified]
+    note: predicate_write＝写入谓词；artifact_preservation＝保全工件（8.2.6 七要素）；unqualified＝未谓词化，按 T3 不取得引用资格。
+  predicate_increments:
+    type: array
+    items:
+      type: object
+      required: [atom, atom_key, change, aspects]
+      fields:
+        atom:
+          type: string
+          pattern: '^[A-Za-z_][A-Za-z0-9_]*\(.*\)$'
+          note: 按 T1.2 规范化后的原子；只写一个调用，不写联接词。
+        atom_key:
+          type: string
+          pattern: '^[0-9a-f]{64}$'
+          note: sha256(utf8(atom))；同一性只由 atom_key 判定。
+        change:
+          type: enum
+          values: [new, no_op]
+          note: 快照中不存在同 atom_key → new；已存在 → no_op（不推进版本向量）。
+        aspects:
+          type: array
+          items: integer
+          enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+          min_items: 1
+          note: 该原子映射的方面；多方面原子逐个列出，不做合并或加权。
+  artifact_evidence:
+    type: array
+    items:
+      type: object
+      required: [path, sha256]
+      fields:
+        path: {type: string, min_length: 1}
+        sha256: {type: string, pattern: '^[0-9a-f]{64}$'}
+    note: outcome_kind = artifact_preservation 时至少 1 项；其余情形可为空。
+  aspects_touched:
+    type: array
+    items: integer
+    enum: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    note: 本步 predicate_increments[].aspects 的并集，去重后按升序书写；不得包含未在增量中出现的方面。
+  snapshot_before:
+    type: object
+    required: [ref, sha256]
+    fields:
+      ref: {type: string, min_length: 1, note: 白板谓词集快照的定位符}
+      sha256: {type: string, pattern: '^[0-9a-f]{64}$'}
+    note: outcome_kind = predicate_write 时必填；用于判定 new／no_op 的基线。
+  snapshot_after:
+    type: object
+    required: [ref, sha256]
+    fields:
+      ref: {type: string, min_length: 1}
+      sha256: {type: string, pattern: '^[0-9a-f]{64}$'}
+    note: outcome_kind = predicate_write 时必填；等于 snapshot_before 当且仅当本步全部增量为 no_op。
+  recorded_at:
+    type: string
+    format: RFC3339
+    note: 带时区偏移；不得省略偏移。
+  related_step_ids:
+    type: array
+    items: string
+    note: 可选；引用本运行内的其它 step_id。
+  notes:
+    type: string
+    note: 可选；不得用它替代任何必填字段。
+
+rules:
+  - id: R1
+    text: outcome_kind = predicate_write 时，predicate_increments 至少 1 项，且 snapshot_before／snapshot_after 必填；artifact_evidence 可为空。
+  - id: R2
+    text: outcome_kind = artifact_preservation 时，artifact_evidence 至少 1 项，predicate_increments 必须为空数组；snapshot_before／snapshot_after 不要求。
+  - id: R3
+    text: outcome_kind = unqualified 时，predicate_increments 与 artifact_evidence 均为空数组；该步按 T3 不取得引用资格，`decision` 须写明退回或降为线索的处置。
+  - id: R4
+    text: 每个 predicate_increments[].atom 必须与 T1.2 的规范化形式逐字一致；atom_key 必须等于 sha256(utf8(atom))。
+  - id: R5
+    text: change 的判定只比较 atom_key：snapshot_before 中已存在同 atom_key → no_op，否则 new；不得按名字或方面判定。
+  - id: R6
+    text: aspects_touched 必须逐项等于 predicate_increments[].aspects 的并集（去重、升序）；predicate_increments 为空时 aspects_touched 必须为空数组。
+  - id: R7
+    text: 同一 run_id 内 step_id 与 seq 各自唯一；seq 不要求连续，但必须递增。
+  - id: R8
+    text: 一条记录只能表达一个推理步；把多个判断合并写入同一条即违规（「一步」的边界由 narrative／trace／decision 三元组是否只含一个判断来判，无法判定时须拆成多条，理由记 notes）。
+
+atom_grammar:
+  canonical_form: 'name(arg1,arg2,...)'
+  name_pattern: '^[A-Za-z_][A-Za-z0-9_]*$'
+  arg_separator: ','
+  normalization:
+    - 去掉 name 与 '(' 之间、'(' 与首个 arg 之间、arg 与 ',' 之间、',' 与下一个 arg 之间、末个 arg 与 ')' 之间的 ASCII 空格与制表符。
+    - 实参内部空白原样保留；不折叠实参内部的连续空白。
+    - 实参顺序不得重排；不得去重；不得改大小写。
+    - 显式占位符 `·` 是一个独立实参，保留。
+    - 嵌套括号按深度配对切分实参，不把内层逗号当作分隔符。
+    - 空实参列表写作 `name()`；不得写成 `name( )`。
+  identity:
+    rule: 两个原子当且仅当 atom_key 相等时是同一原子；atom_key = sha256(utf8(canonical_form))。
+    examples:
+      - {left: 'data_flow(D,svc)', right: 'data_flow( D , svc )', same: true}
+      - {left: 'data_flow(D,svc)', right: 'data_flow(svc,D)', same: false, reason: 实参顺序不同}
+      - {left: 'style(S)', right: 'Style(S)', same: false, reason: 名字大小写不同，且别名不合法}
+      - {left: 'dsm(system,·)', right: 'dsm(system)', same: false, reason: 少写槽位不是同一原子；缺参按 D3.7 处理}
