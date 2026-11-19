@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0006
+aspect: 5
+source_card: G-TRUNK-RLP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH1-0006
+  run_id: batch1
+  seq: 6
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 支付网关负责人]
+  reasoning_mode: discussion
+  narrative: 下单接口要求幂等，以客户端提供的 idempotency_key 作为去重键。
+  trace: 网络重试会重复提交订单；用订单号去重太晚（订单号由服务生成）；改用客户端幂等键，服务端按键保存首次结果并回放。
+  decision: 登记 idempotency(order_api,idempotency_key)，推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: idempotency(order_api,idempotency_key)
+      atom_key: 4cac217947b7360d5701b467325bd06d524ecc2990c3e0b6a73daab10cef69f7
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 4cac217947b7360d5701b467325bd06d524ecc2990c3e0b6a73daab10cef69f7
+        atom: idempotency(order_api,idempotency_key)
+  recorded_at: '2026-11-19T10:05:00+08:00'
+expected:
+  vector_keys_after: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: idempotency 属 aspect_mapped、方面 [5]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

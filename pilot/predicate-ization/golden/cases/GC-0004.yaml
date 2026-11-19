@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0004
+aspect: 4
+source_card: G-TRUNK-OWN
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH1-0004
+  run_id: batch1
+  seq: 4
+  executor: 标注席（Agent，单席）
+  participants: [报表服务负责人, 数据治理责任人]
+  reasoning_mode: discussion
+  narrative: 报表服务通过只读视图访问订单库，不直接读基表；登记一条视图访问路径。
+  trace: 直接读基表会把报表查询耦合到订单库内部结构；改为只读视图并签契约 C7；访问类型取 view，消费方为 reporting_svc。
+  decision: 登记 access_path(order_db,reporting_svc,view,contract_C7)，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: access_path(order_db,reporting_svc,view,contract_C7)
+      atom_key: ed062590dae6a7915a9cfec6003844a7e7f5daeb6cae45da31e4fbfd17a0a185
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: ed062590dae6a7915a9cfec6003844a7e7f5daeb6cae45da31e4fbfd17a0a185
+        atom: access_path(order_db,reporting_svc,view,contract_C7)
+  recorded_at: '2026-11-19T10:03:00+08:00'
+expected:
+  vector_keys_after: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: access_path 属 aspect_mapped、方面 [4]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

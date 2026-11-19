@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0002
+aspect: 4
+source_card: G-TRUNK-DFL
+source_clause: '4.2.4'
+narrative_step:
+  step_id: NS-BATCH1-0002
+  run_id: batch1
+  seq: 2
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 平台架构师]
+  reasoning_mode: discussion
+  narrative: 订单状态变更以事件方式从订单服务流向通知服务，采用事件驱动机制，不直接写对方数据库。
+  trace: 候选机制有同步调用、共享库、事件驱动；共享库违反服务边界，同步调用在通知服务故障时阻塞下单，故取事件驱动；数据流向登记为 order_svc → events → 通知消费方。
+  decision: 登记 data_flow(DP-4.5,order_svc,events,api)，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: data_flow(DP-4.5,order_svc,events,api)
+      atom_key: 6a908327136fd7e48f3951e5f7648b5f98584f6cae80832c858568f707a9ebf8
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 6a908327136fd7e48f3951e5f7648b5f98584f6cae80832c858568f707a9ebf8
+        atom: data_flow(DP-4.5,order_svc,events,api)
+  recorded_at: '2026-11-19T10:01:00+08:00'
+expected:
+  vector_keys_after: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: data_flow 在 predicate_aspects 中属 aspect_mapped、方面 [4]，在 predicate_map 中 status=mapped；基线无同 atom_key，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

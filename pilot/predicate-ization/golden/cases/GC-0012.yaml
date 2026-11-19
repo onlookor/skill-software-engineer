@@ -1,0 +1,30 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0012
+aspect: 0
+source_card: G-TRUNK-CFG
+source_clause: '0.18.2'
+narrative_step:
+  step_id: NS-BATCH1-0012
+  run_id: batch1
+  seq: 12
+  executor: 标注席（Agent，单席）
+  participants: [平台负责人, 值班工程师]
+  reasoning_mode: discussion
+  narrative: 讨论后决定本期不引入配置中心，维持环境变量与启动参数注入。
+  trace: 输入是“当前只有一套部署、变更频率低”；排除配置中心的理由是一次性运维成本高于当前收益；该判断没有可落为卡片谓词的原子写入。
+  decision: 本期不引入配置中心；该判断按 T3 不取得谓词引用资格，退回为后续评审线索。
+  outcome_kind: unqualified
+  predicate_increments: []
+  aspects_touched: []
+  recorded_at: '2026-11-19T10:11:00+08:00'
+expected:
+  vector_keys_after: []
+  d3_disposition: undecidable
+  d4_status: undecidable
+  why: 该步没有原子名，D3/D4 无适用对象；schema 与 README 未定义 unqualified 样本的 expected 取值。
+split_reason: null
+undecidable: true
+undecidable_reason: outcome_kind=unqualified 时没有谓词名可查，expected.d3_disposition/d4_status 在 schema 与 README 中没有取值定义；T3 只规定不取得引用资格，未规定这两个字段怎么填。
+disagreement: null

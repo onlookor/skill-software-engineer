@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0009
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH1-0009
+  run_id: batch1
+  seq: 9
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 发布平台负责人]
+  reasoning_mode: discussion
+  narrative: 订单服务发布采用金丝雀，先放 10% 流量，异常时回滚到 v2。
+  trace: 一次性全量发布的风险是故障面覆盖全部用户；蓝绿需要双倍资源；金丝雀 10% 可在可控爆炸半径内观察错误率，回滚目标明确为上一个稳定版 v2。
+  decision: 登记 deploy_strategy(order_svc,canary,10pct,rollback_v2)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: deploy_strategy(order_svc,canary,10pct,rollback_v2)
+      atom_key: 0d341a55d6bdb75eec70c0ccd54c65dacc251dbd84f3d8a7233f1e7772de19c8
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 0d341a55d6bdb75eec70c0ccd54c65dacc251dbd84f3d8a7233f1e7772de19c8
+        atom: deploy_strategy(order_svc,canary,10pct,rollback_v2)
+  recorded_at: '2026-11-19T10:08:00+08:00'
+expected:
+  vector_keys_after: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: deploy_strategy 属 aspect_mapped、方面 [9]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

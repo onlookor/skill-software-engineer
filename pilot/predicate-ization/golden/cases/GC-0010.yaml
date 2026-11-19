@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0010
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH1-0010
+  run_id: batch1
+  seq: 10
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 平台架构师]
+  reasoning_mode: discussion
+  narrative: 旧订单系统按绞杀者序列迁移，第一阶段双写，持续 30 天后再切读。
+  trace: 直接切读的风险是旧系统仍有未迁移写路径；先双写并核对差异 30 天，等差异归零再切读；阶段与时长作为序列的显式参数。
+  decision: 登记 strangler_sequence(legacy_order,phase1_dual_write,30d)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: strangler_sequence(legacy_order,phase1_dual_write,30d)
+      atom_key: 3f902dbd82f01afa65492cffe69e034fbe8e2bb00fd71daa2c1411fb375460f3
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 3f902dbd82f01afa65492cffe69e034fbe8e2bb00fd71daa2c1411fb375460f3
+        atom: strangler_sequence(legacy_order,phase1_dual_write,30d)
+  recorded_at: '2026-11-19T10:09:00+08:00'
+expected:
+  vector_keys_after: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: strangler_sequence 属 aspect_mapped、方面 [9]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

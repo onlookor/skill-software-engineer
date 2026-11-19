@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0008
+aspect: 5
+source_card: G-TRUNK-STP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH1-0008
+  run_id: batch1
+  seq: 8
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 支付网关负责人]
+  reasoning_mode: discussion
+  narrative: 下单接口调用支付网关的超时预算定为 30 秒，超时后进入补偿而不是无限重试。
+  trace: 支付网关 P99 为 8 秒，30 秒留出重试与网络抖动余量；超过 30 秒继续占用连接会放大故障，故超时后转补偿流程。
+  decision: 登记 timeout_budget(order_api,30000ms)，推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: timeout_budget(order_api,30000ms)
+      atom_key: 3dcef42b28346f0df5d238e0179f9461b8dfe94e41e9a62534ba35db037181a0
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 3dcef42b28346f0df5d238e0179f9461b8dfe94e41e9a62534ba35db037181a0
+        atom: timeout_budget(order_api,30000ms)
+  recorded_at: '2026-11-19T10:07:00+08:00'
+expected:
+  vector_keys_after: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: timeout_budget 属 aspect_mapped、方面 [5]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

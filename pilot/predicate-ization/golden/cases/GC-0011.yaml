@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0011
+aspect: 4
+source_card: G-TRUNK-DFL
+source_clause: '0.18.2-S1'
+narrative_step:
+  step_id: NS-BATCH1-0011
+  run_id: batch1
+  seq: 11
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 评审主持人]
+  reasoning_mode: discussion
+  narrative: 记录选择规程的第一步：核对订单库现状并确认候选输入，形成一条步骤日志。
+  trace: 按选择规程 S1 顺序执行：读取订单库现状、核对候选输入、确认已选候选；执行者 alice、决策点 DP-4.5、步骤 S1；日志作为过程记录写入。
+  decision: 登记 step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)；该名字为 process_record，不推进任何方面。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)
+      atom_key: 39f83211170067ffbf4031007ede1f47fbc132ff0d3909bc902cc83b5d02012f
+      change: new
+      aspects: []
+  aspects_touched: []
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 39f83211170067ffbf4031007ede1f47fbc132ff0d3909bc902cc83b5d02012f
+        atom: step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)
+  recorded_at: '2026-11-19T10:10:00+08:00'
+expected:
+  vector_keys_after: []
+  d3_disposition: process_record
+  d4_status: exempt
+  why: step_log 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=exempt；基线无同 atom_key，判 new，但按 S4 不推进任何方面向量。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

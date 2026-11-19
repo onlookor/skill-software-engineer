@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0005
+aspect: 5
+source_card: G-TRUNK-SCH
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH1-0005
+  run_id: batch1
+  seq: 5
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 调度平台负责人]
+  reasoning_mode: discussion
+  narrative: 订单事件的时间语义定为事件发生时刻（event_time），以 UTC 存储，不采用消费时刻。
+  trace: 若取消费时刻，重放会把同一事件标成不同时间；业务需要按事件发生顺序对账，故取 event_time；跨时区存储统一 UTC，展示层再本地化。
+  decision: 登记 time_semantics(order_event,event_time,UTC)，推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: time_semantics(order_event,event_time,UTC)
+      atom_key: b47e3676a129078708766a5cf7a832a123e38fa28535b895f4b8bb647550e57e
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: b47e3676a129078708766a5cf7a832a123e38fa28535b895f4b8bb647550e57e
+        atom: time_semantics(order_event,event_time,UTC)
+  recorded_at: '2026-11-19T10:04:00+08:00'
+expected:
+  vector_keys_after: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: time_semantics 属 aspect_mapped、方面 [5]，D4 为 mapped；基线无同 atom_key，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

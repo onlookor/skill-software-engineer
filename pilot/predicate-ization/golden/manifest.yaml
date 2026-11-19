@@ -1,13 +1,22 @@
-# 黄金样本集清单（P0 骨架）
+# 黄金样本集清单（P0 第 1 批已标注）
 schema_version: 1
 kind: golden_manifest
-status: skeleton
+status: in_progress
 frozen_at: null
 
 batch_policy:
   cases_per_batch: 12
   design_revision_per_batch: true      # 每批回改 plans/predicate-ization-design.md 一次
   annotator_reviewer_separate: true
+
+annotation_method:
+  mode: single_annotator
+  annotator: 标注席（Agent，单席）
+  sampling: independent_review_seat
+  sampling_ratio_min: 0.20
+  sampling_status: pending
+  inter_annotator_agreement: not_estimable
+  note: 按 plans/predicate-ization-execution-plan.md 第 3 节第 2 项的降级口径；这不是双人独立标注，Cohen's κ 不可估计，不得作为任何结论依据。
 
 quotas:
   target_total: 36
@@ -21,32 +30,53 @@ quotas:
   min_distinct_names: 20
 
 counts:
-  total: 0
-  new: 0
-  no_op: 0
-  unqualified: 0
-  by_aspect: {'4': 0, '5': 0, '9': 0, 'process_record': 0}
+  total: 12
+  new: 9
+  no_op: 2
+  unqualified: 1
+  undecidable: 1
+  by_aspect: {'4': 4, '5': 4, '9': 2, 'process_record': 1}
 
-cases: []
+cases:
+  - {case_id: GC-0001, file: cases/GC-0001.yaml, aspect: 4, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0002, file: cases/GC-0002.yaml, aspect: 4, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0003, file: cases/GC-0003.yaml, aspect: 4, change: no_op, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0004, file: cases/GC-0004.yaml, aspect: 4, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0005, file: cases/GC-0005.yaml, aspect: 5, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0006, file: cases/GC-0006.yaml, aspect: 5, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0007, file: cases/GC-0007.yaml, aspect: 5, change: no_op, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0008, file: cases/GC-0008.yaml, aspect: 5, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0009, file: cases/GC-0009.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0010, file: cases/GC-0010.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0011, file: cases/GC-0011.yaml, aspect: 4, change: new, d3_disposition: process_record, d4_status: exempt, undecidable: false}
+  - {case_id: GC-0012, file: cases/GC-0012.yaml, aspect: 0, change: null, d3_disposition: undecidable, d4_status: undecidable, undecidable: true}
 
-# 尚未在样本中出现的卡片谓词名（33 名，当前全部未覆盖）
+# 本批实际撞上的定义缺口（不是样本结论；待人类裁定后回改定义并重标，不得边标边改）
+definition_gaps:
+  - gap_id: DG-0001
+    cases: [GC-0012]
+    text: outcome_kind=unqualified 的样本没有谓词名，expected.d3_disposition 与 expected.d4_status 在 schema 与 README 中没有取值定义；T3 只规定不取得引用资格。
+    state: 该条按 undecidable 登记，未改定义。
+  - gap_id: DG-0002
+    cases: [GC-0003, GC-0007]
+    text: expected.vector_keys_after 的语义未定义——是“本步推进的键”还是“步后向量中的全部键”；后者在快照只携带 atoms、不携带版本向量的情况下，对 no_op 不可判定。
+    state: 本批按“本步推进的键”标注（no_op 记空数组），待裁定。
+  - gap_id: DG-0003
+    cases: []
+    text: 卡片的 outputs.predicate_writes 多为裸名（如 data_flow、dataset），没有实参；而 D1/D2 的 atom 必须是 name(args) 形式。卡片裸名到叙事步原子的参数位与取值域未定义。
+    state: 本批样本的原子由叙事步直接给出，不反推卡片裸名；该缺口不阻塞本批，但会阻塞“从卡片自动抽取样本”。
+
+# 尚未在样本中出现的卡片谓词名（22 名）
 uncovered:
-  - access_path
   - canary_gate
   - cleanup_filed
   - compensation
-  - consistency_level
   - consistency_rationale
-  - data_flow
   - data_lineage
-  - dataset
-  - delivery_semantics
-  - deploy_strategy
   - evolution_path
   - exclusion_record
   - expiry_of
   - flag
-  - idempotency
   - idempotent
   - interaction_flow
   - invariant
@@ -59,8 +89,4 @@ uncovered:
   - sensitivity
   - shared_write_exception
   - step_class
-  - step_log
-  - strangler_sequence
-  - time_semantics
-  - timeout_budget
   - verdict_table

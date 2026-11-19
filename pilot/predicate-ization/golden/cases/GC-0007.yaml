@@ -1,0 +1,42 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0007
+aspect: 5
+source_card: G-TRUNK-RLP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH1-0007
+  run_id: batch1
+  seq: 7
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 消息平台负责人]
+  reasoning_mode: verbal_consensus
+  narrative: 再次确认订单事件的投递语义为至少一次，没有改为恰好一次。
+  trace: 上一快照已含 delivery_semantics(order_event,at_least_once)；本步只复核消费端仍按去重处理，投递语义与实参均未变化。
+  decision: 维持 delivery_semantics(order_event,at_least_once)；不重复登记，不推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: delivery_semantics(order_event,at_least_once)
+      atom_key: 66da5c9e5dcf84f6757c0c61eddfefae038a39c4e0b35303d3e811698183b238
+      change: no_op
+      aspects: [5]
+  aspects_touched: []
+  snapshot_before:
+    atoms:
+      - atom_key: 66da5c9e5dcf84f6757c0c61eddfefae038a39c4e0b35303d3e811698183b238
+        atom: delivery_semantics(order_event,at_least_once)
+  snapshot_after:
+    atoms:
+      - atom_key: 66da5c9e5dcf84f6757c0c61eddfefae038a39c4e0b35303d3e811698183b238
+        atom: delivery_semantics(order_event,at_least_once)
+  recorded_at: '2026-11-19T10:06:00+08:00'
+expected:
+  vector_keys_after: []
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: delivery_semantics 属 aspect_mapped、方面 [5]，D4 为 mapped；基线已有同 atom_key，判 no_op，不推进方面 5。vector_keys_after 按“本步推进的键”解读（该字段语义待裁定，见 manifest.definition_gaps DG-0002）。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

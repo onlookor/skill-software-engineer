@@ -1,0 +1,42 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0003
+aspect: 4
+source_card: G-TRUNK-OWN
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH1-0003
+  run_id: batch1
+  seq: 3
+  executor: 标注席（Agent，单席）
+  participants: [数据治理责任人, 订单服务负责人]
+  reasoning_mode: verbal_consensus
+  narrative: 复核确认订单库这一数据集登记与上一步完全一致，没有新增数据集。
+  trace: 上一快照已含 dataset(order_db)；本步只确认归属与边界未变，未产生新的数据集标识、未改任何实参。
+  decision: 维持 dataset(order_db)；不重复登记，不推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: dataset(order_db)
+      atom_key: d716e6d33037e863704fb534c768e58400a2788a478dfb4db81ce60aefc6c0bd
+      change: no_op
+      aspects: [4]
+  aspects_touched: []
+  snapshot_before:
+    atoms:
+      - atom_key: d716e6d33037e863704fb534c768e58400a2788a478dfb4db81ce60aefc6c0bd
+        atom: dataset(order_db)
+  snapshot_after:
+    atoms:
+      - atom_key: d716e6d33037e863704fb534c768e58400a2788a478dfb4db81ce60aefc6c0bd
+        atom: dataset(order_db)
+  recorded_at: '2026-11-19T10:02:00+08:00'
+expected:
+  vector_keys_after: []
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: dataset 属 aspect_mapped、方面 [4]，D4 为 mapped；基线已有同 atom_key，判 no_op，不推进方面 4。vector_keys_after 按“本步推进的键”解读（该字段语义待裁定，见 manifest.definition_gaps DG-0002）。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

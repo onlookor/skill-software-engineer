@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0001
+aspect: 4
+source_card: G-TRUNK-CSL
+source_clause: '4.2.3'
+narrative_step:
+  step_id: NS-BATCH1-0001
+  run_id: batch1
+  seq: 1
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 数据治理责任人]
+  reasoning_mode: discussion
+  narrative: 订单服务对订单状态读取要求强一致；业务上不能接受读到已撤销的旧状态，故登记强一致级别。
+  trace: 先排除最终一致（会读到已撤销订单），再排除会话一致（多副本读跨会话失效）；依据约束“状态查询不得返回已撤销订单”，确定为 strong。
+  decision: 登记 consistency_level(DP-4.5,strong)，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: consistency_level(DP-4.5,strong)
+      atom_key: e1014f3fe7ec638ba67f2277c65816d67c64fbd323b8a76fc357bcd4799538c5
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: e1014f3fe7ec638ba67f2277c65816d67c64fbd323b8a76fc357bcd4799538c5
+        atom: consistency_level(DP-4.5,strong)
+  recorded_at: '2026-11-19T10:00:00+08:00'
+expected:
+  vector_keys_after: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: consistency_level 在 predicate_aspects 中属 aspect_mapped、方面 [4]，在 predicate_map 中 status=mapped；基线无同 atom_key，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null
