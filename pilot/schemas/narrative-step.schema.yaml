@@ -80,7 +80,7 @@ fields:
         atom:
           type: string
           pattern: '^[A-Za-z_][A-Za-z0-9_]*\([\s\S]*\)$'
-          note: 按 T1.2 规范化后的原子；只写一个调用，不写联接词。无引号实参不得含 White_Space；引号内可含，故规范化原子可能跨行。
+          note: 按 T1.2 规范化后的原子；只写一个调用，不写联接词。无引号实参不得含 White_Space；引号内可含（但转义仍须在转义集内），故规范化原子可能跨行。
         atom_key:
           type: string
           pattern: '^[0-9a-f]{64}$'
@@ -186,7 +186,7 @@ rules:
   - id: R9
     text: predicate_increments[].aspects 为空数组当且仅当该原子名在 registry/predicate_aspects.yaml 的 disposition 为 process_record；其余情形至少 1 项，且取值必须等于该条目的 aspects（多值逐项列出）。
   - id: R10
-    text: snapshot_before／snapshot_after 必须携带 atoms（每项 atom_key 与规范化原子原文），按 atom_key 升序、不得重复；ref 与 sha256 只是摘要。sha256 若填写，必须等于 atoms 各 atom_key 按列表顺序以 "\n" 连接后的 sha256；判定同一性只读 atoms。
+    text: snapshot_before／snapshot_after 必须携带 atoms（每项 atom_key 与规范化原子原文），按 atom_key 升序、不得重复；atoms[].atom_key 必须等于 sha256(utf8(atom))；ref 与 sha256 只是摘要。sha256 若填写，必须等于 atoms 各 atom_key 按列表顺序以 "\n" 连接后的 sha256；判定同一性只读 atoms。
 
 atom_grammar:
   canonical_form: 'name(arg1,arg2,...)'
@@ -195,12 +195,13 @@ atom_grammar:
   whitespace_property: 'Unicode White_Space'
   structural_whitespace: 'Unicode White_Space 属性全集（以属性名为准）'
   normalization:
+    - 分三个阶段执行：① 边界与区域识别（去掉首尾 White_Space，再左到右扫描标出引用区、转义区与实参边界）；② 结构空白去除（限定在引用区与转义区之外）；③ 实参校验。必须先识别转义与引用，才可能判定某字符是否位于结构位置，不得「先删空白再找引号」；任一阶段无法得到唯一结果即判不合格。
     - 边界：去掉原子字面首尾的全部 White_Space 字符。
-    - 结构空白 = Unicode `White_Space` 属性全集（等价枚举：U+0009–U+000D、U+0020、U+0085、U+00A0、U+1680、U+2000–U+200A、U+2028、U+2029、U+202F、U+205F、U+3000；有出入以属性名为准）。只在五个位置去掉：name 与 '(' 之间、'(' 与首个实参之间、实参与 ',' 之间、',' 与下一个实参之间、末个实参与 ')' 之间。'name( )' 规范化为 'name()'。
+    - 引号：实参可用单引号或双引号包裹；引号只在实参起始处被识别为引用起点（此前只有结构空白），实参内部的未转义引号是普通内容；引用必须在实参结束（',' 或 ')'）前闭合，闭合后到分隔符之间只允许结构空白，否则判不合格。引号内字符是内容，不参与实参切分与括号配对；引号本身保留，不做剥离。引号未闭合判不合格。
+    - 转义：反斜杠后接反斜杠、左括号、右括号、逗号、单引号或双引号之一时，表示该字符的字面形式；转义规则在引号内外一律生效（引号内的 \"／\' 不闭合引号，\,／\) 不结束当前实参），被转义字符不参与切分与括号配对；转义序列原样保留、不做反转义。反斜杠后接其它字符、或位于字面末尾，判不合格（引号内同样判不合格）。例：note("C:\\temp") 有效；note("C:\temp") 判不合格。
+    - 结构空白 = Unicode `White_Space` 属性全集（等价枚举：U+0009–U+000D、U+0020、U+0085、U+00A0、U+1680、U+2000–U+200A、U+2028、U+2029、U+202F、U+205F、U+3000；有出入以属性名为准）。只在引用区与转义区之外、且只在五个位置去掉：name 与 '(' 之间、'(' 与首个实参之间、实参与 ',' 之间、',' 与下一个实参之间、末个实参与 ')' 之间。'name( )' 规范化为 'name()'。结构位置上的 name (x)、name\t(x)、name　(x) 三者同键。
     - 无引号实参：去掉结构空白后不得包含任何 White_Space 字符（含 U+3000、NBSP、CR／LF）；含空白必须加引号，未加引号判不合格，不得静默折叠、替换或删除。
-    - 引号内实参：按原文保留，含 U+3000、NBSP、CR／LF，不做任何替换或折叠。
-    - 引号：实参可用单引号或双引号包裹；引号只在实参起始处被识别为引用起点（此前只有结构空白），实参内部的引号是普通内容；引用必须在实参结束（',' 或 ')'）前闭合，闭合后到分隔符之间只允许结构空白，否则判不合格。引号内的空格、制表符、CR／LF、逗号、括号、U+3000／U+00A0 全是内容，不参与实参切分与括号配对；引号本身保留，不做剥离。引号未闭合判不合格。
-    - 转义：反斜杠后接反斜杠、左括号、右括号、逗号、单引号或双引号之一时，表示该字符的字面形式；转义序列原样保留（不做反转义），被转义字符不参与切分与括号配对。反斜杠后接其它字符、或位于字面末尾，判不合格。
+    - 引号内实参：按原文保留，含 U+3000、NBSP、CR／LF，不做任何替换或折叠（但不豁免转义集校验）；引号内的空白是内容，不参与结构空白去除——note("a , b") 与 note("a,b") 不同键。
     - 实参顺序不得重排、不得去重、不得改大小写；显式占位符 `·` 是一个独立实参并保留；未加引号的嵌套括号按深度配对切分，内层逗号不作分隔。
     - 右括号 `)` 之后不得再有非空白内容；尾随 White_Space 由边界规则去掉，出现其它内容即判不合格；空实参列表写作 `name()`，`,,`、首逗号、尾逗号产生的零长度实参判不合格。
     - 无法按上述规则得到唯一结果时判不合格，不得猜测、补全或改写为看起来合理的形式。
@@ -217,6 +218,8 @@ atom_grammar:
       - {left: 'tag(a\,b)', right: 'tag(a,b)', same: false, reason: 转义逗号不切分，实参个数不同}
       - {left: 'note("a,b")', right: 'note(a,b)', same: false, reason: 引号内逗号不切分，实参个数不同}
       - {left: 'note("a b")', right: "note(\"a\u3000b\")", same: false, reason: 引号内空白按原文保留，键不同}
+      - {left: 'note ( "C:\\temp" )', right: 'note("C:\\temp")', same: true, reason: 结构位置空白去掉；引号内 \\ 是字面反斜杠，转义序列原样保留、不做反转义}
+      - {left: 'note("a , b")', right: 'note("a,b")', same: false, reason: 引号内空白是内容，不按结构空白去除}
       - {left: 'p(a\(b)', right: 'p(a\(b)', same: true, reason: 转义左括号是内容，不参与括号配对}
     invalid_examples:
       - {atom: 'note(a b)', reason: 无引号实参含 U+0020，判不合格}
@@ -224,3 +227,4 @@ atom_grammar:
       - {atom: "note(a\u3000b)", reason: 无引号实参含 U+3000，判不合格}
       - {atom: "note(a\u00A0b)", reason: 无引号实参含 NBSP，判不合格}
       - {atom: "note(a\nb)", reason: 无引号实参含 LF，判不合格}
+      - {atom: 'note("C:\temp")', reason: 引号内同样适用转义集，\t 不属于六个转义字符，判不合格}

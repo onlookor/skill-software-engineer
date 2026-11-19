@@ -348,6 +348,7 @@
   - `registry/README.md`：目录导览补叙事步 schema 与 `predicate_aspects.yaml` 两行。
   - `ROADMAP.md`：M5 出口补构建时间取法。
   - `CHANGELOG.md`：本条追加两条更正记录——`todo.md` 状态块由 `--project` 重生成、3.11 为人工登记；第 10 章为完整非目标清单、未成稿标记在 3／7／8／9 章。0018 原文不改。
+  - `registry/projections/STY.md`、`registry/projections/台账义务清单.md`、`registry/projections/索引.md`、`registry/projections/自检报告.md`：仅「生成于」时间戳随 `--project` 重生成而变，源哈希未变，不是内容更新。
 - **变更摘要**：
   1. **D1**：叙事步记录形态落 schema，T1.1 给出 7 条字面判据；`predicate_write` 要求前后快照，`artifact_preservation` 与 `unqualified` 分道。
   2. **D2**：规范化原子 `name(args...)`、`atom_key = sha256(utf8(atom))`；同名同参＝`no_op`，不推进向量；`new` 才推进并在多方面各 +1；判定规则写入 T2.1。
@@ -356,6 +357,7 @@
   5. **设计文档**：按「随 P0 同步成稿、每标一批黄金样本回改一次、P0 通过时冻结」写；第 3／7／8／9 章明写未成稿，第 10 章为完整非目标清单。
   6. **黄金样本**：只建骨架与标注口径（S1–S7、批次 12 条、P0 目标 36 条），0 条样本。
   7. **第六轮复核整改**（全部文档与 schema 级）：① 0018 恢复 `5e2e13f` 原文，两处更正改为本条追加，0014–0017 逐字未动；② 已推送批次不得就地改写，本条只追加；③ T1.2 与 `atom_grammar` 按 Unicode `White_Space` 属性全集处理结构位置空白（`name (x)`／`name\t(x)`／`name　(x)` 同键），无引号实参含任何空白即判不合格，引号内空白按原文保留（`name("a b")` 与 `name("a　b")` 不同键），并补转义与零长度实参规则；④ 快照改为必须携带 `atoms`（`atom_key`＋原子原文），`ref`／`sha256` 降为摘要，S2 按此对齐不削弱；⑤ 模板补齐 `predicate_increments`、`aspects_touched`、前后快照，删去非 schema 字段 `snapshot_before.predicates`；schema 的空 `aspects` 仅限 `process_record`，S4 同步；⑥ `predicate_map.yaml` 头注与 `entry_fields` 写明 `expr_sha256` 是卡片 `predicate_writes` 原文的 sha256、不是 `atom_key`；逐条复算 98 条一致（去重 33 名：28 名×1＋5 名×14）；⑦ `step_id` 改 `layer`，值 `outputs`；⑧ D3 的 `mapped` 全改 `aspect_mapped`，与 D4 的 `mapped` 分开。
+  8. **第七轮复核整改**：① T1.2 改为三阶段——边界与区域识别（左到右扫描标出引用区、转义区与实参边界）→ 结构空白去除（限定在引用区与转义区之外）→ 实参校验；删去「上下文无关」这一断言，并补 `note("a , b")` 与 `note("a,b")` 不同键；② 写明转义规则在引号内外一律生效、引号内「原文保留」不豁免转义集，补 `note("C:\\temp")` 有效与 `note("C:\temp")` 判不合格；③ T2.1 第 1 条精确到 `snapshot_before.atoms`，与 schema R5 一致；④ T1.1 第 7 条与 schema R10 补 `atoms[].atom_key = sha256(utf8(atom))`；⑤ 0019 涉及文件补登 `7cece15` 夹带的 4 个投影文件（仅生成时间戳变化，源哈希未变）。
 - **未改动**：母本、`SKILL.md` 判据、18 张卡正文、`validators/`、`dist/`、`.gitignore` 未动；未重打包、未写解析器／求值器／引擎；0014／0015／0016／0017／0018 逐字未动。
 - **关联 ADR**：`ADR-PRED-ENG-01`（P0 冻结口径；本批在冻结前落地）。
 - **备注**：只提交，不推送、不打标签。
