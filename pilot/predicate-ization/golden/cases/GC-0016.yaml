@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0016
+aspect: 5
+source_card: G-TRUNK-RLP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH2-0016
+  run_id: batch2
+  seq: 4
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 运维值班负责人]
+  reasoning_mode: discussion
+  narrative: 订单事件保留期定为 30 天；保留值按业务原文写作“30 d”（数字与单位间有空格），以带引号实参登记。
+  trace: 保留值写作 `30 d`，其中含 White_Space，未加引号即违反 T1.2(e)；整体加双引号后空格是内容、原样保留。基线是 expiry_of(order_event,30d)（无空格、无引号），两者 atom_key 不同。
+  decision: 登记 expiry_of(order_event,"30 d")，推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'expiry_of(order_event,"30 d")'
+      atom_key: 3863e9788c191ebcc780551ee8c08a533f8c477b98e439400958c83923ab72d6
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms:
+      - atom_key: 3359a85a6226c71f98c2d5ba4b67b3254ef57410f5d9cda33fa35e3711366837
+        atom: expiry_of(order_event,30d)
+  snapshot_after:
+    atoms:
+      - atom_key: 3359a85a6226c71f98c2d5ba4b67b3254ef57410f5d9cda33fa35e3711366837
+        atom: expiry_of(order_event,30d)
+      - atom_key: 3863e9788c191ebcc780551ee8c08a533f8c477b98e439400958c83923ab72d6
+        atom: 'expiry_of(order_event,"30 d")'
+  recorded_at: '2026-11-19T11:03:00+08:00'
+expected:
+  advanced_keys: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: expiry_of 属 aspect_mapped、方面 [5]，D4 为 mapped；引号内空格是内容，与基线无空格写法 atom_key 不同，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

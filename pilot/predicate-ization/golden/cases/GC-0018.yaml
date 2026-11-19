@@ -1,0 +1,28 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0018
+aspect: 5
+source_card: G-TRUNK-STP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH2-0018
+  run_id: batch2
+  seq: 6
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 可靠性负责人]
+  reasoning_mode: discussion
+  narrative: 讨论后决定不为订单事件引入 saga 补偿，改用幂等消费加死信重放。
+  trace: saga 需要额外协调器与补偿接口；现有幂等消费与死信重放已覆盖已知失败分支，且不新增跨服务事务。该判断没有可写入的机器层谓词原子。
+  decision: 不登记 saga；按 T3 退回，转幂等消费与死信重放方案评审。
+  outcome_kind: unqualified
+  predicate_increments: []
+  aspects_touched: []
+  recorded_at: '2026-11-19T11:05:00+08:00'
+expected:
+  verdict: unqualified
+  reject_code: no_predicate_atom
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0019
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH2-0019
+  run_id: batch2
+  seq: 7
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 订单服务负责人]
+  reasoning_mode: discussion
+  narrative: 灰度门禁第一阶段标签按发布原文写作“phase 1”（含空格），以带引号实参登记。
+  trace: 标签含 White_Space，未加引号即不合格；加双引号后空格是内容。基线是 canary_gate(order_svc,phase1,5pct)（无空格），两者 atom_key 不同，判 new。
+  decision: 登记 canary_gate(order_svc,"phase 1",5pct)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'canary_gate(order_svc,"phase 1",5pct)'
+      atom_key: df296aec7a31a36cb31b9968486888384cfb6fded6305bab304329313bf1ea15
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms:
+      - atom_key: a4d86ea3ac7d329292f9071eb1f0741b9858c1e180db9a4336e233bbc9c58b0a
+        atom: canary_gate(order_svc,phase1,5pct)
+  snapshot_after:
+    atoms:
+      - atom_key: a4d86ea3ac7d329292f9071eb1f0741b9858c1e180db9a4336e233bbc9c58b0a
+        atom: canary_gate(order_svc,phase1,5pct)
+      - atom_key: df296aec7a31a36cb31b9968486888384cfb6fded6305bab304329313bf1ea15
+        atom: 'canary_gate(order_svc,"phase 1",5pct)'
+  recorded_at: '2026-11-19T11:06:00+08:00'
+expected:
+  advanced_keys: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: canary_gate 属 aspect_mapped、方面 [9]，D4 为 mapped；引号内空格是内容，与基线无空格写法 atom_key 不同，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

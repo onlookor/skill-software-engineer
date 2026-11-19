@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0013
+aspect: 4
+source_card: G-TRUNK-CSL
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH2-0013
+  run_id: batch2
+  seq: 1
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 数据治理责任人]
+  reasoning_mode: discussion
+  narrative: 订单读取要求租户级强隔离；一致性级别定为 strong，理由按业务原文登记，含分号与空格。
+  trace: 理由原文是“strong isolation; per-tenant keys”，分号后可读性依赖空格；按 T1.2(e) 含空白的无引号实参不合格，故整体加双引号，引号内空白原样保留、不做折叠。
+  decision: 登记 consistency_rationale(DP-4.2,"strong isolation; per-tenant keys")，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'consistency_rationale(DP-4.2,"strong isolation; per-tenant keys")'
+      atom_key: 6a7dd33622d970bf2d368fcafcbe31d47611861bc53850fea1e865e57368ba9f
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms:
+      - atom_key: ffe398a10db3883b5cdc1d00b8f27526d7a551b85e6cdd02b229621dbddc6738
+        atom: consistency_level(DP-4.2,strong)
+  snapshot_after:
+    atoms:
+      - atom_key: 6a7dd33622d970bf2d368fcafcbe31d47611861bc53850fea1e865e57368ba9f
+        atom: 'consistency_rationale(DP-4.2,"strong isolation; per-tenant keys")'
+      - atom_key: ffe398a10db3883b5cdc1d00b8f27526d7a551b85e6cdd02b229621dbddc6738
+        atom: consistency_level(DP-4.2,strong)
+  recorded_at: '2026-11-19T11:00:00+08:00'
+expected:
+  advanced_keys: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: consistency_rationale 属 aspect_mapped、方面 [4]，D4 为 mapped；基线只有 consistency_level(DP-4.2,strong)，引号内空白与分号是内容，atom_key 不同，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

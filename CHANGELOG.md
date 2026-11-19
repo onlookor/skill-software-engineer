@@ -405,3 +405,26 @@
 - **未改动**：母本、`SKILL.md` 判据、18 张卡正文、`validators/`、`dist/` 未动；未重打包；未写解析器／求值器／引擎；`编译规范.md` 不含 `expected` 字段，本批无对应改动；0014–0020 逐字未动。
 - **关联 ADR**：无
 - **备注**：抽检由独立复核席执行，执行席未自抽检。只提交，不推送、不打标签。
+
+## 批次 0022 — 2026-11-19
+
+- **批次号**：0022
+- **日期**：2026-11-19
+- **事项**：黄金样本第 2 批 12 条（`GC-0013`–`GC-0024`）；同时做掉第 1 批复核留的两条记账（`cases[].aspect` 与 `counts.by_aspect` 口径统一、`target_total`／`cases_per_batch` 嵌套位置说明）。
+- **涉及文件**：
+  - 新增：`pilot/predicate-ization/golden/cases/GC-0013.yaml`–`GC-0024.yaml`
+  - 修改：`pilot/predicate-ization/golden/cases/GC-0011.yaml`（`aspect: 4` → `0`）
+  - 修改：`pilot/predicate-ization/golden/manifest.yaml`（计数、`cases`、`uncovered`、`definition_gaps` 注记、两条记账）
+  - 修改：`pilot/predicate-ization/golden/README.md`（批次进度、`cases[].aspect` 与 `by_aspect` 口径、字段位置）
+  - 修改：`plans/predicate-ization-design.md`（第 11 章追加「回改记录」：第 1、2 批）
+- **变更摘要**：
+  1. **第 2 批 12 条**：方面 4／5／9＝3／3／4，`process_record` 2；`no_op` 2（`GC-0017`／`GC-0022`）、`unqualified` 2（`GC-0015` 记方面 4、`GC-0018` 记方面 5）。累计 24 条：`new` 17、`no_op` 4、`unqualified` 3、`undecidable` 0。
+  2. **难度取向**：不堆简单 `new`，按定义压力点取材——结构空白重述后同 `atom_key` 判 `no_op`（`GC-0017`）、引号内空白是内容（`GC-0013`／`0016`／`0019`）、转义逗号与引号内逗号不切分实参（`GC-0014`／`0021`）、实参顺序不同即不同键（`GC-0020`）、同名前缀引号内外对照（`GC-0022`）、`process_record` 对 `mapped`／`exempt` 的对照（`GC-0023`／`0024`）。
+  3. **覆盖**：新增名字 8 个（`consistency_rationale`／`data_lineage`／`expiry_of`／`idempotent`／`canary_gate`／`evolution_path`／`selection_context`／`verdict_table`）；累计 19／33，`uncovered` 14 名，未静默。
+  4. **记账 1**：`GC-0011` 的 `aspect` 改为 `0`（与模板「过程记录写 0」一致）；`cases[].aspect` 语义写清为「案例所属方面，取自源卡 `_aspect`」，`counts.by_aspect` 按 4／5／9 取该字段、`process_record` 取 `d3_disposition` 计数、`'0'` 取 `aspect=0` 且非 `process_record` 计数，从 `cases[]` 重算与清单相等。
+  5. **记账 2**：`manifest.yaml` 顶部与 README §4 注明 `target_total` 在 `quotas` 下、`cases_per_batch` 在 `batch_policy` 下，外部脚本不得读顶层同名字段。
+  6. **校验**：仓外临时脚本（`/tmp`，不入库）复算 24 条——`atom_key = sha256(atom)`、`change` 只按 `snapshot_before.atoms` 判、`advanced_keys` 与 `aspects_touched` 一致、`no_op` 为空、`unqualified` 的 `expected` 键集精确、`cases[]` 重算的 `by_aspect` 与清单相等、`uncovered` 与「33 名减已用名」一致，0 错误。
+  7. **配额三层口径（人类 2026-11-19 裁定）**：桶数 36（方面 4／5／9 各 10 ＋ `process_record` 6）；`unqualified` 单列配额 4，只数 `aspect=0` 的样本、不占桶；文件总数 40＝36＋4。当前 24 个文件＝桶 23＋`aspect=0` 的 `unqualified` 1（`GC-0012`）；`counts.unqualified` 为 3（含占桶的 `GC-0015`／`GC-0018`），与配额进度 1 不是同一口径，已在 `quotas.unqualified_note` 写清。剩余 16 条＝桶 13（4:3、5:3、9:4、`process_record`:3）＋ `aspect=0` 的 `unqualified` 3；第 3 批 12 条＝桶 12，第 4 批 4 条＝桶 1＋`unqualified` 3。
+- **未改动**：母本、`SKILL.md` 判据、18 张卡、`validators/`、`dist/`；未写解析器／求值器／引擎；0020–0021 逐字未动。
+- **关联 ADR**：无
+- **备注**：单人标注，第 2 批抽检尚未执行，`sampling_status` 保持 `pending`，执行席未自抽检。只提交，不推送、不打标签。

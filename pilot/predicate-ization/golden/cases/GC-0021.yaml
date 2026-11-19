@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0021
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH2-0021
+  run_id: batch2
+  seq: 9
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 订单服务负责人]
+  reasoning_mode: discussion
+  narrative: 部署策略定为金丝雀，比例与观察窗口合并写作“10%, 30min”，回滚目标升到 v3。
+  trace: 该实参含逗号与空格，整体加双引号后逗号不切分实参、空格原样保留；引号外的结构逗号后不留空白。与基线 deploy_strategy(order_svc,canary,10pct,rollback_v2) 不同键，判 new。
+  decision: 登记 deploy_strategy(order_svc,canary,"10%, 30min",rollback_v3)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'deploy_strategy(order_svc,canary,"10%, 30min",rollback_v3)'
+      atom_key: 5bbbb584f8a76e40978fce1dfd36b7050e94507a97504b0147e0461d26ce83f7
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms:
+      - atom_key: 0d341a55d6bdb75eec70c0ccd54c65dacc251dbd84f3d8a7233f1e7772de19c8
+        atom: deploy_strategy(order_svc,canary,10pct,rollback_v2)
+  snapshot_after:
+    atoms:
+      - atom_key: 0d341a55d6bdb75eec70c0ccd54c65dacc251dbd84f3d8a7233f1e7772de19c8
+        atom: deploy_strategy(order_svc,canary,10pct,rollback_v2)
+      - atom_key: 5bbbb584f8a76e40978fce1dfd36b7050e94507a97504b0147e0461d26ce83f7
+        atom: 'deploy_strategy(order_svc,canary,"10%, 30min",rollback_v3)'
+  recorded_at: '2026-11-19T11:08:00+08:00'
+expected:
+  advanced_keys: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: deploy_strategy 属 aspect_mapped、方面 [9]，D4 为 mapped；引号内逗号与空格是内容，与基线不同 atom_key，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

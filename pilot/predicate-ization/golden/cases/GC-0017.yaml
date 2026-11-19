@@ -1,0 +1,46 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0017
+aspect: 5
+source_card: G-TRUNK-RLP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH2-0017
+  run_id: batch2
+  seq: 5
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 平台架构师]
+  reasoning_mode: discussion
+  narrative: 复核确认订单 API 以 dedupe_key 幂等；叙事把同一原子以带结构空白的原样写法重述一遍。
+  trace: 原始写法是 `idempotent( order_api , dedupe_key )`；按 T1.2(d) 只去掉结构空白（名字与括号间、括号内两侧、逗号两侧），规范化后与快照中的 idempotent(order_api,dedupe_key) 同字面、同 atom_key，因此判 no_op，不推进方面。
+  decision: 再次登记 idempotent(order_api,dedupe_key)；判定为 no_op，方面 5 不推进。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: idempotent(order_api,dedupe_key)
+      atom_key: 923a9a91b225ec37914fac7d560757a0d91f75d3c6a1964cedda38434cb938ae
+      change: no_op
+      aspects: [5]
+  aspects_touched: []
+  snapshot_before:
+    atoms:
+      - atom_key: 3359a85a6226c71f98c2d5ba4b67b3254ef57410f5d9cda33fa35e3711366837
+        atom: expiry_of(order_event,30d)
+      - atom_key: 923a9a91b225ec37914fac7d560757a0d91f75d3c6a1964cedda38434cb938ae
+        atom: idempotent(order_api,dedupe_key)
+  snapshot_after:
+    atoms:
+      - atom_key: 3359a85a6226c71f98c2d5ba4b67b3254ef57410f5d9cda33fa35e3711366837
+        atom: expiry_of(order_event,30d)
+      - atom_key: 923a9a91b225ec37914fac7d560757a0d91f75d3c6a1964cedda38434cb938ae
+        atom: idempotent(order_api,dedupe_key)
+  recorded_at: '2026-11-19T11:04:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: idempotent 属 aspect_mapped、方面 [5]，D4 为 mapped；基线已有同 atom_key（结构空白差异不产生新键），判 no_op；`advanced_keys` 只收 new 且 aspects 非空的键，故为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

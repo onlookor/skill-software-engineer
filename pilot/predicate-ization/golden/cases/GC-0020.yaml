@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0020
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH2-0020
+  run_id: batch2
+  seq: 8
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 架构评审主持人]
+  reasoning_mode: discussion
+  narrative: 演进路径按“服务 → 旧库 → 阶段一双写”的口径登记，实参顺序与既有写法相反。
+  trace: T1.2 第 2 条禁止重排实参；基线 evolution_path(order_svc,phase1_dual_write,legacy_order) 的实参顺序是“服务、阶段、旧库”，本步是“服务、旧库、阶段”，两者 atom_key 不同，判 new。
+  decision: 登记 evolution_path(order_svc,legacy_order,phase1_dual_write)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: evolution_path(order_svc,legacy_order,phase1_dual_write)
+      atom_key: 2d5a2a6ed86fed1b67d09d8f33a1f36534af1b5443fbe6d63a763b949f17cadf
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms:
+      - atom_key: 1dd23ed61d495d346d7a96f196d84f22a4f73aea3ef6e1bbd6339f2e114217f6
+        atom: evolution_path(order_svc,phase1_dual_write,legacy_order)
+  snapshot_after:
+    atoms:
+      - atom_key: 1dd23ed61d495d346d7a96f196d84f22a4f73aea3ef6e1bbd6339f2e114217f6
+        atom: evolution_path(order_svc,phase1_dual_write,legacy_order)
+      - atom_key: 2d5a2a6ed86fed1b67d09d8f33a1f36534af1b5443fbe6d63a763b949f17cadf
+        atom: evolution_path(order_svc,legacy_order,phase1_dual_write)
+  recorded_at: '2026-11-19T11:07:00+08:00'
+expected:
+  advanced_keys: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: evolution_path 属 aspect_mapped、方面 [9]，D4 为 mapped；实参顺序不得重排，本步与基线仅顺序不同即不同 atom_key，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

@@ -1,11 +1,15 @@
-# 黄金样本集清单（P0 第 1 批已标注）
+# 黄金样本集清单（P0 第 2 批已标注）
 schema_version: 1
 kind: golden_manifest
 status: in_progress
 frozen_at: null
 
+# 字段位置说明（记账 2）：target_total 位于 quotas 之下、cases_per_batch 位于
+# batch_policy 之下；早期外部脚本若读顶层同名字段会落空，须改读嵌套路径。
+
 batch_policy:
   cases_per_batch: 12
+  last_batch_may_be_remainder: true    # 第 4 批 4 条；不扩批、不削减桶
   design_revision_per_batch: true      # 每批回改 plans/predicate-ization-design.md 一次
   annotator_reviewer_separate: true
 
@@ -17,25 +21,34 @@ annotation_method:
   sampling_status: pending
   inter_annotator_agreement: not_estimable
   note: 按 plans/predicate-ization-execution-plan.md 第 3 节第 2 项的降级口径；这不是双人独立标注，Cohen's κ 不可估计，不得作为任何结论依据。
+  sampling_note: 第 1 批抽检由独立复核席完成（5/5 一致）；第 2 批抽检尚未执行，sampling_status 保持 pending，不因第 1 批结果改写。
 
 quotas:
-  target_total: 36
+  # 三层口径（人类 2026-11-19 裁定）：① 桶数；② unqualified 单列配额；③ 文件总数 = ① + ②。
+  bucket_total: 36
   by_aspect:
     '4': 10
     '5': 10
     '9': 10
   process_record: 6
+  unqualified_min: 4          # 只数 aspect=0 的 unqualified；这些样本不占桶
   no_op_min: 6
-  unqualified_min: 4
   min_distinct_names: 20
+  expected_files: 40          # = bucket_total 36 + unqualified_min 4
+  target_total: 36            # 与 bucket_total 同义，保留旧名避免外部脚本落空；以 bucket_total 为准
+  target_total_note: target_total 是桶数（方面 4／5／9 各 10 ＋ process_record 6），不是文件总数；文件总数见 expected_files。
+  unqualified_note: unqualified 单列配额只数 aspect=0 的 unqualified（当前为 GC-0012），这些样本不占桶；有方面语境的 unqualified（GC-0015 记方面 4、GC-0018 记方面 5）按所属方面占桶，同时计入 counts.unqualified，但不计入本配额。counts.unqualified 与配额进度不是同一口径。
+  unqualified_progress: 1      # 已达配额口径的条数（aspect=0 的 unqualified）
+  remaining_gap: 第 2 批后尚缺 16 条：桶 13 条（4:3、5:3、9:4、process_record:3）＋ aspect=0 的 unqualified 3 条。第 3 批 12 条＝桶 12（4:3、5:3、9:4、process_record:2）；第 4 批 4 条＝桶 1（process_record:1）＋ unqualified 3。文件总数 24＋12＋4＝40。
 
 counts:
-  total: 12
-  new: 9
-  no_op: 2
-  unqualified: 1
+  total: 24
+  new: 17
+  no_op: 4
+  unqualified: 3
   undecidable: 0
-  by_aspect: {'4': 4, '5': 4, '9': 2, 'process_record': 1}
+  by_aspect: {'4': 7, '5': 7, '9': 6, 'process_record': 3, '0': 1}
+  by_aspect_basis: cases[].aspect 表示案例所属方面：方面样本取源卡 _aspect（4／5／9）；过程记录按模板写 0，记入 process_record 桶；无方面 unqualified 也写 0，记入 '0' 桶。4／5／9 直接取该字段，process_record 取 d3_disposition=process_record 的条数，'0' 只收 aspect=0 且非 process_record 的条目。四项与 '0' 相加等于 total；桶数 = 4／5／9／process_record 四项之和 = 23。
 
 cases:
   - {case_id: GC-0001, file: cases/GC-0001.yaml, aspect: 4, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
@@ -48,10 +61,23 @@ cases:
   - {case_id: GC-0008, file: cases/GC-0008.yaml, aspect: 5, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
   - {case_id: GC-0009, file: cases/GC-0009.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
   - {case_id: GC-0010, file: cases/GC-0010.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
-  - {case_id: GC-0011, file: cases/GC-0011.yaml, aspect: 4, change: new, d3_disposition: process_record, d4_status: exempt, undecidable: false}
+  - {case_id: GC-0011, file: cases/GC-0011.yaml, aspect: 0, change: new, d3_disposition: process_record, d4_status: exempt, undecidable: false}
   - {case_id: GC-0012, file: cases/GC-0012.yaml, aspect: 0, change: null, verdict: unqualified, reject_code: no_predicate_atom, undecidable: false}
+  - {case_id: GC-0013, file: cases/GC-0013.yaml, aspect: 4, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0014, file: cases/GC-0014.yaml, aspect: 4, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0015, file: cases/GC-0015.yaml, aspect: 4, change: null, verdict: unqualified, reject_code: no_predicate_atom, undecidable: false}
+  - {case_id: GC-0016, file: cases/GC-0016.yaml, aspect: 5, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0017, file: cases/GC-0017.yaml, aspect: 5, change: no_op, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0018, file: cases/GC-0018.yaml, aspect: 5, change: null, verdict: unqualified, reject_code: no_predicate_atom, undecidable: false}
+  - {case_id: GC-0019, file: cases/GC-0019.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0020, file: cases/GC-0020.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0021, file: cases/GC-0021.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0022, file: cases/GC-0022.yaml, aspect: 9, change: no_op, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0023, file: cases/GC-0023.yaml, aspect: 0, change: new, d3_disposition: process_record, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0024, file: cases/GC-0024.yaml, aspect: 0, change: new, d3_disposition: process_record, d4_status: exempt, undecidable: false}
 
 # 本批撞上的定义缺口（不是样本结论）；三条均已由人类裁定，DG-0001／DG-0002 已回改定义并按新口径重标，DG-0003 登记为技术债（TECH-DEBT 第 14 条）
+# 第 2 批（GC-0013–GC-0024）未新增定义缺口：边界情形均可按 T1.2／T2.1 唯一定键。
 definition_gaps:
   - gap_id: DG-0001
     cases: [GC-0012]
@@ -69,27 +95,19 @@ definition_gaps:
     state: 已裁定：不修，登记为技术债
     resolution: "原子只由叙事步给出；卡片 predicate_writes 的裸名只作名字存在性与命名空间校验，不构成原子模板，不得据此反推参数。新增 TECH-DEBT 第 14 条（做什么／为何现在不做／不做期间的空白／启动条件／关闭判据），设计稿「非目标与未决」留指针。"
 
-# 尚未在样本中出现的卡片谓词名（22 名）
+# 尚未在样本中出现的卡片谓词名（14 名）
 uncovered:
-  - canary_gate
   - cleanup_filed
   - compensation
-  - consistency_rationale
-  - data_lineage
-  - evolution_path
   - exclusion_record
-  - expiry_of
   - flag
-  - idempotent
   - interaction_flow
   - invariant
   - orchestrator
   - owner
   - quality_impact_card
   - saga
-  - selection_context
   - selection_procedure
   - sensitivity
   - shared_write_exception
   - step_class
-  - verdict_table

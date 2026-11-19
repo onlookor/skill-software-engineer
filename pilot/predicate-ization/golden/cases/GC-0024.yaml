@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0024
+aspect: 0
+source_card: G-TRUNK-STP
+source_clause: '0.18.2-S4'
+narrative_step:
+  step_id: NS-BATCH2-0024
+  run_id: batch2
+  seq: 12
+  executor: 标注席（Agent，单席）
+  participants: [可靠性负责人, 评审主持人]
+  reasoning_mode: discussion
+  narrative: S4 包络校验产出判定表：候选 c1 对硬目标 g1 判定 reachable。
+  trace: 判定表记录逐候选 × 逐硬目标的三值结果，属选择过程记录；verdict_table 在 predicate_aspects 中为 process_record，在 predicate_map 中 status=exempt。豁免只影响 D4 覆盖口径，不改变原子写入本身。
+  decision: 登记 verdict_table(DP-5.2,c1,g1,reachable)；该名字不推进任何方面向量，按 D4 豁免。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: verdict_table(DP-5.2,c1,g1,reachable)
+      atom_key: 3298965d90226918f562e24576701b9a375c87bb1aca5f67eafaa54e39656231
+      change: new
+      aspects: []
+  aspects_touched: []
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 3298965d90226918f562e24576701b9a375c87bb1aca5f67eafaa54e39656231
+        atom: verdict_table(DP-5.2,c1,g1,reachable)
+  recorded_at: '2026-11-19T11:11:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: process_record
+  d4_status: exempt
+  why: verdict_table 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=exempt；基线无同 atom_key，判 new 但按 S4 不推进方面向量，`advanced_keys` 为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

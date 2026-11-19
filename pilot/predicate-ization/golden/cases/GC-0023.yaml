@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0023
+aspect: 0
+source_card: G-TRUNK-STP
+source_clause: '0.18.2-S0'
+narrative_step:
+  step_id: NS-BATCH2-0023
+  run_id: batch2
+  seq: 11
+  executor: 标注席（Agent，单席）
+  participants: [可靠性负责人, 订单服务负责人]
+  reasoning_mode: discussion
+  narrative: 选择规程 S0 记录输入事实集 F1、F2（合并写作带引号的“F1,F2”）与生效约束 C7，形成选择上下文快照。
+  trace: 叙事把输入事实集写作 F1、F2 两个事实；写入时合并为一个实参，逗号在引号内是内容、不切分实参。selection_context 在 predicate_aspects 中为 process_record，在 predicate_map 中 status=mapped。
+  decision: 登记 selection_context(DP-5.2,"F1,F2",C7)；该名字不推进任何方面向量。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'selection_context(DP-5.2,"F1,F2",C7)'
+      atom_key: 958398be86278f5bcfc49473dc4a2924c1eed751c1f62bc7316d783c47166aae
+      change: new
+      aspects: []
+  aspects_touched: []
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: 958398be86278f5bcfc49473dc4a2924c1eed751c1f62bc7316d783c47166aae
+        atom: 'selection_context(DP-5.2,"F1,F2",C7)'
+  recorded_at: '2026-11-19T11:10:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: process_record
+  d4_status: mapped
+  why: selection_context 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=mapped；基线无同 atom_key，判 new、D4 纳入覆盖，但按 S4 不推进任何方面向量，`advanced_keys` 为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

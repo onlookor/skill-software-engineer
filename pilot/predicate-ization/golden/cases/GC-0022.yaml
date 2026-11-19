@@ -1,0 +1,46 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0022
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH2-0022
+  run_id: batch2
+  seq: 10
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 架构评审主持人]
+  reasoning_mode: discussion
+  narrative: 复核重述绞杀序列第二阶段（标签按原文写作“phase 2”，含空格），字面与基线中的带引号条目一致。
+  trace: 基线同时含带引号的 strangler_sequence(legacy_order,"phase 2",60d) 与不带引号的 strangler_sequence(legacy_order,phase2,60d)；本步字面与前者逐字相同，同 atom_key → no_op。不带引号那条是不同原子，不参与判定。
+  decision: 再次登记 strangler_sequence(legacy_order,"phase 2",60d)；判定 no_op，方面 9 不推进。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'strangler_sequence(legacy_order,"phase 2",60d)'
+      atom_key: 88cb762a3fd27d2958eedf8b26043fd3d27549b0f81f0be513768836ad022405
+      change: no_op
+      aspects: [9]
+  aspects_touched: []
+  snapshot_before:
+    atoms:
+      - atom_key: 88cb762a3fd27d2958eedf8b26043fd3d27549b0f81f0be513768836ad022405
+        atom: 'strangler_sequence(legacy_order,"phase 2",60d)'
+      - atom_key: d57fdb78216b34455eb163df5d0bc3330b61e4fec286234394530314a8348d65
+        atom: strangler_sequence(legacy_order,phase2,60d)
+  snapshot_after:
+    atoms:
+      - atom_key: 88cb762a3fd27d2958eedf8b26043fd3d27549b0f81f0be513768836ad022405
+        atom: 'strangler_sequence(legacy_order,"phase 2",60d)'
+      - atom_key: d57fdb78216b34455eb163df5d0bc3330b61e4fec286234394530314a8348d65
+        atom: strangler_sequence(legacy_order,phase2,60d)
+  recorded_at: '2026-11-19T11:09:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: strangler_sequence 属 aspect_mapped、方面 [9]，D4 为 mapped；基线带引号条目与本步逐字相同，判 no_op；`advanced_keys` 只收 new 且 aspects 非空的键，故为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

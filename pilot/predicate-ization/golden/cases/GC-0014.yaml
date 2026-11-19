@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0014
+aspect: 4
+source_card: G-TRUNK-DFL
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH2-0014
+  run_id: batch2
+  seq: 2
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 数据平台负责人]
+  reasoning_mode: discussion
+  narrative: 归档数据集的名称本身含逗号（events,archive），血缘登记用转义逗号写入，避免被当作实参分隔。
+  trace: 该名称含逗号，不加引号会被切开；加双引号后逗号是内容。本条用 `\,`（T1.2(c) 合法转义，原样保留、不反转义），与基线中未转义写法 `events,archive` 属不同字面、不同 atom_key。
+  decision: 登记 data_lineage(order_db,reporting_svc,"events\,archive")，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'data_lineage(order_db,reporting_svc,"events\,archive")'
+      atom_key: 1630a36b36919c1a6a45f3e5c19eb5257221c3698d30a91ebc59b1499cb5a1a6
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms:
+      - atom_key: 794ac1f701293b73de1c4491f773aef951e0f437afca4ce324e219deaca5397d
+        atom: 'data_lineage(order_db,reporting_svc,"events,archive")'
+  snapshot_after:
+    atoms:
+      - atom_key: 1630a36b36919c1a6a45f3e5c19eb5257221c3698d30a91ebc59b1499cb5a1a6
+        atom: 'data_lineage(order_db,reporting_svc,"events\,archive")'
+      - atom_key: 794ac1f701293b73de1c4491f773aef951e0f437afca4ce324e219deaca5397d
+        atom: 'data_lineage(order_db,reporting_svc,"events,archive")'
+  recorded_at: '2026-11-19T11:01:00+08:00'
+expected:
+  advanced_keys: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: data_lineage 属 aspect_mapped、方面 [4]，D4 为 mapped；转义逗号写法与基线未转义写法 atom_key 不同，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

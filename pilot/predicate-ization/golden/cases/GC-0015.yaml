@@ -1,0 +1,28 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0015
+aspect: 4
+source_card: G-TRUNK-OWN
+source_clause: '0.18.2-S6'
+narrative_step:
+  step_id: NS-BATCH2-0015
+  run_id: batch2
+  seq: 3
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 数据治理责任人]
+  reasoning_mode: discussion
+  narrative: 讨论后决定不为订单库开共享写例外，改为按租户单写者路由。
+  trace: 共享写例外会把写冲突藏进例外登记；单写者路由在当前交付空间可行，且不新增谓词义务。该判断没有可写入的机器层谓词原子，S6 的谓词写入为空。
+  decision: 不登记 shared_write_exception；按 T3 退回，转单写者路由方案评审。
+  outcome_kind: unqualified
+  predicate_increments: []
+  aspects_touched: []
+  recorded_at: '2026-11-19T11:02:00+08:00'
+expected:
+  verdict: unqualified
+  reject_code: no_predicate_atom
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null
