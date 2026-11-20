@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0036
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH3-0036
+  run_id: batch3
+  seq: 12
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 架构评审主持人]
+  reasoning_mode: discussion
+  narrative: 演进路径的切换策略名按决议原文写作 cutover 'big bang'（内含单引号），整个实参以单引号包裹、内层单引号以 \' 转义后登记。
+  trace: 单引号内的 \' 不闭合引号（T1.2(c)），转义集校验在引号内同样生效（T1.2(f)）；第二实参是 'cutover \'big bang\'' 整体，转义原样保留、不做反转义。基线第二实参 cutover 无引号，atom_key 不同，判 new。计算命令 printf '%s' "evolution_path(order_svc,'cutover \'big bang\'',lrm_2026q4,thresholds_v1)" | sha256sum 得 dac218041f577678c1bca6bdbe4a78a8f0142a5c84ed66912c36d9750e652fd2；基线 printf '%s' 'evolution_path(order_svc,cutover,lrm_2026q4,thresholds_v1)' | sha256sum 得 cc70487e0c2192064b627be5f6a522851247bbb06c3753f8424a1b56ea84724c。
+  decision: 登记 evolution_path(order_svc,'cutover \'big bang\'',lrm_2026q4,thresholds_v1)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: "evolution_path(order_svc,'cutover \\'big bang\\'',lrm_2026q4,thresholds_v1)"
+      atom_key: dac218041f577678c1bca6bdbe4a78a8f0142a5c84ed66912c36d9750e652fd2
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms:
+      - atom_key: cc70487e0c2192064b627be5f6a522851247bbb06c3753f8424a1b56ea84724c
+        atom: evolution_path(order_svc,cutover,lrm_2026q4,thresholds_v1)
+  snapshot_after:
+    atoms:
+      - atom_key: cc70487e0c2192064b627be5f6a522851247bbb06c3753f8424a1b56ea84724c
+        atom: evolution_path(order_svc,cutover,lrm_2026q4,thresholds_v1)
+      - atom_key: dac218041f577678c1bca6bdbe4a78a8f0142a5c84ed66912c36d9750e652fd2
+        atom: "evolution_path(order_svc,'cutover \\'big bang\\'',lrm_2026q4,thresholds_v1)"
+  recorded_at: '2026-11-20T10:12:00+08:00'
+expected:
+  advanced_keys: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: evolution_path 属 aspect_mapped、方面 [9]，D4 为 mapped；单引号内 \' 不闭合引号、转义原样保留，与基线无引号写法 atom_key 不同，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

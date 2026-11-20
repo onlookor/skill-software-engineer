@@ -1,0 +1,42 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0028
+aspect: 4
+source_card: G-TRUNK-OWN
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH3-0028
+  run_id: batch3
+  seq: 4
+  executor: 标注席（Agent，单席）
+  participants: [订单库负责人, 账务服务负责人]
+  reasoning_mode: discussion
+  narrative: 复核重述订单库与账务服务的共享写治理例外（退出计划 exit_2026q4）；原始写法在 name 与 ( 之间用全角空格 U+3000，其余结构位用 U+0020。
+  trace: 原始字面为 shared_write_exception 后接 U+3000 再接 (order_db, ledger_svc , exit_2026q4 )。U+3000 与 U+0020 都属 White_Space，且都位于五个结构位置（name 与 ( 之间、( 与首实参之间、实参与 , 之间、, 与下一实参之间、末实参与 ) 之间），按 T1.2(d) 全部去除；规范化字面为 shared_write_exception(order_db,ledger_svc,exit_2026q4)，与基线同 atom_key，判 no_op（对照 T1.2(d) 的 name (x)／name\t(x)／name　(x) 三例同键）。计算命令 printf '%s' 'shared_write_exception(order_db,ledger_svc,exit_2026q4)' | sha256sum 得 5a4932775c72e4b80e4ecf5d6b1ca4034e808ab25a6fd581c5a80313301d0236，基线同键。
+  decision: 再次登记 shared_write_exception(order_db,ledger_svc,exit_2026q4)；判定 no_op，方面 4 不推进。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: shared_write_exception(order_db,ledger_svc,exit_2026q4)
+      atom_key: 5a4932775c72e4b80e4ecf5d6b1ca4034e808ab25a6fd581c5a80313301d0236
+      change: no_op
+      aspects: [4]
+  aspects_touched: []
+  snapshot_before:
+    atoms:
+      - atom_key: 5a4932775c72e4b80e4ecf5d6b1ca4034e808ab25a6fd581c5a80313301d0236
+        atom: shared_write_exception(order_db,ledger_svc,exit_2026q4)
+  snapshot_after:
+    atoms:
+      - atom_key: 5a4932775c72e4b80e4ecf5d6b1ca4034e808ab25a6fd581c5a80313301d0236
+        atom: shared_write_exception(order_db,ledger_svc,exit_2026q4)
+  recorded_at: '2026-11-20T10:04:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: shared_write_exception 属 aspect_mapped、方面 [4]，D4 为 mapped；仅结构空白（含 U+3000）不同的字面规范化为同一结果，与基线同 atom_key，判 no_op；advanced_keys 只收 new 且 aspects 非空的键，故为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

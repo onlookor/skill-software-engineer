@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0027
+aspect: 4
+source_card: G-TRUNK-CSL
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH3-0027
+  run_id: batch3
+  seq: 3
+  executor: 标注席（Agent，单席）
+  participants: [订单库负责人, 账务服务负责人]
+  reasoning_mode: discussion
+  narrative: 订单库与账本之间的不变式按决议原文写作 nonneg(sum(a,b))（嵌套括号），以无引号实参登记。
+  trace: 无引号嵌套括号按深度配对（T1.2 第 2 条），内层逗号不作实参分隔，第三实参是 nonneg(sum(a,b)) 整体；外层 ) 与实参列表配对，其后无内容。基线 invariant(order_db,ledger,nonneg) 第三实参不同，atom_key 不同，判 new。计算命令 printf '%s' 'invariant(order_db,ledger,nonneg(sum(a,b)))' | sha256sum 得 71d64ac47d224f8c5ba36c01cac97fb301881324bfc9908528dca884ea1008c9；基线 printf '%s' 'invariant(order_db,ledger,nonneg)' | sha256sum 得 66b0337c9231a94523aeb1836b3e4289e3ab00cfa0ecb21c55d6c2c68feef2c4。
+  decision: 登记 invariant(order_db,ledger,nonneg(sum(a,b)))，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: invariant(order_db,ledger,nonneg(sum(a,b)))
+      atom_key: 71d64ac47d224f8c5ba36c01cac97fb301881324bfc9908528dca884ea1008c9
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms:
+      - atom_key: 66b0337c9231a94523aeb1836b3e4289e3ab00cfa0ecb21c55d6c2c68feef2c4
+        atom: invariant(order_db,ledger,nonneg)
+  snapshot_after:
+    atoms:
+      - atom_key: 66b0337c9231a94523aeb1836b3e4289e3ab00cfa0ecb21c55d6c2c68feef2c4
+        atom: invariant(order_db,ledger,nonneg)
+      - atom_key: 71d64ac47d224f8c5ba36c01cac97fb301881324bfc9908528dca884ea1008c9
+        atom: invariant(order_db,ledger,nonneg(sum(a,b)))
+  recorded_at: '2026-11-20T10:03:00+08:00'
+expected:
+  advanced_keys: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: invariant 属 aspect_mapped、方面 [4]，D4 为 mapped；嵌套括号按深度配对、内层逗号不切分，与基线第三实参不同，atom_key 不同，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

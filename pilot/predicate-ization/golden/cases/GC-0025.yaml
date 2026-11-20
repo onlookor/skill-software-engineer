@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0025
+aspect: 4
+source_card: G-TRUNK-OWN
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH3-0025
+  run_id: batch3
+  seq: 1
+  executor: 标注席（Agent，单席）
+  participants: [订单库负责人, 平台运维负责人]
+  reasoning_mode: discussion
+  narrative: 订单库由运维与数据两个团队共同负责，责任方按决议原文写作“ops, data”（含逗号与空格），以带引号实参登记。
+  trace: 引号内逗号与空格是内容（T1.2(f)），不切分为两个实参，引号保留在规范化字面中。基线 owner(order_db,ops) 只有一个责任方，atom_key 不同，判 new。计算命令 printf '%s' 'owner(order_db,"ops, data")' | sha256sum 得 8cf3a7921e4be5453447e22977d56703e8e1747488934d2ddf92d5d7bc14d04a；基线 printf '%s' 'owner(order_db,ops)' | sha256sum 得 77454fa95879afb7ff0c6f0f8660bf9077f7b7e6a1e7bd05178d5723a429c089。
+  decision: 登记 owner(order_db,"ops, data")，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'owner(order_db,"ops, data")'
+      atom_key: 8cf3a7921e4be5453447e22977d56703e8e1747488934d2ddf92d5d7bc14d04a
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms:
+      - atom_key: 77454fa95879afb7ff0c6f0f8660bf9077f7b7e6a1e7bd05178d5723a429c089
+        atom: owner(order_db,ops)
+  snapshot_after:
+    atoms:
+      - atom_key: 77454fa95879afb7ff0c6f0f8660bf9077f7b7e6a1e7bd05178d5723a429c089
+        atom: owner(order_db,ops)
+      - atom_key: 8cf3a7921e4be5453447e22977d56703e8e1747488934d2ddf92d5d7bc14d04a
+        atom: 'owner(order_db,"ops, data")'
+  recorded_at: '2026-11-20T10:01:00+08:00'
+expected:
+  advanced_keys: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: owner 属 aspect_mapped、方面 [4]，D4 为 mapped；引号内逗号与空格是内容、不切分实参，与基线单责任方写法 atom_key 不同，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

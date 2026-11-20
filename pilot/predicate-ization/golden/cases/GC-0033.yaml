@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0033
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH3-0033
+  run_id: batch3
+  seq: 9
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 订单服务负责人]
+  reasoning_mode: discussion
+  narrative: 蓝绿部署的临时目录按决议原文写作 C:\temp（含反斜杠），反斜杠以 \\ 转义后以带引号实参登记。
+  trace: \\ 表示字面反斜杠（T1.2(c)），转义序列原样保留、不做反转义；对照 schema 示例 note("C:\\temp") 有效而 note("C:\temp") 判不合格（\t 不在转义集内，引号内同样适用）。基线第三实参 plain 无反斜杠，atom_key 不同，判 new。计算命令 printf '%s' 'deploy_strategy(order_svc,blue_green,"C:\\temp",rollback_v2)' | sha256sum 得 4a1714904ed25b1910310091fff660659fc911738b3a9f19b074ba1f5c0e2a1a；基线 printf '%s' 'deploy_strategy(order_svc,blue_green,plain,rollback_v2)' | sha256sum 得 0ff9f6d58b731032552e7593b21f1f80afaccc9125d1df2ea0230a051439dccf。
+  decision: 登记 deploy_strategy(order_svc,blue_green,"C:\\temp",rollback_v2)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'deploy_strategy(order_svc,blue_green,"C:\\temp",rollback_v2)'
+      atom_key: 4a1714904ed25b1910310091fff660659fc911738b3a9f19b074ba1f5c0e2a1a
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms:
+      - atom_key: 0ff9f6d58b731032552e7593b21f1f80afaccc9125d1df2ea0230a051439dccf
+        atom: deploy_strategy(order_svc,blue_green,plain,rollback_v2)
+  snapshot_after:
+    atoms:
+      - atom_key: 0ff9f6d58b731032552e7593b21f1f80afaccc9125d1df2ea0230a051439dccf
+        atom: deploy_strategy(order_svc,blue_green,plain,rollback_v2)
+      - atom_key: 4a1714904ed25b1910310091fff660659fc911738b3a9f19b074ba1f5c0e2a1a
+        atom: 'deploy_strategy(order_svc,blue_green,"C:\\temp",rollback_v2)'
+  recorded_at: '2026-11-20T10:09:00+08:00'
+expected:
+  advanced_keys: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: deploy_strategy 属 aspect_mapped、方面 [9]，D4 为 mapped；\\ 是字面反斜杠、转义原样保留，与基线第三实参不同，atom_key 不同，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

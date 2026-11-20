@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0030
+aspect: 5
+source_card: G-TRUNK-STP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH3-0030
+  run_id: batch3
+  seq: 6
+  executor: 标注席（Agent，单席）
+  participants: [订单流程负责人, 编排服务负责人]
+  reasoning_mode: discussion
+  narrative: 订单流程的编排者是 saga_coord；本步按双引号写法登记，基线中已有的是单引号写法。
+  trace: 引号保留在规范化字面中，不做引号剥离或类型转换（T1.2(b)）；双引号字面 orchestrator(order_flow,"saga_coord") 与单引号字面 orchestrator(order_flow,'saga_coord') 是不同原子，atom_key 不同，判 new。计算命令 printf '%s' 'orchestrator(order_flow,"saga_coord")' | sha256sum 得 16952541fd1e6660e9de9f0fdd991c2aeaf3b8f897922a9a877b1ddad037d098；基线 printf '%s' "orchestrator(order_flow,'saga_coord')" | sha256sum 得 413f1273705e462051124ff4ee2adee9d017584cecc6eefbb2ba45ed7c59617b。
+  decision: 登记 orchestrator(order_flow,"saga_coord")，推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'orchestrator(order_flow,"saga_coord")'
+      atom_key: 16952541fd1e6660e9de9f0fdd991c2aeaf3b8f897922a9a877b1ddad037d098
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms:
+      - atom_key: 413f1273705e462051124ff4ee2adee9d017584cecc6eefbb2ba45ed7c59617b
+        atom: "orchestrator(order_flow,'saga_coord')"
+  snapshot_after:
+    atoms:
+      - atom_key: 16952541fd1e6660e9de9f0fdd991c2aeaf3b8f897922a9a877b1ddad037d098
+        atom: 'orchestrator(order_flow,"saga_coord")'
+      - atom_key: 413f1273705e462051124ff4ee2adee9d017584cecc6eefbb2ba45ed7c59617b
+        atom: "orchestrator(order_flow,'saga_coord')"
+  recorded_at: '2026-11-20T10:06:00+08:00'
+expected:
+  advanced_keys: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: orchestrator 属 aspect_mapped、方面 [5]，D4 为 mapped；单双引号不做类型转换、引号保留，两种写法 atom_key 不同，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

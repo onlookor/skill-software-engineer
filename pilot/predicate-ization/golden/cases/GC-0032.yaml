@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0032
+aspect: 5
+source_card: G-TRUNK-STP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH3-0032
+  run_id: batch3
+  seq: 8
+  executor: 标注席（Agent，单席）
+  participants: [前端负责人, 订单流程负责人]
+  reasoning_mode: discussion
+  narrative: 结账交互流的标签按决议原文写作 click confirm，但两词之间的空白是 NBSP（U+00A0）而非普通空格，以带引号实参登记。
+  trace: 引号内 White_Space 一律是内容（T1.2(f)），NBSP 按原文保留、不折叠不替换；与基线引号内 U+0020 的写法 atom_key 不同，判 new（同 schema 同一性示例 note("a b") 与 note("a　b") 不同键之理）。本条原子引号内是真实 U+00A0 字节（UTF-8 为 C2 A0），YAML 以 \u00A0 转义书写。计算命令 printf 'interaction_flow(order_ui,checkout,"click\xc2\xa0confirm")' | sha256sum 得 abc54eb646a6a2cbaafe21487a2343919431ead6651f6e9dd55928d8041b3159；基线 printf '%s' 'interaction_flow(order_ui,checkout,"click confirm")' | sha256sum 得 9a9bd809af5c94f956158536f3ee6bf8babd8bc511c734b34de03d346a53f557。
+  decision: 登记 interaction_flow(order_ui,checkout,"click\u00A0confirm")（引号内为 NBSP），推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: "interaction_flow(order_ui,checkout,\"click\u00A0confirm\")"
+      atom_key: abc54eb646a6a2cbaafe21487a2343919431ead6651f6e9dd55928d8041b3159
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms:
+      - atom_key: 9a9bd809af5c94f956158536f3ee6bf8babd8bc511c734b34de03d346a53f557
+        atom: 'interaction_flow(order_ui,checkout,"click confirm")'
+  snapshot_after:
+    atoms:
+      - atom_key: 9a9bd809af5c94f956158536f3ee6bf8babd8bc511c734b34de03d346a53f557
+        atom: 'interaction_flow(order_ui,checkout,"click confirm")'
+      - atom_key: abc54eb646a6a2cbaafe21487a2343919431ead6651f6e9dd55928d8041b3159
+        atom: "interaction_flow(order_ui,checkout,\"click\u00A0confirm\")"
+  recorded_at: '2026-11-20T10:08:00+08:00'
+expected:
+  advanced_keys: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: interaction_flow 属 aspect_mapped、方面 [5]，D4 为 mapped；引号内 NBSP 按原文保留、与普通空格不同键，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

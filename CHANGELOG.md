@@ -450,3 +450,25 @@
 - **未改动**：母本、`SKILL.md` 判据、18 张卡、`validators/`、`dist/`；未写解析器／求值器／引擎、未重打包；0014–0022 逐字未动（`0022` 未推送，按例外规则本可就地合并，选择另开 `0023` 以保持「既往批次不改」；`0022` 中的旧配额数字由本批取代，以本批为准）。
 - **关联 ADR**：无
 - **备注**：单人标注，第 2 批抽检尚未执行，`sampling_status` 保持 `pending`，执行席未自抽检。只提交，不推送、不打标签。
+
+## 批次 0024 — 2026-11-20
+
+- **批次号**：0024
+- **日期**：2026-11-20
+- **事项**：黄金样本第 3 批 12 条（`GC-0025`–`GC-0036`，全部进桶）；同时做掉三项记账（抽检状态改为实际结论、覆盖进度落纸、0023 取代句补全）。
+- **涉及文件**：
+  - 新增：`pilot/predicate-ization/golden/cases/GC-0025.yaml`–`GC-0036.yaml`（12 条全部进桶：方面 4／5／9 各 4，无 `process_record`、无 `unqualified`）
+  - 修改：`pilot/predicate-ization/golden/manifest.yaml`（`sampling_status` 与结论登记、覆盖进度注释、`counts`／`cases`／`uncovered`／`quotas.remaining_gap`、第 3 批无新增定义缺口注记与多方面取材观察）
+  - 修改：`pilot/predicate-ization/golden/README.md`（顶部抽检状态、§4 批次与配额进度同步至 36 文件／33 桶／剩余 4 条、覆盖进度与批次要求）
+  - 修改：`plans/predicate-ization-design.md`（第 11 章回改记录追加第 3 批，无判定口径变更）
+- **变更摘要**：
+  1. **第 3 批 12 条（全部进桶，方面 4／5／9 = 4／4／4）**：方面 4 = `GC-0025` `owner(order_db,"ops, data")`（引号内逗号＋空格是内容，不切分实参）／`GC-0026` `sensitivity(order_db,"pii \"masked\"")`（引号内 `\"` 不闭合引号）／`GC-0027` `invariant(order_db,ledger,nonneg(sum(a,b)))`（无引号嵌套括号按深度配对；源卡 G-TRUNK-CSL）／`GC-0028` `shared_write_exception(order_db,ledger_svc,exit_2026q4)`（原始写法 name 与 ( 之间 U+3000、其余结构位 U+0020，规范化后与基线同键，**no_op**）。方面 5 = `GC-0029` `saga(order_flow,reserve\,release)`（`\,` 不切分）／`GC-0030` `orchestrator(order_flow,"saga_coord")`（基线为单引号写法；引号不剥离、不做类型转换，判 new）／`GC-0031` `compensation(order_flow,undo\(charge\))`（`\(` `\)` 是字面内容，与基线真嵌套括号不同键）／`GC-0032` `interaction_flow(order_ui,checkout,"click\u00A0confirm")`（引号内 NBSP U+00A0 按原文保留，与基线普通空格不同键）。方面 9 = `GC-0033` `deploy_strategy(order_svc,blue_green,"C:\\temp",rollback_v2)`（`\\` 字面反斜杠）／`GC-0034` `strangler_sequence(legacy_order,route(api(v1,v2),legacy),30d)`（多层嵌套括号、内层逗号不切分）／`GC-0035` `canary_gate(order_svc,"phase 1",5pct)`（仅结构空白不同，跨批复用 `GC-0019` 增量原子，同键 **no_op**；基线两项逐项给出）／`GC-0036` `evolution_path(order_svc,'cutover \'big bang\'',lrm_2026q4,thresholds_v1)`（单引号内 `\'` 不闭合引号）。六类转义（`\\ \( \) \, \' \"`）全覆盖；`atom_key` 全部以 `printf '%s' '<atom>' | sha256sum` 实算写入（NBSP 条以 `printf '\xc2\xa0'` 构造字节），每条 trace 附计算命令与完整键值；`snapshot_before.atoms` 逐项 `{atom_key, atom}`、按 `atom_key` 升序去重；期望值按 T1.2／T2.1 与 S1–S9 手算。
+  2. **覆盖**：本批新引入谓词名 8 个（批次要求 ≥2，取自原 `uncovered` 14 名）：`owner`／`sensitivity`／`invariant`／`shared_write_exception`／`saga`／`orchestrator`／`compensation`／`interaction_flow`。累计覆盖 **27／33**，`min_distinct_names: 20` 已满足；仍 `uncovered` 6 名：`cleanup_filed`／`exclusion_record`／`flag`／`quality_impact_card`／`selection_procedure`／`step_class`，未静默。
+  3. **记账 1（抽检状态）**：`manifest.yaml` 的 `sampling_status` 由 `pending` 改为 `partial`，新取值含义在 `annotation_method` 注释中定义（pending＝无任何批次抽检结论登记；partial＝部分批次完成、其余待；complete＝全部批次完成）。`sampling_note` 与 README 顶部改为实际结论：第 1 批抽检 5 条一致、第 2 批抽检 6 条一致，合计 **11 条一致、0 不一致**；**抽检由独立复核席在仓外执行，仓内只登记结论**，不是仓内签署；第 3 批抽检尚未执行。κ 不可估计的口径不变。
+  4. **记账 2（覆盖进度落纸）**：README §4 与 manifest 注释明确写出第 2 批后覆盖 19／33、距 `min_distinct_names: 20` 差 1；「第 3 批至少引入 2 个新名字」写入批次要求（不卡在 20 上）；第 3 批实际引入 8 个后覆盖 27／33。
+  5. **记账 3（更正，引用批次 0023）**：0023「未改动」项的取代句只声明「`0022` 中的旧配额数字由本批取代」，未声明取代 0022 里 `GC-0015`／`GC-0018` 的方面归属（0022 第 1 条写作「`GC-0015` 记方面 4、`GC-0018` 记方面 5」）。按 0023 引入的三层口径，该归属表述亦被取代：`GC-0015`／`GC-0018` 一律 `aspect=0`、记入 `'0'` 桶、不占桶、只计入 `unqualified` 单列配额；其原指向的方面（4／5）只存于该两条 `notes`，不进任何统计。以本条更正为准；按只追加规则不改 0023 原文。
+  6. **进度与计数**：`counts` 更新为 total 36、new 27、no_op 6、unqualified 3、undecidable 0；`by_aspect` 由 `cases[]` 重算为 `{4:10, 5:10, 9:10, process_record:3, 0:3}`，五项相加等于 total；桶数 = 33。`no_op_min: 6` 达标（`GC-0003`／`0007`／`0017`／`0022`／`0028`／`0035`）。`remaining_gap`：第 4 批 4 条＝`process_record` 3 ＋ `unqualified` 1；文件总数 36＋4＝40。
+  7. **设计回改**：第 3 批**无判定口径变更**——六类转义、嵌套括号、引号内逗号／空白（含 NBSP）、结构空白（含 U+3000）、单双引号对照均可按 T1.2／T2.1 现行文本唯一定键，未新增定义缺口。留档三条观察：①「需要多个方面的名字」本批无法取材（33 名全部单方面，S3 禁止自造方面；取材观察、非定义缺口，留待首个多方面谓词）；② 卡片 `predicate_writes` 条目按 S9／TECH-DEBT 14 只作名字存在性与命名空间校验，不反推参数位／取值域；③ `GC-0035` 两个基线键与 `GC-0019` 逐一相同，跨批同一性按 T2.1「与历史写法无关」成立。
+- **未改动**：母本、`SKILL.md` 判据、18 张卡、`validators/`、`dist/`；未写解析器／求值器／引擎、未重打包；不改 `pilot/schemas/narrative-step.schema.yaml`、不改《编译规范》T1.2／T2.1；未新增定义缺口与 `reject_code`；0014–0023 逐字未动。
+- **关联 ADR**：无
+- **备注**：单人标注，第 3 批抽检尚未执行；第 1–2 批抽检结论（11 条一致、0 不一致）为独立复核席仓外执行的登记，不是仓内签署。只提交，不推送、不打标签；不自评，不写「已复核」「已验证」。

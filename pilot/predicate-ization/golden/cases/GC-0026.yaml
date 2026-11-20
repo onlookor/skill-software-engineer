@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0026
+aspect: 4
+source_card: G-TRUNK-OWN
+source_clause: '4.5'
+narrative_step:
+  step_id: NS-BATCH3-0026
+  run_id: batch3
+  seq: 2
+  executor: 标注席（Agent，单席）
+  participants: [订单库负责人, 数据安全负责人]
+  reasoning_mode: discussion
+  narrative: 订单库的敏感度标签按决议原文写作 pii "masked"（内含双引号），内层双引号以 \" 转义后以带引号实参登记。
+  trace: 引号内的 \" 不闭合引号（T1.2(c)），转义序列原样保留、不做反转义（T1.2(f)）；标签含双引号，必须加引号包裹。基线 sensitivity(order_db,pii) 无引号，atom_key 不同，判 new。计算命令 printf '%s' 'sensitivity(order_db,"pii \"masked\"")' | sha256sum 得 d3af02a82d1a367a738ec342b5eb1d0f1df9d2fbb5ca478e5f5dfb34eae5bc30；基线 printf '%s' 'sensitivity(order_db,pii)' | sha256sum 得 a123f809f166410462881734122c93b7faeeda69c6a9fd13020c57ed0ca27a8d。
+  decision: 登记 sensitivity(order_db,"pii \"masked\"")，推进方面 4。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'sensitivity(order_db,"pii \"masked\"")'
+      atom_key: d3af02a82d1a367a738ec342b5eb1d0f1df9d2fbb5ca478e5f5dfb34eae5bc30
+      change: new
+      aspects: [4]
+  aspects_touched: [4]
+  snapshot_before:
+    atoms:
+      - atom_key: a123f809f166410462881734122c93b7faeeda69c6a9fd13020c57ed0ca27a8d
+        atom: sensitivity(order_db,pii)
+  snapshot_after:
+    atoms:
+      - atom_key: a123f809f166410462881734122c93b7faeeda69c6a9fd13020c57ed0ca27a8d
+        atom: sensitivity(order_db,pii)
+      - atom_key: d3af02a82d1a367a738ec342b5eb1d0f1df9d2fbb5ca478e5f5dfb34eae5bc30
+        atom: 'sensitivity(order_db,"pii \"masked\"")'
+  recorded_at: '2026-11-20T10:02:00+08:00'
+expected:
+  advanced_keys: [4]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: sensitivity 属 aspect_mapped、方面 [4]，D4 为 mapped；引号内 \" 不闭合引号、转义原样保留，与基线无引号写法 atom_key 不同，判 new 并推进方面 4。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

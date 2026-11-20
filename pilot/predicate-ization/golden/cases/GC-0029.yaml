@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0029
+aspect: 5
+source_card: G-TRUNK-STP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH3-0029
+  run_id: batch3
+  seq: 5
+  executor: 标注席（Agent，单席）
+  participants: [订单流程负责人, 编排服务负责人]
+  reasoning_mode: discussion
+  narrative: 订单 saga 的步骤序列按决议原文写作 reserve,release（含逗号），逗号以 \, 转义后作为单个无引号实参登记。
+  trace: \, 在转义集内（T1.2(c)），被转义的逗号不参与实参切分，第二实参是 reserve\,release 整体，转义序列原样保留、不做反转义；对照 schema 同一性示例 tag(a\,b) 与 tag(a,b) 不同键（实参个数不同）。基线 saga(order_flow,reserve) 只有一个步骤，atom_key 不同，判 new。计算命令 printf '%s' 'saga(order_flow,reserve\,release)' | sha256sum 得 e03aa82929d45b4c85d63c4b0c8020afa7ae771d254a9818c22119261daf6f36；基线 printf '%s' 'saga(order_flow,reserve)' | sha256sum 得 a41dd6f8899086dffb6f1ad89cbbcf7aeef6bb6a8fa5da073e078d0a3794e2b2。
+  decision: 登记 saga(order_flow,reserve\,release)，推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'saga(order_flow,reserve\,release)'
+      atom_key: e03aa82929d45b4c85d63c4b0c8020afa7ae771d254a9818c22119261daf6f36
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms:
+      - atom_key: a41dd6f8899086dffb6f1ad89cbbcf7aeef6bb6a8fa5da073e078d0a3794e2b2
+        atom: saga(order_flow,reserve)
+  snapshot_after:
+    atoms:
+      - atom_key: a41dd6f8899086dffb6f1ad89cbbcf7aeef6bb6a8fa5da073e078d0a3794e2b2
+        atom: saga(order_flow,reserve)
+      - atom_key: e03aa82929d45b4c85d63c4b0c8020afa7ae771d254a9818c22119261daf6f36
+        atom: 'saga(order_flow,reserve\,release)'
+  recorded_at: '2026-11-20T10:05:00+08:00'
+expected:
+  advanced_keys: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: saga 属 aspect_mapped、方面 [5]，D4 为 mapped；\, 不切分实参、转义原样保留，与基线实参个数不同，atom_key 不同，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

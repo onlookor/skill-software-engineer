@@ -1,0 +1,46 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0035
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH3-0035
+  run_id: batch3
+  seq: 11
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 订单服务负责人]
+  reasoning_mode: discussion
+  narrative: 复核重述灰度门禁第一阶段（标签按原文写作“phase 1”，含空格）；原始写法在实参列表带结构空白：canary_gate( order_svc , "phase 1" , 5pct )。
+  trace: 原始字面的空白全部位于结构位置（( 之后、, 前后、) 之前），按 T1.2(d) 去除；"phase 1" 引号内空格是内容、保留。规范化字面为 canary_gate(order_svc,"phase 1",5pct)，与基线第二项（GC-0019 写入的增量，跨批复用）同 atom_key，判 no_op；基线第一项 canary_gate(order_svc,phase1,5pct) 是不同原子，不参与判定。计算命令 printf '%s' 'canary_gate(order_svc,"phase 1",5pct)' | sha256sum 得 df296aec7a31a36cb31b9968486888384cfb6fded6305bab304329313bf1ea15；基线第一项 printf '%s' 'canary_gate(order_svc,phase1,5pct)' | sha256sum 得 a4d86ea3ac7d329292f9071eb1f0741b9858c1e180db9a4336e233bbc9c58b0a。
+  decision: 再次登记 canary_gate(order_svc,"phase 1",5pct)；判定 no_op，方面 9 不推进。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'canary_gate(order_svc,"phase 1",5pct)'
+      atom_key: df296aec7a31a36cb31b9968486888384cfb6fded6305bab304329313bf1ea15
+      change: no_op
+      aspects: [9]
+  aspects_touched: []
+  snapshot_before:
+    atoms:
+      - atom_key: a4d86ea3ac7d329292f9071eb1f0741b9858c1e180db9a4336e233bbc9c58b0a
+        atom: canary_gate(order_svc,phase1,5pct)
+      - atom_key: df296aec7a31a36cb31b9968486888384cfb6fded6305bab304329313bf1ea15
+        atom: 'canary_gate(order_svc,"phase 1",5pct)'
+  snapshot_after:
+    atoms:
+      - atom_key: a4d86ea3ac7d329292f9071eb1f0741b9858c1e180db9a4336e233bbc9c58b0a
+        atom: canary_gate(order_svc,phase1,5pct)
+      - atom_key: df296aec7a31a36cb31b9968486888384cfb6fded6305bab304329313bf1ea15
+        atom: 'canary_gate(order_svc,"phase 1",5pct)'
+  recorded_at: '2026-11-20T10:11:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: canary_gate 属 aspect_mapped、方面 [9]，D4 为 mapped；仅结构空白不同的字面规范化后与基线带引号条目同 atom_key，判 no_op；advanced_keys 只收 new 且 aspects 非空的键，故为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

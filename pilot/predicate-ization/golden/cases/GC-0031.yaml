@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0031
+aspect: 5
+source_card: G-TRUNK-STP
+source_clause: '5.5'
+narrative_step:
+  step_id: NS-BATCH3-0031
+  run_id: batch3
+  seq: 7
+  executor: 标注席（Agent，单席）
+  participants: [订单流程负责人, 支付服务负责人]
+  reasoning_mode: discussion
+  narrative: 补偿动作按决议原文写作 undo(charge)，但本步要求把括号当作字面内容而非结构，以 \( \) 转义后登记。
+  trace: \( 与 \) 在转义集内（T1.2(c)），被转义的括号是字面内容、不参与括号配对（对照 schema 同一性示例 p(a\(b)）；第二实参是 undo\(charge\) 整体，转义原样保留。基线 compensation(order_flow,undo(charge)) 的括号是真嵌套括号、按深度配对，两个字面 atom_key 不同，判 new。计算命令 printf '%s' 'compensation(order_flow,undo\(charge\))' | sha256sum 得 cc7671794bba146b1b0182dc00b7cdfccd9ba15ea9f431846ece65994d24ac09；基线 printf '%s' 'compensation(order_flow,undo(charge))' | sha256sum 得 97ee8073e84487f243f8d5ac680d879ea109c29511f16d63812560410abbe974。
+  decision: 登记 compensation(order_flow,undo\(charge\))，推进方面 5。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: 'compensation(order_flow,undo\(charge\))'
+      atom_key: cc7671794bba146b1b0182dc00b7cdfccd9ba15ea9f431846ece65994d24ac09
+      change: new
+      aspects: [5]
+  aspects_touched: [5]
+  snapshot_before:
+    atoms:
+      - atom_key: 97ee8073e84487f243f8d5ac680d879ea109c29511f16d63812560410abbe974
+        atom: compensation(order_flow,undo(charge))
+  snapshot_after:
+    atoms:
+      - atom_key: 97ee8073e84487f243f8d5ac680d879ea109c29511f16d63812560410abbe974
+        atom: compensation(order_flow,undo(charge))
+      - atom_key: cc7671794bba146b1b0182dc00b7cdfccd9ba15ea9f431846ece65994d24ac09
+        atom: 'compensation(order_flow,undo\(charge\))'
+  recorded_at: '2026-11-20T10:07:00+08:00'
+expected:
+  advanced_keys: [5]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: compensation 属 aspect_mapped、方面 [5]，D4 为 mapped；\( \) 是字面内容不参与配对，与基线真嵌套括号写法 atom_key 不同，判 new 并推进方面 5。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

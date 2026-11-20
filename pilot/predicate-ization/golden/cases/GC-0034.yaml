@@ -1,0 +1,44 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0034
+aspect: 9
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH3-0034
+  run_id: batch3
+  seq: 10
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 架构评审主持人]
+  reasoning_mode: discussion
+  narrative: 绞杀序列第二阶段经 route(api(v1,v2),legacy) 分流（两层嵌套括号），以无引号实参登记。
+  trace: 无引号嵌套括号按深度配对（T1.2 第 2 条），内层逗号（v1,v2 与 api(...),legacy）都不作实参分隔，第二实参是 route(api(v1,v2),legacy) 整体；与 GC-0031 的转义括号对照——此处括号是结构性的、参与配对。基线第二实参 route 不同，atom_key 不同，判 new。计算命令 printf '%s' 'strangler_sequence(legacy_order,route(api(v1,v2),legacy),30d)' | sha256sum 得 f86cebb4a15254bbf866e879a5f7da6c6fe6a3f746639fc2c2c2a870f6c5a631；基线 printf '%s' 'strangler_sequence(legacy_order,route,30d)' | sha256sum 得 0834659d38784b0617821c7741155a53dac21392dbe28e54c455c7492b0e8a7a。
+  decision: 登记 strangler_sequence(legacy_order,route(api(v1,v2),legacy),30d)，推进方面 9。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: strangler_sequence(legacy_order,route(api(v1,v2),legacy),30d)
+      atom_key: f86cebb4a15254bbf866e879a5f7da6c6fe6a3f746639fc2c2c2a870f6c5a631
+      change: new
+      aspects: [9]
+  aspects_touched: [9]
+  snapshot_before:
+    atoms:
+      - atom_key: 0834659d38784b0617821c7741155a53dac21392dbe28e54c455c7492b0e8a7a
+        atom: strangler_sequence(legacy_order,route,30d)
+  snapshot_after:
+    atoms:
+      - atom_key: 0834659d38784b0617821c7741155a53dac21392dbe28e54c455c7492b0e8a7a
+        atom: strangler_sequence(legacy_order,route,30d)
+      - atom_key: f86cebb4a15254bbf866e879a5f7da6c6fe6a3f746639fc2c2c2a870f6c5a631
+        atom: strangler_sequence(legacy_order,route(api(v1,v2),legacy),30d)
+  recorded_at: '2026-11-20T10:10:00+08:00'
+expected:
+  advanced_keys: [9]
+  d3_disposition: aspect_mapped
+  d4_status: mapped
+  why: strangler_sequence 属 aspect_mapped、方面 [9]，D4 为 mapped；多层嵌套括号按深度配对、内层逗号不切分，与基线第二实参不同，atom_key 不同，判 new 并推进方面 9。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null
