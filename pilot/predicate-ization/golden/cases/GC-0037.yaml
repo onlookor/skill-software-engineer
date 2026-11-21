@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0037
+aspect: 0
+source_card: G-TRUNK-STP
+source_clause: '0.18.2-S1'
+narrative_step:
+  step_id: NS-BATCH4-0037
+  run_id: batch4
+  seq: 1
+  executor: 标注席（Agent，单席）
+  participants: [编排服务负责人, 评审主持人]
+  reasoning_mode: discussion
+  narrative: DP-5.2 选择规程 S1 核对候选输入：候选 STP-004 的 applicability.problem_space 求值为假（该候选面向的问题空间与本决策点不符），登记一条排除记录说明为何未选。
+  trace: 按 S1 逐项核对候选适用性；STP-004 在 applicability.problem_space 上求值为假，排除理由随记录写入，不进入后续评估。计算命令 printf '%s' 'exclusion_record(DP-5.2,STP-004,applicability.problem_space)' | sha256sum 得 f932ea660b93860d6194f12ad41489c85c83c746c07841b4e7612fec396b0b98；基线为空，判 new。
+  decision: 登记 exclusion_record(DP-5.2,STP-004,applicability.problem_space)；该名字为 process_record，不推进任何方面。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: exclusion_record(DP-5.2,STP-004,applicability.problem_space)
+      atom_key: f932ea660b93860d6194f12ad41489c85c83c746c07841b4e7612fec396b0b98
+      change: new
+      aspects: []
+  aspects_touched: []
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: f932ea660b93860d6194f12ad41489c85c83c746c07841b4e7612fec396b0b98
+        atom: exclusion_record(DP-5.2,STP-004,applicability.problem_space)
+  recorded_at: '2026-11-21T10:01:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: process_record
+  d4_status: mapped
+  why: exclusion_record 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=mapped（不在三个 exempt 名之列）；它记录的是「为何未选」这一选择过程事实，不是对已选方案的设计事实写入——被排除候选不产生任何设计承诺，故不推进方面向量。基线无同 atom_key，判 new；advanced_keys 只收 new 且 aspects 非空的键，故为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

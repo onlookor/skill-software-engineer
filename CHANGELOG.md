@@ -472,3 +472,25 @@
 - **未改动**：母本、`SKILL.md` 判据、18 张卡、`validators/`、`dist/`；未写解析器／求值器／引擎、未重打包；不改 `pilot/schemas/narrative-step.schema.yaml`、不改《编译规范》T1.2／T2.1；未新增定义缺口与 `reject_code`；0014–0023 逐字未动。
 - **关联 ADR**：无
 - **备注**：单人标注，第 3 批抽检尚未执行；第 1–2 批抽检结论（11 条一致、0 不一致）为独立复核席仓外执行的登记，不是仓内签署。只提交，不推送、不打标签；不自评，不写「已复核」「已验证」。
+
+## 批次 0025 — 2026-11-21
+
+- **批次号**：0025
+- **日期**：2026-11-21
+- **事项**：黄金样本第 4 批（收尾批）4 条（`GC-0037`–`GC-0040`）；同时做掉三项记账（第 3 批抽检结论入仓、S8「键」用词观察登记、收尾记账 `remaining_gap` 归零）。40 文件齐、桶 36 满、`unqualified` 4 满。
+- **涉及文件**：
+  - 新增：`pilot/predicate-ization/golden/cases/GC-0037.yaml`–`GC-0040.yaml`（3 条 `process_record` ＋ 1 条 `unqualified`）
+  - 修改：`pilot/predicate-ization/golden/manifest.yaml`（`sampling_status: complete` 与枚举含义、`sampling_note` 23 条结论、`counts`／`cases`／`uncovered`／`quotas.unqualified_progress`／`remaining_gap` 归零、第 4 批无新增定义缺口注记）
+  - 修改：`pilot/predicate-ization/golden/README.md`（顶部状态、§1 目录注释、§4 批次与配额进度同步至 40 文件／36 桶／`unqualified` 4、覆盖 29／33）
+  - 修改：`plans/predicate-ization-design.md`（第 11 章回改记录追加第 4 批，无判定口径变更）
+- **变更摘要**：
+  1. **第 4 批 4 条（收尾批）**：`GC-0037` `exclusion_record(DP-5.2,STP-004,applicability.problem_space)`（新名，`process_record`／`mapped`，new；排除记录只记「为何未选」，不是设计事实）／`GC-0038` `selection_procedure(DP-5.2,S6,C6)`（新名，`process_record`／`exempt`，new；规程完成记录覆盖 S0–S6，归任一方面都会重复计数）／`GC-0039` `step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)`（`process_record`／`exempt`，**no_op**——复盘评审逐字重登 `GC-0011` 的增量原子，跨批复用同键；首个 `no_op` × `process_record` 交叉，压 R9 与 T2.1 的叠加，`advanced_keys` 必为 `[]`）／`GC-0040` `unqualified`（源卡 G-TRUNK-DPS 条款 9.5；决定不为报表服务单设灰度门禁、沿用既有检查单，无可写谓词原子；`expected` 只写 `verdict: unqualified` 与 `reject_code: no_predicate_atom`，`d3_disposition`／`d4_status` 不适用、两键不写；原指向方面 9 记于 notes，不进统计）。三条过程记录均按 S4 写明「为何不是设计事实」；`atom_key` 全部以 `printf '%s' '<atom>' | sha256sum` 实算写入，每条 trace 附计算命令与完整键值；`snapshot_before.atoms` 逐项 `{atom_key, atom}`、升序去重。
+  2. **覆盖**：本批新引入谓词名 2 个（批次要求 ≥2，取自原 `uncovered` 6 名）：`exclusion_record`／`selection_procedure`。累计覆盖 **29／33**；仍 `uncovered` 4 名：`cleanup_filed`／`flag`／`quality_impact_card`／`step_class`，未静默。
+  3. **记账 1（第 3 批抽检结论入仓）**：第 3 批抽检已由独立复核席**在仓外执行**：12 条全覆盖、12 条一致、0 不一致、0 条「无法判定」。`manifest.yaml` 的 `sampling_status` 由 `partial` 改为 `complete`，枚举含义同步定义（complete＝已执行抽检的全部批次结论均已登记、无悬置结果；该值不主张全部样本均已抽检——第 4 批抽检尚未执行，结论另行追加登记）。`sampling_note` 与 README 顶部改为：第 1 批 5 条一致＋第 2 批 6 条一致＋第 3 批 12 条一致＝**23 条一致、0 不一致**；仓内只登记结论，不是仓内签署。κ 不可估计的口径不变。
+  4. **记账 2（S8「键」用词观察，不改口径）**：复核席指出 S8 的「键」可能被读成 `atom_key`。本批**不改 S8**：上下文已由字段名（`advanced_keys`）约束，收尾批改动定义的风险大于收益。仅登记观察（本条与设计稿第 11 章第 4 批回改记录），不为交差顺手改字；留待冻结后如有歧义实例再议。
+  5. **记账 3（收尾记账）**：`remaining_gap` 归零——40 文件齐＝桶 36 满（4／5／9 = 10／10／10 ＋ `process_record` 6）＋ `aspect=0` 的 `unqualified` 4 满（`GC-0012`／`0015`／`0018`／`0040`）；`expected_files: 40` 标为已达成。`status` 仍 `in_progress`、`frozen_at` 仍 `null`——**冻结是人类门，执行方不自行冻结**，本批不写「P0 已通过」。
+  6. **进度与计数**：`counts` 更新为 total 40、new 29、no_op 7、unqualified 4、undecidable 0；`by_aspect` 由 `cases[]` 重算为 `{4:10, 5:10, 9:10, process_record:6, 0:4}`，五项相加等于 total；桶数 = 36。`no_op_min: 6` 达标且超出（共 7：`GC-0003`／`0007`／`0017`／`0022`／`0028`／`0035`／`0039`）；`unqualified_progress: 4` 满。
+  7. **设计回改**：第 4 批**无判定口径变更**——`no_op` × `process_record` 交叉可由 T2.1 与 S4 叠加唯一判定，`unqualified` 沿用 DG-0001 裁定；未新增定义缺口、未新开 `reject_code`。留档三条观察：① `GC-0039` 跨批复用 `GC-0011` 键，同一性与批次边界无关；② S8 用词观察不改口径（见记账 2）；③ `process_record` 与 `exempt` 是两个独立维度，`GC-0037`（mapped）与 `GC-0038`（exempt）对照落实。
+- **未改动**：母本、`SKILL.md` 判据、18 张卡、`validators/`、`dist/`；未写解析器／求值器／引擎、未重打包；不改 `pilot/schemas/narrative-step.schema.yaml`、不改《编译规范》T1.2／T2.1、不改 S8 口径；未新增定义缺口与 `reject_code`；0014–0024 逐字未动。
+- **关联 ADR**：无
+- **备注**：单人标注，第 4 批抽检尚未执行；第 1–3 批抽检结论（23 条一致、0 不一致）为独立复核席仓外执行的登记，不是仓内签署。40 文件齐是收尾就绪的待验主张，不是「P0 完成」；冻结与出口验收留人类门。只提交，不推送、不打标签；不自评，不写「已复核」「已验证」「已冻结」。

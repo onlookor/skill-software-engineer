@@ -1,4 +1,4 @@
-# 黄金样本集清单（P0 第 3 批已标注）
+# 黄金样本集清单（P0 第 4 批已标注，40 文件已齐；冻结是人类门，status 仍 in_progress）
 schema_version: 1
 kind: golden_manifest
 status: in_progress
@@ -18,14 +18,15 @@ annotation_method:
   annotator: 标注席（Agent，单席）
   sampling: independent_review_seat
   sampling_ratio_min: 0.20
-  # sampling_status 枚举定义：pending＝尚无任何批次的抽检结论登记；partial＝部分批次已由
-  # 独立复核席完成抽检且结论已登记、其余批次待抽检（当前第 1–2 批完成、第 3 批待）；
-  # complete＝全部已标注批次的抽检结论均已登记。抽检一律由独立复核席在仓外执行，
-  # 仓内只登记结论，不是仓内签署。
-  sampling_status: partial
+  # sampling_status 枚举定义：pending＝尚无任何批次的抽检结论登记；partial＝部分已执行
+  # 抽检的批次结论已登记、其余已执行批次待登记；complete＝已执行抽检的全部批次结论均已
+  # 登记、无悬置结果（当前第 1–3 批均已登记）。该值不主张全部样本均已抽检——第 4 批
+  # （收尾批）抽检尚未执行，其结论由独立复核席仓外执行后另行追加登记。抽检一律由
+  # 独立复核席在仓外执行，仓内只登记结论，不是仓内签署。
+  sampling_status: complete
   inter_annotator_agreement: not_estimable
   note: 按 plans/predicate-ization-execution-plan.md 第 3 节第 2 项的降级口径；这不是双人独立标注，Cohen's κ 不可估计，不得作为任何结论依据。
-  sampling_note: 第 1 批抽检 5 条一致、第 2 批抽检 6 条一致，合计 11 条一致、0 不一致。抽检由独立复核席在仓外执行，仓内只登记结论；第 3 批抽检尚未执行。
+  sampling_note: 第 1 批抽检 5 条一致、第 2 批抽检 6 条一致、第 3 批抽检 12 条全覆盖一致，合计 23 条一致、0 不一致、0 条无法判定。抽检一律由独立复核席在仓外执行，仓内只登记结论，不是仓内签署；第 4 批（收尾批 4 条）抽检尚未执行。
 
 quotas:
   # 三层口径（人类 2026-11-19 裁定）：① 桶数；② unqualified 单列配额；③ 文件总数 = ① + ②。
@@ -36,26 +37,26 @@ quotas:
     '9': 10
   process_record: 6
   unqualified_min: 4          # 一律 aspect=0，不占桶
-  no_op_min: 6                # 第 3 批后已达 6（GC-0003／0007／0017／0022／0028／0035）
+  no_op_min: 6                # 第 4 批后共 7（GC-0003／0007／0017／0022／0028／0035／0039）
   min_distinct_names: 20
-  # 覆盖进度（记账 2）：第 2 批后覆盖 19／33，距 min_distinct_names 20 差 1；第 3 批批次
-  # 要求「至少引入 2 个新名字」（不卡在 20 上）。第 3 批实际引入 8 个新名字，覆盖 27／33，
-  # min_distinct_names 已满足；仍 uncovered 6 名见文末列表。
-  expected_files: 40          # = bucket_total 36 + unqualified_min 4
+  # 覆盖进度（记账 2）：第 2 批后 19／33；第 3 批引入 8 个新名字后 27／33，min_distinct_names 20
+  # 已满足；第 4 批（收尾批）再引入 2 个新名字（exclusion_record／selection_procedure），
+  # 覆盖 29／33；仍 uncovered 4 名见文末列表。
+  expected_files: 40          # = bucket_total 36 + unqualified_min 4；第 4 批后已达成（40 文件齐）。status 仍 in_progress、frozen_at 仍 null——冻结是人类门，执行方不得自行冻结。
   target_total: 36            # 与 bucket_total 同义，保留旧名避免外部脚本落空；以 bucket_total 为准
   target_total_note: target_total 是桶数（方面 4／5／9 各 10 ＋ process_record 6），不是文件总数；文件总数见 expected_files。
-  unqualified_note: 任何 unqualified 一律 aspect=0、不占桶；不存在「带方面语境的 unqualified」这一中间态——被判不合格即无方面主张，给它记方面等于把「本来想写哪个方面」混进「实际产出了什么」。当前 3 条（GC-0012／GC-0015／GC-0018）全部计入本配额；GC-0015／GC-0018 原本指向的方面记在该条 notes 里，不进任何统计。counts.unqualified 与配额进度单列：前者数全部 outcome_kind=unqualified，后者只数已达配额口径的条目；此刻两者都是 3，但定义不同，不得混用或互相替代。
-  unqualified_progress: 3      # 已达配额口径的条数（aspect=0 的 unqualified）
-  remaining_gap: 第 3 批后尚缺 4 条：桶 3 条（process_record:3）＋ aspect=0 的 unqualified 1 条，全部在第 4 批。文件总数 36＋4＝40。
+  unqualified_note: 任何 unqualified 一律 aspect=0、不占桶；不存在「带方面语境的 unqualified」这一中间态——被判不合格即无方面主张，给它记方面等于把「本来想写哪个方面」混进「实际产出了什么」。当前 4 条（GC-0012／GC-0015／GC-0018／GC-0040）全部计入本配额；GC-0015／GC-0018／GC-0040 原本指向的方面记在该条 notes 里，不进任何统计。counts.unqualified 与配额进度单列：前者数全部 outcome_kind=unqualified，后者只数已达配额口径的条目；此刻两者都是 4，但定义不同，不得混用或互相替代。
+  unqualified_progress: 4      # 已达配额口径的条数（aspect=0 的 unqualified）
+  remaining_gap: 已归零：40 文件齐＝桶 36 满（4／5／9 = 10／10／10 ＋ process_record 6）＋ aspect=0 的 unqualified 4 满。expected_files 已达成；status 仍 in_progress、frozen_at 仍 null——冻结是人类门，执行方不得自行冻结。
 
 counts:
-  total: 36
-  new: 27
-  no_op: 6
-  unqualified: 3
+  total: 40
+  new: 29
+  no_op: 7
+  unqualified: 4
   undecidable: 0
-  by_aspect: {'4': 10, '5': 10, '9': 10, 'process_record': 3, '0': 3}
-  by_aspect_basis: cases[].aspect 表示案例所属方面：方面样本取源卡 _aspect（4／5／9）；过程记录写 0，记入 process_record 桶；unqualified 一律写 0，记入 '0' 桶。4／5／9 直接取该字段，process_record 取 d3_disposition=process_record 的条数，'0' 只收 aspect=0 且非 process_record 的条目。五项相加等于 total；桶数 = 4／5／9／process_record 四项之和 = 33。
+  by_aspect: {'4': 10, '5': 10, '9': 10, 'process_record': 6, '0': 4}
+  by_aspect_basis: cases[].aspect 表示案例所属方面：方面样本取源卡 _aspect（4／5／9）；过程记录写 0，记入 process_record 桶；unqualified 一律写 0，记入 '0' 桶。4／5／9 直接取该字段，process_record 取 d3_disposition=process_record 的条数，'0' 只收 aspect=0 且非 process_record 的条目。五项相加等于 total；桶数 = 4／5／9／process_record 四项之和 = 36。
 
 cases:
   - {case_id: GC-0001, file: cases/GC-0001.yaml, aspect: 4, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
@@ -94,6 +95,10 @@ cases:
   - {case_id: GC-0034, file: cases/GC-0034.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
   - {case_id: GC-0035, file: cases/GC-0035.yaml, aspect: 9, change: no_op, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
   - {case_id: GC-0036, file: cases/GC-0036.yaml, aspect: 9, change: new, d3_disposition: aspect_mapped, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0037, file: cases/GC-0037.yaml, aspect: 0, change: new, d3_disposition: process_record, d4_status: mapped, undecidable: false}
+  - {case_id: GC-0038, file: cases/GC-0038.yaml, aspect: 0, change: new, d3_disposition: process_record, d4_status: exempt, undecidable: false}
+  - {case_id: GC-0039, file: cases/GC-0039.yaml, aspect: 0, change: no_op, d3_disposition: process_record, d4_status: exempt, undecidable: false}
+  - {case_id: GC-0040, file: cases/GC-0040.yaml, aspect: 0, change: null, verdict: unqualified, reject_code: no_predicate_atom, undecidable: false}
 
 # 本批撞上的定义缺口（不是样本结论）；三条均已由人类裁定，DG-0001／DG-0002 已回改定义并按新口径重标，DG-0003 登记为技术债（TECH-DEBT 第 14 条）
 # 第 2 批（GC-0013–GC-0024）未新增定义缺口：边界情形均可按 T1.2／T2.1 唯一定键。
@@ -101,6 +106,8 @@ cases:
 # 结构空白（含 U+3000）、单双引号对照均可按 T1.2／T2.1 唯一定键。「需要多个方面的名字」
 # 这一边界本批无法取材：registry/predicate_aspects.yaml 的 33 名全部单方面，S3 禁止自造方面；
 # 此为取材观察、不是定义缺口，留待首个多方面谓词出现（见设计稿第 11 章第 3 批回改记录）。
+# 第 4 批（GC-0037–GC-0040）未新增定义缺口：no_op × process_record 交叉可由 T2.1 与 S4 叠加
+# 唯一判定；unqualified 沿用 DG-0001 裁定，reject_code 复用已登记的 no_predicate_atom，未新开码。
 definition_gaps:
   - gap_id: DG-0001
     cases: [GC-0012]
@@ -118,12 +125,10 @@ definition_gaps:
     state: 已裁定：不修，登记为技术债
     resolution: "原子只由叙事步给出；卡片 predicate_writes 的条目整体（裸名与带签名条目一视同仁）只作名字存在性与命名空间校验，不构成原子模板，均不得据此反推参数位或取值域。新增 TECH-DEBT 第 14 条（做什么／为何现在不做／不做期间的空白／启动条件／关闭判据），设计稿「非目标与未决」留指针。"
 
-# 尚未在样本中出现的卡片谓词名（6 名）；第 3 批新引入 8 名：owner／sensitivity／invariant／
-# shared_write_exception／saga／orchestrator／compensation／interaction_flow，覆盖 27／33。
+# 尚未在样本中出现的卡片谓词名（4 名）；第 4 批新引入 2 名：exclusion_record／selection_procedure，
+# 覆盖 29／33（第 3 批引入的 8 名见 CHANGELOG 批次 0024）。
 uncovered:
   - cleanup_filed
-  - exclusion_record
   - flag
   - quality_impact_card
-  - selection_procedure
   - step_class

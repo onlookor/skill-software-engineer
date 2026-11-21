@@ -1,0 +1,29 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0040
+aspect: 0
+source_card: G-TRUNK-DPS
+source_clause: '9.5'
+narrative_step:
+  step_id: NS-BATCH4-0040
+  run_id: batch4
+  seq: 4
+  executor: 标注席（Agent，单席）
+  participants: [发布负责人, 报表服务负责人]
+  reasoning_mode: discussion
+  narrative: 讨论后决定本期不为报表服务单设灰度门禁，沿用既有发布检查单；不新增门禁谓词，也不改动已登记门禁的任何参数。
+  trace: 单设门禁会新增一条 canary_gate 义务并占用发布窗口；沿用既有检查单在当前交付空间可行，且不新增谓词义务。该判断没有可写入的机器层谓词原子——「决定不新增」本身不是词表内任何谓词的实例，9.5 的谓词写入为空。
+  decision: 不登记新的 canary_gate；按 T3 退回，报表服务发布沿用既有检查单。
+  outcome_kind: unqualified
+  predicate_increments: []
+  aspects_touched: []
+  notes: 该判断原本指向方面 9（源卡 G-TRUNK-DPS 的归属方面），但判 unqualified 后不产生方面主张；本条 aspect 记 0，该指向不进任何统计。
+  recorded_at: '2026-11-21T10:04:00+08:00'
+expected:
+  verdict: unqualified
+  reject_code: no_predicate_atom
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

@@ -1,0 +1,40 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0038
+aspect: 0
+source_card: G-TRUNK-STP
+source_clause: '0.18.2-S6'
+narrative_step:
+  step_id: NS-BATCH4-0038
+  run_id: batch4
+  seq: 2
+  executor: 标注席（Agent，单席）
+  participants: [编排服务负责人, 评审主持人]
+  reasoning_mode: discussion
+  narrative: DP-5.2 选择规程在 S6 收敛：影响分级与路由已完成，登记一条选择规程完成记录，标记该决策点的 S0–S6 过程走完。
+  trace: S6 决策落地后按卡片 produces 登记 selection_procedure(DP-5.2,S6,C6)，参数位由本叙事步给出（决策点 DP-5.2、步骤 S6、检查单 C6），不从卡片签名反推取值。计算命令 printf '%s' 'selection_procedure(DP-5.2,S6,C6)' | sha256sum 得 cb23d1bdf0cf575ceb2f42a91703446b9a291a8cbd80ebeea1c1c543934acc02；基线为空，判 new。
+  decision: 登记 selection_procedure(DP-5.2,S6,C6)；该名字为 process_record，不推进任何方面。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: selection_procedure(DP-5.2,S6,C6)
+      atom_key: cb23d1bdf0cf575ceb2f42a91703446b9a291a8cbd80ebeea1c1c543934acc02
+      change: new
+      aspects: []
+  aspects_touched: []
+  snapshot_before:
+    atoms: []
+  snapshot_after:
+    atoms:
+      - atom_key: cb23d1bdf0cf575ceb2f42a91703446b9a291a8cbd80ebeea1c1c543934acc02
+        atom: selection_procedure(DP-5.2,S6,C6)
+  recorded_at: '2026-11-21T10:02:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: process_record
+  d4_status: exempt
+  why: selection_procedure 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=exempt（三个已登记 exempt 名之一，S5 允许）。它记录的是「规程走完」这一过程状态，覆盖 S0–S6 全部方面的操作，归到任一单一方面都会重复计数，不是设计事实写入；本步的设计事实由 S6 收敛的权威谓词增量另行承载，不在本条。基线无同 atom_key，判 new；advanced_keys 为空数组。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null

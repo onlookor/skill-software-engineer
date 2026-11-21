@@ -1,0 +1,42 @@
+schema_version: 1
+kind: golden_case
+status: annotated
+case_id: GC-0039
+aspect: 0
+source_card: G-TRUNK-DFL
+source_clause: '0.18.2-S1'
+narrative_step:
+  step_id: NS-BATCH4-0039
+  run_id: batch4
+  seq: 3
+  executor: 标注席（Agent，单席）
+  participants: [订单服务负责人, 复盘评审主持人]
+  reasoning_mode: discussion
+  narrative: 复盘评审回看 DP-4.5 的选择过程，逐字重登 GC-0011 已写入的同一条 S1 步骤日志（同决策点、同步骤、同输入、同求值、同已选候选、同检查单、同执行者），确认日志无遗漏；不产生新日志内容。
+  trace: 复盘语境与 GC-0011 的首次登记不同，但重登字面逐字相同，规范化原子仍为 step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)。计算命令 printf '%s' 'step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)' | sha256sum 得 39f83211170067ffbf4031007ede1f47fbc132ff0d3909bc902cc83b5d02012f，与基线唯一条目（GC-0011 写入的增量，跨批复用）同 atom_key，判 no_op。本条是 no_op 与 process_record 的首个交叉：change 只按 atom_key 判（T2.1），过程记录不推进向量与之独立（R9／S4），两条规则叠加后 advanced_keys 仍必为 []。
+  decision: 再次登记 step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)；判定 no_op，且该名字为 process_record，本就不推进任何方面。
+  outcome_kind: predicate_write
+  predicate_increments:
+    - atom: step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)
+      atom_key: 39f83211170067ffbf4031007ede1f47fbc132ff0d3909bc902cc83b5d02012f
+      change: no_op
+      aspects: []
+  aspects_touched: []
+  snapshot_before:
+    atoms:
+      - atom_key: 39f83211170067ffbf4031007ede1f47fbc132ff0d3909bc902cc83b5d02012f
+        atom: step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)
+  snapshot_after:
+    atoms:
+      - atom_key: 39f83211170067ffbf4031007ede1f47fbc132ff0d3909bc902cc83b5d02012f
+        atom: step_log(DP-4.5,S1,order_db,verified,selected,C7,alice)
+  recorded_at: '2026-11-21T10:03:00+08:00'
+expected:
+  advanced_keys: []
+  d3_disposition: process_record
+  d4_status: exempt
+  why: step_log 在 predicate_aspects 中 disposition=process_record、aspects 为空，在 predicate_map 中 status=exempt。它是七槽步骤日志，只记录「过程如何走」，不承载任何方面的设计事实——即使判 new 也不推进向量（S4），何况本步基线已有同 atom_key，判 no_op。advanced_keys 只收 new 且 aspects 非空的键，no_op 必为 []；两个口径在此交叉且结论一致。
+split_reason: null
+undecidable: false
+undecidable_reason: null
+disagreement: null
