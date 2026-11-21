@@ -29,3 +29,7 @@ registry/anchor_index/targets.csv
 
 # 技能分发包构建产物（skills/software-engineering/scripts/build_package.py 生成，不入库）
 /dist/
+
+# 本机环境笔记不入库（含主机、代理、密钥路径等信息）
+本机*配置变更记录*.md
+*.private.md
